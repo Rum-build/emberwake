@@ -145,19 +145,27 @@ Playable on the Verdant Isle field:
 - After the stand, Vesper is in the light and will not duel. Hold the threshold, set a mouth on the light (one scar), or step back. None of the three opens the cathedral bar. **Leave** at the south returns to the crypt, short of the crack. Continue stores the breach, the choice, and the ash. Kestrel is not in the light and does not join.
 - The room is taller than the crypt: ribs, light shafts, falling ash, a readable threshold plaque, and the remnant mass beside the light. The mouse stick, Absorb, and Pack stay.
 
-## Remnant claim (this branch)
+## Remnant claim (shipped)
 
 - If the breach choice is Held Threshold, **Enter** on the north light opens the nave interior past the bar. A mouth on that light, or stepping back, does not; Look and the quest line say Held Threshold is the gate. **Leave** and Continue stay safe.
-- A Rite Celebrant holds the chamber. Physical blows land thin while the ward is up. A merge spell tears it. Torren’s shoulder and Nima’s steady still happen on their first actions. After the rite, Vesper is at the mass. Claim, refuse, share, or burn. Those flags are not the ending. She does not enter the host. Burn costs one scar. The other three do not.
+- A Rite Celebrant holds the chamber. Physical blows land thin while the ward is up. A merge spell tears it. Torren’s shoulder and Nima’s steady still happen on their first actions. After the rite, Vesper is at the mass. Claim, refuse, share, or burn. She does not enter the host. Burn costs one scar. The other three do not. After the flag, north is the aftermath.
 - Kestrel can be spoken to on a rib after the rite. Ask her to land, or leave her the rib. Landing puts her on the stone. She does not join.
 - **Leave** at the south returns to the breach, short of the bar. Continue stores the claim, the flag, and whether she landed. The chamber is larger than the breach: a bar you have passed, ribs, light shafts, ash, a readable claim plaque, and Vesper’s silhouette beside the mass.
 - The mouse stick, Absorb, and Pack stay.
 
+## Aftermath (this branch)
+
+- After a claim flag is set, **Enter** on the north mass opens one coda room. The quest line names it. Without a flag, that door is not there. **Leave** and Continue stay safe.
+- The room resolves the flag. Claim: Lira still wears it, Licence Zero has no number, Vesper stays outside, the rot slows and does not die, the spark is fed and still hungry. Refuse: her name stays, the licence and the rot stay. Share: Vesper stands beside the mass, the page fails for two, both hungers remain. Burn: the scar is the echo, debt and the HP cut are spoken, they will write another licence, the rot roots deeper, the spark is angrier. She does not enter the host.
+- Light, fog, the core, the licence ring, and her silhouette change with the path. The plaque is readable. Burn’s plaque names the debt and the cut. If Kestrel landed, she stands in the room and is still not in the pack. If she stayed in the air, she is not in the room.
+- **Credits** are north and open the credits card. **Return** comes back to the aftermath, not the title. **Leave** south returns to the claim, short of the door. Continue stores the aftermath. The quest line completes when the ending has been heard.
+- The mouse stick, Absorb, and Pack stay.
+
 ## Still ahead
 
-From DESIGN.md, after this claim:
+From DESIGN.md, after these endings:
 
-1. The rest of the scar’s debt. The kiln, the earth cork, a fed leak, Vesper’s taste, the spoken name, a drunk yard slag, a drunk remnant weep, a named cathedral hinge, a mouth on the crypt crack, a mouth on the breach light, and a burned claim each add a point. Banking the marrow leak eases one. Pressing a digit, holding the threshold, and claiming, refusing, or sharing the remnant do not. The rest stays. The four claim flags are not endings yet.
+1. The rest of the scar’s debt. The kiln, the earth cork, a fed leak, Vesper’s taste, the spoken name, a drunk yard slag, a drunk remnant weep, a named cathedral hinge, a mouth on the crypt crack, a mouth on the breach light, and a burned claim each add a point. Banking the marrow leak eases one. Pressing a digit, holding the threshold, and claiming, refusing, or sharing the remnant do not. Hearing the ending does not add a point. The burn’s debt is echoed in that room and is not charged twice.
 2. The wider waystone network, the wind merges (ice, thunder, tide, root), and a party slot for Kestrel if she ever takes one.
 
 Combat menus stay Fight / Magic / Item / Flee. New panels stay desktop-first.

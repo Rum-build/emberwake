@@ -681,22 +681,22 @@
             {
               label: 'Claim the remnant.',
               pick: 'claim',
-              reply: { speaker: 'Vesper', text: 'Then the spark names it. Lira is still the host. I do not enter. This is a flag, not the ending.' },
+              reply: { speaker: 'Vesper', text: 'Then the spark names it. Lira is still the host. I do not enter. North is the aftermath.' },
             },
             {
               label: 'Refuse it.',
               pick: 'refuse',
-              reply: { speaker: 'Vesper', text: 'Then it stays unclaimed. The room remains. I do not enter the host. The ending is not written.' },
+              reply: { speaker: 'Vesper', text: 'Then it stays unclaimed. The room remains. I do not enter the host. North is the aftermath.' },
             },
             {
               label: 'Share the light.',
               pick: 'share',
-              reply: { speaker: 'Vesper', text: 'Then both sparks are named on it. I still do not step into her. The claim is split and unfinished.' },
+              reply: { speaker: 'Vesper', text: 'Then both sparks are named on it. I still do not step into her. North is the aftermath.' },
             },
             {
               label: 'Burn the claim.',
               pick: 'burn',
-              reply: { speaker: 'Vesper', text: 'Then the scar takes the ash. The mass chars and is not gone. I do not enter the host.' },
+              reply: { speaker: 'Vesper', text: 'Then the scar takes the ash. The mass chars and is not gone. I do not enter the host. North is the aftermath.' },
             },
           ],
         },
@@ -732,6 +732,37 @@
       onPick: function (id) {
         if (Emberwake.noteKestrelClaim) Emberwake.noteKestrelClaim(id);
       },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('aftermath', function () {
+    const word = Emberwake.claimWord ? Emberwake.claimWord() : 'claim';
+    const bird = Emberwake.kestrelClaimWord && Emberwake.kestrelClaimWord() === 'land'
+      ? 'Kestrel landed and did not join.'
+      : 'Kestrel stayed in the air.';
+    const company = [];
+    if (Emberwake.companyHas && Emberwake.companyHas('torren')) company.push('Torren is the shoulder.');
+    if (Emberwake.companyHas && Emberwake.companyHas('nima')) company.push('Nima is the steady.');
+    const debt = Emberwake.scarCount ? Emberwake.scarCount() : 0;
+    const cut = debt * 6;
+    let vesper = 'You named it. Licence Zero cannot follow a thing with no number. I stay outside the host. The rot slows where she walks. It does not die. The spark is fed, and it still wants the next mouth.';
+    let lira = 'I am still the one wearing it. ' + (company.length ? company.join(' ') + ' ' : '') + bird + ' The hunger is quieter. It is not gone.';
+    if (word === 'refuse') {
+      vesper = 'Unclaimed. The Concord keeps Licence Zero. The land keeps rotting. I do not take her mouth. The spark stays hungry, and honest.';
+      lira = 'My name is still mine. The mass can still be numbered. I walk out with the hunger I came in with. ' + bird;
+    } else if (word === 'share') {
+      vesper = 'Two sparks on one light. The licence splits and fails. I do not step into her. The rot hesitates. That is not a healing. Both hungers remain.';
+      lira = 'Half a name. She is beside the mass, not inside me. The Concord has no page for two owners. ' + bird;
+    } else if (word === 'burn') {
+      vesper = 'The claim burned. The licence burns with it, and they will write another. The rot eats the ash and roots deeper. I do not enter. I wanted it alive. The scar is the echo.';
+      lira = 'The burn is in the host. Scar debt ' + debt + '. Max life cut by ' + cut + '. The spark ate ash and is angrier. The land will not thank me. ' + bird;
+    }
+    Emberwake.present({
+      lines: [
+        { where: 'Aftermath', speaker: 'Vesper', text: vesper },
+        { where: 'Aftermath', speaker: 'Lira', text: lira },
+      ],
     });
     return true;
   });
