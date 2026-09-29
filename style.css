@@ -301,11 +301,11 @@ button, .inventory-panel, .inv-body, .credits-content {
   color: #ffe6c8;
 }
 
-/* HUD — desktop plate, bottom-left, out of the center of the field */
+/* HUD — desktop plate top-left; stick and actions own the bottom */
 .hud {
   position: fixed;
-  top: auto;
-  bottom: 16px;
+  top: 16px;
+  bottom: auto;
   left: 16px;
   right: auto;
   width: 340px;
@@ -327,6 +327,10 @@ button, .inventory-panel, .inv-body, .credits-content {
   gap: 2px;
   min-width: 0;
   flex: 1;
+}
+
+.hud-right:empty {
+  display: none;
 }
 
 .hud-right {
@@ -428,21 +432,79 @@ button, .inventory-panel, .inv-body, .credits-content {
   text-shadow: 0 1px 3px #000;
 }
 
-/* Joystick */
+/* Joystick — always on in the field (PC mouse drag + touch) */
 .joystick-zone {
   position: fixed;
   left: 0;
   bottom: 0;
-  width: min(46vw, 220px);
-  height: min(42vh, 220px);
+  width: min(46vw, 240px);
+  height: min(42vh, 240px);
   z-index: 25;
-  display: none;
-  align-items: flex-end;
-  justify-content: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 6px;
   padding: 12px;
   padding-bottom: max(16px, env(safe-area-inset-bottom));
   padding-left: max(12px, env(safe-area-inset-left));
   touch-action: none;
+}
+
+.control-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 225, 168, 0.75);
+  text-shadow: 0 1px 4px #000;
+  padding-left: 8px;
+  pointer-events: none;
+}
+
+/* Bottom-right field actions — large click / tap targets */
+.onscreen-actions {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  z-index: 25;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 16px;
+  padding-bottom: max(18px, env(safe-area-inset-bottom));
+  padding-right: max(16px, env(safe-area-inset-right));
+  pointer-events: none;
+}
+
+.btn-action {
+  pointer-events: auto;
+  min-width: 112px;
+  min-height: 56px;
+  padding: 14px 22px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border-radius: 14px;
+  border-width: 2px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  touch-action: manipulation;
+}
+
+.btn-pack {
+  background: linear-gradient(180deg, rgba(40, 48, 72, 0.96), rgba(18, 22, 36, 0.98));
+  border-color: rgba(180, 200, 255, 0.45);
+  color: #dce6ff;
+}
+
+.btn-action.btn-absorb {
+  min-width: 132px;
+  min-height: 64px;
+  font-size: 1.12rem;
+  background: linear-gradient(180deg, #8d3d16, #3f1c10);
+  border-color: #ffb067;
+  color: #ffe6c8;
 }
 
 .joystick-base {
@@ -472,16 +534,18 @@ button, .inventory-panel, .inv-body, .credits-content {
 
 .interact-prompt {
   position: fixed;
-  left: 372px;
-  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 140px;
   top: auto;
   z-index: 21;
   max-width: 420px;
   background: rgba(12, 10, 9, 0.9);
   border: 1px solid rgba(212, 176, 112, 0.45);
-  border-radius: 2px;
+  border-radius: 8px;
   padding: 8px 12px;
   pointer-events: none;
+  text-align: center;
 }
 
 #interact-title {
@@ -905,6 +969,16 @@ button, .inventory-panel, .inv-body, .credits-content {
   justify-content: flex-start;
   gap: 8px;
   text-align: left;
+  min-height: 48px;
+  font-size: 1rem;
+  padding: 12px 16px;
+}
+
+.dialogue-advance {
+  min-height: 52px;
+  font-size: 1.05rem;
+  padding: 12px 20px;
+  align-self: stretch;
 }
 
 .dialogue-keys {
@@ -959,7 +1033,7 @@ button, .inventory-panel, .inv-body, .credits-content {
   line-height: 1.45;
 }
 
-/* Desktop pointer: menus take the mouse. The stick stays a touch control. */
+/* Desktop pointer: menus + stick + action pad all work with the mouse. */
 @media (hover: hover) and (pointer: fine) and (min-width: 821px) {
   .btn:hover:not(:disabled) {
     border-color: #ffe0a0;
@@ -972,7 +1046,7 @@ button, .inventory-panel, .inv-body, .credits-content {
   }
 }
 
-/* Phone and narrow windows: large taps, joystick, stacked windows. */
+/* Phone and narrow windows: larger taps, stacked windows. Stick already on. */
 @media (pointer: coarse), (max-width: 820px) {
   .pc-key { display: none; }
   .hud-keys { display: none; }
@@ -1014,14 +1088,6 @@ button, .inventory-panel, .inv-body, .credits-content {
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
   }
 
-  .interact-prompt {
-    left: 12px;
-    top: 34%;
-    bottom: auto;
-    max-width: min(78vw, 380px);
-    border-radius: 10px;
-  }
-
   .inventory-panel {
     top: 0;
     right: 0;
@@ -1057,9 +1123,19 @@ button, .inventory-panel, .inv-body, .credits-content {
   .dialogue-line { font-size: 1.02rem; }
   .dialogue-keys { display: none; }
 
-  .joystick-zone { display: flex; }
   .joystick-base { width: 128px; height: 128px; }
   .joystick-knob { width: 56px; height: 56px; }
+  .btn-action { min-width: 108px; min-height: 54px; font-size: 1.02rem; }
+  .btn-action.btn-absorb { min-width: 124px; min-height: 60px; }
+  .interact-prompt {
+    left: 12px;
+    right: 12px;
+    transform: none;
+    bottom: auto;
+    top: 34%;
+    max-width: none;
+    text-align: left;
+  }
 }
 
 @media (max-width: 520px) {
@@ -1086,6 +1162,8 @@ button, .inventory-panel, .inv-body, .credits-content {
   gap: 12px;
   pointer-events: none;
 }
+
+.hud-right:empty { display: none; }
 
 .hud-right {
   display: flex;

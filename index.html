@@ -19,7 +19,7 @@
       <p class="tease">The Ashen Concord bottles magic and calls the quiet safety. Another spark, Vesper, drinks faster than you and leaves the rot behind as a receipt.</p>
       <button id="btn-start" class="btn btn-primary btn-xl" type="button">Wake</button>
       <button id="btn-credits" class="btn btn-quiet" type="button">Credits</button>
-      <p class="hint">PC first: mouse on menus, WASD to walk, E absorb, I pack. Enter advances a scene. 1–4 choose a command in battle.<br />On a phone the joystick and the large buttons do the same work.</p>
+      <p class="hint">Play with the on-screen stick and buttons — mouse or touch, no keyboard needed. WASD, E, I, and Enter still work if you have a keyboard.<br />Drag the stick to walk. Absorb and Pack sit on the right. Click menus and scene choices.</p>
     </div>
   </div>
 
@@ -79,12 +79,9 @@
         <span class="nums" id="strain-nums">0/100</span>
       </div>
       <p class="hud-rumor" id="hud-rumor">The leaf-villages pretend the Concord’s seals are mercy.</p>
-      <p class="hud-keys">WASD move · E absorb · I pack · mouse on commands</p>
+      <p class="hud-keys">Stick or WASD · Absorb / E · Pack / I · click commands</p>
     </div>
-    <div class="hud-right">
-      <button id="btn-inventory" class="btn btn-hud" type="button">Pack</button>
-      <button id="btn-absorb" class="btn btn-hud btn-absorb hidden" type="button">Absorb</button>
-    </div>
+    <div class="hud-right" aria-hidden="true"></div>
   </div>
 
   <div id="interact-prompt" class="interact-prompt hidden">
@@ -145,11 +142,18 @@
     </div>
   </div>
 
-  <!-- Virtual joystick -->
-  <div id="joystick-zone" class="joystick-zone hidden">
+  <!-- Virtual joystick (always available in the field — mouse drag or touch) -->
+  <div id="joystick-zone" class="joystick-zone hidden" aria-label="Movement stick">
     <div id="joystick-base" class="joystick-base">
       <div id="joystick-knob" class="joystick-knob"></div>
     </div>
+    <span class="control-label">Move</span>
+  </div>
+
+  <!-- On-screen action buttons (mouse / touch; keyboard optional) -->
+  <div id="onscreen-actions" class="onscreen-actions hidden" aria-label="Field actions">
+    <button id="btn-absorb" class="btn btn-action btn-absorb hidden" type="button" title="Absorb (E)">Absorb</button>
+    <button id="btn-inventory" class="btn btn-action btn-pack" type="button" title="Pack (I)">Pack</button>
   </div>
 
   <div id="encounter-flash" class="encounter-flash"></div>
@@ -200,7 +204,7 @@
     <p class="dialogue-speaker" id="dialogue-speaker"></p>
     <p class="dialogue-line" id="dialogue-line"></p>
     <div class="dialogue-actions" id="dialogue-actions"></div>
-    <p class="dialogue-keys">Enter or click to continue · number keys choose</p>
+    <p class="dialogue-keys">Click Continue / Leave · number keys optional</p>
   </div>
 
   <div id="toast" class="toast hidden"></div>

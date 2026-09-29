@@ -96,6 +96,7 @@
   const joystickZone = $('#joystick-zone');
   const joystickBase = $('#joystick-base');
   const joystickKnob = $('#joystick-knob');
+  const onscreenActions = $('#onscreen-actions');
   const encounterFlash = $('#encounter-flash');
   const combatUI = $('#combat-ui');
   const enemyPanel = $('#enemy-panel');
@@ -1012,7 +1013,7 @@
       ? 'A Concord seal sits on the mouth. They called this safety while you watched.'
       : nearPool.absorbed
       ? 'Quiet now. The ground kept what you did not need.'
-      : nearPool.hint + ' Press E, or Absorb.';
+      : nearPool.hint + ' Tap Absorb (or E).';
   }
 
   function itemCount(id) {
@@ -1079,6 +1080,18 @@
     $('#inv-lightning').textContent = String(spark.lightning);
   }
 
+  function setFieldControls(visible) {
+    const show = !!visible;
+    joystickZone.classList.toggle('hidden', !show);
+    if (onscreenActions) onscreenActions.classList.toggle('hidden', !show);
+    if (!show) {
+      joy.active = false;
+      joy.dx = 0;
+      joy.dy = 0;
+      if (joystickKnob) joystickKnob.style.transform = 'translate(-50%, -50%)';
+    }
+  }
+
   function setInventory(open) {
     if (open && gameState !== State.OVERWORLD) return;
     inventoryOpen = open;
@@ -1088,10 +1101,10 @@
       joy.dx = 0;
       joy.dy = 0;
       joystickKnob.style.transform = 'translate(-50%, -50%)';
-      joystickZone.classList.add('hidden');
+      setFieldControls(false);
       renderInventory();
     } else if (gameState === State.OVERWORLD && !encounterLocked) {
-      joystickZone.classList.remove('hidden');
+      setFieldControls(true);
     }
     updateHUD();
     updatePrompt();
@@ -1398,7 +1411,7 @@
     combatsFought += 1;
     gameState = State.COMBAT;
     hud.classList.add('hidden');
-    joystickZone.classList.add('hidden');
+    setFieldControls(false);
     interactPrompt.classList.add('hidden');
     combatUI.classList.remove('hidden');
     overworldGroup.visible = false;
@@ -1924,7 +1937,7 @@
     combatPartyMeshes = [];
     gameState = State.OVERWORLD;
     hud.classList.remove('hidden');
-    joystickZone.classList.remove('hidden');
+    setFieldControls(true);
     encounterLocked = false;
     stepsSinceEncounter = 0;
     suppressEncountersUntil = performance.now() + 2200;
@@ -2064,6 +2077,7 @@
     dialogueOnDone = (script && script.onDone) || done || null;
     dialogueOpen = true;
     if (inventoryOpen) setInventory(false);
+    setFieldControls(false);
     const panel = $('#dialogue');
     panel.classList.remove('hidden');
     renderDialogue();
@@ -2095,7 +2109,7 @@
     } else {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'btn';
+      btn.className = 'btn btn-primary dialogue-advance';
       const last = dialogueIndex >= dialogueLines.length - 1;
       btn.textContent = last ? 'Leave it' : 'Continue';
       btn.addEventListener('click', advanceDialogue);
@@ -2127,6 +2141,9 @@
     dialogueOpen = false;
     const panel = $('#dialogue');
     if (panel) panel.classList.add('hidden');
+    if (gameState === State.OVERWORLD && !inventoryOpen && !encounterLocked) {
+      setFieldControls(true);
+    }
     const done = dialogueOnDone;
     dialogueOnDone = null;
     if (typeof done === 'function') done();
@@ -2246,7 +2263,7 @@
     gameoverScreen.classList.add('hidden');
     combatUI.classList.add('hidden');
     hud.classList.remove('hidden');
-    joystickZone.classList.remove('hidden');
+    setFieldControls(true);
     overworldGroup.visible = true;
     combatGroup.visible = false;
     camera.position.set(playerMesh.position.x, CAMERA_HEIGHT, playerMesh.position.z + CAMERA_DIST);
@@ -2321,6 +2338,16 @@
       showToast('The spark drags Lira upright. Twelve marks are gone into the grass. The isle does not applaud.');
       endCombatReturn();
     });
+    const dialoguePanel = $('#dialogue');
+    if (dialoguePanel) {
+      dialoguePanel.addEventListener('click', (e) => {
+        if (!dialogueOpen) return;
+        if (e.target.closest('button')) return;
+        const line = dialogueLines[dialogueIndex];
+        if (line && line.choices && line.choices.length) return;
+        advanceDialogue();
+      });
+    }
     setupCombatMenus();
   }
 
