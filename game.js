@@ -172,7 +172,10 @@
   let motes = [];
   let hoods = [];
   let phoneMode = false;
+  let weather = null;
   let nearChest = null;
+  let nearSpare = null;
+  let nearJournal = null;
   let nearNotice = null;
   let nearCord = null;
   let nearPost = null;
@@ -631,6 +634,7 @@
     buildClaim();
     buildAftermath();
     buildCombatArena();
+    buildWeather();
     window.addEventListener('resize', onResize);
   }
 
@@ -831,6 +835,7 @@
     ground.receiveShadow = true;
     overworldGroup.add(ground);
     overworldGroup.add(makeWaysideChest(-2.2, 3.6));
+    overworldGroup.add(makeSpareGreen(-12.4, 6.2));
     overworldGroup.add(makeSaltCord(3.2, -8));
     overworldGroup.add(makeWayPost(-11.2, 1.6));
     overworldGroup.add(makeColdRing(9.2, -12.4));
@@ -1308,6 +1313,18 @@
     const deskLamp = new THREE.PointLight(0xffe0a8, 0.55, 6);
     deskLamp.position.set(-1.2, 1.6, -0.2);
     g.add(deskLamp);
+    const countPier = makeLicencePier();
+    countPier.position.set(-2.45, 0, -2.2);
+    g.add(countPier);
+    const hallPier = makeLicencePier();
+    hallPier.position.set(2.55, 0, -10.4);
+    g.add(hallPier);
+    const hallBeam = new THREE.Mesh(
+      new THREE.BoxGeometry(0.14, 0.1, 1.4),
+      new THREE.MeshPhongMaterial({ color: 0xd4b56a, emissive: new THREE.Color(0x3a2c10), shininess: 48 })
+    );
+    hallBeam.position.set(2.55, 1.68, -9.55);
+    g.add(hallBeam);
     makeMotes(g, 32, 0xc8b89a, { x: 5, y: 1.6, z: 8 });
     const hallLight = new THREE.PointLight(0xd4c08a, 0.9, 16);
     hallLight.position.set(0, 2.4, -10);
@@ -1745,6 +1762,18 @@
     g.add(rest);
     g.add(makeAsideBench(-0.15, -4.15));
     g.add(makeNimaStop(5.15, -0.85));
+    const yardPierA = makeLicencePier();
+    yardPierA.position.set(-5.15, 0, -0.35);
+    g.add(yardPierA);
+    const yardPierB = makeLicencePier();
+    yardPierB.position.set(-5.15, 0, 1.05);
+    g.add(yardPierB);
+    const yardBeam = new THREE.Mesh(
+      new THREE.BoxGeometry(0.16, 0.1, 1.55),
+      new THREE.MeshPhongMaterial({ color: 0xd4b56a, emissive: new THREE.Color(0x3a2c10), shininess: 48 })
+    );
+    yardBeam.position.set(-5.15, 1.68, 0.35);
+    g.add(yardBeam);
     yardGroup = g;
     scene.add(g);
   }
@@ -2201,6 +2230,7 @@
     }
     cryptPile(-1.55, 1.2, 0.36);
     cryptPile(1.35, 0.7, 0.26);
+    g.add(makeCryptNotice(0.85, 1.62));
     const floorCrack = new THREE.Mesh(
       new THREE.PlaneGeometry(0.07, 1.7),
       new THREE.MeshBasicMaterial({ color: 0x0a0604, fog: false })
@@ -2907,6 +2937,36 @@
       });
     });
     return doors;
+  }
+
+  function nearestSpare() {
+    if (!playerMesh || locale !== 'field' || regionId !== 'verdant-isle' || skyPass) return null;
+    if (Math.hypot(-12.4 - playerMesh.position.x, 6.2 - playerMesh.position.z) > 1.05) return null;
+    if (seenBeats['spare-green']) {
+      return {
+        title: 'Spare green',
+        hint: 'The cloth is empty. The second tonic is already in the pack. Press E. The kiln is still the road.',
+      };
+    }
+    return {
+      title: 'A spare green',
+      hint: 'A bitter wrap off the west path. Press E. It is not the wayside chest and not a door.',
+    };
+  }
+
+  function nearestJournal() {
+    if (!playerMesh || locale !== 'count-crypt' || skyPass) return null;
+    if (Math.hypot(0.85 - playerMesh.position.x, 1.62 - playerMesh.position.z) > 0.7) return null;
+    if (seenBeats['crypt-notice']) {
+      return {
+        title: 'A filed notice',
+        hint: 'It was already read. The crack did not open. Press E to hear it again.',
+      };
+    }
+    return {
+      title: 'A folded notice',
+      hint: 'East dust. Not the ledger and not the crack. Press E.',
+    };
   }
 
   function nearestLetter() {
@@ -4127,12 +4187,40 @@
     const head = new THREE.Mesh(new THREE.SphereGeometry(0.2 * scale, 8, 7), skin);
     head.position.y = 1.08 * scale;
     g.add(head);
-    const hair = new THREE.Mesh(
-      new THREE.SphereGeometry(0.22 * scale, 6, 5),
-      new THREE.MeshLambertMaterial({ color: 0x241810 })
+    const hairMat = new THREE.MeshPhongMaterial({
+      color: vesper ? 0x14080c : concord ? 0x161410 : 0x24160e,
+      emissive: new THREE.Color(vesper ? 0x100608 : 0x0c0806),
+      shininess: concord ? 4 : 12,
+      specular: new THREE.Color(vesper ? 0x3a2018 : 0x5a4030),
+    });
+    const hair = new THREE.Group();
+    const cap = new THREE.Mesh(new THREE.SphereGeometry(0.21 * scale, 8, 6), hairMat);
+    cap.scale.set(1.08, vesper ? 0.58 : concord ? 0.4 : 0.52, 1.05);
+    cap.position.y = 1.2 * scale;
+    hair.add(cap);
+    const bang = new THREE.Mesh(
+      new THREE.BoxGeometry((concord ? 0.22 : 0.3) * scale, 0.05 * scale, 0.07 * scale),
+      hairMat
     );
-    hair.scale.y = 0.5;
-    hair.position.y = 1.2 * scale;
+    bang.position.set(0, 1.15 * scale, 0.155 * scale);
+    hair.add(bang);
+    const lockDrop = vesper ? 0.46 : concord ? 0.07 : 0.24;
+    [-1, 1].forEach((side) => {
+      const lock = new THREE.Mesh(
+        new THREE.BoxGeometry(0.07 * scale, lockDrop * scale, 0.07 * scale),
+        hairMat
+      );
+      lock.position.set(side * 0.15 * scale, (1.14 - lockDrop * 0.42) * scale, vesper ? -0.02 * scale : 0.02 * scale);
+      hair.add(lock);
+    });
+    if (!concord) {
+      const tail = new THREE.Mesh(
+        new THREE.BoxGeometry(0.11 * scale, (vesper ? 0.38 : 0.2) * scale, 0.07 * scale),
+        hairMat
+      );
+      tail.position.set(vesper ? -0.02 * scale : 0.08 * scale, (vesper ? 0.86 : 1.0) * scale, -0.14 * scale);
+      hair.add(tail);
+    }
     g.add(hair);
     const rimColor = new THREE.Color(color).lerp(new THREE.Color(0xffe6c8), 0.62);
     const rim = new THREE.Mesh(
@@ -4211,6 +4299,18 @@
     );
     nose.position.set(0, 1.06 * scale, 0.18 * scale);
     g.add(nose);
+    const brow = new THREE.Mesh(
+      new THREE.BoxGeometry(0.2 * scale, 0.022 * scale, 0.04 * scale),
+      skin
+    );
+    brow.position.set(0, 1.145 * scale, 0.175 * scale);
+    g.add(brow);
+    const mouth = new THREE.Mesh(
+      new THREE.BoxGeometry((vesper ? 0.07 : 0.09) * scale, 0.016 * scale, 0.028 * scale),
+      new THREE.MeshBasicMaterial({ color: vesper ? 0x2a100c : 0x6a3030, fog: false })
+    );
+    mouth.position.set(0, 0.995 * scale, 0.188 * scale);
+    g.add(mouth);
     const legs = [];
     [-0.11, 0.11].forEach((x) => {
       const leg = new THREE.Mesh(
@@ -4270,6 +4370,71 @@
     );
     band.position.set(0, 0.28, 0.24);
     g.add(band);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeSpareGreen(x, z) {
+    const g = new THREE.Group();
+    const wrap = new THREE.Mesh(
+      new THREE.BoxGeometry(0.28, 0.1, 0.18),
+      new THREE.MeshLambertMaterial({ color: 0x3a6a38 })
+    );
+    wrap.position.y = 0.08;
+    g.add(wrap);
+    const leaf = new THREE.Mesh(
+      new THREE.BoxGeometry(0.16, 0.04, 0.1),
+      new THREE.MeshBasicMaterial({ color: 0x8fbf62, fog: false })
+    );
+    leaf.position.set(0.04, 0.14, 0.02);
+    leaf.rotation.z = 0.4;
+    g.add(leaf);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeLicencePier() {
+    const g = new THREE.Group();
+    const stone = new THREE.MeshPhongMaterial({
+      color: 0x3c4240, shininess: 8, specular: new THREE.Color(0x8a8478),
+    });
+    const metal = new THREE.MeshPhongMaterial({
+      color: 0xd4b56a, emissive: new THREE.Color(0x3a2c10), shininess: 72, specular: new THREE.Color(0xfff2c8),
+    });
+    const shaft = new THREE.Mesh(new THREE.BoxGeometry(0.26, 1.65, 0.26), stone);
+    shaft.position.y = 0.82;
+    g.add(shaft);
+    const cap = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.1, 0.4), metal);
+    cap.position.y = 1.68;
+    g.add(cap);
+    const seal = new THREE.Mesh(new THREE.OctahedronGeometry(0.09, 0), metal);
+    seal.position.set(0, 1.12, 0.15);
+    g.add(seal);
+    return g;
+  }
+
+  function makeCryptNotice(x, z) {
+    const g = new THREE.Group();
+    const peg = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.035, 0.045, 0.78, 5),
+      new THREE.MeshLambertMaterial({ color: 0x3a3028 })
+    );
+    peg.position.y = 0.39;
+    g.add(peg);
+    const page = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.46, 0.34),
+      new THREE.MeshBasicMaterial({ color: 0xe6d4b0, fog: false, side: THREE.DoubleSide })
+    );
+    page.position.set(0, 0.78, 0);
+    page.rotation.y = 0.55;
+    g.add(page);
+    const ink = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.28, 0.04),
+      new THREE.MeshBasicMaterial({ color: 0x2a1810, fog: false, side: THREE.DoubleSide })
+    );
+    ink.position.set(0.02, 0.8, 0.01);
+    ink.rotation.y = 0.55;
+    g.add(ink);
     g.position.set(x, 0, z);
     return g;
   }
@@ -4745,6 +4910,64 @@
     const down = !!seenBeats['coast-brawl'];
     coastPatrol.rotation.z = down ? 1.05 : 0;
     coastPatrol.position.y = down ? 0.12 : 0;
+  }
+
+  function buildWeather() {
+    function makeFall(count, color, size) {
+      const base = new Float32Array(count * 3);
+      for (let i = 0; i < count; i++) {
+        base[i * 3] = (Math.random() - 0.5) * 18;
+        base[i * 3 + 1] = Math.random() * 7;
+        base[i * 3 + 2] = (Math.random() - 0.5) * 18;
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(base.slice(), 3));
+      const pts = new THREE.Points(geo, new THREE.PointsMaterial({
+        color: color,
+        size: size,
+        transparent: true,
+        opacity: 0.72,
+        depthWrite: false,
+        sizeAttenuation: true,
+      }));
+      pts.userData.base = base;
+      pts.userData.count = count;
+      pts.visible = false;
+      scene.add(pts);
+      return pts;
+    }
+    weather = {
+      rain: makeFall(160, 0xb7c6d4, 0.12),
+      gust: makeFall(120, 0xd2c2a4, 0.18),
+    };
+  }
+
+  function driftWeather() {
+    if (!weather || !playerMesh) return;
+    const wet = locale === 'field' && (regionId === 'verdant-isle' || regionId === 'stormreach');
+    const ashen = locale === 'ashen-marrow' || locale === 'concord-yard' || locale === 'remnant-claim' || locale === 'aftermath';
+    const gustOn = ashen && ashDensity !== 'thin';
+    weather.rain.visible = !!(wet && motionWanted);
+    weather.gust.visible = !!(gustOn && motionWanted);
+    if (!motionWanted) return;
+    if (phoneMode && ((Math.floor(performance.now() / 40) % 2) === 0)) return;
+    const t = performance.now() * 0.001;
+    function fall(pts, speed, lean) {
+      if (!pts.visible) return;
+      const arr = pts.geometry.attributes.position.array;
+      const base = pts.userData.base;
+      const n = pts.userData.count;
+      for (let i = 0; i < n; i++) {
+        const y = ((base[i * 3 + 1] - t * speed) % 7 + 7) % 7;
+        arr[i * 3] = base[i * 3] + lean;
+        arr[i * 3 + 1] = y;
+        arr[i * 3 + 2] = base[i * 3 + 2] + Math.sin(t + i) * 0.04;
+      }
+      pts.geometry.attributes.position.needsUpdate = true;
+      pts.position.set(playerMesh.position.x, playerMesh.position.y, playerMesh.position.z);
+    }
+    fall(weather.rain, 2.8, Math.sin(t * 0.6) * 0.2);
+    fall(weather.gust, 1.15, Math.sin(t * 0.45) * 0.85);
   }
 
   function driftMotes() {
@@ -5488,6 +5711,8 @@
     const showChalk = idle && nearChalk && !atExit && !showGallery && !showKestrel;
     const showCamp = idle && nearCamp && !showAbsorb && !atExit && !showTalk && !showMark;
     const showChest = idle && nearChest && !showAbsorb && !showDoor && !showGate && !showReturn;
+    const showSpare = idle && nearSpare && !showAbsorb && !showDoor && !showGate && !showReturn && !showChest;
+    const showJournal = idle && nearJournal && !atExit && !showCrack;
     const showNotice = idle && nearNotice && !showAbsorb && !showDoor && !showGate && !showReturn && !showPorter && !showChest;
     const showCord = idle && nearCord && !showAbsorb && !showDoor && !showChest;
     const showPost = idle && nearPost && !showAbsorb && !showDoor && !showChest && !showCord;
@@ -5497,7 +5722,7 @@
     const showRation = idle && nearRation && !showAbsorb && !showDoor && !showGate && !showReturn && !showPorter && !showNotice && !showClerk && !showChest;
     const showAside = idle && nearAside && !showAbsorb && !atExit && !showTalk && !showMark && !showCamp;
     const showNima = idle && nearNima && !showAbsorb && !atExit && !showTalk && !showMark && !showCamp && !showAside;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showNotice && !showCord && !showPost && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol);
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showSpare && !showJournal && !showNotice && !showCord && !showPost && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
@@ -5512,6 +5737,8 @@
     else if (showLook || showPipe || showThroat || showStone || showMark || showNave || showGallery) absorbBtn.textContent = 'Enter';
     else if (showTalk) absorbBtn.textContent = 'Speak';
     else if (showChest) absorbBtn.textContent = seenBeats['wayside-chest'] ? 'Look' : 'Open';
+    else if (showSpare) absorbBtn.textContent = seenBeats['spare-green'] ? 'Look' : 'Open';
+    else if (showJournal) absorbBtn.textContent = 'Look';
     else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showRing || showClerk || showRation || showAside || showNima || showPatrol) absorbBtn.textContent = 'Look';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
     absorbBtn.classList.toggle('is-ready', !!showAbsorb);
@@ -5519,7 +5746,7 @@
 
   function updatePrompt() {
     const atExit = atInteriorExit();
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !nearLetter && !nearChest && !nearNotice && !nearCord && !nearPost && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !nearLetter && !nearChest && !nearSpare && !nearJournal && !nearNotice && !nearCord && !nearPost && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -5652,6 +5879,16 @@
       $('#interact-detail').textContent = nearChest.hint;
       return;
     }
+    if (nearSpare && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
+      $('#interact-title').textContent = nearSpare.title;
+      $('#interact-detail').textContent = nearSpare.hint;
+      return;
+    }
+    if (nearJournal) {
+      $('#interact-title').textContent = nearJournal.title;
+      $('#interact-detail').textContent = nearJournal.hint;
+      return;
+    }
     if (nearNotice) {
       $('#interact-title').textContent = nearNotice.title;
       $('#interact-detail').textContent = nearNotice.hint;
@@ -5769,6 +6006,8 @@
       const waiting = [];
       if (seenBeats['furrow-letter']) waiting.push('A cousin’s letter says Vesper walked the Concord to the well. The furrow was the price. The road did not change.');
       if (seenBeats['wayside-chest']) waiting.push('The wayside chest gave one tonic. It is empty. The kiln is still the road.');
+      if (seenBeats['spare-green']) waiting.push('A spare green off the west path gave a second tonic. It does not open the kiln.');
+      if (seenBeats['crypt-notice']) waiting.push('A notice in the count crypt called the crack weather. The bar stayed shut.');
       if (seenBeats['cord-bound']) waiting.push('The salt cord is bound around the jerkin. Ash coughs for 4. It does not open a door and it does not pay a scar.');
       else if (seenBeats['salt-cord']) waiting.push('A salt cord is in the pack. Bind it once. The vault does not count rope. The road did not change.');
       if (seenBeats['coast-notice']) waiting.push('A notice on the shale says mouths are numbered. It is not the vault door.');
@@ -6213,6 +6452,10 @@
         talkMargin();
         return;
       }
+      if (nearJournal && locale === 'count-crypt' && !atMouth && !nearCrack) {
+        talkJournal();
+        return;
+      }
       if (nearCrack && locale === 'count-crypt' && !atMouth) {
         cross(() => { if (nearCrack.open) enterBreach(); else lookCrack(); });
         return;
@@ -6282,6 +6525,10 @@
     }
     if (nearChest) {
       talkChest();
+      return;
+    }
+    if (nearSpare) {
+      talkSpare();
       return;
     }
     if (nearCord) {
@@ -8123,6 +8370,51 @@
     saveGame();
   }
 
+  function talkSpare() {
+    if (locale !== 'field' || regionId !== 'verdant-isle' || dialogueOpen) return;
+    if (seenBeats['spare-green']) {
+      showToast('The spare green is already in the pack. The cloth stays empty. The kiln is still the road.');
+      return;
+    }
+    const fn = EW.scenes['spare-green'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'spare-green';
+    }
+  }
+
+  function noteSpare() {
+    seenBeats['spare-green'] = true;
+    const stack = items.find((row) => row.id === 'tonic');
+    if (stack) stack.count += 1;
+    else items.push({ id: 'tonic', count: 1 });
+    showToast('A second verdant tonic. The wayside chest is a different cloth. The kiln is still the road.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function talkJournal() {
+    if (locale !== 'count-crypt' || dialogueOpen) return;
+    if (seenBeats['crypt-notice']) {
+      showToast('The notice stays in the dust. The crack did not become a door.');
+      return;
+    }
+    const fn = EW.scenes['crypt-notice'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'crypt-notice';
+    }
+  }
+
+  function noteJournal() {
+    seenBeats['crypt-notice'] = true;
+    showToast('The notice is read. The crack and the bar stay shut.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
   function talkCord() {
     if (locale !== 'field' || regionId !== 'verdant-isle' || dialogueOpen) return;
     if (seenBeats['salt-cord']) {
@@ -8641,6 +8933,8 @@
       nearChalk = null;
       nearCamp = null;
       nearChest = null;
+      nearSpare = null;
+      nearJournal = null;
       nearNotice = null;
       nearCord = null;
       nearPost = null;
@@ -8749,6 +9043,8 @@
         nearChalk = nearestChalk();
         nearCamp = nearestCamp();
         nearChest = nearestChest();
+        nearSpare = nearestSpare();
+        nearJournal = nearestJournal();
         nearNotice = nearestNotice();
         nearCord = nearestCord();
         nearPost = nearestPost();
@@ -8798,6 +9094,8 @@
         nearChalk = nearestChalk();
         nearCamp = nearestCamp();
         nearChest = nearestChest();
+        nearSpare = nearestSpare();
+        nearJournal = nearestJournal();
         nearNotice = nearestNotice();
         nearCord = nearestCord();
         nearPost = nearestPost();
@@ -8813,6 +9111,7 @@
       updateVaultTriggers();
       updateMarrowVesper();
       updateAshDusk();
+      driftWeather();
       updatePipeTrigger();
       updateThroatTrigger();
       updateYardVesper();
@@ -8867,6 +9166,8 @@
       nearChalk = nearestChalk();
       nearCamp = nearestCamp();
         nearChest = nearestChest();
+        nearSpare = nearestSpare();
+        nearJournal = nearestJournal();
         nearNotice = nearestNotice();
         nearCord = nearestCord();
         nearPost = nearestPost();
@@ -10072,15 +10373,16 @@
     }).join('');
     const order = $('#turn-order');
     if (order) {
-      const chips = turnQueue.map((t, i) => {
+      const chips = [];
+      turnQueue.forEach((t, i) => {
         const name = t.type === 'party' ? party[t.index].name : enemies[t.index].name;
         const dead = t.type === 'party' ? party[t.index].hp <= 0 : !enemies[t.index].alive;
-        if (dead) return '';
+        if (dead) return;
         const side = t.type === 'party' ? ' ally' : ' foe';
         const now = i === combatTurnIndex;
-        return `<span class="turn-chip${side}${now ? ' now' : ''}">${now ? 'Now · ' : ''}${esc(name)}</span>`;
-      }).join('');
-      order.innerHTML = '<span class="turn-label">Order</span>' + chips;
+        chips.push(`<span class="turn-chip${side}${now ? ' now' : ''}">${now ? 'Now · ' : ''}${esc(name)}</span>`);
+      });
+      order.innerHTML = '<span class="turn-label">Order</span>' + chips.join('<span class="turn-sep" aria-hidden="true">›</span>');
     }
     const held = $('#combat-held');
     if (held && spark) {
@@ -10681,9 +10983,13 @@
 
   function syncAsh() {
     const word = ashDensity === 'thin' ? 'Thin' : ashDensity === 'thick' ? 'Thick' : 'Steady';
+    const hint = ashDensity === 'thin' ? 'fewer motes' : ashDensity === 'thick' ? 'more motes' : 'the usual fall';
     ['#btn-ash', '#btn-pack-ash'].forEach((sel) => {
       const btn = $(sel);
-      if (btn) btn.textContent = 'Ash · ' + word;
+      if (!btn) return;
+      btn.textContent = 'Ash fall · ' + word;
+      btn.title = 'Ash fall density, ' + word + ', ' + hint + '. Click to change.';
+      btn.setAttribute('aria-label', 'Ash fall density ' + word + ', ' + hint);
     });
   }
 
@@ -11025,7 +11331,13 @@
     requestAnimationFrame(animate);
     const dt = Math.min(clock.getDelta(), 0.05);
     if (gameState === State.OVERWORLD) updateOverworld(dt);
-    else if (gameState === State.COMBAT || gameState === State.VICTORY) {
+    else {
+      if (weather) {
+        weather.rain.visible = false;
+        weather.gust.visible = false;
+      }
+    }
+    if (gameState === State.COMBAT || gameState === State.VICTORY) {
       updateCombatCamera(dt);
       pulseHost();
     }
@@ -11966,6 +12278,11 @@
   EW.armPatrol = armPatrol;
   EW.finishPatrol = finishPatrol;
   EW.noteDusk = noteDusk;
+  EW.heardDusk = function () { return !!seenBeats['ash-dusk']; };
+  EW.foughtPatrol = function () { return !!seenBeats['coast-brawl']; };
+  EW.corkedCup = function () { return !!seenBeats['leaf-after'] || seals.some((seal) => seal.name === 'Corked Cup'); };
+  EW.noteSpare = noteSpare;
+  EW.noteJournal = noteJournal;
   EW.leafWon = function () { return !!seenBeats['leaf-patrol']; };
   EW.noteLeafAfter = noteLeafAfter;
   EW.notePost = notePost;
