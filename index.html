@@ -53,7 +53,7 @@
     <div class="title-content credits-content">
       <h2 class="screen-title">Credits</h2>
       <p>Emberwake uses open-licence audio only — CC0, CC-BY with attribution, or a similarly clear grant. Every cue that ships is named in <strong>CREDITS.md</strong> and on this screen.</p>
-      <p>This Verdant Isle slice is silent on purpose. No music and no effects are loaded until their licences are written down.</p>
+      <p><strong>Field bed.</strong> Original, this repository. CC0. A quiet loop of filtered noise and two slow tones, generated in the browser. No sample is loaded. Press Silent on the field to stop it.</p>
       <p class="credits-note">Commercial libraries stay out. If a licence is doubtful, the moment stays quiet.</p>
       <button id="btn-credits-close" class="btn btn-primary" type="button">Return</button>
     </div>
@@ -62,7 +62,11 @@
   <!-- Overworld HUD -->
   <div id="hud" class="hud hidden">
     <div class="hud-left">
-      <div class="hud-location" id="hud-location">Verdant Isle</div>
+      <div class="hud-location-row">
+        <div class="hud-location" id="hud-location">Verdant Isle</div>
+        <button id="btn-bed" class="btn btn-quiet btn-bed" type="button" aria-pressed="true">Sound</button>
+      </div>
+      <p class="hud-quest" id="hud-quest"></p>
       <div class="hud-path" id="hud-path">Path —</div>
       <div class="hud-row">
         <span class="hud-gold" title="Concord-rim coin">Marks <span id="hud-gold">0</span></span>
