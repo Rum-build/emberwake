@@ -994,7 +994,7 @@
     overworldGroup.add(new THREE.HemisphereLight(0xb7d4ee, 0x2a5a30, 0.48));
 
     const spawnPin = landmark('spawn');
-    playerMesh = makeCharacter(0xc47a4a, 0.95);
+    playerMesh = makeCharacter(0xc47a4a, 0.95, 'lira');
     if (playerMesh.userData.ember) playerMesh.userData.ember.visible = true;
     playerMesh.position.set(spawnPin.x, 0, spawnPin.z);
     coughPuff = new THREE.Mesh(
@@ -2160,6 +2160,19 @@
     perch.position.set(-2.9, 1.95, -0.55);
     perch.rotation.y = 0.6;
     g.add(perch);
+    const coolRim = new THREE.DirectionalLight(0xc5d6ee, 0.7);
+    coolRim.position.set(-5, 7, -14);
+    g.add(coolRim);
+    makeMotes(g, 40, 0xc5d4e6, { x: 11, y: 2.6, z: 9 }, { fall: true });
+    [[-4.35, 1.85], [4.55, 0.15], [-4.6, -2.15]].forEach((spot, i) => {
+      const rock = new THREE.Mesh(
+        new THREE.BoxGeometry(0.34 + (i % 2) * 0.12, 0.16 + (i === 1 ? 0.08 : 0), 0.28),
+        stone
+      );
+      rock.position.set(spot[0], 0.08, spot[1]);
+      rock.rotation.y = 0.4 + i * 0.55;
+      g.add(rock);
+    });
     markGroup = g;
     scene.add(g);
   }
@@ -3774,9 +3787,11 @@
     return {
       id: 'harbor-vault',
       title: 'Harbor vault',
-      hint: seenBeats['vault-ledger']
-        ? 'The count is behind you. The bottle-hall is through the north iron. Press E.'
-        : 'The counting room is uncorked. The bottles stay behind iron. Press E.',
+      hint: seenBeats['vault-ledger'] && seenBeats['clerk-tally'] && !seenBeats['bottle-hall']
+        ? 'North iron. The hall of corks. That is the bottled monopoly. Press E.'
+        : seenBeats['vault-ledger']
+          ? 'The count is behind you. The bottle-hall is through the north iron. Press E.'
+          : 'The counting room is uncorked. The bottles stay behind iron. Press E.',
     };
   }
 
@@ -4870,6 +4885,7 @@
     const g = new THREE.Group();
     const concord = kind === 'concord';
     const vesper = kind === 'vesper';
+    const lira = kind === 'lira';
     const clothMat = new THREE.MeshPhongMaterial({
       color,
       emissive: new THREE.Color(vesper ? 0x12080c : concord ? 0x10141c : 0x1a100c),
@@ -4920,10 +4936,10 @@
     buckle.position.set(0, 0.42 * scale, 0.16 * scale);
     g.add(buckle);
     const skin = new THREE.MeshPhongMaterial({
-      color: vesper ? 0x6a4038 : 0xe8b090,
-      emissive: new THREE.Color(vesper ? 0x1a0c0c : 0x3a2018),
+      color: vesper ? 0x6a4038 : lira ? 0xf2c8aa : 0xe8b090,
+      emissive: new THREE.Color(vesper ? 0x1a0c0c : lira ? 0x5c3424 : 0x3a2018),
       shininess: 9,
-      specular: new THREE.Color(vesper ? 0x3a2018 : 0x6a4030),
+      specular: new THREE.Color(vesper ? 0x3a2018 : lira ? 0x8a5040 : 0x6a4030),
     });
     const head = new THREE.Mesh(new THREE.SphereGeometry(0.2 * scale, 8, 7), skin);
     head.position.y = 1.08 * scale;
@@ -4963,11 +4979,13 @@
       hair.add(tail);
     }
     g.add(hair);
-    const rimColor = new THREE.Color(color).lerp(new THREE.Color(0xffe6c8), 0.62);
+    const rimColor = lira
+      ? new THREE.Color(0xd8e8f4)
+      : new THREE.Color(color).lerp(new THREE.Color(0xffe6c8), 0.62);
     const rim = new THREE.Mesh(
       new THREE.PlaneGeometry(0.62 * scale, 1.25 * scale),
       new THREE.MeshBasicMaterial({
-        color: rimColor, transparent: true, opacity: 0.38, depthWrite: false, side: THREE.DoubleSide, fog: false,
+        color: rimColor, transparent: true, opacity: lira ? 0.52 : 0.38, depthWrite: false, side: THREE.DoubleSide, fog: false,
       })
     );
     rim.position.set(0, 0.72 * scale, -0.26 * scale);
@@ -4975,7 +4993,7 @@
     g.add(rim);
     [-0.07, 0.07].forEach((x) => {
       const eye = new THREE.Mesh(
-        new THREE.SphereGeometry(0.032 * scale, 5, 4),
+        new THREE.SphereGeometry((lira ? 0.04 : 0.032) * scale, 5, 4),
         new THREE.MeshBasicMaterial({ color: 0x140c0a, fog: false })
       );
       eye.position.set(x * scale, 1.1 * scale, 0.17 * scale);
@@ -4988,6 +5006,32 @@
     );
     sash.position.set(0, 0.74 * scale, 0.2 * scale);
     g.add(sash);
+    if (lira) {
+      const scarfMat = new THREE.MeshPhongMaterial({
+        color: 0x7eb0c8,
+        emissive: new THREE.Color(0x163040),
+        shininess: 10,
+        specular: new THREE.Color(0xe4f2f8),
+      });
+      const scarf = new THREE.Mesh(
+        new THREE.BoxGeometry(0.46 * scale, 0.09 * scale, 0.28 * scale),
+        scarfMat
+      );
+      scarf.position.set(0, 0.96 * scale, 0.02 * scale);
+      g.add(scarf);
+      const scarfTail = new THREE.Mesh(
+        new THREE.BoxGeometry(0.1 * scale, 0.32 * scale, 0.07 * scale),
+        scarfMat
+      );
+      scarfTail.position.set(-0.18 * scale, 0.78 * scale, 0.08 * scale);
+      g.add(scarfTail);
+      const cheek = new THREE.Mesh(
+        new THREE.BoxGeometry(0.22 * scale, 0.045 * scale, 0.02 * scale),
+        new THREE.MeshBasicMaterial({ color: 0xf7d2b6, fog: false })
+      );
+      cheek.position.set(0, 1.045 * scale, 0.19 * scale);
+      g.add(cheek);
+    }
     if (concord) {
       const plate = new THREE.Mesh(
         new THREE.BoxGeometry(0.22 * scale, 0.16 * scale, 0.05 * scale),
@@ -5036,7 +5080,7 @@
     g.userData.emberMotes = emberMotes;
     const nose = new THREE.Mesh(
       new THREE.BoxGeometry(0.06 * scale, 0.06 * scale, 0.08 * scale),
-      new THREE.MeshLambertMaterial({ color: 0xe0a080 })
+      new THREE.MeshLambertMaterial({ color: lira ? 0xf6c8a8 : 0xe0a080 })
     );
     nose.position.set(0, 1.06 * scale, 0.18 * scale);
     g.add(nose);
@@ -6429,6 +6473,7 @@
       return 'You stepped back. Holding the threshold opens the bar. South is the crypt.';
     }
     if (locale === 'count-crypt') {
+      if (!seenBeats.cryptFight && !seenBeats['mark-scrap']) return 'The numbered scrap is east of the mark. An auditor keeps this ledger.';
       if (!seenBeats.cryptFight) return 'An auditor keeps the ledger under Licence Zero.';
       if (!cryptWord) return 'The crack is north. Spend a digit, take the scar, or leave it. The bar stays shut.';
       if (cryptWord === 'mouth') return 'The crack has your mouth on it. It is not Cracked Zero. South is the gallery.';
@@ -6453,7 +6498,7 @@
       if (!seenBeats.naveStep) {
       if (seenBeats['scrap-read']) return 'The scrap is read. A tally clerk can see the count. North, the nave stays shut.';
       if (seenBeats['mark-scrap']) return 'The numbered scrap is in the pack. Read it once. North, the road goes on.';
-      return 'North of the pillar, the road goes on to a sealed door.';
+      return 'East of the aisle, a numbered scrap. North, the door can wait.';
     }
       if (naveWord === 'name') return 'The nave is named and shut. South is the yard.';
       if (naveWord === 'turn') return 'You left the cathedral seal. South is the yard.';
@@ -6485,7 +6530,7 @@
     if (throatWord === 'name') return 'The name is in the spark. The yard stone is west of the engine.';
     if (throatWord === 'cork') return 'The name stayed corked. The yard stone is still west of the engine.';
     if (locale === 'harbor-vault' && !seenBeats['bottle-hall'] && !seenBeats['clerk-tally']) return 'East on the shale, the tally clerk. The hall is not the road yet.';
-    if (locale === 'harbor-vault' && !seenBeats['bottle-hall']) return 'The bottle-hall is north of the count.';
+    if (locale === 'harbor-vault' && !seenBeats['bottle-hall']) return 'North, the hall of corks. That is the bottled monopoly.';
     if (locale === 'field' && regionId === 'stormreach' && !seenBeats['vault-face']) return 'The harbor vault is in the cliff. A tally clerk stands east of the door.';
     if (locale === 'field' && regionId === 'stormreach' && !seenBeats['clerk-tally'] && !seenBeats['bottle-hall']) return 'The vault is named. East, the tally clerk. He is not the hall.';
     if (locale === 'leaf-village' && !seenBeats['furrow-letter']) return 'A letter sits in the basket by the furrow. It is not the road. South is the isle.';
@@ -6502,6 +6547,7 @@
     if (!seenBeats['waystone-wake']) return 'The kiln, then the scar. The waystone stays shut until both.';
     if (!seenBeats.marrowStep && !seenBeats['bottle-hall'] && !seenBeats['vault-face']) return 'The waystone is open. The harbor vault is on the shale. A tally clerk stands east of the door.';
     if (!seenBeats.marrowStep && !seenBeats['bottle-hall'] && !seenBeats['clerk-tally']) return 'The tally clerk is east of the vault. Speak to him before the hall.';
+    if (!seenBeats.marrowStep && !seenBeats['bottle-hall'] && seenBeats['clerk-tally']) return 'The clerk is done. North in the vault, corks hold the monopoly.';
     if (!seenBeats.marrowStep) return 'The inland road starts in the bottle-hall.';
     return 'The ash shelf is not the end of the rot.';
   }
@@ -10614,7 +10660,7 @@
       combatEnemyMeshes.push(mesh);
     });
     party.forEach((p, i) => {
-      const mesh = makeCharacter(p.color, 0.85);
+      const mesh = makeCharacter(p.color, 0.85, p.id === 'lira' ? 'lira' : undefined);
       if (p.id === 'lira' && mesh.userData.ember) mesh.userData.ember.visible = true;
       mesh.position.set(3.6, 0, -1.7 + i * 1.55);
       mesh.rotation.y = Math.PI / 2;
@@ -12465,11 +12511,18 @@
         : !seenBeats['clerk-tally'] && !seenBeats['bottle-hall']
           ? 'The vault is named. The tally clerk is east. The hall is not the road yet.'
           : !seenBeats['bottle-hall']
-            ? 'The clerk counted the weather. The hall is north of the count.'
+            ? 'The clerk is done. North in the vault, corks hold the monopoly.'
             : 'Shale, lightning, the harbor vault.';
       rows.push({ name: 'Stormreach Coast', note: coastNote });
     }
-    if (seenBeats['vault-ledger'] || seenBeats['bottle-hall']) rows.push({ name: 'Harbor vault', note: 'The count and the bottle-hall.' });
+    if (seenBeats['vault-ledger'] || seenBeats['bottle-hall']) {
+      rows.push({
+        name: 'Harbor vault',
+        note: !seenBeats['bottle-hall']
+          ? 'North, the hall of corks. That is the bottled monopoly.'
+          : 'The count and the bottle-hall.',
+      });
+    }
     if (seenBeats.marrowStep) rows.push({ name: 'Ashen Marrow', note: 'The digest-engine and the ash shelf.' });
     if (pipeWord || seenBeats['pipe-feed']) {
       rows.push({ name: 'Engine pipe', note: pipeWord === 'crack' ? 'The feed is cracked.' : pipeWord === 'leave' ? 'The feed stayed corked.' : 'The valve is a choice.' });
@@ -12488,6 +12541,7 @@
       const weep = pools.find((p) => p.id === 'mark-weep');
       let note = 'The rumour has a pillar. Kestrel did not carry you.';
       if (!seenBeats.markFight) note = 'Walked. A counter is still on the road.';
+      else if (!seenBeats['mark-scrap']) note = 'East of the aisle, a numbered scrap.';
       else if (weep && weep.absorbed) note = 'The weep is in the spark. The remnant is not this pillar.';
       else if (weep && weep.bottled) note = 'The weep was numbered. The pillar stayed.';
       else note = 'Walked. The weep is still a mouth.';
@@ -12502,6 +12556,8 @@
           ? 'Read once. A tally clerk can see the count. The nave stayed shut.'
           : 'In the pack. Read it once. It does not open the nave.',
       });
+    } else if (seenBeats.markFight) {
+      rows.push({ name: 'Numbered scrap', note: 'East of the aisle. It does not open the nave.' });
     }
     if (seenBeats.naveStep) {
       const note = naveWord === 'name'
@@ -12524,16 +12580,23 @@
       rows.push({ name: 'Watch gallery', note: 'Not walked yet. East of the sealed door. The list does not carry you.' });
     }
     if (seenBeats.cryptStep || cryptWord) {
-      const cryptNote = cryptWord === 'digit'
-        ? 'A digit is in the crack. The bar stayed shut.'
-        : cryptWord === 'mouth'
-          ? 'The crack took a scar. The bar stayed shut.'
-          : cryptWord === 'leave'
-            ? 'The crack was left. The bar stayed shut.'
-            : 'Walked. The auditor or the crack is still ahead.';
+      const cryptNote = !seenBeats['mark-scrap']
+        ? 'The numbered scrap is still east of the mark.'
+        : cryptWord === 'digit'
+          ? 'A digit is in the crack. The bar stayed shut.'
+          : cryptWord === 'mouth'
+            ? 'The crack took a scar. The bar stayed shut.'
+            : cryptWord === 'leave'
+              ? 'The crack was left. The bar stayed shut.'
+              : 'Walked. The auditor or the crack is still ahead.';
       rows.push({ name: 'Count crypt', note: cryptNote });
     } else if (galleryWord) {
-      rows.push({ name: 'Count crypt', note: 'Not walked yet. Down the count-stair. The list does not carry you.' });
+      rows.push({
+        name: 'Count crypt',
+        note: seenBeats['mark-scrap']
+          ? 'Not walked yet. Down the count-stair. The list does not carry you.'
+          : 'Not walked yet. The numbered scrap is east of the mark.',
+      });
     }
     if (seenBeats.breachStep || breachWord) {
       const breachNote = breachWord === 'hold'
