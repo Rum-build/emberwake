@@ -15,11 +15,19 @@
     <div class="title-content">
       <p class="eyebrow">Verdant Isle · Act I</p>
       <h1 class="game-title">Emberwake</h1>
+      <div class="title-rule" aria-hidden="true"></div>
       <p class="subtitle">Power is immortal. You are the spark inside Lira.</p>
       <p class="tease">The Ashen Concord bottles magic and calls the quiet safety. Another spark, Vesper, drinks faster than you and leaves the rot behind as a receipt.</p>
       <button id="btn-continue" class="btn btn-primary btn-xl hidden" type="button">Continue</button>
       <p id="continue-note" class="continue-note hidden"></p>
       <button id="btn-start" class="btn btn-primary btn-xl" type="button">Wake</button>
+      <div id="wake-confirm" class="wake-confirm hidden">
+        <p>Wake throws this save out. The scar, the letter, and the road go with it.</p>
+        <div class="wake-actions">
+          <button id="btn-wake-yes" class="btn btn-primary" type="button">Throw it out</button>
+          <button id="btn-wake-stay" class="btn btn-quiet" type="button">Stay</button>
+        </div>
+      </div>
       <button id="btn-credits" class="btn btn-quiet" type="button">Credits</button>
       <p class="hint">Mouse or WASD to walk. Absorb or E drinks a pool and steps through a door. Pack or I opens the pack. Click or Enter advances a scene.<br />Continue picks up this browser’s save. On a phone the stick and the large buttons do the same work.</p>
     </div>
@@ -122,6 +130,7 @@
       <button id="btn-inv-close" class="btn btn-menu btn-back" type="button">Close</button>
     </div>
     <div class="inv-body">
+      <p class="quest-kicker">Quest</p>
       <p class="inv-quest" id="inv-quest"></p>
       <section class="inv-section">
         <h3>Party</h3>

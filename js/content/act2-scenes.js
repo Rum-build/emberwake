@@ -573,6 +573,26 @@
     return true;
   });
 
+  Emberwake.registerScene('gallery-margin', function () {
+    const held = Emberwake.packHas && Emberwake.packHas('Cousin’s Margin');
+    const line = held
+      ? 'The filed copy matches the cousin’s letter. The Concord kept Vesper’s handwriting and called it mercy.'
+      : 'The village seal is filed as mercy. The furrow is not in this count.';
+    const reply = held
+      ? 'The basket and the wall say the same thing. Neither opens the stair.'
+      : 'Mercy, on their page. The grey furrow is still not a digit.';
+    Emberwake.present({
+      lines: [
+        { where: 'Watch gallery', speaker: 'Lira', text: line },
+        { speaker: 'Lira', text: reply },
+      ],
+      onDone: function () {
+        if (Emberwake.noteMargin) Emberwake.noteMargin();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('nave-kestrel', function () {
     Emberwake.present({
       lines: [
