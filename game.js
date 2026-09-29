@@ -2096,7 +2096,7 @@
     g.add(watcher);
     g.userData.watcher = watcher;
     const landed = makeCharacter(0x6a5348, 0.92);
-    landed.position.set(1.35, 0, 0.4);
+    landed.position.set(0, 0, 0.2);
     landed.visible = false;
     g.add(landed);
     g.userData.landed = landed;
@@ -5185,7 +5185,7 @@
 
   function nearestPerch() {
     if (!playerMesh || locale !== 'remnant-claim' || !seenBeats.claimFight || kestrelClaim || skyPass) return null;
-    if (Math.hypot(playerMesh.position.x - 1.35, playerMesh.position.z - 0.4) > 1.45) return null;
+    if (Math.hypot(playerMesh.position.x, playerMesh.position.z - 0.2) > 2.1) return null;
     return {
       title: 'Kestrel',
       hint: 'She is on the rib, not in the pack. Press E. Landing is not a joining.',
