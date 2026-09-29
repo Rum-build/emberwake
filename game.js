@@ -2076,6 +2076,39 @@
       g.add(post);
     });
     makeMotes(g, 96, 0xc4b4a4, { x: 12, y: 3.4, z: 14 }, { fall: true });
+    const pewMat = new THREE.MeshLambertMaterial({ color: 0x3a2a22 });
+    const brass = new THREE.MeshBasicMaterial({ color: 0xc4a46a, fog: false });
+    [-1.95, 1.95].forEach((x) => {
+      [0.2, 1.15, 2.15].forEach((z) => {
+        const pew = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.38, 0.26), pewMat);
+        pew.position.set(x, 0.2, z);
+        g.add(pew);
+        const backrest = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.36, 0.07), pewMat);
+        backrest.position.set(x, 0.46, z - 0.1);
+        g.add(backrest);
+      });
+    });
+    [-2.15, 2.15].forEach((x) => {
+      const stall = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.92, 0.38), pewMat);
+      stall.position.set(x, 0.46, -1.35);
+      g.add(stall);
+      const candle = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.04, 0.05, 0.22, 5),
+        new THREE.MeshBasicMaterial({ color: 0xffe2b0, fog: false })
+      );
+      candle.position.set(x, 1.02, -1.35);
+      g.add(candle);
+    });
+    [[-1.15, 2.4, -1.7], [1.15, 2.4, -1.7]].forEach((line) => {
+      const inlay = new THREE.Mesh(new THREE.PlaneGeometry(0.06, line[1]), brass);
+      inlay.rotation.x = -Math.PI / 2;
+      inlay.position.set(line[0], 0.03, line[2]);
+      g.add(inlay);
+    });
+    const cross = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.06), brass);
+    cross.rotation.x = -Math.PI / 2;
+    cross.position.set(0, 0.035, -0.55);
+    g.add(cross);
     const chalk = makeCountPage('CHALK', ['The host is numbered', 'Before the door', 'Not a key']);
     chalk.position.set(-2.85, 1.22, 1.82);
     chalk.scale.set(0.48, 0.48, 1);
@@ -2444,6 +2477,33 @@
     fallen.rotation.z = 0.4;
     fallen.position.set(-1.7, 0.05, 3.35);
     g.add(fallen);
+    const voussoirMat = new THREE.MeshPhongMaterial({ color: 0x4a3830, shininess: 6, specular: new THREE.Color(0x2a1810) });
+    [[-2.55, -2.65, 0.7, 0.55], [2.7, -1.45, 0.85, -0.4], [-3.4, 0.85, 0.55, 0.2]].forEach((bit) => {
+      const stone = new THREE.Mesh(new THREE.BoxGeometry(bit[2], 0.28, 0.42), voussoirMat);
+      stone.position.set(bit[0], 0.16, bit[1]);
+      stone.rotation.y = bit[3];
+      stone.rotation.z = 0.08;
+      g.add(stone);
+    });
+    [-4.55, 4.55].forEach((x) => {
+      [-2.4, -0.5, 1.5].forEach((z) => {
+        const post = new THREE.Mesh(new THREE.BoxGeometry(0.28, 2.4, 0.28), ribMat);
+        post.position.set(x, 1.2, z);
+        g.add(post);
+      });
+      const lintel = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.22, 4.3), ribMat);
+      lintel.position.set(x, 2.45, -0.45);
+      g.add(lintel);
+    });
+    [[-3.8, -3.6, 0.62], [4.1, -2.2, 0.48], [-4.2, 2.4, 0.4]].forEach((pile) => {
+      const ashPile = new THREE.Mesh(
+        new THREE.SphereGeometry(pile[2], 6, 5),
+        new THREE.MeshLambertMaterial({ color: 0x241c18 })
+      );
+      ashPile.scale.y = 0.28;
+      ashPile.position.set(pile[0], pile[2] * 0.14, pile[1]);
+      g.add(ashPile);
+    });
     makeMotes(g, 80, 0xc4b4a4, { x: 12, y: 4.2, z: 14 }, { fall: true });
     breachGroup = g;
     scene.add(g);
@@ -4426,6 +4486,20 @@
       legs.push(leg);
     });
     g.userData.legs = legs;
+    const arms = [];
+    [-1, 1].forEach((side) => {
+      const arm = new THREE.Group();
+      arm.position.set(side * 0.34 * scale, 0.84 * scale, 0);
+      const upper = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.045 * scale, 0.052 * scale, 0.32 * scale, 5),
+        clothMat
+      );
+      upper.position.y = -0.16 * scale;
+      arm.add(upper);
+      g.add(arm);
+      arms.push(arm);
+    });
+    g.userData.arms = arms;
     g.userData.cloth = clothMat;
     return g;
   }
@@ -5111,30 +5185,36 @@
     if (!playerMesh) return;
     if (!motionWanted && mode === 'idle') mode = 'still';
     const legs = playerMesh.userData.legs;
+    const arms = playerMesh.userData.arms;
     const t = performance.now();
+    function setLimbs(legL, legR, armL, armR) {
+      if (legs) {
+        legs[0].rotation.x = legL;
+        legs[1].rotation.x = legR;
+      }
+      if (arms) {
+        arms[0].rotation.x = armL;
+        arms[1].rotation.x = armR;
+      }
+    }
     if (mode === 'walk') {
       const step = Math.sin(t * 0.012);
-      playerMesh.position.y = Math.abs(step) * 0.08;
-      playerMesh.rotation.x = 0;
-      if (legs) {
-        legs[0].rotation.x = step * 0.4;
-        legs[1].rotation.x = -step * 0.4;
-      }
+      playerMesh.position.y = Math.abs(step) * 0.09;
+      playerMesh.rotation.x = step * 0.035;
+      playerMesh.rotation.z = step * 0.04;
+      setLimbs(step * 0.55, -step * 0.55, -step * 0.48, step * 0.48);
     } else if (mode === 'idle') {
       const breath = Math.sin(t * 0.0024);
-      playerMesh.position.y = (breath + 1) * 0.012;
-      playerMesh.rotation.x = breath * 0.04;
-      if (legs) {
-        legs[0].rotation.x = breath * 0.06;
-        legs[1].rotation.x = breath * 0.04;
-      }
+      const shift = Math.sin(t * 0.0011);
+      playerMesh.position.y = (breath + 1) * 0.014;
+      playerMesh.rotation.x = breath * 0.035;
+      playerMesh.rotation.z = shift * 0.02;
+      setLimbs(breath * 0.05, breath * 0.03, -breath * 0.06, breath * 0.04);
     } else {
       playerMesh.position.y = 0;
       playerMesh.rotation.x = 0;
-      if (legs) {
-        legs[0].rotation.x = 0;
-        legs[1].rotation.x = 0;
-      }
+      playerMesh.rotation.z = 0;
+      setLimbs(0, 0, 0, 0);
     }
   }
 
@@ -5178,10 +5258,8 @@
   }
 
   function buildCombatArena() {
-    const floor = new THREE.Mesh(
-      new THREE.CircleGeometry(10, 28),
-      new THREE.MeshPhongMaterial({ color: 0x242c28, shininess: 10, specular: new THREE.Color(0x304038) })
-    );
+    const floorMat = new THREE.MeshPhongMaterial({ color: 0x242c28, shininess: 10, specular: new THREE.Color(0x304038) });
+    const floor = new THREE.Mesh(new THREE.CircleGeometry(10, 28), floorMat);
     floor.rotation.x = -Math.PI / 2;
     combatGroup.add(floor);
     const grain = new THREE.Mesh(
@@ -5215,31 +5293,80 @@
       cap.position.set(spot[0], 1.6, spot[1]);
       combatGroup.add(cap);
     });
+    const hillMat = new THREE.MeshLambertMaterial({ color: 0x1a2428 });
     for (let i = 0; i < 5; i++) {
       const hill = new THREE.Mesh(
         new THREE.SphereGeometry(2.6 + (i % 3) * 0.4, 8, 6),
-        new THREE.MeshLambertMaterial({ color: 0x1a2428 })
+        hillMat
       );
       hill.position.set(-8 + i * 4, -0.8, -7.5);
       hill.scale.y = 0.45;
       combatGroup.add(hill);
     }
-    const back = new THREE.Mesh(
-      new THREE.PlaneGeometry(40, 18),
-      new THREE.MeshBasicMaterial({ color: 0x1c2832 })
-    );
+    const backMat = new THREE.MeshBasicMaterial({ color: 0x1c2832 });
+    const back = new THREE.Mesh(new THREE.PlaneGeometry(40, 18), backMat);
     back.position.set(0, 7, -11);
     combatGroup.add(back);
-    combatGroup.add(new THREE.AmbientLight(0xc8c0b8, 0.28));
-    const light = new THREE.DirectionalLight(0xfff0dd, 0.55);
-    light.position.set(4, 14, 8);
-    combatGroup.add(light);
+    const ambient = new THREE.AmbientLight(0xc8c0b8, 0.28);
+    combatGroup.add(ambient);
+    const sun = new THREE.DirectionalLight(0xfff0dd, 0.55);
+    sun.position.set(4, 14, 8);
+    combatGroup.add(sun);
     const warm = new THREE.PointLight(0xffb070, 1.25, 16);
     warm.position.set(4.4, 3.1, 0.4);
     combatGroup.add(warm);
     const cold = new THREE.PointLight(0x7aa0d8, 1.05, 16);
     cold.position.set(-3.4, 3.2, -1.4);
     combatGroup.add(cold);
+    combatGroup.userData.light = { floorMat, hillMat, backMat, ambient, sun, warm, cold };
+  }
+
+  function combatMood() {
+    if (locale === 'leaf-village' || locale === 'root-cellar') return 'day';
+    if (locale === 'field' && regionId === 'verdant-isle') return 'day';
+    if (locale === 'harbor-vault') return 'dusk';
+    if (locale === 'field' && regionId === 'stormreach') return 'dusk';
+    return 'ember';
+  }
+
+  function syncCombatLight() {
+    const pack = combatGroup && combatGroup.userData.light;
+    if (!pack) return;
+    const table = {
+      day: {
+        floor: 0x2a3430, hill: 0x243038, back: 0x1c2832,
+        amb: 0xc8c0b8, ambI: 0.32, sun: 0xfff0dd, sunI: 0.62,
+        warm: 0xffb070, warmI: 1.15, cold: 0x7aa0d8, coldI: 1.2, fog: 0x1c2832,
+      },
+      dusk: {
+        floor: 0x2c241c, hill: 0x2a221c, back: 0x3a2824,
+        amb: 0xc4a080, ambI: 0.22, sun: 0xffc090, sunI: 0.46,
+        warm: 0xff8840, warmI: 1.55, cold: 0x5a6888, coldI: 0.4, fog: 0x2a201c,
+      },
+      ember: {
+        floor: 0x1a1210, hill: 0x140e10, back: 0x120c10,
+        amb: 0x6a4030, ambI: 0.16, sun: 0xffa060, sunI: 0.32,
+        warm: 0xff5a22, warmI: 1.85, cold: 0x3a2840, coldI: 0.26, fog: 0x100c10,
+      },
+    };
+    const tone = table[combatMood()] || table.day;
+    pack.floorMat.color.setHex(tone.floor);
+    pack.hillMat.color.setHex(tone.hill);
+    pack.backMat.color.setHex(tone.back);
+    pack.ambient.color.setHex(tone.amb);
+    pack.ambient.intensity = tone.ambI;
+    pack.sun.color.setHex(tone.sun);
+    pack.sun.intensity = tone.sunI;
+    pack.warm.color.setHex(tone.warm);
+    pack.warm.intensity = tone.warmI;
+    pack.cold.color.setHex(tone.cold);
+    pack.cold.intensity = tone.coldI;
+    if (scene.fog) {
+      scene.fog.color.setHex(tone.fog);
+      scene.fog.near = 18;
+      scene.fog.far = 64;
+    }
+    renderer.setClearColor(tone.fog);
   }
 
   function combatMats(color, concord) {
@@ -6144,7 +6271,8 @@
           : 'The gallery filed the village seal as mercy. The furrow is not in the count.');
       }
       if (seenBeats['nave-pressure']) waiting.push('West chalk in the nave numbered the host. It did not open the bar.');
-      if (seenBeats['mark-scrap']) waiting.push('A numbered scrap from the Remnant Mark is in the pack. The pillar stayed a number. The nave did not open.');
+      if (seenBeats['scrap-read']) waiting.push('The numbered scrap was read once. A tally clerk can see the count. It does not open the nave or the vault.');
+      else if (seenBeats['mark-scrap']) waiting.push('A numbered scrap from the Remnant Mark is in the pack. Read it once. The nave did not open.');
       if (seenBeats['mark-company']) waiting.push(markCompany === 'ask'
         ? 'You asked the bird on the mark to keep company. She refused. She is not in the pack.'
         : 'You left the bird on the mark the air. She did not join.');
@@ -6300,7 +6428,10 @@
       const bind = k.name === 'Salt Cord' && !seenBeats['cord-bound']
         ? '<button class="btn btn-small" type="button" data-act="bind-cord">Bind</button>'
         : '';
-      return `<li class="inv-card" title="${esc(k.desc)}"><div class="row"><span class="name">${esc(k.name)}</span>${bind}</div><div class="desc">${esc(k.desc)}</div></li>`;
+      const read = k.name === 'Numbered Scrap' && !seenBeats['scrap-read']
+        ? '<button class="btn btn-small" type="button" data-act="read-scrap">Read</button>'
+        : '';
+      return `<li class="inv-card" title="${esc(k.desc)}"><div class="row"><span class="name">${esc(k.name)}</span>${bind}${read}</div><div class="desc">${esc(k.desc)}</div></li>`;
     }).join('');
 
     $('#inv-level').textContent = String(spark.level);
@@ -7395,7 +7526,9 @@
     if (seenBeats['mark-scrap']) {
       return {
         title: 'A numbered scrap',
-        hint: 'It is already in the pack. The pillar did not open. Press E to hear it again.',
+        hint: seenBeats['scrap-read']
+          ? 'It was read once. The pillar did not open. Press E to hear it again.'
+          : 'It is in the pack. Read it once. The pillar did not open. Press E to hear it again.',
       };
     }
     return {
@@ -8333,7 +8466,9 @@
   function talkScrap() {
     if (locale !== 'remnant-mark' || dialogueOpen) return;
     if (seenBeats['mark-scrap']) {
-      showToast('The scrap is in the pack. The pillar stayed numbered. The nave did not open.');
+      showToast(seenBeats['scrap-read']
+        ? 'The scrap was read once. The pillar stayed numbered. The nave did not open.'
+        : 'The scrap is in the pack. Read it once. The pillar stayed numbered. The nave did not open.');
       return;
     }
     const fn = EW.scenes['mark-scrap'];
@@ -8348,10 +8483,39 @@
     if (!seals.some((seal) => seal.name === 'Numbered Scrap')) {
       seals.push({
         name: 'Numbered Scrap',
-        desc: 'A tally from the Remnant Mark. They numbered the pillar and left the count in the dust. It is not the Prime Remnant, and it does not open the nave.',
+        desc: 'A tally from the Remnant Mark. Read it once from the pack. They numbered the pillar and left the count in the dust. It is not the Prime Remnant, and it does not open the nave.',
       });
     }
-    showToast('The scrap is in the pack. The pillar stayed a number. The nave did not open.');
+    showToast('The scrap is in the pack. Read it once. The pillar stayed a number. The nave did not open.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function readScrap() {
+    if (!seals.some((seal) => seal.name === 'Numbered Scrap')) return;
+    if (seenBeats['scrap-read']) {
+      showToast('The scrap was read once. The nave did not open. The vault did not open.');
+      return;
+    }
+    setInventory(false);
+    const fn = EW.scenes['scrap-read'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'scrap-read';
+    } else noteScrapRead();
+  }
+
+  function noteScrapRead() {
+    seenBeats['scrap-read'] = true;
+    let changed = false;
+    seals.forEach((seal) => {
+      if (seal.name === 'Numbered Scrap' && seal.desc.indexOf('Read once.') < 0) {
+        seal.desc = 'Read once. The pillar is a number, not the Prime Remnant. A tally clerk on the shale can see it. It does not open the nave or the vault.';
+        changed = true;
+      }
+    });
+    if (changed) showToast('The scrap is read. The pillar stayed a number. The nave did not open.');
     refreshRumor();
     updateHUD();
     saveGame();
@@ -8636,7 +8800,7 @@
     if (!seals.some((seal) => seal.name === 'Salt Cord')) {
       seals.push({
         name: 'Salt Cord',
-        desc: 'A waxed cord from the isle grass. Bind it from the pack once. Ash in the teeth coughs for 4, not 6. It does not open a door.',
+        desc: 'A waxed cord from the isle grass. Bind it from the pack once. Ash in the teeth coughs for 4, not 5. It does not open a door.',
       });
     }
     showToast('The cord is in the pack. Bind it once if you want the knot. The scar is still the other way.');
@@ -8667,7 +8831,7 @@
     if (!seals.some((seal) => seal.name === 'Bound Cord')) {
       seals.push({
         name: 'Bound Cord',
-        desc: 'The waxed cord is tied around the jerkin. Ash in the teeth coughs for 4, not 6. It does not open a door and it does not pay a scar.',
+        desc: 'The waxed cord is tied around the jerkin. Ash in the teeth coughs for 4, not 5. It does not open a door and it does not pay a scar.',
       });
     }
     if (had) showToast('The cord is bound. Ash in the teeth will cough for 4. The road did not change.');
@@ -9577,10 +9741,7 @@
     tuckCathedral();
     if (coastGroup) coastGroup.visible = false;
     combatGroup.visible = true;
-    scene.fog.near = 22;
-    scene.fog.far = 70;
-    scene.fog.color.set(0x1c2832);
-    renderer.setClearColor(0x1c2832);
+    syncCombatLight();
 
     const preset = scriptedEncounter;
     scriptedEncounter = null;
@@ -9622,7 +9783,7 @@
       : enemies.some((e) => e.id === 'penitent')
       ? (seenBeats['cord-bound']
         ? 'An ash penitent on the approach. It kneels once. The bound cord keeps the cough at 4. It is not a scar.'
-        : 'An ash penitent on the approach. It kneels once. Ash sits in the teeth and coughs for 6 on the next turn. It is not a scar.')
+        : 'An ash penitent on the approach. It kneels once. Ash sits in the teeth and coughs for 5 on the next turn. It is not a scar.')
       : enemies.some((e) => e.id === 'celebrant')
       ? 'A Concord last rite. The ward drinks a knife. A merge on the list tears it. A shoulder still stands in front.'
       : enemies.some((e) => e.id === 'captain')
@@ -9630,11 +9791,11 @@
       : enemies.some((e) => e.id === 'stoker')
       ? 'Corked iron. A knife spends itself on the coat. Magma stays on them. Glass looks for the seam.'
       : enemies.some((e) => e.id === 'cinder')
-        ? 'Ash that learned to crawl. The shelf is not empty.'
+        ? 'Ash that learned to crawl. It splits once. The next bite is a spark.'
         : enemies.some((e) => e.id === 'counter')
-        ? 'A counter left to number a leak. He counts blows the same way.'
+        ? 'A counter left to number a leak. He lifts a bead. The next blow he throws is already thin.'
       : enemies.some((e) => e.id === 'brine')
-          ? 'The coast grew a thing with too many legs. The wet is not only water.'
+          ? 'The coast grew a thing with too many legs. It wets the stone. The splash is a nick, not a second full bite.'
       : enemies.some((e) => e.id === 'echo')
       ? 'Vesper is not on this field. Something that remembers her mouth is.'
       : enemies.some((e) => e.id === 'scribe')
@@ -9682,7 +9843,7 @@
     if (t.type === 'party') {
       const coughing = party[t.index];
       if (coughing && coughing.ash) {
-        const bite = seenBeats['cord-bound'] ? 4 : 6;
+        const bite = seenBeats['cord-bound'] ? 4 : 5;
         coughing.ash = 0;
         coughing.hp = Math.max(0, coughing.hp - bite);
         showLog('Ash in the teeth. ' + coughing.name + ' loses ' + bite + '.');
@@ -10325,6 +10486,22 @@
       later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
       return;
     }
+    if (enemy.id === 'counter' && !enemy.counted) {
+      enemy.counted = true;
+      enemy.bead = true;
+      showLog('The counter lifts a bead. The next blow he throws is already a number. It lands thin.');
+      updateCombatUI();
+      later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
+      return;
+    }
+    if (enemy.id === 'cinder' && !enemy.flared) {
+      enemy.flared = true;
+      enemy.flare = true;
+      showLog('The cinder splits. The next bite is a spark. It costs a little life.');
+      updateCombatUI();
+      later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
+      return;
+    }
     let pick = living[rand(0, living.length - 1)];
     if (enemy.id === 'echo') {
       const lira = living.find((x) => x.p.id === 'lira');
@@ -10348,6 +10525,21 @@
         coverNote += ' The heat comes off the plate. A shoulder in front would have taken it.';
       }
     }
+    let beadNote = '';
+    if (enemy.bead) {
+      enemy.bead = false;
+      dmg = Math.max(1, Math.floor(dmg * 0.55));
+      beadNote = ' The bead was already written. The blow lands thin.';
+    }
+    let flareNote = '';
+    if (enemy.flare) {
+      enemy.flare = false;
+      if (coverReady) flareNote = ' Torren’s shoulder takes the spark.';
+      else {
+        dmg += 2;
+        flareNote = ' The spark comes off the split. A shoulder in front would have taken it.';
+      }
+    }
     if (coverReady) {
       const cut = Math.min(8, Math.max(0, dmg - 1));
       dmg -= cut;
@@ -10361,12 +10553,12 @@
       const drain = Math.min(6, pick.p.mp);
       pick.p.mp -= drain;
       pick.p.hp = Math.max(0, pick.p.hp - dmg);
-      showLog(enemy.name + ' corks ' + pick.p.name + '. ' + dmg + ' HP, and ' + drain + ' mind sealed away.' + coverNote);
+      showLog(enemy.name + ' corks ' + pick.p.name + '. ' + dmg + ' HP, and ' + drain + ' mind sealed away.' + coverNote + beadNote + flareNote);
     } else if (enemy.id === 'echo') {
       const before = spark.strain;
       applyStrain(4);
       pick.p.hp = Math.max(0, pick.p.hp - dmg);
-      showLog('The echo strikes ' + pick.p.name + ' for ' + dmg + ' and leaves a thumbprint of Vesper’s hunger. Strain ' + spark.strain + '.' + strainWarning(before) + coverNote);
+      showLog('The echo strikes ' + pick.p.name + ' for ' + dmg + ' and leaves a thumbprint of Vesper’s hunger. Strain ' + spark.strain + '.' + strainWarning(before) + coverNote + beadNote + flareNote);
     } else {
       pick.p.hp = Math.max(0, pick.p.hp - dmg);
       let splashNote = '';
@@ -10374,7 +10566,7 @@
         enemy.wet = false;
         const other = living.find((x) => x.p !== pick.p && x.p.hp > 0);
         if (other) {
-          const splash = Math.max(1, Math.floor(dmg / 2));
+          const splash = Math.max(1, Math.min(3, Math.floor(dmg / 2)));
           other.p.hp = Math.max(0, other.p.hp - splash);
           splashNote = ' The brine splashes. The wet hits two.';
           if (other.p.hp <= 0) {
@@ -10396,7 +10588,7 @@
           }
         }
       }
-      showLog(enemy.name + ' hits ' + pick.p.name + ' for ' + dmg + '.' + coverNote + splashNote + jawNote);
+      showLog(enemy.name + ' hits ' + pick.p.name + ' for ' + dmg + '.' + coverNote + beadNote + flareNote + splashNote + jawNote);
     }
     punchNumber(dmg, 'harm');
     animateAttack(combatEnemyMeshes[idx], combatPartyMeshes[pick.i]);
@@ -10606,7 +10798,9 @@
       if (e.ink) bits.push({ kind: 'ink', label: 'Ink', title: 'The next line takes mind and still cuts' });
       if (e.heat) bits.push({ kind: 'heat', label: 'Heat', title: 'The next blow costs more life' });
       if (e.jaw) bits.push({ kind: 'jaw', label: 'Jaw', title: 'The next bite finds a second body' });
-      if (e.wet) bits.push({ kind: 'wet', label: 'Wet', title: 'The next bite hits two' });
+      if (e.wet) bits.push({ kind: 'wet', label: 'Wet', title: 'The next bite hits two. The splash is a nick' });
+      if (e.bead) bits.push({ kind: 'bead', label: 'Bead', title: 'The next blow he throws lands thin' });
+      if (e.flare) bits.push({ kind: 'flare', label: 'Flare', title: 'The next bite is a spark' });
       if (e.page) bits.push({ kind: 'page', label: 'Page', title: 'A page is open' });
       if (e.rite) bits.push({ kind: 'rite', label: 'Rite', title: 'The rite is up' });
       if (e.knelt) bits.push({ kind: 'ash', label: 'Knelt', title: 'Ash is in the teeth' });
@@ -11331,6 +11525,14 @@
     } else if (seenBeats.yardStep) {
       rows.push({ name: 'Remnant Mark', note: 'Not walked yet. North of the yard. The list does not carry you.' });
     }
+    if (seenBeats['mark-scrap']) {
+      rows.push({
+        name: 'Numbered scrap',
+        note: seenBeats['scrap-read']
+          ? 'Read once. A tally clerk can see the count. The nave stayed shut.'
+          : 'In the pack. Read it once. It does not open the nave.',
+      });
+    }
     if (seenBeats.naveStep) {
       const note = naveWord === 'name'
         ? 'The hinge is named. The door stayed shut.'
@@ -11561,6 +11763,7 @@
       else if (act.dataset.act === 'use') useFieldItem(act.dataset.id, act.dataset.mode);
       else if (act.dataset.act === 'digest') digestShard(act.dataset.uid);
       else if (act.dataset.act === 'bind-cord') bindCord();
+      else if (act.dataset.act === 'read-scrap') readScrap();
     });
     $('#btn-retry').addEventListener('click', () => {
       party.forEach((p) => {
@@ -12585,6 +12788,8 @@
   EW.passageLaid = function () { return !!passageLaid; };
   EW.noteKestrelNave = noteKestrelNave;
   EW.noteScrap = noteScrap;
+  EW.noteScrapRead = noteScrapRead;
+  EW.scrapRead = function () { return !!seenBeats['scrap-read']; };
   EW.noteCompany = noteCompany;
   EW.packHas = function (name) { return !!(seals && seals.some((seal) => seal.name === name)); };
   EW.naveChoice = function () { return naveWord; };

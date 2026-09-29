@@ -68,8 +68,14 @@
   Emberwake.registerScene('clerk-tally', function () {
     const bound = Emberwake.hasBound && Emberwake.hasBound();
     const margin = Emberwake.hasMargin && Emberwake.hasMargin();
+    const scrap = Emberwake.scrapRead && Emberwake.scrapRead();
+    const held = Emberwake.packHas && Emberwake.packHas('Numbered Scrap');
     let board = 'Unlicensed feet. I am counting weather, not mouths. The door is the other board.';
-    if (bound && margin) board = 'The knot is not a number. The furrow in the pack already is. Neither opens the door.';
+    if (scrap && bound) board = 'Rope on a coat, and a pillar number already read. Neither is a licence. The door is the other board.';
+    else if (scrap && margin) board = 'A filed furrow, and a pillar number already read. Neither opens the door.';
+    else if (scrap) board = 'That scrap is a pillar number, not a licence. I can see the count. The door is the other board.';
+    else if (held) board = 'Dust in the pack is not a line until you read it. The door does not move for a scrap.';
+    else if (bound && margin) board = 'The knot is not a number. The furrow in the pack already is. Neither opens the door.';
     else if (bound) board = 'Rope on a coat is not a licence. The count does not move.';
     else if (margin) board = 'The cousin’s letter is a margin already filed as weather. This tally adds no line.';
     Emberwake.present({
@@ -820,6 +826,19 @@
       ],
       onDone: function () {
         if (Emberwake.noteMargin) Emberwake.noteMargin();
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('scrap-read', function () {
+    Emberwake.present({
+      lines: [
+        { where: 'The pack', speaker: 'Lira', text: 'The scrap says the pillar is a number. They left the count and took the door with them.' },
+        { speaker: 'The spark', text: 'A tally. A clerk on the shale can see a number. He cannot open a vault with it, and this page does not open the nave.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteScrapRead) Emberwake.noteScrapRead();
       },
     });
     return true;
