@@ -372,6 +372,13 @@ Playable on the Verdant Isle field:
 - Drinking a pool throws a ground ring and a short burst of embers. The ring is not a cue. The eight sounds stay the set in CREDITS.
 - Phone controls, Absorb, Pack, and Continue stay.
 
+## Marrow dusk, the assist, and the debt (this branch)
+
+- The ash shelf, the sealed throat, and the Concord yard sit in a closer dusk. A grate, a sack, a cinder bowl, an iron coil, and a yard drift sit off the tender, the pipe, the yard stone, the leak, and the south steps.
+- In a fight, Torren’s shoulder and Nima’s steady show on the turn ribbon and on their card. The licence ring at an enemy’s feet stays. A hit flashes hotter. The numbers of the blows stay where they were. Neither the chip nor the flash is a cue.
+- On a phone, scar debt reads as Debt and takes a warmer chip when a point is owed. Places and the stick stay clear.
+- The eight sounds stay the set in CREDITS.
+
 ## Isle company, the cup, and the scar (this branch)
 
 - After the village, and before the letter, the quest and Places say Nima walks with her and the letter is still in the basket. They do not name the kiln.

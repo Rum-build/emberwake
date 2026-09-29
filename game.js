@@ -172,6 +172,7 @@
   let kestrelFly = 0;
   let coverReady = false;
   let assistUsed = {};
+  let assistCue = '';
   let motes = [];
   let hoods = [];
   let phoneMode = false;
@@ -526,6 +527,7 @@
     kestrelFly = 0;
     coverReady = false;
     assistUsed = {};
+    assistCue = '';
     if (yardGroup) yardGroup.visible = false;
     if (markGroup) markGroup.visible = false;
     tuckCathedral();
@@ -670,10 +672,10 @@
       scene.fog.far = 86;
       if (renderer) renderer.setClearColor(0x6e7e90);
     } else if (place === 'marrow') {
-      scene.fog.color.set(0x4a2018);
-      scene.fog.near = 14;
-      scene.fog.far = 64;
-      if (renderer) renderer.setClearColor(0x4a2018);
+      scene.fog.color.set(0x5c2416);
+      scene.fog.near = 9;
+      scene.fog.far = 46;
+      if (renderer) renderer.setClearColor(0x5c2416);
     } else if (place === 'vault') {
       scene.fog.color.set(0x1a222c);
       scene.fog.near = 18;
@@ -685,15 +687,15 @@
       scene.fog.far = 18;
       if (renderer) renderer.setClearColor(0x1a1412);
     } else if (place === 'throat') {
-      scene.fog.color.set(0x120c10);
-      scene.fog.near = 7;
-      scene.fog.far = 20;
-      if (renderer) renderer.setClearColor(0x120c10);
+      scene.fog.color.set(0x2a1210);
+      scene.fog.near = 4.5;
+      scene.fog.far = 14;
+      if (renderer) renderer.setClearColor(0x2a1210);
     } else if (place === 'yard') {
-      scene.fog.color.set(0x3a3428);
-      scene.fog.near = 16;
-      scene.fog.far = 50;
-      if (renderer) renderer.setClearColor(0x3a3428);
+      scene.fog.color.set(0x4a3020);
+      scene.fog.near = 11;
+      scene.fog.far = 38;
+      if (renderer) renderer.setClearColor(0x4a3020);
     } else if (place === 'mark') {
       scene.fog.color.set(0x241820);
       scene.fog.near = 9;
@@ -1630,6 +1632,22 @@
     const lamp = new THREE.PointLight(0xff5530, 0.75, 8);
     lamp.position.set(0, 2.1, -1.8);
     g.add(lamp);
+    const throatRim = new THREE.PointLight(0xff6630, 0.95, 7);
+    throatRim.position.set(-1.55, 1.65, 1.35);
+    g.add(throatRim);
+    const coil = new THREE.Mesh(
+      new THREE.TorusGeometry(0.22, 0.045, 6, 12),
+      new THREE.MeshLambertMaterial({ color: 0x2a2422 })
+    );
+    coil.rotation.x = Math.PI / 2;
+    coil.position.set(-1.45, 0.05, 1.15);
+    g.add(coil);
+    const soot = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.5, 0.85),
+      new THREE.MeshBasicMaterial({ color: 0x140c0c, transparent: true, opacity: 0.55, side: THREE.DoubleSide })
+    );
+    soot.position.set(2.22, 1.15, 0.35);
+    g.add(soot);
     makeMotes(g, 24, 0xc45a3a, { x: 3.2, y: 1.4, z: 5 });
     return g;
   }
@@ -1660,6 +1678,9 @@
     g.visible = false;
     g.add(new THREE.AmbientLight(0x4a2818, 0.24));
     g.add(new THREE.HemisphereLight(0x6a3020, 0x100806, 0.22));
+    const duskRim = new THREE.DirectionalLight(0xff7a3a, 0.62);
+    duskRim.position.set(-12, 3.2, 9);
+    g.add(duskRim);
     const ashGeo = new THREE.PlaneGeometry(36, 28, 22, 16);
     raisePlane(ashGeo, (x, y) => (
       Math.sin(x * 0.38) * Math.cos(y * 0.33) * 0.4
@@ -1812,6 +1833,31 @@
       stake.position.set(spot[0], 0.4, spot[1]);
       g.add(stake);
     });
+    const shelfGrate = new THREE.Mesh(
+      new THREE.BoxGeometry(0.72, 0.05, 0.4),
+      new THREE.MeshLambertMaterial({ color: 0x3a302c })
+    );
+    shelfGrate.rotation.y = 0.35;
+    shelfGrate.position.set(2.4, 0.05, 3.3);
+    g.add(shelfGrate);
+    const ashSack = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.16, 0.2, 0.42, 6),
+      new THREE.MeshLambertMaterial({ color: 0x2a1814 })
+    );
+    ashSack.position.set(-3.2, 0.22, 3.15);
+    g.add(ashSack);
+    const cinderBowl = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.18, 0.14, 0.1, 7),
+      new THREE.MeshLambertMaterial({ color: 0x4a3028 })
+    );
+    cinderBowl.position.set(5.85, 0.06, 3.15);
+    g.add(cinderBowl);
+    const bowlEmber = new THREE.Mesh(
+      new THREE.SphereGeometry(0.07, 5, 4),
+      new THREE.MeshBasicMaterial({ color: 0xff6a28 })
+    );
+    bowlEmber.position.set(5.85, 0.14, 3.15);
+    g.add(bowlEmber);
     makeMotes(g, 40, 0xc45a3a, { x: 10, y: 1.8, z: 8 });
     const pipeMouth = new THREE.Group();
     pipeMouth.position.set(5.55, 0, -3.15);
@@ -1863,6 +1909,9 @@
     const yardFill = new THREE.DirectionalLight(0x8aa0c0, 0.28);
     yardFill.position.set(6, 8, -10);
     g.add(yardFill);
+    const yardRim = new THREE.DirectionalLight(0xff6a30, 0.5);
+    yardRim.position.set(11, 2.4, -8);
+    g.add(yardRim);
     const geo = new THREE.PlaneGeometry(32, 24, 18, 14);
     raisePlane(geo, (x, y) => Math.sin(x * 0.45) * Math.cos(y * 0.4) * 0.16);
     const iron = new THREE.Color(0x3a342c);
@@ -1969,6 +2018,20 @@
     );
     yardBeam.position.set(-5.15, 1.68, 0.35);
     g.add(yardBeam);
+    const yardGrate = new THREE.Mesh(
+      new THREE.BoxGeometry(0.7, 0.06, 0.42),
+      new THREE.MeshLambertMaterial({ color: 0x3a3028 })
+    );
+    yardGrate.position.set(0.85, 0.05, 2.85);
+    yardGrate.rotation.y = 0.4;
+    g.add(yardGrate);
+    const yardDrift = new THREE.Mesh(
+      new THREE.SphereGeometry(0.32, 6, 5),
+      new THREE.MeshLambertMaterial({ color: 0x2a2018 })
+    );
+    yardDrift.scale.y = 0.28;
+    yardDrift.position.set(-2.55, 0.06, 3.25);
+    g.add(yardDrift);
     yardGroup = g;
     scene.add(g);
   }
@@ -6596,9 +6659,10 @@
     if (scarEl) {
       scarEl.classList.remove('hidden');
       scarEl.classList.toggle('quiet', scarDebt <= 0);
+      scarEl.classList.toggle('owed', scarDebt > 0);
       scarEl.textContent = scarDebt > 0
-        ? 'Scar ' + scarDebt + ' · max HP −' + (scarDebt * SCAR_CUT)
-        : 'Scar 0';
+        ? 'Debt ' + scarDebt + ' · −' + (scarDebt * SCAR_CUT) + ' HP'
+        : 'Debt 0';
     }
     const strainWord = spark.strain >= 70 ? 'tearing' : spark.strain >= 40 ? 'taxed' : 'steady';
     $('#strain-nums').textContent = spark.strain + '/100 · ' + strainWord;
@@ -10463,6 +10527,7 @@
     clearCry();
     coverReady = false;
     assistUsed = {};
+    assistCue = '';
     gameState = State.COMBAT;
     hud.classList.add('hidden');
     setFieldControls(false);
@@ -10625,8 +10690,10 @@
     turnIndicator.textContent = actor.name;
     if (actor.id === 'torren') {
       coverReady = true;
+      assistCue = 'Torren · shoulder';
       showLog('Torren sets his shoulder in front of the line. The next blow lands lighter.');
     } else {
+      assistCue = 'Nima · steady';
       const hurt = party.filter((member) => member.hp > 0).sort((a, b) => (a.hp / maxHp(a)) - (b.hp / maxHp(b)))[0];
       const before = hurt.hp;
       hurt.hp = Math.min(maxHp(hurt), hurt.hp + 14);
@@ -11374,6 +11441,7 @@
       showLog(enemy.name + ' hits ' + pick.p.name + ' for ' + dmg + '.' + coverNote + beadNote + flareNote + saltNote + splashNote + jawNote);
     }
     punchNumber(dmg, 'harm');
+    flashMesh(combatPartyMeshes[pick.i], 0xffe0c8);
     animateAttack(combatEnemyMeshes[idx], combatPartyMeshes[pick.i]);
     if (pick.p.hp <= 0) {
       const mesh = combatPartyMeshes[pick.i];
@@ -11600,6 +11668,8 @@
       if (p.cry) bits.push({ kind: 'cry', label: 'Cry', title: 'A gull’s cry is still on this turn' });
       if (p.steadied) bits.push({ kind: 'steady', label: 'Steady', title: 'The next cry costs less mind' });
       if (p.id === 'lira' && scarDebt > 0) bits.push({ kind: 'scar', label: 'Scar ' + scarDebt, title: 'Scar debt cuts max life' });
+      if (p.id === 'torren' && assistUsed.torren) bits.push({ kind: 'assist', label: 'Shoulder', title: 'His shoulder is in front. The next heavy blow lands lighter.' });
+      if (p.id === 'nima' && assistUsed.nima) bits.push({ kind: 'assist', label: 'Steady', title: 'She steadied the line once this fight.' });
       return `<div class="party-card ${p.hp <= 0 ? 'dead' : ''} ${i === active ? 'active' : ''}">
         <div class="name">${esc(p.name)}</div>
         <div class="role">${esc(p.role)}</div>
@@ -11619,6 +11689,7 @@
         const now = i === combatTurnIndex;
         chips.push(`<span class="turn-chip${side}${now ? ' now' : ''}">${now ? 'Now · ' : ''}${esc(name)}</span>`);
       });
+      if (assistCue) chips.unshift('<span class="turn-chip assist">' + esc(assistCue) + '</span>');
       order.innerHTML = '<span class="turn-label">Order</span>' + chips.join('<span class="turn-sep" aria-hidden="true">›</span>');
     }
     const held = $('#combat-held');
@@ -11674,15 +11745,26 @@
   function flashMesh(mesh, color) {
     if (!mesh) return;
     const touched = [];
+    const scale = mesh.scale.clone();
+    mesh.scale.multiplyScalar(1.07);
     mesh.traverse((c) => {
       if (c.isMesh && c.material && c.material.emissive) {
-        touched.push([c.material, c.material.emissive.getHex()]);
-        c.material.emissive.setHex(color);
+        const mat = c.material;
+        touched.push([mat, mat.emissive.getHex(), mat.emissiveIntensity]);
+        mat.emissive.setHex(0xfff6ee);
+        if (typeof mat.emissiveIntensity === 'number') mat.emissiveIntensity = 2.4;
       }
     });
     setTimeout(() => {
-      touched.forEach(([mat, hex]) => { if (mat.emissive) mat.emissive.setHex(hex); });
-    }, 340);
+      touched.forEach(([mat]) => { if (mat.emissive) mat.emissive.setHex(color); });
+    }, 80);
+    setTimeout(() => {
+      mesh.scale.copy(scale);
+      touched.forEach(([mat, hex, inten]) => {
+        if (mat.emissive) mat.emissive.setHex(hex);
+        if (typeof inten === 'number' && typeof mat.emissiveIntensity === 'number') mat.emissiveIntensity = inten;
+      });
+    }, 460);
   }
 
   function bobParty(on) {
