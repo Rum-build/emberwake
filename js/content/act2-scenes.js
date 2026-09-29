@@ -529,19 +529,19 @@
   Emberwake.registerScene('gallery-count', function () {
     const hasFeed = Emberwake.packHas && Emberwake.packHas('Named Feed');
     const hasPass = Emberwake.packHas && Emberwake.packHas('Unwritten Passage');
-    let readReply = 'Licence Zero. Every later bottle is a digit of that zero. The stair is the lock. It does not open.';
-    if (hasFeed) readReply += ' Named Feed is a digit of hunger, not a weapon.';
-    if (hasPass) readReply += ' The Unwritten Passage is the blank digit. It does not open the door.';
+    let readReply = 'Licence Zero. Every later bottle is a digit of that zero. The count turns the stair. It goes down. The cathedral bar stays shut.';
+    if (hasFeed) readReply += ' Named Feed is a digit of hunger. It can go into the crack. It is still not a weapon.';
+    if (hasPass) readReply += ' The Unwritten Passage is the blank digit. It can lie on the crack. It does not open the bar.';
     const nave = Emberwake.naveChoice ? Emberwake.naveChoice() : null;
-    let fileReply = 'The page stays hungry. The bar hinge is still a choice. The stair stays locked.';
-    if (nave === 'name') fileReply = 'The named hinge is written into Licence Zero. The cathedral bar stays shut. The stair stays locked.';
-    else if (nave === 'turn') fileReply = 'The refusal is a blank digit on Licence Zero. The bar stays theirs. The stair stays locked.';
+    let fileReply = 'The page stays hungry. The grate lifts. The stair goes down. The bar hinge is still a choice.';
+    if (nave === 'name') fileReply = 'The named hinge is written into Licence Zero. The grate lifts. The cathedral bar stays shut.';
+    else if (nave === 'turn') fileReply = 'The refusal is a blank digit on Licence Zero. The grate lifts. The bar stays theirs.';
     Emberwake.present({
       lines: [
         {
           where: 'Watch gallery',
           speaker: 'Lira',
-          text: 'A ledger. They numbered the cathedral as Licence Zero. The stair under the grate is not a door.',
+          text: 'A ledger. They numbered the cathedral as Licence Zero. The stair under the grate waits on this count. The bar stays shut.',
           choices: [
             {
               label: 'Read the count.',
@@ -586,6 +586,52 @@
       ],
       onPick: function (id) {
         if (Emberwake.noteKestrelNave) Emberwake.noteKestrelNave(id);
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('crypt-crack', function () {
+    const hasFeed = Emberwake.packHas && Emberwake.packHas('Named Feed') && !(Emberwake.feedThin && Emberwake.feedThin());
+    const hasPass = Emberwake.packHas && Emberwake.packHas('Unwritten Passage') && !(Emberwake.passageLaid && Emberwake.passageLaid());
+    const choices = [];
+    if (hasFeed || hasPass) {
+      let label = 'Press Named Feed.';
+      let reply = 'The hunger digit thins into the crack. The name stays in the pack. It does not open the bar. I do not step into her. Kestrel is not the company.';
+      if (hasFeed && hasPass) {
+        label = 'Press both digits.';
+        reply = 'Named Feed thins. The Unwritten Passage lies on the crack and stays in the pack. The remnant shows. The bar stays shut. I do not enter the host.';
+      } else if (hasPass) {
+        label = 'Lay the Unwritten Passage.';
+        reply = 'The blank digit lies on the crack. It stays in the pack. It is still not a key. The bar stays shut. I do not enter the host.';
+      }
+      choices.push({
+        label: label,
+        pick: 'digit',
+        reply: { speaker: 'Vesper', text: reply },
+      });
+    }
+    choices.push({
+      label: 'Put a mouth on the crack.',
+      pick: 'mouth',
+      reply: { speaker: 'Vesper', text: 'Then the scar takes the digit your pack would not. The remnant breathes. The bar stays shut. I still do not step into her.' },
+    });
+    choices.push({
+      label: 'Leave the crack.',
+      pick: 'leave',
+      reply: { speaker: 'Vesper', text: 'Then it stays a rumour. You saw it. The cathedral does not open, and I do not enter the host.' },
+    });
+    Emberwake.present({
+      lines: [
+        {
+          where: 'Count crypt',
+          speaker: 'Vesper',
+          text: 'Under Licence Zero the stone is split. That light is the remnant, not a door. The ledger on the stand is their count. I am the pressure. I will not step into her, and Kestrel is not down here.',
+          choices: choices,
+        },
+      ],
+      onPick: function (id) {
+        if (Emberwake.noteCrypt) Emberwake.noteCrypt(id);
       },
     });
     return true;
