@@ -121,15 +121,21 @@ Playable on the Verdant Isle field:
 - The isle has a cooler fill light beside the sun. Characters and the yard and mark ground take a low shine. The mark fog sits close. An original CC0 merge sting plays when a merge is spent and Sound is on.
 - The mouse stick, Absorb, and Pack stay.
 
-## Ash nave (this branch)
+## Ash nave (shipped)
 
 - North of the Remnant Mark, after the counter, a stone opens the ash nave. The cathedral is in sight and sealed. Name the hinge, which scars, or leave the seal. The door does not open. Vesper is on the roof and does not enter the host. **Leave** at the south returns to the pillar. Continue stores the nave and the choice. Kestrel does not join and does not carry the crossing.
 - Ash architecture, Concord banners, and falling ash sit on that road. Figures in the distance read as cutouts. The path screen says which strike is true and that the other two land thin. If Torren is in a fight, his first action sets his shoulder in front of the next blow. If Nima is, hers steadies whoever is lowest.
 - The mouse stick, Absorb, and Pack stay.
 
+## Watch gallery (this branch)
+
+- East of the sealed cathedral door, **Enter** opens a Concord watch gallery. Read the count, which names the Prime Remnant as Licence Zero, or file the nave’s hinge into that count. Named Feed and the Unwritten Passage, if they are in the pack, are called digits and are not spent. A grated count-stair stays locked. The cathedral bar stays shut. **Leave** at the south returns to the nave, just outside the gallery door. Continue stores the gallery, the count, and those notes.
+- After the count, a bird crosses the nave and does not land. Speak only if you walk to that crossing; ask or leave the air, and she still does not join. Stained light, denser ashfall, and banner wind sit on the nave. The remnant mass keeps a rim that reads through the fog. Cleave, Channel, and Aim each flash their own color.
+- The mouse stick, Absorb, and Pack stay.
+
 ## Still ahead
 
-From DESIGN.md, after this nave:
+From DESIGN.md, after this gallery:
 
 1. The rest of the scar’s debt. The kiln, the earth cork, a fed leak, Vesper’s taste, the spoken name, a drunk yard slag, a drunk remnant weep, and a named cathedral hinge each add a point. Banking the marrow leak eases one. The rest stays.
 2. The wider waystone network, the wind merges (ice, thunder, tide, root), and a party slot for Kestrel if she ever takes one.
