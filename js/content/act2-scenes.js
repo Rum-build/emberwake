@@ -97,16 +97,36 @@
     else if (bound) coat = 'That cord is salt, not a seal. Step aside. The vault is not yours.';
     else if (margin) coat = 'A margin in the pack is a filed mercy. We do not add a line, and we do not open the door.';
     else if (ration) coat = 'A stamped biscuit. You bought food, not a key. The door is the other board.';
-    const lines = [
-      { where: 'Stormreach shale, west of the roost', speaker: 'A Concord coat', text: coat },
-      { speaker: 'Lira', text: 'Then look. The door stays the other board.' },
-    ];
-    if (torren) lines.push({ speaker: 'Torren', text: 'I left that coat. Their count is not my rank, and it still does not open the vault.' });
-    lines.push({ speaker: 'The spark', text: 'A patrol word does not open the vault. The shale keeps the door.' });
+    const looked = Emberwake.patrolLooked && Emberwake.patrolLooked();
+    const choice = {
+      speaker: 'Lira',
+      text: 'The door stays the other board.',
+      choices: [
+        { label: 'Leave them the shale.', pick: 'leave', reply: { speaker: 'A Concord coat', text: 'Then walk. The count does not move for a look, and it does not move for a fight you did not start.' } },
+        { label: 'Provoke the coats.', pick: 'provoke', reply: { speaker: 'A Concord coat', text: 'Unlicensed and loud. The vault stays shut. The shale does not.' } },
+      ],
+    };
+    const lines = looked
+      ? [
+        { where: 'Stormreach shale, west of the roost', speaker: 'A Concord coat', text: 'We already read the pack. Provoke us and the shale answers. The vault still does not.' },
+        choice,
+      ]
+      : [
+        { where: 'Stormreach shale, west of the roost', speaker: 'A Concord coat', text: coat },
+        { speaker: 'Lira', text: 'Then look. The door stays the other board.' },
+      ];
+    if (!looked && torren) lines.push({ speaker: 'Torren', text: 'I left that coat. Their count is not my rank, and it still does not open the vault.' });
+    if (!looked) {
+      lines.push({ speaker: 'The spark', text: 'A patrol word does not open the vault. The shale keeps the door.' });
+      lines.push(choice);
+    }
     Emberwake.present({
       lines: lines,
+      onPick: function (id) {
+        if (Emberwake.armPatrol) Emberwake.armPatrol(id);
+      },
       onDone: function () {
-        if (Emberwake.notePatrol) Emberwake.notePatrol();
+        if (Emberwake.finishPatrol) Emberwake.finishPatrol();
       },
     });
     return true;
@@ -349,9 +369,24 @@
         { where: 'Ashen Marrow', speaker: 'Lira', text: 'Ash under a red sky. The hall is behind us. My feet are on the bill they sent inland.' },
         { speaker: 'A tender', text: 'The digest-engine eats what the seals failed to hold. I keep it fed. I do not keep it honest. The leak in front of the maw is a mouth. South is the only door back.' },
         { speaker: 'The spark', text: 'Feeding that mouth will scar her. Banking it gives one point of the debt back, if the kiln or the cork already took one. Neither choice is a licence.' },
+        { speaker: 'Lira', text: 'Dusk is on the ash. I am still the one under it.' },
+        { speaker: 'The spark', text: 'The sky went down. The mouth stayed hers.' },
       ],
       onDone: function () {
         if (Emberwake.noteMarrowStep) Emberwake.noteMarrowStep();
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('ash-dusk', function () {
+    Emberwake.present({
+      lines: [
+        { where: 'Ashen Marrow', speaker: 'Lira', text: 'Dusk is on the ash. I am still the one under it.' },
+        { speaker: 'The spark', text: 'The sky went down. The mouth stayed hers.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteDusk) Emberwake.noteDusk();
       },
     });
     return true;

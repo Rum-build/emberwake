@@ -590,14 +590,16 @@ body.still-motion .encounter-flash.active {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 18px 12px;
-  background: rgba(8, 6, 8, 0.55);
+  padding: 18px 12px 132px;
+  background: rgba(8, 6, 8, 0.42);
+  pointer-events: none;
 }
 .places-panel.hidden { display: none; }
 .places-card {
   width: min(420px, 100%);
-  max-height: min(70vh, 520px);
+  max-height: min(58vh, 480px);
   overflow: auto;
+  pointer-events: auto;
   background: rgba(22, 16, 14, 0.94);
   color: #f4ead8;
   border: 1px solid rgba(232, 196, 138, 0.45);
@@ -1445,7 +1447,7 @@ body:not(.still-motion) .btn-absorb.is-ready {
   .btn-hud { min-height: 48px; min-width: 92px; font-size: 0.95rem; letter-spacing: 0; text-transform: none; }
   .btn-menu { font-size: 1rem; min-height: 52px; }
   .dialogue-advance, .dialogue-choice { min-height: 52px; }
-  .btn-pace, .btn-pack-motion, #btn-motion { min-height: 48px; min-width: 120px; }
+  .btn-pace, .btn-pack-motion, #btn-motion, #btn-ash, #btn-pack-ash { min-height: 48px; min-width: 120px; }
 
   .status-icon { font-size: 0.84rem; padding: 3px 9px; line-height: 1.5; }
   .turn-chip { font-size: 0.84rem; padding: 4px 9px; }

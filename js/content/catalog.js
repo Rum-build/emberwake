@@ -34,7 +34,7 @@
   content.items = {
     tonic: { name: 'Verdant Tonic', desc: 'Nima’s bitter green. Closes a wound. Does not answer a question.', heal: 42, field: true, combat: true },
     phial: { name: 'Wellwater Phial', desc: 'A mouthful of the deep well. Steadies the reserve behind the eyes.', mp: 28, field: true, combat: true },
-    ration: { name: 'Concord Ration', desc: 'A stamped biscuit from the shale stall. It is not a licence. It can close a wound or steady a mind.', heal: 22, mp: 12, field: true, combat: true },
+    ration: { name: 'Concord Ration', desc: 'A stamped biscuit from the shale stall. It is not a licence. It closes up to 22 HP or returns 12 mind. Mind breaks a gull’s cry. The wound side does not.', heal: 22, mp: 12, field: true, combat: true },
     rotash: { name: 'Rot-ash', desc: 'A curdled pool, pocketed. Coast vendors trade it. This isle has no such stall.', field: false, combat: false },
   };
 
