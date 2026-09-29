@@ -170,6 +170,8 @@
   let assistUsed = {};
   let motes = [];
   let bedWanted = true;
+  let motionWanted = true;
+  let combatPace = 'steady';
   let audioCtx = null;
   let bedGain = null;
   let bedFilter = null;
@@ -562,16 +564,23 @@
   }
 
   // ─── Three build ──────────────────────────────────────────
+  function phoneGpu() {
+    return window.matchMedia('(pointer: coarse)').matches || Math.min(window.innerWidth, window.innerHeight) < 700;
+  }
+
   function initThree() {
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    const phone = phoneGpu();
+    renderer = new THREE.WebGLRenderer({
+      canvas, antialias: !phone, alpha: false, powerPreference: 'high-performance',
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, phone ? 1.25 : 1.75));
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x87b5d9);
-    renderer.shadowMap.enabled = true;
+    renderer.setClearColor(0x7eafd4);
+    renderer.shadowMap.enabled = !phone;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x87b5d9, 16, 78);
+    scene.fog = new THREE.Fog(0x7eafd4, 22, 92);
     camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 120);
     camera.position.set(0, CAMERA_HEIGHT, CAMERA_DIST);
     clock = new THREE.Clock();
@@ -628,10 +637,10 @@
       scene.fog.far = 86;
       if (renderer) renderer.setClearColor(0x6e7e90);
     } else if (place === 'marrow') {
-      scene.fog.color.set(0x3a241c);
-      scene.fog.near = 10;
-      scene.fog.far = 58;
-      if (renderer) renderer.setClearColor(0x3a241c);
+      scene.fog.color.set(0x4a2018);
+      scene.fog.near = 14;
+      scene.fog.far = 64;
+      if (renderer) renderer.setClearColor(0x4a2018);
     } else if (place === 'vault') {
       scene.fog.color.set(0x1a222c);
       scene.fog.near = 18;
@@ -649,14 +658,14 @@
       if (renderer) renderer.setClearColor(0x120c10);
     } else if (place === 'yard') {
       scene.fog.color.set(0x3a3428);
-      scene.fog.near = 12;
-      scene.fog.far = 42;
+      scene.fog.near = 16;
+      scene.fog.far = 50;
       if (renderer) renderer.setClearColor(0x3a3428);
     } else if (place === 'mark') {
-      scene.fog.color.set(0x2c2430);
-      scene.fog.near = 7;
-      scene.fog.far = 32;
-      if (renderer) renderer.setClearColor(0x2c2430);
+      scene.fog.color.set(0x241820);
+      scene.fog.near = 9;
+      scene.fog.far = 38;
+      if (renderer) renderer.setClearColor(0x241820);
     } else if (place === 'nave') {
       scene.fog.color.set(0x1c1618);
       scene.fog.near = 8;
@@ -695,10 +704,10 @@
       scene.fog.far = 22;
       if (renderer) renderer.setClearColor(0x3a342c);
     } else {
-      scene.fog.color.set(0x87b5d9);
-      scene.fog.near = 16;
-      scene.fog.far = 78;
-      if (renderer) renderer.setClearColor(0x87b5d9);
+      scene.fog.color.set(0x7eafd4);
+      scene.fog.near = 22;
+      scene.fog.far = 92;
+      if (renderer) renderer.setClearColor(0x7eafd4);
     }
     tuneBed(place === 'stormreach' ? 'coast' : (place === 'claim' || place === 'aftermath') ? 'claim' : 'field');
   }
@@ -725,15 +734,24 @@
   }
 
   function makeSky(hex, highHex) {
-    const geo = new THREE.SphereGeometry(48, 18, 12);
+    const geo = new THREE.SphereGeometry(64, 22, 16);
     const low = new THREE.Color(hex);
-    const high = highHex ? new THREE.Color(highHex) : low.clone().lerp(new THREE.Color(0xfff0d4), 0.42);
+    const high = highHex ? new THREE.Color(highHex) : low.clone().lerp(new THREE.Color(0xfff0d4), 0.55);
+    const zenith = high.clone().lerp(new THREE.Color(0xffffff), 0.18);
+    const horizon = low.clone().lerp(high, 0.35).lerp(new THREE.Color(0xffe6c4), 0.22);
     const pos = geo.attributes.position;
     const colors = new Float32Array(pos.count * 3);
     const c = new THREE.Color();
     for (let i = 0; i < pos.count; i++) {
-      const t = Math.max(0, Math.min(1, (pos.getY(i) + 18) / 46));
-      c.copy(low).lerp(high, t);
+      const y = pos.getY(i);
+      const t = Math.max(0, Math.min(1, (y + 22) / 58));
+      const lift = t * t * (3 - 2 * t);
+      c.copy(low).lerp(high, lift).lerp(zenith, Math.max(0, lift - 0.72) * 1.4);
+      const band = Math.exp(-Math.pow((t - 0.34) * 7.5, 2));
+      c.lerp(horizon, band * 0.62);
+      const x = pos.getX(i);
+      const warm = Math.max(0, Math.sin(x * 0.04) * 0.5 + 0.15);
+      if (t < 0.5) c.lerp(new THREE.Color(0xffd2a8), warm * (0.5 - t) * 0.35);
       colors[i * 3] = c.r;
       colors[i * 3 + 1] = c.g;
       colors[i * 3 + 2] = c.b;
@@ -742,6 +760,10 @@
     return new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
       vertexColors: true, side: THREE.BackSide, depthWrite: false, fog: false,
     }));
+  }
+
+  function groundGrain(x, y) {
+    return Math.sin(x * 3.2) * Math.cos(y * 2.6) * 0.55 + Math.sin(x * 7.4 + y * 5.2) * 0.28;
   }
 
   function layCloth(parent, x, z, radius, color, opacity) {
@@ -756,7 +778,7 @@
   }
 
   function buildOverworld() {
-    const groundGeo = new THREE.PlaneGeometry(WORLD_SIZE * 1.5, WORLD_SIZE * 1.5, 32, 32);
+    const groundGeo = new THREE.PlaneGeometry(WORLD_SIZE * 1.5, WORLD_SIZE * 1.5, 40, 40);
     raisePlane(groundGeo, (x, y) => (
       Math.sin(x * 0.3) * Math.cos(y * 0.25) * 0.34
       + Math.sin(x * 0.82 + 1.4) * Math.cos(y * 0.66) * 0.09
@@ -769,6 +791,9 @@
       c.copy(low).lerp(high, t);
       const patch = Math.sin(x * 0.47) * Math.cos(y * 0.41);
       if (patch > 0.72) c.lerp(soil, 0.45);
+      const grit = groundGrain(x, y);
+      if (grit > 0.45) c.lerp(soil, 0.22);
+      else if (grit < -0.55) c.lerp(high, 0.18);
     });
     const ground = new THREE.Mesh(groundGeo, new THREE.MeshPhongMaterial({
       vertexColors: true, shininess: 7, specular: new THREE.Color(0x243018),
@@ -776,7 +801,7 @@
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
     overworldGroup.add(ground);
-    overworldGroup.add(makeSky(0xb7d4ea));
+    overworldGroup.add(makeSky(0x6ea0c8, 0xf3e2c0));
 
     const grassMat = new THREE.MeshLambertMaterial({ color: 0x3d8b3d });
     for (let i = 0; i < 26; i++) {
@@ -1416,13 +1441,14 @@
       c.copy(ashDark).lerp(ashRed, t);
       if (Math.sin(x * 0.9) * Math.cos(y * 0.7) > 0.55) c.lerp(cinder, 0.4);
       if (Math.hypot(x, y - 2) < 3.4) c.lerp(sootAsh, 0.5);
+      if (groundGrain(x, y) > 0.4) c.lerp(sootAsh, 0.28);
     });
     const ash = new THREE.Mesh(ashGeo, new THREE.MeshPhongMaterial({
       vertexColors: true, shininess: 4, specular: new THREE.Color(0x3a2018),
     }));
     ash.rotation.x = -Math.PI / 2;
     g.add(ash);
-    g.add(makeSky(0x8a3a30));
+    g.add(makeSky(0x4a2018, 0xd08048));
     [[1.7, 2.35, 0.85], [-1.85, 0.55, 0.65], [0.55, -1.05, 0.5]].forEach((spot) => {
       const drift = new THREE.Mesh(
         new THREE.SphereGeometry(spot[2], 8, 6),
@@ -2283,16 +2309,18 @@
     const claimFill = new THREE.PointLight(0xffd0a8, 0.7, 18);
     claimFill.position.set(0, 2.6, 4.4);
     g.add(claimFill);
-    const geo = new THREE.PlaneGeometry(22, 24, 10, 10);
+    const geo = new THREE.PlaneGeometry(22, 24, 16, 14);
     const ash = new THREE.Color(0x120e10);
-    const ember = new THREE.Color(0x8a3414);
+    const ember = new THREE.Color(0xc44a18);
     const stone = new THREE.Color(0x1a1412);
     tintPlane(geo, (c, x, y) => {
       c.copy(ash);
       const core = Math.hypot(x, y + 6);
-      if (core < 4.5) c.lerp(ember, 0.62);
+      if (core < 3.2) c.lerp(ember, 0.82);
+      else if (core < 5.2) c.lerp(ember, 0.4);
       else if (y < 0) c.lerp(ember, 0.22);
       else c.lerp(stone, 0.45);
+      if (groundGrain(x, y) > 0.35) c.lerp(stone, 0.25);
     });
     const floor = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
       vertexColors: true, shininess: 6, specular: new THREE.Color(0x3a2010),
@@ -2380,9 +2408,35 @@
       new THREE.IcosahedronGeometry(1.85, 1),
       new THREE.MeshBasicMaterial({ color: 0xff6a2a, fog: false })
     );
-    core.position.set(0, 2.35, -6.15);
+    core.position.set(0, 2.55, -6.15);
+    core.scale.setScalar(1.15);
     g.add(core);
     g.userData.core = core;
+    const heart = new THREE.Mesh(
+      new THREE.OctahedronGeometry(0.62, 0),
+      new THREE.MeshBasicMaterial({ color: 0xffe2b0, fog: false })
+    );
+    heart.position.set(0, 2.55, -6.15);
+    g.add(heart);
+    const massMat = new THREE.MeshBasicMaterial({ color: 0x3a1810, fog: false });
+    for (let i = 0; i < 7; i++) {
+      const slab = new THREE.Mesh(
+        new THREE.BoxGeometry(0.42, 1.35 + (i % 3) * 0.55, 0.22),
+        massMat
+      );
+      const a = (i / 7) * Math.PI * 2;
+      slab.position.set(Math.cos(a) * 1.35, 2.15 + (i % 2) * 0.4, -6.15 + Math.sin(a) * 1.05);
+      slab.rotation.y = -a;
+      g.add(slab);
+    }
+    const massWash = new THREE.Mesh(
+      new THREE.PlaneGeometry(4.6, 5.6),
+      new THREE.MeshBasicMaterial({
+        color: 0xff6a2a, transparent: true, opacity: 0.28, fog: false, depthWrite: false, side: THREE.DoubleSide,
+      })
+    );
+    massWash.position.set(0, 2.7, -7.15);
+    g.add(massWash);
     const stage = new THREE.Mesh(
       new THREE.CircleGeometry(3.4, 28),
       new THREE.MeshBasicMaterial({ color: 0xff5a28, transparent: true, opacity: 0.28, fog: false })
@@ -2394,7 +2448,7 @@
       new THREE.RingGeometry(2.3, 2.7, 28),
       new THREE.MeshBasicMaterial({ color: 0xffe2b0, side: THREE.DoubleSide, transparent: true, opacity: 0.55, fog: false })
     );
-    halo.position.set(0, 2.35, -6.05);
+    halo.position.set(0, 2.55, -6.05);
     g.add(halo);
     const plaque = makeCountPage('THE CLAIM', ['Prime Remnant', 'Not a licence', 'Lira is the host']);
     plaque.position.set(0, 4.15, -5.15);
@@ -2543,6 +2597,79 @@
     landed.visible = false;
     g.add(landed);
     makeMotes(g, 72, 0xd0b8a4, { x: 10, y: 4.2, z: 10 }, { fall: true });
+    function endImage(kind) {
+      const image = new THREE.Group();
+      if (kind === 'claim') {
+        const frame = new THREE.Mesh(
+          new THREE.TorusGeometry(0.58, 0.07, 6, 18),
+          new THREE.MeshBasicMaterial({ color: 0xe8d2a0, fog: false })
+        );
+        frame.position.set(2.15, 1.2, 0.9);
+        image.add(frame);
+        const sprig = new THREE.Mesh(
+          new THREE.ConeGeometry(0.14, 0.48, 5),
+          new THREE.MeshBasicMaterial({ color: 0x6ed36a, fog: false })
+        );
+        sprig.position.set(0.4, 0.26, -1.05);
+        image.add(sprig);
+      } else if (kind === 'refuse') {
+        const post = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.08, 0.11, 0.8, 6),
+          new THREE.MeshLambertMaterial({ color: 0x3a3530 })
+        );
+        post.position.set(-1.75, 0.4, 1.05);
+        image.add(post);
+        const seal = new THREE.Mesh(
+          new THREE.OctahedronGeometry(0.24, 0),
+          new THREE.MeshBasicMaterial({ color: 0xe0cc8a, fog: false })
+        );
+        seal.position.set(-1.75, 0.95, 1.05);
+        image.add(seal);
+        const dead = new THREE.Mesh(
+          new THREE.CircleGeometry(0.85, 12),
+          new THREE.MeshBasicMaterial({ color: 0x3a2430, transparent: true, opacity: 0.92, fog: false })
+        );
+        dead.rotation.x = -Math.PI / 2;
+        dead.position.set(0.15, 0.05, -0.35);
+        image.add(dead);
+      } else if (kind === 'share') {
+        [-0.32, 0.32].forEach((x, i) => {
+          const half = new THREE.Mesh(
+            new THREE.PlaneGeometry(0.62, 0.9),
+            new THREE.MeshBasicMaterial({
+              color: i ? 0xc080ff : 0xffb060, side: THREE.DoubleSide, fog: false,
+            })
+          );
+          half.position.set(x, 0.75, -0.2);
+          half.rotation.y = i ? -0.45 : 0.45;
+          image.add(half);
+        });
+      } else {
+        const gash = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.18, 2.6),
+          new THREE.MeshBasicMaterial({ color: 0xff2a10, fog: false })
+        );
+        gash.rotation.x = -Math.PI / 2;
+        gash.position.set(0.2, 0.07, 0.55);
+        image.add(gash);
+        const heap = new THREE.Mesh(
+          new THREE.SphereGeometry(0.62, 8, 6),
+          new THREE.MeshBasicMaterial({ color: 0x140806, fog: false })
+        );
+        heap.scale.y = 0.32;
+        heap.position.set(-0.85, 0.14, 0.2);
+        image.add(heap);
+      }
+      image.visible = kind === 'claim';
+      g.add(image);
+      return image;
+    }
+    const images = {
+      claim: endImage('claim'),
+      refuse: endImage('refuse'),
+      share: endImage('share'),
+      burn: endImage('burn'),
+    };
     g.userData.amb = amb;
     g.userData.hemi = hemi;
     g.userData.shafts = shafts;
@@ -2556,6 +2683,7 @@
     g.userData.clerk = clerk;
     g.userData.banner = banner;
     g.userData.landed = landed;
+    g.userData.images = images;
     aftermathGroup = g;
     scene.add(g);
   }
@@ -2998,7 +3126,7 @@
     sun.position.set(8, 22, 14);
     g.add(sun);
 
-    g.add(makeSky(0x9aafc0));
+    g.add(makeSky(0x5e7c90, 0xe4d2b8));
     const water = new THREE.Mesh(
       new THREE.PlaneGeometry(80, 80),
       new THREE.MeshPhongMaterial({ color: 0x14344e, shininess: 64, specular: new THREE.Color(0xd0e8ff) })
@@ -3026,6 +3154,9 @@
       c.copy(stone);
       if (y < -2) c.lerp(wetStone, 0.55);
       if (h > 0.1) c.lerp(pale, 0.35);
+      const grit = groundGrain(x, y);
+      if (grit > 0.42) c.lerp(wetStone, 0.35);
+      else if (grit < -0.5) c.lerp(pale, 0.2);
     });
     const shelf = new THREE.Mesh(shelfGeo, new THREE.MeshPhongMaterial({
       vertexColors: true, shininess: 10, specular: new THREE.Color(0x3a4038),
@@ -3155,7 +3286,7 @@
   function buildCoast() {
     const g = new THREE.Group();
     g.visible = false;
-    g.add(makeSky(0x9aafc0));
+    g.add(makeSky(0x5e7c90, 0xe8dcc4));
     g.add(new THREE.AmbientLight(0xb7c4d4, 0.62));
     g.add(new THREE.HemisphereLight(0x8aa4c0, 0x2a2418, 0.42));
     const sun = new THREE.DirectionalLight(0xfff0d8, 0.7);
@@ -3471,7 +3602,7 @@
   }
 
   function updatePools(dt) {
-    const t = performance.now() * 0.001;
+    const t = motionWanted ? performance.now() * 0.001 : 0;
     pools.forEach((pool) => {
       if (pool.healing && pool.heal < 1) pool.heal = Math.min(1, pool.heal + dt * 0.5);
       if (pool.burst > 0) pool.burst = Math.max(0, pool.burst - dt * 0.85);
@@ -3715,7 +3846,7 @@
   }
 
   function driftMotes() {
-    if (!motes.length) return;
+    if (!motes.length || !motionWanted) return;
     const t = performance.now() * 0.001;
     motes.forEach((pts) => {
       let node = pts;
@@ -3746,6 +3877,7 @@
 
   function poseHost(mode) {
     if (!playerMesh) return;
+    if (!motionWanted && mode === 'idle') mode = 'still';
     const legs = playerMesh.userData.legs;
     const t = performance.now();
     if (mode === 'walk') {
@@ -6269,6 +6401,11 @@
       data.clerk.position.y = word === 'burn' ? 0.2 : 0;
     }
     if (data.landed) data.landed.visible = kestrelClaim === 'land';
+    if (data.images) {
+      Object.keys(data.images).forEach((key) => {
+        data.images[key].visible = key === word;
+      });
+    }
   }
 
   function playAftermathScene() {
@@ -6288,8 +6425,8 @@
     locale = 'aftermath';
     if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
     aftermathGroup.add(playerMesh);
-    const px = silent && opts.pos ? (opts.pos.x || 0) : 0;
-    const pz = silent && opts.pos ? (opts.pos.z == null ? 3.35 : opts.pos.z) : 3.35;
+    const px = silent && opts.pos && opts.pos.x != null ? opts.pos.x : 0;
+    const pz = silent && opts.pos && opts.pos.z != null ? opts.pos.z : 3.35;
     playerMesh.position.set(px, 0, pz);
     if (interiorGroup) interiorGroup.visible = false;
     if (overworldGroup) overworldGroup.visible = false;
@@ -7103,16 +7240,22 @@
       encounterFlash.classList.remove('active');
       if (gameState === State.GAMEOVER) return;
       startCombat();
-    }, 700);
+    }, Math.round(700 * paceScale()));
   }
 
   // ─── Combat ───────────────────────────────────────────────
+  function paceScale() {
+    if (combatPace === 'slow') return 1.7;
+    if (combatPace === 'brisk') return 0.62;
+    return 1;
+  }
+
   function later(fn, ms) {
     const epoch = combatEpoch;
     setTimeout(() => {
       if (epoch !== combatEpoch) return;
       fn();
-    }, ms);
+    }, Math.max(40, Math.round(ms * paceScale())));
   }
 
   function rollEncounter() {
@@ -8100,6 +8243,12 @@
   }
 
   function updateCombatCamera(dt) {
+    if (!motionWanted) {
+      combatKick = 0;
+      camera.position.set(0.4, 4.8, 8.4);
+      camera.lookAt(0.2, 1.2, -0.4);
+      return;
+    }
     combatCameraAngle += dt * 0.12;
     combatKick = Math.max(0, combatKick - dt * 1.6);
     const kick = combatKick * 0.42;
@@ -8237,7 +8386,10 @@
     const reply = choice.reply;
     if (typeof dialogueOnPick === 'function' && choice.pick) dialogueOnPick(choice.pick);
     dialogueLines[dialogueIndex] = { where: line.where, speaker: line.speaker, text: line.text };
-    if (reply) dialogueLines.splice(dialogueIndex + 1, 0, reply);
+    if (reply) {
+      const extra = Array.isArray(reply) ? reply : [reply];
+      dialogueLines.splice.apply(dialogueLines, [dialogueIndex + 1, 0].concat(extra));
+    }
     advanceDialogue();
   }
 
@@ -8544,6 +8696,52 @@
     bedTones.forEach((osc, i) => { osc.frequency.value = spec.freqs[i]; });
   }
 
+  function syncMotion() {
+    document.body.classList.toggle('still-motion', !motionWanted);
+    const label = motionWanted ? 'Motion' : 'Still';
+    ['#btn-motion', '#btn-pack-motion'].forEach((sel) => {
+      const btn = $(sel);
+      if (!btn) return;
+      btn.textContent = label;
+      btn.setAttribute('aria-pressed', motionWanted ? 'true' : 'false');
+    });
+  }
+
+  function syncPace() {
+    const btn = $('#btn-pace');
+    const word = combatPace === 'slow' ? 'Slow' : combatPace === 'brisk' ? 'Brisk' : 'Steady';
+    if (btn) btn.textContent = 'Pace · ' + word;
+  }
+
+  function loadEase() {
+    let stored = null;
+    let pace = null;
+    try {
+      stored = localStorage.getItem('emberwake.motion');
+      pace = localStorage.getItem('emberwake.pace');
+    } catch (err) { /* ignore */ }
+    if (stored === 'off') motionWanted = false;
+    else if (stored === 'on') motionWanted = true;
+    else motionWanted = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (pace === 'slow' || pace === 'brisk' || pace === 'steady') combatPace = pace;
+    syncMotion();
+    syncPace();
+  }
+
+  function setMotion(on) {
+    motionWanted = !!on;
+    try { localStorage.setItem('emberwake.motion', motionWanted ? 'on' : 'off'); } catch (err) { /* ignore */ }
+    syncMotion();
+    saveGame();
+  }
+
+  function cyclePace() {
+    combatPace = combatPace === 'steady' ? 'brisk' : combatPace === 'brisk' ? 'slow' : 'steady';
+    try { localStorage.setItem('emberwake.pace', combatPace); } catch (err) { /* ignore */ }
+    syncPace();
+    saveGame();
+  }
+
   function setBed(on) {
     bedWanted = !!on;
     try { localStorage.setItem('emberwake.bed', bedWanted ? 'on' : 'off'); } catch (err) { /* ignore */ }
@@ -8713,6 +8911,12 @@
     });
     const bedBtn = $('#btn-bed');
     if (bedBtn) bedBtn.addEventListener('click', () => setBed(!bedWanted));
+    const motionBtn = $('#btn-motion');
+    if (motionBtn) motionBtn.addEventListener('click', () => setMotion(!motionWanted));
+    const packMotion = $('#btn-pack-motion');
+    if (packMotion) packMotion.addEventListener('click', () => setMotion(!motionWanted));
+    const paceBtn = $('#btn-pace');
+    if (paceBtn) paceBtn.addEventListener('click', () => cyclePace());
     const placesBtn = $('#btn-places');
     if (placesBtn) placesBtn.addEventListener('click', () => {
       const panel = $('#places-panel');
@@ -8887,6 +9091,8 @@
         kestrelNave: kestrelNave,
         duelWord: duelWord,
         kestrelWord: kestrelWord,
+        motion: motionWanted,
+        pace: combatPace,
         pos: { x: playerMesh.position.x, z: playerMesh.position.z },
         pools: pools.map((p) => ({
           id: p.id,
@@ -8990,6 +9196,14 @@
     if (marrowWord === 'bank' && leakPool && !leakPool.absorbed) leakPool.withheld = true;
     clampHostHp();
     grantReadyMerges({ quiet: true });
+    if (typeof data.motion === 'boolean') motionWanted = data.motion;
+    if (data.pace === 'slow' || data.pace === 'brisk' || data.pace === 'steady') combatPace = data.pace;
+    try {
+      localStorage.setItem('emberwake.motion', motionWanted ? 'on' : 'off');
+      localStorage.setItem('emberwake.pace', combatPace);
+    } catch (err) { /* ignore */ }
+    syncMotion();
+    syncPace();
     refreshRumor();
   }
 
@@ -9726,6 +9940,7 @@
   EW.noteMarrowChoice = noteMarrowChoice;
   EW.noteVesperAsh = noteVesperAsh;
   EW.scarCount = function () { return scarDebt; };
+  EW.scarCut = function () { return SCAR_CUT; };
   EW.notePipe = notePipe;
   EW.maybeStartPipeFight = maybeStartPipeFight;
   EW.noteThroat = noteThroat;
@@ -9772,6 +9987,7 @@
   window.addEventListener('beforeunload', saveGame);
 
   function boot() {
+    loadEase();
     if (typeof THREE === 'undefined') {
       document.body.innerHTML = '<p style="color:#fff;padding:2rem;font-family:sans-serif">Three.js did not load. Emberwake needs the network once, for the CDN.</p>';
       return;

@@ -88,6 +88,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The pipe, the gallery, the crypt, and the breach read as rooms. A filed copy in the gallery uses Cousin’s Margin if it is held, and a different line if it is not. The stair stays a separate choice. A clerk stamps the next blow thin.
 - West chalk in the ash nave is optional. It speaks to scar debt, Held Threshold, and Cousin’s Margin, and it does not open the bar. A scar cuts 5 max HP. Mend keeps 3 of that. Merges still spend two elements and cost one mind less. A door sting plays when she steps through. See `CREDITS.md`. Silent stops it.
 - A rest west of the Concord yard’s south gate is optional. It does not drink the slag or open the mark. A pool bursts when it is drunk. Ash falls a little wider. A blow flashes warmer. Continue keeps a saved step whose height is zero.
+- Skies have a horizon, the ground has a grain, and the fog changes with the place. The remnant mass is a column you can read. Each ending shows one object with the plaque. Torren and Nima can speak after a claim flag if they came. Motion and combat pace are on the title, in the pack, and in a fight. On a phone the taps are larger.
 
 ## Play on your phone
 

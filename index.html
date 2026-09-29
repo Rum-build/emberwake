@@ -29,6 +29,7 @@
         </div>
       </div>
       <button id="btn-credits" class="btn btn-quiet" type="button">Credits</button>
+      <button id="btn-motion" class="btn btn-quiet" type="button" aria-pressed="true">Motion</button>
       <p class="hint">Mouse or WASD to walk. Absorb or E drinks a pool and steps through a door. Pack or I opens the pack. Click or Enter advances a scene.<br />Continue picks up this browser’s save. On a phone the stick and the large buttons do the same work.</p>
     </div>
   </div>
@@ -134,6 +135,7 @@
     <div class="inv-body">
       <p class="quest-kicker">Quest</p>
       <p class="inv-quest" id="inv-quest"></p>
+      <button id="btn-pack-motion" class="btn btn-quiet btn-pack-motion" type="button" aria-pressed="true">Motion</button>
       <section class="inv-section">
         <h3>Party</h3>
         <div id="inv-party" class="party-strip"></div>
@@ -197,6 +199,7 @@
   <div id="combat-ui" class="combat-ui hidden">
     <div class="combat-top">
       <div id="combat-held" class="combat-held">Held · Fire 0 · Water 0 · Bolt 0 · Earth 0</div>
+      <button id="btn-pace" class="btn btn-quiet btn-pace" type="button">Pace · Steady</button>
       <div id="turn-order" class="turn-order"></div>
       <div id="enemy-panel" class="enemy-panel"></div>
     </div>
