@@ -172,11 +172,15 @@
   let bedWanted = true;
   let audioCtx = null;
   let bedGain = null;
+  let bedFilter = null;
+  let bedTones = null;
+  let bedPlace = 'field';
   let coughPuff = null;
   let marrowVesper = null;
   let marrowStain = null;
   let vesperAshLatch = false;
   let nearWorker = null;
+  let nearPorter = null;
   let runLive = false;
   const SAVE_KEY = 'emberwake.save.v1';
   let combatsFought = 0;
@@ -242,6 +246,7 @@
   let combatPartyMeshes = [];
   let combatEnemyMeshes = [];
   let combatCameraAngle = 0;
+  let combatKick = 0;
   let pools = [];
 
   function esc(s) {
@@ -688,6 +693,7 @@
       scene.fog.far = 78;
       if (renderer) renderer.setClearColor(0x87b5d9);
     }
+    tuneBed(place === 'stormreach' ? 'coast' : (place === 'claim' || place === 'aftermath') ? 'claim' : 'field');
   }
 
   function raisePlane(geo, heightAt) {
@@ -939,6 +945,28 @@
       fig.rotation.y = Math.PI;
       villageRoom.add(fig);
     });
+    const tray = new THREE.Mesh(
+      new THREE.BoxGeometry(0.95, 0.14, 0.52),
+      new THREE.MeshLambertMaterial({ color: 0x6a5840 })
+    );
+    tray.position.set(-2.15, 0.22, 1.45);
+    villageRoom.add(tray);
+    const barley = new THREE.Mesh(
+      new THREE.BoxGeometry(0.72, 0.08, 0.36),
+      new THREE.MeshLambertMaterial({ color: 0x8a8a78 })
+    );
+    barley.position.set(-2.15, 0.32, 1.45);
+    villageRoom.add(barley);
+    const furrow = makeCountPage('GREY FURROW', ['South field', 'Sealed well', 'Not weather']);
+    furrow.position.set(-2.15, 1.05, 1.12);
+    furrow.rotation.x = -0.38;
+    villageRoom.add(furrow);
+    const basket = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.22, 0.16, 0.28, 7),
+      new THREE.MeshLambertMaterial({ color: 0x8a6a38 })
+    );
+    basket.position.set(-1.35, 0.16, 1.72);
+    villageRoom.add(basket);
     cellarRoom = buildCellar();
     cellarRoom.visible = false;
     vaultRoom = buildVaultRoom();
@@ -1129,6 +1157,24 @@
     );
     marrowJar.position.set(0, 0.7, -14.4);
     g.add(marrowJar);
+    const inlandFace = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.46, 0.62),
+      new THREE.MeshBasicMaterial({ color: 0xe2c878, fog: false })
+    );
+    inlandFace.position.set(0, 0.78, -14.72);
+    inlandFace.rotation.y = Math.PI;
+    g.add(inlandFace);
+    const inland = makeCountPage('INLAND', ['Not the harbor', 'Ashen Marrow', 'The cork stays']);
+    inland.position.set(1.45, 1.55, -13.35);
+    inland.rotation.x = -0.32;
+    g.add(inland);
+    const rope = new THREE.Mesh(
+      new THREE.TorusGeometry(0.52, 0.045, 6, 16),
+      new THREE.MeshLambertMaterial({ color: 0xe2c878, emissive: new THREE.Color(0x6a5010) })
+    );
+    rope.rotation.x = Math.PI / 2;
+    rope.position.set(-0.2, 0.06, -8.45);
+    g.add(rope);
     const shaft = new THREE.Mesh(
       new THREE.PlaneGeometry(1.1, 6.2),
       new THREE.MeshBasicMaterial({ color: 0xe6d2a4, transparent: true, opacity: 0.14, depthWrite: false })
@@ -1146,6 +1192,7 @@
     const marrowLight = new THREE.PointLight(0xff5530, 0.7, 10);
     marrowLight.position.set(0, 1.8, -14.2);
     g.add(marrowLight);
+    g.userData.marrowLight = marrowLight;
     const hallClerk = makeCharacter(0x3a3532, 0.9);
     hallClerk.position.set(1.8, 0, -8.6);
     hallClerk.rotation.y = Math.PI * 0.5;
@@ -1384,6 +1431,19 @@
     throatHole.position.set(0, 1.05, 0.02);
     throatMouth.add(throatHole);
     g.add(throatMouth);
+    [[0.35, 2.15], [-0.28, 1.35], [0.22, 0.5], [-0.18, -0.35]].forEach((spot) => {
+      const print = new THREE.Mesh(
+        new THREE.CircleGeometry(0.22, 8),
+        new THREE.MeshBasicMaterial({ color: 0x140c0a, transparent: true, opacity: 0.82 })
+      );
+      print.rotation.x = -Math.PI / 2;
+      print.position.set(spot[0], 0.06, spot[1]);
+      g.add(print);
+    });
+    const bill = makeCountPage('THE BILL', ['What leaked', 'What she ate', 'What the engine kept']);
+    bill.position.set(1.35, 1.55, 1.05);
+    bill.rotation.x = -0.34;
+    g.add(bill);
     makeMotes(g, 40, 0xc45a3a, { x: 10, y: 1.8, z: 8 });
     const pipeMouth = new THREE.Group();
     pipeMouth.position.set(5.55, 0, -3.15);
@@ -2387,6 +2447,21 @@
     return doors;
   }
 
+  function nearestPorter() {
+    if (!playerMesh || locale !== 'field' || regionId !== 'stormreach' || skyPass) return null;
+    if (Math.hypot(2.45 - playerMesh.position.x, 2.55 - playerMesh.position.z) > 1.45) return null;
+    if (seenBeats['vault-porter']) {
+      return {
+        title: 'A porter',
+        hint: 'He is still wet. The book is still dry. The vault door is the other way.',
+      };
+    }
+    return {
+      title: 'A porter',
+      hint: 'He is dripping on dry shale. Press E. He is not the door.',
+    };
+  }
+
   function nearestVaultDoor() {
     if (!playerMesh || locale !== 'field' || regionId !== 'stormreach' || !seenBeats['vault-face']) return null;
     if (skyPass) return null;
@@ -2751,6 +2826,21 @@
     lamp.position.set(0, 3.2, 2.4);
     vault.add(lamp);
     g.add(vault);
+    const porter = makeCharacter(0x4a4038, 0.92);
+    porter.position.set(2.45, 0, 2.55);
+    porter.rotation.y = -0.6;
+    g.add(porter);
+    const puddle = new THREE.Mesh(
+      new THREE.CircleGeometry(0.48, 10),
+      new THREE.MeshBasicMaterial({ color: 0x2a4458, transparent: true, opacity: 0.78 })
+    );
+    puddle.rotation.x = -Math.PI / 2;
+    puddle.position.set(2.45, 0.04, 2.55);
+    g.add(puddle);
+    const drip = makeCountPage('SHORT', ['Fourth storm', 'Sold as weather', 'He stays wet']);
+    drip.position.set(3.55, 1.42, 2.2);
+    drip.rotation.x = -0.36;
+    g.add(drip);
     g.add(makeConcordBanner(3.1, 1.4));
 
     const spire = new THREE.Mesh(
@@ -3540,11 +3630,11 @@
   }
 
   // ─── HUD, toast, inventory ────────────────────────────────
-  function showToast(msg) {
+  function showToast(msg, ms) {
     toast.textContent = msg;
     toast.classList.remove('hidden');
     clearTimeout(showToast._t);
-    showToast._t = setTimeout(() => toast.classList.add('hidden'), 4600);
+    showToast._t = setTimeout(() => toast.classList.add('hidden'), ms || 4600);
   }
 
   function showLog(msg) {
@@ -3564,6 +3654,7 @@
     el.classList.remove('show', 'harm', 'heal');
     void el.offsetWidth;
     el.classList.add('show', kind === 'heal' ? 'heal' : 'harm');
+    if (kind !== 'heal') combatKick = 0.34;
   }
 
   function questLine() {
@@ -3909,7 +4000,8 @@
     const showCredits = idle && nearCredits && !showAbsorb && !atExit;
     const showPerch = idle && nearPerch && !showAbsorb && !atExit && !showBar && !showEnd;
     const showKestrel = idle && nearKestrel && !showAbsorb && !atExit && !showGallery;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel);
+    const showPorter = idle && locale === 'field' && nearPorter && !showAbsorb && !showDoor && !showGate && !showReturn;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
@@ -3919,6 +4011,7 @@
     else if (showBar) absorbBtn.textContent = nearBar.open ? 'Enter' : 'Look';
     else if (showCredits) absorbBtn.textContent = 'Credits';
     else if (showEnd) absorbBtn.textContent = 'Enter';
+    else if (showPorter) absorbBtn.textContent = 'Speak';
     else if (showPerch || showKestrel) absorbBtn.textContent = 'Speak';
     else if (showLook || showPipe || showThroat || showStone || showMark || showNave || showGallery) absorbBtn.textContent = 'Enter';
     else if (showTalk) absorbBtn.textContent = 'Speak';
@@ -3927,7 +4020,7 @@
 
   function updatePrompt() {
     const atExit = atInteriorExit();
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -3978,6 +4071,11 @@
     if (nearDoor && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
       $('#interact-title').textContent = nearDoor.title;
       $('#interact-detail').textContent = nearDoor.hint;
+      return;
+    }
+    if (nearPorter && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
+      $('#interact-title').textContent = nearPorter.title;
+      $('#interact-detail').textContent = nearPorter.hint;
       return;
     }
     if (nearGate && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
@@ -4499,6 +4597,10 @@
       enterInterior(nearDoor.id);
       return;
     }
+    if (nearPorter) {
+      talkPorter();
+      return;
+    }
     if (nearGate) {
       landOnCoast();
       return;
@@ -4560,6 +4662,10 @@
     if (levels) msg += ' Spark level ' + spark.level + '. Capacity ' + spark.capacity + '.';
     msg += strainWarning(before) + bite;
     if (gained.length) msg += ' ' + gained.join(', ') + (gained.length === 1 ? ' stays' : ' stay') + ' on the magic list.';
+    if (!seenBeats.fedOnce) {
+      seenBeats.fedOnce = true;
+      msg += ' Strain cuts her while it is high. A scar is a separate cut to max life. The kiln under the arch is the first that scars.';
+    }
     if (pool.id === 'kiln' && addScar('kiln')) msg += scarDebtLine();
     if (pool.id === 'marrow-leak' && addScar('leak')) {
       if (marrowWord !== 'bank') marrowWord = 'fed';
@@ -4568,7 +4674,7 @@
     if (pool.id === 'yard-slag' && addScar('yard')) msg += scarDebtLine();
     if (pool.id === 'mark-weep' && addScar('mark')) msg += scarDebtLine();
     playSting();
-    showToast(msg);
+    showToast(msg, seenBeats.fedOnce && msg.indexOf('A scar is a separate cut') >= 0 ? 7200 : 4600);
     refreshRumor();
     updateHUD();
     updatePrompt();
@@ -6060,6 +6166,9 @@
     if (breachGroup && breachGroup.visible && breachGroup.userData.banner) {
       breachGroup.userData.banner.rotation.y = Math.sin(t * 1.2) * 0.18;
     }
+    if (vaultRoom && vaultRoom.visible && vaultRoom.userData.marrowLight) {
+      vaultRoom.userData.marrowLight.intensity = 0.45 + Math.abs(Math.sin(t * 1.7)) * 0.5;
+    }
     if (claimGroup && claimGroup.visible && claimGroup.userData.core) {
       claimGroup.userData.core.rotation.y = t * 0.35;
       const pulse = claimWord === 'burn' ? 1.15 : 1 + Math.sin(t * 1.5) * 0.06;
@@ -6094,6 +6203,19 @@
         kestrelFly = 0;
         bird.visible = false;
       }
+    }
+  }
+
+  function talkPorter() {
+    if (locale !== 'field' || regionId !== 'stormreach' || dialogueOpen) return;
+    if (seenBeats['vault-porter']) {
+      showToast('The porter stays wet. The fourth storm is still sold.');
+      return;
+    }
+    const fn = EW.scenes['vault-porter'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'vault-porter';
     }
   }
 
@@ -6273,6 +6395,7 @@
       nearCredits = null;
       nearPerch = null;
       nearKestrel = null;
+      nearPorter = null;
       joy.active = false;
       joy.dx = 0;
       joy.dy = 0;
@@ -6365,6 +6488,7 @@
         nearCredits = nearestCredits();
         nearPerch = nearestPerch();
         nearKestrel = nearestKestrel();
+        nearPorter = nearestPorter();
         const safe = nearPool && !nearPool.absorbed;
         const cooled = performance.now() < suppressEncountersUntil;
         const onField = locale === 'field' && (regionId === 'verdant-isle' || regionId === 'stormreach');
@@ -6396,6 +6520,7 @@
         nearCredits = nearestCredits();
         nearPerch = nearestPerch();
         nearKestrel = nearestKestrel();
+        nearPorter = nearestPorter();
       }
 
       updateCellarTriggers();
@@ -6447,6 +6572,7 @@
       nearCredits = nearestCredits();
       nearPerch = nearestPerch();
       nearKestrel = nearestKestrel();
+      nearPorter = nearestPorter();
       playerMesh.position.y = 0;
     }
 
@@ -6754,8 +6880,21 @@
       pathMenu.querySelectorAll('[data-path]').forEach((btn) => {
         btn.classList.toggle('is-on', btn.dataset.path === spark.path);
       });
+      if (!seenBeats.jobLesson && spark && spark.path) {
+        seenBeats.jobLesson = true;
+        const job = spark.path === 'mage' ? 'Channel' : spark.path === 'ranged' ? 'Aim' : 'Cleave';
+        showLog(job + ' is the job. The other two land thin.');
+        saveGame();
+      }
     }
-    if (which === 'magic') refreshMagicButtons();
+    if (which === 'magic') {
+      refreshMagicButtons();
+      if (!seenBeats.mergeMenu && earnedMergeNames().length) {
+        seenBeats.mergeMenu = true;
+        showLog('A merge spends two elements. The button names what it does. A knife will not.');
+        saveGame();
+      }
+    }
     if (which === 'item') renderCombatItems();
     const open = [mainMenu, pathMenu, magicMenu, itemMenu, targetMenu].find((menu) => menu && !menu.classList.contains('hidden'));
     if (open) tagCommandKeys(open);
@@ -6894,6 +7033,12 @@
     showMenus('target');
   }
 
+  function noteAir(target, dmg, text) {
+    if (!target || !target.air) return { dmg: dmg, text: text };
+    target.air = false;
+    return { dmg: 1, text: text + ' The hare is in the air. The blow finds almost nothing.' };
+  }
+
   function pathStrike(actor, target, path) {
     const s = actorStats(actor);
     if (actor.id !== 'lira' || !path) {
@@ -6904,7 +7049,8 @@
       else if (actor.id === 'nima') text = 'Nima’s rod finds ' + target.name + ' for ' + dmg + '. It is not her real work.';
       else text = actor.name + ' strikes ' + target.name + ' for ' + dmg + '.';
       if (target.rite) text += ' The rite holds.';
-      return { dmg, text, pathXp: 0, mpGain: 0 };
+      const thinAir = noteAir(target, dmg, text);
+      return { dmg: thinAir.dmg, text: thinAir.text, pathXp: 0, mpGain: 0 };
     }
     const thin = path !== spark.path;
     let raw = 1;
@@ -6942,7 +7088,8 @@
       dmg = Math.max(1, Math.floor(dmg * 0.4));
       text += ' The last rite takes the edge. ' + dmg + ' lands. A merge would tear the ward.';
     }
-    return { dmg, text, pathXp: thin ? 0 : 7, mpGain };
+    const thinAir = noteAir(target, dmg, text);
+    return { dmg: thinAir.dmg, text: thinAir.text, pathXp: thin ? 0 : 7, mpGain };
   }
 
   function executeAction(targetIdx) {
@@ -7136,6 +7283,14 @@
     }
     const living = party.map((p, i) => ({ p, i })).filter((x) => x.p.hp > 0);
     if (!living.length) { checkCombatEnd(); return; }
+    if (enemy.id === 'hare' && !enemy.bolted && enemy.hp < enemy.maxHp / 2) {
+      enemy.bolted = true;
+      enemy.air = true;
+      showLog('The hare bolts. The next blow finds almost nothing.');
+      updateCombatUI();
+      later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
+      return;
+    }
     let pick = living[rand(0, living.length - 1)];
     if (enemy.id === 'echo') {
       const lira = living.find((x) => x.p.id === 'lira');
@@ -7171,7 +7326,20 @@
       showLog('The echo strikes ' + pick.p.name + ' for ' + dmg + ' and leaves a thumbprint of Vesper’s hunger. Strain ' + spark.strain + '.' + strainWarning(before) + coverNote);
     } else {
       pick.p.hp = Math.max(0, pick.p.hp - dmg);
-      showLog(enemy.name + ' hits ' + pick.p.name + ' for ' + dmg + '.' + coverNote);
+      let splashNote = '';
+      if (enemy.id === 'brine') {
+        const other = living.find((x) => x.p !== pick.p && x.p.hp > 0);
+        if (other) {
+          const splash = Math.max(1, Math.floor(dmg / 2));
+          other.p.hp = Math.max(0, other.p.hp - splash);
+          splashNote = ' The brine splashes. The wet hits two.';
+          if (other.p.hp <= 0) {
+            const mesh = combatPartyMeshes[other.i];
+            if (mesh) mesh.rotation.z = 1.15;
+          }
+        }
+      }
+      showLog(enemy.name + ' hits ' + pick.p.name + ' for ' + dmg + '.' + coverNote + splashNote);
     }
     punchNumber(dmg, 'harm');
     animateAttack(combatEnemyMeshes[idx], combatPartyMeshes[pick.i]);
@@ -7426,10 +7594,12 @@
 
   function updateCombatCamera(dt) {
     combatCameraAngle += dt * 0.12;
-    camera.position.x = 0.4 + Math.sin(combatCameraAngle) * 0.45;
-    camera.position.y = 4.8 + Math.sin(combatCameraAngle * 0.7) * 0.12;
-    camera.position.z = 8.4;
-    camera.lookAt(0.2, 1.2, -0.4);
+    combatKick = Math.max(0, combatKick - dt * 1.6);
+    const kick = combatKick * 0.42;
+    camera.position.x = 0.4 + Math.sin(combatCameraAngle) * 0.45 + kick;
+    camera.position.y = 4.8 + Math.sin(combatCameraAngle * 0.7) * 0.12 - kick * 0.35;
+    camera.position.z = 8.4 - kick;
+    camera.lookAt(0.2, 1.2 - kick * 0.15, -0.4);
   }
 
   // ─── Input & flow ─────────────────────────────────────────
@@ -7804,13 +7974,14 @@
       const filter = audioCtx.createBiquadFilter();
       filter.type = 'lowpass';
       filter.frequency.value = 240;
+      bedFilter = filter;
       const noiseGain = audioCtx.createGain();
       noiseGain.gain.value = 0.4;
       noise.connect(filter);
       filter.connect(noiseGain);
       noiseGain.connect(bedGain);
       noise.start();
-      [78, 117].forEach((freq, i) => {
+      bedTones = [78, 117].map((freq, i) => {
         const osc = audioCtx.createOscillator();
         osc.type = 'sine';
         osc.frequency.value = freq;
@@ -7819,10 +7990,24 @@
         osc.connect(tone);
         tone.connect(bedGain);
         osc.start();
+        return osc;
       });
+      tuneBed(bedPlace);
     }
-    bedGain.gain.value = 0.04;
+    if (bedWanted) bedGain.gain.value = 0.04;
     if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
+
+  function tuneBed(place) {
+    bedPlace = place === 'coast' ? 'coast' : place === 'claim' ? 'claim' : 'field';
+    if (!bedFilter || !bedTones) return;
+    const spec = bedPlace === 'coast'
+      ? { cut: 520, freqs: [92, 138] }
+      : bedPlace === 'claim'
+        ? { cut: 140, freqs: [55, 82] }
+        : { cut: 240, freqs: [78, 117] };
+    bedFilter.frequency.value = spec.cut;
+    bedTones.forEach((osc, i) => { osc.frequency.value = spec.freqs[i]; });
   }
 
   function setBed(on) {

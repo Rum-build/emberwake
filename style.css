@@ -1035,26 +1035,26 @@ button, .inventory-panel, .inv-body, .credits-content {
 .hit-float {
   position: absolute;
   left: 50%;
-  top: 46%;
+  top: 44%;
   transform: translate(-50%, 0);
-  font-size: 2rem;
+  font-size: 2.65rem;
   font-weight: 700;
   letter-spacing: 0.02em;
   pointer-events: none;
   opacity: 0;
   z-index: 46;
-  text-shadow: 0 2px 0 #2a100c, 0 0 12px rgba(0, 0, 0, 0.85);
+  text-shadow: 0 2px 0 #2a100c, 0 0 16px rgba(0, 0, 0, 0.9);
 }
 .hit-float.harm { color: #ffb089; }
 .hit-float.heal { color: #b7e6c2; }
 .hit-float.juice-cleave { color: #ff6a2a; text-shadow: 0 0 14px #ff6a2a, 0 2px 0 #2a100c; }
 .hit-float.juice-channel { color: #7ec8e8; text-shadow: 0 0 14px #7ec8e8, 0 2px 0 #102028; }
 .hit-float.juice-aim { color: #d8c8ff; text-shadow: 0 0 14px #d8c8ff, 0 2px 0 #1a1428; }
-.hit-float.show { animation: hitpop 0.55s ease-out; }
+.hit-float.show { animation: hitpop 0.68s ease-out; }
 @keyframes hitpop {
-  0% { opacity: 0; transform: translate(-50%, 10px); }
-  18% { opacity: 1; }
-  100% { opacity: 0; transform: translate(-50%, -32px); }
+  0% { opacity: 0; transform: translate(-50%, 18px) scale(0.82); }
+  16% { opacity: 1; transform: translate(-50%, 0) scale(1.12); }
+  100% { opacity: 0; transform: translate(-50%, -52px) scale(1); }
 }
 
 .turn-indicator {

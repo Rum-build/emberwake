@@ -29,6 +29,10 @@
         },
         {
           speaker: 'Old Joss',
+          text: 'That tray is last year’s barley. Grey. Do not call it weather.',
+        },
+        {
+          speaker: 'Old Joss',
           text: 'They sealed the well and the south furrow went grey. My cousin’s barley died polite. Polite is how they like a famine.',
         },
         {
