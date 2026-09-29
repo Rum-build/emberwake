@@ -45,6 +45,16 @@
     return true;
   });
 
+  Emberwake.registerScene('vault-porter', function () {
+    Emberwake.present({
+      lines: [
+        { where: 'Vault approach', speaker: 'A porter', text: 'The fourth storm was sold. I am wet because the book is not.' },
+        { speaker: 'Lira', text: 'Then the door is a count, not a bottle.' },
+      ],
+    });
+    return true;
+  });
+
   Emberwake.registerScene('merge-tease', function () {
     var fire = Emberwake.elementCount ? Emberwake.elementCount('fire') : 0;
     var bolt = Emberwake.elementCount ? Emberwake.elementCount('lightning') : 0;

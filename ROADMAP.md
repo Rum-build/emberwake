@@ -161,12 +161,24 @@ Playable on the Verdant Isle field:
 - **Credits** are north and open the credits card. **Return** comes back to the aftermath, not the title. **Leave** south returns to the claim, short of the door. Continue stores the aftermath. The quest line completes when the ending has been heard.
 - The mouse stick, Absorb, and Pack stay.
 
-## Visual pass (this branch)
+## Visual pass (shipped)
 
 - Figures have a rim, eyes, and a sash so they separate from the grass and from a dark room. Lira’s chest holds a spark ember in the field and in a fight. Vesper’s silhouette keeps a thin rim and does not gain the ember.
 - Verdant Isle has a far hill line and a sea that takes the sun. Stormreach’s water does the same, and the cliff carries teeth against the sky. The ash shelf catches a little highlight.
 - The remnant claim is darker so the mass, the shafts, and the floor light own the room. A fill keeps the host readable. The fight stands on a ring: warm light on her side, cold light on theirs.
 - Phone controls, Absorb, Pack, and Continue are unchanged.
+
+## Midgame flesh (this branch)
+
+- The leaf-village keeps a grey-furrow tray. Old Joss names it. The argument still recruits Nima.
+- A porter stands short of the Stormreach vault door, wet because the book is not. Speak once. The door stays Enter. Continue stores the beat.
+- The bottle-hall’s dark bottle faces inland, with a gold rope on the earth cork and a plaque that names Ashen Marrow. The crack-or-leave choice is unchanged.
+- The ash shelf has footprints into the engine and a bill the tender could have written.
+- A hit number kicks and reads larger. Opening Magic, once a merge is earned, says a merge spends two elements and a knife will not. The first Fight menu names the job.
+- A Hollow Hare below half health bolts. The next physical blow finds almost nothing. A Brine Skitter splashes a second living person.
+- The first absorb says strain cuts her while it is high, and a scar is a separate cut to max life. The kiln is named as the first scar.
+- Stormreach retunes the bed higher. The remnant claim and the aftermath retune it lower. Both are the original loop. Silent still stops it. CREDITS names them.
+- Phone controls, Absorb, Pack, and Continue stay.
 
 ## Still ahead
 
@@ -185,4 +197,4 @@ The bible’s order, each act a production pull of its own (and as many follow-u
 - **Act III — The Rot That Speaks.** Ashen Marrow. Feeding heals and overfeeding scars the host as the moral weight. Concord digest-engine. Vesper’s method on the table.
 - **Act IV — Remnant Wake.** Waystone network. The race for the Prime Remnant. Endings from merges, who lived, and whether Lira is still the host.
 
-Audio stays open-licence and listed in `CREDITS.md` before a cue plays. The field bed is the first cue. It is original and CC0.
+Audio stays open-licence and listed in `CREDITS.md` before a cue plays. The field bed is the first cue. The coast and the claim are that same loop, retuned. It is original and CC0.
