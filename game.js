@@ -667,10 +667,10 @@
   function placeFog(place) {
     if (!scene || !scene.fog) return;
     if (place === 'stormreach') {
-      scene.fog.color.set(0x6e7e90);
-      scene.fog.near = 20;
-      scene.fog.far = 86;
-      if (renderer) renderer.setClearColor(0x6e7e90);
+      scene.fog.color.set(0x8aa0b4);
+      scene.fog.near = 16;
+      scene.fog.far = 70;
+      if (renderer) renderer.setClearColor(0x8aa0b4);
     } else if (place === 'marrow') {
       scene.fog.color.set(0x5c2416);
       scene.fog.near = 9;
@@ -4190,7 +4190,46 @@
     g.add(makeCairn(4.2, 8.8));
     g.add(makeRationStall(-8.6, 3.2));
     dressHarbor(g);
+    dressCoastMist(g);
     g.userData.gusts = makeGusts(g, 5, 0xd0e4f0);
+  }
+
+  function dressCoastMist(g) {
+    const haze = new THREE.MeshBasicMaterial({
+      color: 0xd5e4f0,
+      transparent: true,
+      opacity: 0.28,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+    });
+    const sheet = new THREE.Mesh(new THREE.PlaneGeometry(26, 4.2), haze);
+    sheet.rotation.x = -Math.PI / 2;
+    sheet.position.set(0, 0.16, 12.8);
+    g.add(sheet);
+    const veilMat = haze.clone();
+    veilMat.opacity = 0.18;
+    [[-10.6, 1.15, 7.1, 0.35], [10.4, 1.05, 8.6, -0.4]].forEach((spot) => {
+      const veil = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 1.6), veilMat);
+      veil.position.set(spot[0], spot[1], spot[2]);
+      veil.rotation.y = spot[3];
+      g.add(veil);
+    });
+    const bandMat = haze.clone();
+    bandMat.opacity = 0.14;
+    const band = new THREE.Mesh(new THREE.PlaneGeometry(16, 7), bandMat);
+    band.rotation.x = -Math.PI / 2;
+    band.position.set(1.2, 2.15, 5.6);
+    g.add(band);
+    const streakMat = new THREE.MeshBasicMaterial({
+      color: 0xeaf4ff, transparent: true, opacity: 0.7, depthWrite: false,
+    });
+    [[2.4, 2.7, 6.3], [4.2, 3.4, 5.5], [1.1, 2.2, 7.1], [5.6, 2.9, 4.7], [0.2, 3.5, 6.6], [3.5, 1.85, 5.0], [-1.6, 2.5, 5.8], [6.4, 3.1, 7.3]].forEach((spot) => {
+      const streak = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.9, 0.035), streakMat);
+      streak.position.set(spot[0], spot[1], spot[2]);
+      streak.rotation.z = 0.22;
+      streak.rotation.x = 0.15;
+      g.add(streak);
+    });
   }
 
   function dressHarbor(g) {
@@ -5820,11 +5859,18 @@
 
   function driftWeather() {
     if (!weather || !playerMesh) return;
-    const wet = locale === 'field' && (regionId === 'verdant-isle' || regionId === 'stormreach');
+    const coast = locale === 'field' && regionId === 'stormreach';
+    const isleWet = locale === 'field' && regionId === 'verdant-isle';
     const ashen = locale === 'ashen-marrow' || locale === 'concord-yard' || locale === 'remnant-claim' || locale === 'aftermath';
     const gustOn = ashen && ashDensity !== 'thin';
-    weather.rain.visible = !!(wet && motionWanted);
+    weather.rain.visible = coast || (isleWet && motionWanted);
+    if (weather.rain.material) {
+      weather.rain.material.opacity = coast ? 0.82 : 0.72;
+      weather.rain.material.size = coast ? 0.22 : 0.12;
+      weather.rain.material.color.setHex(coast ? 0xeaf4ff : 0xb7c6d4);
+    }
     weather.gust.visible = !!(gustOn && motionWanted);
+    if (coast) weather.rain.position.set(playerMesh.position.x, playerMesh.position.y, playerMesh.position.z);
     if (!motionWanted) return;
     if (phoneMode && ((Math.floor(performance.now() / 40) % 2) === 0)) return;
     const t = performance.now() * 0.001;
@@ -6438,8 +6484,10 @@
     }
     if (throatWord === 'name') return 'The name is in the spark. The yard stone is west of the engine.';
     if (throatWord === 'cork') return 'The name stayed corked. The yard stone is still west of the engine.';
+    if (locale === 'harbor-vault' && !seenBeats['bottle-hall'] && !seenBeats['clerk-tally']) return 'East on the shale, the tally clerk. The hall is not the road yet.';
     if (locale === 'harbor-vault' && !seenBeats['bottle-hall']) return 'The bottle-hall is north of the count.';
-    if (locale === 'field' && regionId === 'stormreach' && !seenBeats['vault-face']) return 'The harbor vault is in the cliff.';
+    if (locale === 'field' && regionId === 'stormreach' && !seenBeats['vault-face']) return 'The harbor vault is in the cliff. A tally clerk stands east of the door.';
+    if (locale === 'field' && regionId === 'stormreach' && !seenBeats['clerk-tally'] && !seenBeats['bottle-hall']) return 'The vault is named. East, the tally clerk. He is not the hall.';
     if (locale === 'leaf-village' && !seenBeats['furrow-letter']) return 'A letter sits in the basket by the furrow. It is not the road. South is the isle.';
     if (locale === 'leaf-village' && !seenBeats.patrol) return 'The letter is in the pack. South is the isle. The leaf-cup is south-west of the wake.';
     if (locale === 'field' && regionId === 'verdant-isle' && !seenBeats.village) return 'North-west is the leaf-village. A letter is in the basket inside. Walk to it. It is not the road.';
@@ -6452,6 +6500,8 @@
     if (locale === 'field' && regionId === 'verdant-isle' && seenBeats['furrow-letter'] && !seenBeats.patrol) return 'South-west of the wake, the leaf-cup. A licence is already there. Torren has not left the coat.';
     if (locale === 'root-cellar' && !seenBeats.kiln) return 'The kiln is north. It still has a tenant.';
     if (!seenBeats['waystone-wake']) return 'The kiln, then the scar. The waystone stays shut until both.';
+    if (!seenBeats.marrowStep && !seenBeats['bottle-hall'] && !seenBeats['vault-face']) return 'The waystone is open. The harbor vault is on the shale. A tally clerk stands east of the door.';
+    if (!seenBeats.marrowStep && !seenBeats['bottle-hall'] && !seenBeats['clerk-tally']) return 'The tally clerk is east of the vault. Speak to him before the hall.';
     if (!seenBeats.marrowStep) return 'The inland road starts in the bottle-hall.';
     return 'The ash shelf is not the end of the rot.';
   }
@@ -10603,6 +10653,8 @@
           ? 'The coast grew a thing with too many legs. It wets the stone. The splash is a nick, not a second full bite.'
       : enemies.some((e) => e.id === 'echo')
       ? 'Vesper is not on this field. Something that remembers her mouth is.'
+      : enemies.some((e) => e.id === 'warden') && enemies.some((e) => e.id === 'clerk')
+        ? 'Licence. The coast warden lifts the seal. The next blow costs more life. A shoulder in front tears it.'
       : enemies.some((e) => e.id === 'warden') && party.some((p) => p.id === 'torren' && p.hp > 0)
         ? 'Torren is in the line. The coat is still on him. The seal is not. Your people act, then theirs.'
       : enemies.some((e) => e.id === 'scribe')
@@ -11277,7 +11329,7 @@
     if (enemy.id === 'warden' && !enemy.raised) {
       enemy.raised = true;
       enemy.licence = true;
-      showLog('The warden lifts the seal. The next blow is the licence. It costs more life.');
+      showLog('Licence. The warden lifts the seal. The next blow costs more life.');
       updateCombatUI();
       later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
       return;
@@ -12407,7 +12459,16 @@
       });
     }
     if (seenBeats.cellar || seenBeats.kiln) rows.push({ name: 'Root-cellar', note: 'The kiln under the arch.' });
-    if (seenBeats.coastRoute || seenBeats['vault-face'] || regionId === 'stormreach') rows.push({ name: 'Stormreach Coast', note: 'Shale, lightning, the harbor vault.' });
+    if (seenBeats.coastRoute || seenBeats['vault-face'] || regionId === 'stormreach') {
+      const coastNote = !seenBeats['vault-face'] && !seenBeats['bottle-hall']
+        ? 'The harbor vault is in the cliff. A tally clerk stands east of the door.'
+        : !seenBeats['clerk-tally'] && !seenBeats['bottle-hall']
+          ? 'The vault is named. The tally clerk is east. The hall is not the road yet.'
+          : !seenBeats['bottle-hall']
+            ? 'The clerk counted the weather. The hall is north of the count.'
+            : 'Shale, lightning, the harbor vault.';
+      rows.push({ name: 'Stormreach Coast', note: coastNote });
+    }
     if (seenBeats['vault-ledger'] || seenBeats['bottle-hall']) rows.push({ name: 'Harbor vault', note: 'The count and the bottle-hall.' });
     if (seenBeats.marrowStep) rows.push({ name: 'Ashen Marrow', note: 'The digest-engine and the ash shelf.' });
     if (pipeWord || seenBeats['pipe-feed']) {
