@@ -70,6 +70,14 @@
         r: 2.8,
         toast: 'Someone on the shale already knows your hunger.',
       },
+      {
+        id: 'kestrel-ask',
+        scene: 'kestrel-ask',
+        x: -2.4,
+        z: 8.4,
+        r: 2.2,
+        toast: 'A wing holds over the roost.',
+      },
     ],
   });
 })(window.Emberwake);

@@ -64,12 +64,19 @@ Playable on the Verdant Isle field:
 - After a coast pool and the vault’s face, Vesper offers a measuring duel. Throw the blow (a little strain) or hold it. She walks away alive.
 - Continue stores the coast, the merge word, and the duel, along with the rest of the browser save. The mouse stick and Absorb/Pack stay.
 
+## Act II deepen (this branch)
+
+- After the clerk on the shale, **E** at the seam enters the counting room. Sign the shortage or refuse it. The bottles stay behind iron. Leaving puts her back on the coast, not the isle.
+- Once the merge tease has fired, **Plasma** or **Steam** is a Magic command. Plasma spends fire and lightning. Steam spends fire and water.
+- Walking the shale can start a fight: charged wisps, licence clerks, scribes, and sometimes Vesper’s echo. The counting room stays quiet.
+- After the count, walk under the wing and ask Kestrel to land, or leave her the air. She does not join. Continue stores the vault, the spell, and the refusal.
+
 ## Still ahead
 
-From DESIGN.md, after this landing:
+From DESIGN.md, after this deepening:
 
-1. The scar’s debt, counted and not paid.
-2. The rest of Act II: the vault interior, merge words that become spells, a longer coast, and a party slot for Kestrel if the road ever offers one.
+1. The scar’s debt, counted and not paid. The witness line does not pay it.
+2. The rest of Act II: the bottle-hall itself, the rest of the merge tree, a longer coast, and a party slot for Kestrel if she ever takes one.
 
 Combat menus stay Fight / Magic / Item / Flee. New panels stay desktop-first.
 

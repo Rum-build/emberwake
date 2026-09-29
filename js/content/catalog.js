@@ -42,6 +42,8 @@
     water: { element: 'water', cost: 1, mp: 4, kind: 'dmg', power: 9, flash: 0x2a9adf },
     lightning: { element: 'lightning', cost: 1, mp: 5, kind: 'dmg', power: 14, flash: 0xd2b4ff },
     cure: { element: 'water', cost: 1, mp: 5, kind: 'heal', flash: 0x9dffc8 },
+    plasma: { element: 'lightning', cost: 1, also: 'fire', alsoCost: 1, mp: 7, kind: 'dmg', power: 22, flash: 0xfff1c2, merge: 'plasma' },
+    steam: { element: 'water', cost: 1, also: 'fire', alsoCost: 1, mp: 6, kind: 'dmg', power: 16, flash: 0xd8e4ea, merge: 'steam' },
   };
 
   content.enemies = {
@@ -53,6 +55,8 @@
     echo: { name: "Vesper's Echo", color: 0x2a2030, maxHp: 80, atk: 14, def: 5, xp: 36, gold: 24, shape: 'echo' },
     mite: { name: 'Jar Mite', color: 0x3a4030, maxHp: 38, atk: 9, def: 2, xp: 14, gold: 7, shape: 'bug' },
     'kiln-heart': { name: 'Kiln Heart', color: 0x8a2410, maxHp: 98, atk: 15, def: 6, xp: 42, gold: 28, shape: 'kiln' },
+    wisp: { name: 'Charged Wisp', color: 0x9ec6ff, maxHp: 36, atk: 11, def: 2, xp: 16, gold: 9, shape: 'sphere' },
+    clerk: { name: 'Licence Clerk', color: 0x4a453c, maxHp: 48, atk: 10, def: 4, xp: 18, gold: 16, shape: 'human' },
   };
 
   content.roster = {
@@ -75,7 +79,7 @@
       name: 'Kestrel',
       role: 'Edge · eagle-rider',
       joins: 'sky-routes',
-      note: 'Opens the thermal to Stormreach after the kiln and the scar. She brings Lira to the shale and still does not join.',
+      note: 'Opens the thermal to Stormreach after the kiln and the scar. She can be asked to land after the counting room. She still does not join.',
     },
   ];
 })(window.Emberwake);

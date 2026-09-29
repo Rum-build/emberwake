@@ -89,6 +89,7 @@
   let interiorGroup = null;
   let villageRoom = null;
   let cellarRoom = null;
+  let vaultRoom = null;
   let nearDoor = null;
   let nearGate = null;
   let nearReturn = null;
@@ -96,6 +97,7 @@
   let regionId = 'verdant-isle';
   let mergeWord = null;
   let duelWord = null;
+  let kestrelWord = null;
   let runLive = false;
   const SAVE_KEY = 'emberwake.save.v1';
   let combatsFought = 0;
@@ -337,6 +339,7 @@
     regionId = 'verdant-isle';
     mergeWord = null;
     duelWord = null;
+    kestrelWord = null;
     locale = 'field';
     stepsSinceEncounter = 0;
     encounterLocked = false;
@@ -364,6 +367,7 @@
     if (coastGroup) coastGroup.visible = false;
     if (stormreachGroup) stormreachGroup.visible = false;
     if (coastVesper) coastVesper.visible = false;
+    if (vaultRoom) vaultRoom.visible = false;
     sleepWaystone();
     const locLabel = $('#hud-location');
     if (locLabel) locLabel.textContent = 'Verdant Isle';
@@ -592,8 +596,10 @@
     });
     cellarRoom = buildCellar();
     cellarRoom.visible = false;
+    vaultRoom = buildVaultRoom();
     interiorGroup.add(villageRoom);
     interiorGroup.add(cellarRoom);
+    interiorGroup.add(vaultRoom);
     pools.forEach((p) => {
       if (p.interior === 'root-cellar' && p.group) cellarRoom.add(p.group);
     });
@@ -675,6 +681,48 @@
     return g;
   }
 
+  function buildVaultRoom() {
+    const g = buildRoom({
+      floor: 0x3e4550,
+      wall: 0x2c3138,
+      light: 0xd4c08a,
+      intensity: 0.72,
+    });
+    const desk = new THREE.Mesh(
+      new THREE.BoxGeometry(1.8, 0.7, 0.7),
+      new THREE.MeshLambertMaterial({ color: 0x4a4034 })
+    );
+    desk.position.set(-1.2, 0.35, -0.4);
+    g.add(desk);
+    const clerk = makeCharacter(0x3a3532, 0.92);
+    clerk.position.set(-1.2, 0, -1.5);
+    clerk.rotation.y = Math.PI;
+    g.add(clerk);
+    const guard = makeCharacter(0x2a3038, 0.95);
+    guard.position.set(2.2, 0, -1.1);
+    guard.rotation.y = Math.PI * 0.85;
+    g.add(guard);
+    const grate = new THREE.Mesh(
+      new THREE.BoxGeometry(3.4, 1.7, 0.12),
+      new THREE.MeshLambertMaterial({ color: 0x14181e })
+    );
+    grate.position.set(0.3, 1.15, -3.35);
+    g.add(grate);
+    [-0.5, 0.35, 1.2].forEach((x) => {
+      const jar = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.16, 0.2, 0.58, 8),
+        new THREE.MeshLambertMaterial({ color: 0x9ec6ff, emissive: new THREE.Color(0x224466) })
+      );
+      jar.position.set(x, 0.42, -3.75);
+      g.add(jar);
+    });
+    const bolt = new THREE.PointLight(0x99c4ff, 0.85, 9);
+    bolt.position.set(0.3, 1.5, -3.5);
+    g.add(bolt);
+    g.visible = false;
+    return g;
+  }
+
   function cellarFits(x, z) {
     if (z > 3.45 || z < -23.4) return false;
     if (z >= -4.7 && Math.abs(x) <= 3.45) return true;
@@ -732,8 +780,21 @@
     return doors;
   }
 
+  function nearestVaultDoor() {
+    if (!playerMesh || locale !== 'field' || regionId !== 'stormreach' || !seenBeats['vault-face']) return null;
+    if (skyPass) return null;
+    if (Math.hypot(0.2 - playerMesh.position.x, 1.15 - playerMesh.position.z) > 1.7) return null;
+    return {
+      id: 'harbor-vault',
+      title: 'Harbor vault',
+      hint: 'The counting room is uncorked. The bottles stay behind iron. Press E.',
+    };
+  }
+
   function nearestDoor() {
-    if (!playerMesh || locale !== 'field' || regionId !== 'verdant-isle') return null;
+    if (!playerMesh || locale !== 'field') return null;
+    if (regionId === 'stormreach') return nearestVaultDoor();
+    if (regionId !== 'verdant-isle') return null;
     let best = null;
     let bestD = 2.8;
     fieldDoors().forEach((door) => {
@@ -758,7 +819,7 @@
     if (Math.hypot(pin.x - playerMesh.position.x, pin.z - playerMesh.position.z) > 2.5) return null;
     return {
       title: 'The roost',
-      hint: 'Press E to take the thermal back to the isle. The vault stays corked.',
+      hint: 'Press E to take the thermal back to the isle. The bottle-hall stays corked.',
     };
   }
 
@@ -771,7 +832,7 @@
     if (d > 3.2) return null;
     return {
       title: 'Woken waystone',
-      hint: 'The thermal will put your feet on the shale. Press E to land. The vault does not open from the air or the ground.',
+      hint: 'The thermal will put your feet on the shale. Press E to land. The counting room is a door. The bottles are not.',
     };
   }
 
@@ -787,25 +848,57 @@
     interiorGroup.visible = true;
     villageRoom.visible = id === 'leaf-village';
     cellarRoom.visible = id === 'root-cellar';
-    const dusk = id === 'root-cellar' ? 0x1a1410 : 0x3a342c;
+    if (vaultRoom) vaultRoom.visible = id === 'harbor-vault';
+    const dusk = id === 'root-cellar' ? 0x1a1410 : id === 'harbor-vault' ? 0x1a222c : 0x3a342c;
     scene.fog.color.set(dusk);
     renderer.setClearColor(dusk);
     beatHold = {};
-    const beatKey = id === 'leaf-village' ? 'village' : 'cellar';
-    const sceneId = id === 'leaf-village' ? 'village-argument' : 'cellar-threshold';
-    if (!seenBeats[beatKey]) {
-      const fn = EW.scenes[sceneId];
-      if (typeof fn === 'function') fn();
+    const locLabel = $('#hud-location');
+    if (id === 'harbor-vault') {
+      if (locLabel) locLabel.textContent = 'Harbor Vault';
+      if (!silent && !seenBeats['vault-ledger']) {
+        const fn = EW.scenes['vault-ledger'];
+        if (typeof fn === 'function') {
+          const played = fn();
+          if (played !== false && dialogueOpen) pendingBeat = 'vault-ledger';
+        }
+      }
+    } else {
+      if (locLabel && id === 'leaf-village') locLabel.textContent = 'Leaf-village';
+      else if (locLabel && id === 'root-cellar') locLabel.textContent = 'Root-cellar';
+      const beatKey = id === 'leaf-village' ? 'village' : 'cellar';
+      const sceneId = id === 'leaf-village' ? 'village-argument' : 'cellar-threshold';
+      if (!seenBeats[beatKey]) {
+        const fn = EW.scenes[sceneId];
+        if (typeof fn === 'function') fn();
+      }
     }
     refreshRumor();
     saveGame();
   }
 
   function exitInterior() {
+    const fromVault = locale === 'harbor-vault';
     const pinId = locale === 'root-cellar' ? 'root-cellar' : 'leaf-village';
     const pin = landmark(pinId);
     locale = 'field';
     if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
+    if (fromVault) {
+      locale = 'field';
+      regionId = 'stormreach';
+      stormreachGroup.add(playerMesh);
+      playerMesh.position.set(0.2, 0, 1.7);
+      interiorGroup.visible = false;
+      if (vaultRoom) vaultRoom.visible = false;
+      overworldGroup.visible = false;
+      stormreachGroup.visible = true;
+      scene.fog.color.set(0x6e7e90);
+      renderer.setClearColor(0x6e7e90);
+      const coastLabel = $('#hud-location');
+      if (coastLabel) coastLabel.textContent = 'Stormreach Coast';
+      saveGame();
+      return;
+    }
     overworldGroup.add(playerMesh);
     playerMesh.position.set(pin.x, 0, pin.z + 2.4);
     interiorGroup.visible = false;
@@ -1571,14 +1664,23 @@
     const wellDone = pools.some((p) => p.id === 'well' && p.absorbed);
     const left = pools.filter((p) => !p.absorbed && !p.bottled && !p.interior).length;
     const kilnQuiet = pools.some((p) => p.id === 'kiln' && p.absorbed);
-    if (seenBeats['vesper-duel']) {
+    if (seenBeats['kestrel-ask'] && !seenBeats['vesper-duel']) {
+      rumor = kestrelWord === 'ask'
+        ? 'You asked Kestrel to land. She refused. The thermal is still hers, and the pack is still without her.'
+        : 'You left Kestrel the air. She did not join. The roost is still the way home.';
+    } else if (seenBeats['vesper-duel']) {
       rumor = duelWord === 'press'
         ? 'Vesper turned the blow on the shale. Nobody fell. The vault is still corked, and the wrist has a number.'
         : 'You held the blow on the shale. Vesper counted the hold and walked away alive. The vault is still corked.';
     } else if (mergeWord === 'plasma') {
-      rumor = 'Fire and lightning tried to become plasma between her hands. The word left. It is not a spell.';
+      rumor = 'Plasma is on the magic list. It spends fire and lightning together, and then they are gone.';
     } else if (mergeWord === 'steam') {
-      rumor = 'Fire and water fogged the shale and called itself steam. The word left. It is not a spell.';
+      rumor = 'Steam is on the magic list. It spends fire and water together. It is weather you can aim.';
+    } else if (seenBeats['vault-ledger']) {
+      const signed = seals.some((seal) => seal.name === 'Witness Line');
+      rumor = signed
+        ? 'Lira’s name is on the harbor shortage. The bottles stayed behind iron. The shale is still drinking the difference.'
+        : 'You refused the harbor’s shortage line. The book stays polite. The bottles stayed behind iron.';
     } else if (seenBeats['vault-face']) {
       rumor = 'A clerk named the harbor vault and did not open it. The leak beside the door is still weather.';
     } else if (seenBeats['coast-landing'] || regionId === 'stormreach') {
@@ -1673,10 +1775,12 @@
       return;
     }
     if (atExit) {
-      $('#interact-title').textContent = locale === 'root-cellar' ? 'The mouth' : 'The door';
+      $('#interact-title').textContent = locale === 'root-cellar' ? 'The mouth' : locale === 'harbor-vault' ? 'The shale' : 'The door';
       $('#interact-detail').textContent = locale === 'root-cellar'
         ? 'Press E to step back onto the isle. The throat stays open behind you.'
-        : 'Press E to step back onto the isle.';
+        : locale === 'harbor-vault'
+          ? 'Press E to step back onto the coast. The iron stays shut.'
+          : 'Press E to step back onto the isle.';
       return;
     }
     if (nearDoor && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
@@ -1724,7 +1828,11 @@
       const waiting = [];
       if (!findMember('nima')) waiting.push('Nima is still in the leaf-village.');
       if (!findMember('torren')) waiting.push('Torren has not refused the Concord yet.');
-      if (seenBeats['coast-landing']) {
+      if (seenBeats['kestrel-ask']) {
+        waiting.push(kestrelWord === 'ask'
+          ? 'You asked Kestrel to land. She refused. She is still the road, not the company.'
+          : 'You left Kestrel the air. She did not join.');
+      } else if (seenBeats['coast-landing']) {
         waiting.push('Kestrel set you on the Stormreach shale and stayed in the air. She did not join.');
       } else if (seenBeats.coastRoute) {
         waiting.push('Kestrel opened a thermal to Stormreach. She did not join. The harbor vault stayed corked.');
@@ -1733,8 +1841,14 @@
       } else {
         waiting.push('Kestrel is not on this road.');
       }
-      if (mergeWord === 'plasma') waiting.push('Plasma tried to exist between her hands. It is not a spell yet.');
-      else if (mergeWord === 'steam') waiting.push('Steam tried to exist between her hands. It is not a spell yet.');
+      if (seenBeats['vault-ledger']) {
+        const signed = seals.some((seal) => seal.name === 'Witness Line');
+        waiting.push(signed
+          ? 'The harbor count has Lira’s name on the shortage. The bottles stayed behind iron.'
+          : 'You refused the harbor’s shortage line. The bottles stayed behind iron.');
+      }
+      if (mergeWord === 'plasma') waiting.push('Plasma is on the magic list. It spends fire and lightning together.');
+      else if (mergeWord === 'steam') waiting.push('Steam is on the magic list. It spends fire and water together.');
       if (seenBeats['vesper-duel']) waiting.push('Vesper measured a blow on the coast and walked away alive.');
       roadNote.textContent = waiting.join(' ');
     }
@@ -2112,7 +2226,7 @@
           const limit = WORLD_SIZE * 0.58;
           playerMesh.position.x = Math.max(-limit, Math.min(limit, nx));
           playerMesh.position.z = Math.max(-limit, Math.min(limit, nz));
-        } else if (locale === 'leaf-village') {
+        } else if (locale === 'leaf-village' || locale === 'harbor-vault') {
           playerMesh.position.x = Math.max(-3.45, Math.min(3.45, nx));
           playerMesh.position.z = Math.max(-3.45, Math.min(3.45, nz));
         } else {
@@ -2128,7 +2242,7 @@
         nearReturn = nearestReturn();
         const safe = nearPool && !nearPool.absorbed;
         const cooled = performance.now() < suppressEncountersUntil;
-        if (locale === 'field' && regionId === 'verdant-isle' && !safe && !cooled && stepsSinceEncounter > ENCOUNTER_STEPS) {
+        if (locale === 'field' && (regionId === 'verdant-isle' || regionId === 'stormreach') && !safe && !cooled && stepsSinceEncounter > ENCOUNTER_STEPS) {
           const pressure = rotPressure();
           const chancePerSec = 0.32 + pressure * 0.7;
           if (Math.random() < chancePerSec * dt) triggerEncounter();
@@ -2199,6 +2313,7 @@
   }
 
   function rollEncounter() {
+    if (regionId === 'stormreach') return rollCoastEncounter();
     const pressure = rotPressure();
     const echoReady = spark.strain >= 28 || pools.some((p) => p.vesper && p.absorbed) || combatsFought >= 2;
     if (echoReady && Math.random() < 0.14) return [spawnEnemy('echo')];
@@ -2206,6 +2321,24 @@
     const table = pressure > 0.35
       ? ['hare', 'weevil', 'weevil', 'whelp', 'scribe']
       : ['hare', 'whelp', 'scribe', 'hare'];
+    const list = [];
+    for (let i = 0; i < n; i++) list.push(table[rand(0, table.length - 1)]);
+    const counts = {};
+    return list.map((id) => {
+      counts[id] = (counts[id] || 0) + 1;
+      const dup = list.filter((x) => x === id).length > 1;
+      return spawnEnemy(id, dup ? ' ' + counts[id] : '');
+    });
+  }
+
+  function rollCoastEncounter() {
+    const pressure = rotPressure();
+    const echoReady = spark.strain >= 28 || !!duelWord || combatsFought >= 2;
+    if (echoReady && Math.random() < 0.16) return [spawnEnemy('echo')];
+    const n = 1 + (Math.random() < (pressure > 0.45 ? 0.6 : 0.3) ? 1 : 0);
+    const table = pressure > 0.4
+      ? ['wisp', 'wisp', 'clerk', 'scribe']
+      : ['wisp', 'clerk', 'scribe', 'wisp'];
     const list = [];
     for (let i = 0; i < n; i++) list.push(table[rand(0, table.length - 1)]);
     const counts = {};
@@ -2367,7 +2500,7 @@
 
   function tagCommandKeys(root) {
     const buttons = Array.from(root.querySelectorAll('button')).filter((btn) => {
-      return btn.dataset.action !== 'back' && btn.dataset.action !== 'back-target';
+      return btn.dataset.action !== 'back' && btn.dataset.action !== 'back-target' && !btn.classList.contains('hidden');
     });
     buttons.forEach((btn, i) => {
       if (i > 8 || btn.querySelector('.pc-key')) return;
@@ -2386,7 +2519,7 @@
     const open = openCombatMenu();
     if (!open) return;
     const buttons = Array.from(open.querySelectorAll('button')).filter((btn) => {
-      return btn.dataset.action !== 'back' && btn.dataset.action !== 'back-target';
+      return btn.dataset.action !== 'back' && btn.dataset.action !== 'back-target' && !btn.classList.contains('hidden');
     });
     const btn = buttons[index];
     if (btn && !btn.disabled) btn.click();
@@ -2399,16 +2532,34 @@
     if (back) back.click();
   }
 
+  function elementLabel(id) {
+    if (id === 'lightning') return 'Bolt';
+    return id.charAt(0).toUpperCase() + id.slice(1);
+  }
+
   function refreshMagicButtons() {
     const turn = currentTurn();
     const actor = turn && turn.type === 'party' ? party[turn.index] : null;
     magicMenu.querySelectorAll('[data-magic]').forEach((btn) => {
       const sp = SPELLS[btn.dataset.magic];
-      const have = spark[sp.element];
+      const locked = !!(sp.merge && mergeWord !== sp.merge);
+      btn.classList.toggle('hidden', locked);
+      if (locked) {
+        btn.disabled = true;
+        return;
+      }
+      const have = spark[sp.element] || 0;
+      const alsoNeed = sp.also ? (sp.alsoCost || 1) : 0;
+      const alsoHave = sp.also ? (spark[sp.also] || 0) : alsoNeed;
       const costEl = btn.querySelector('.cost');
-      const label = sp.element === 'lightning' ? 'Bolt' : sp.element.charAt(0).toUpperCase() + sp.element.slice(1);
-      if (costEl) costEl.textContent = label + ' ' + sp.cost + ' · ' + sp.mp + ' MP · have ' + have;
-      btn.disabled = !actor || actor.mp < sp.mp || have < sp.cost;
+      if (costEl) {
+        const cost = sp.also
+          ? elementLabel(sp.also) + ' ' + alsoNeed + ' + ' + elementLabel(sp.element) + ' ' + sp.cost
+          : elementLabel(sp.element) + ' ' + sp.cost;
+        const held = sp.also ? 'have ' + alsoHave + '/' + have : 'have ' + have;
+        costEl.textContent = cost + ' · ' + sp.mp + ' MP · ' + held;
+      }
+      btn.disabled = !actor || actor.mp < sp.mp || have < sp.cost || alsoHave < alsoNeed;
     });
   }
 
@@ -2539,7 +2690,8 @@
       if (target.hp <= 0) markDead(targetIdx);
     } else if (act.kind === 'magic') {
       const sp = SPELLS[act.magic];
-      if (!sp || spark[sp.element] < sp.cost || actor.mp < sp.mp) {
+      const alsoNeed = sp && sp.also ? (sp.alsoCost || 1) : 0;
+      if (!sp || (sp.merge && mergeWord !== sp.merge) || spark[sp.element] < sp.cost || (sp.also && spark[sp.also] < alsoNeed) || actor.mp < sp.mp) {
         showLog('The spark has not digested enough, or the mind is dry.');
         combatBusy = false;
         inputEnabled = true;
@@ -2547,6 +2699,7 @@
         return;
       }
       spark[sp.element] -= sp.cost;
+      if (sp.also) spark[sp.also] -= alsoNeed;
       actor.mp -= sp.mp;
       const stats = actorStats(actor);
       const mageBonus = actor.id === 'lira' && spark.path === 'mage' ? 6 : 0;
@@ -2569,8 +2722,10 @@
           fire: actor.name + ' spends a coal of fire. ' + target.name + ' takes ' + dmg + '.',
           water: actor.name + ' turns held water into a hard tide. ' + dmg + ' to ' + target.name + '.',
           lightning: 'Lightning the spark kept in the teeth. ' + target.name + ' takes ' + dmg + '.',
+          plasma: 'Plasma. Fire and lightning spend together. ' + target.name + ' takes ' + dmg + '.',
+          steam: 'Steam scalds the air between them. ' + target.name + ' takes ' + dmg + '.',
         };
-        showLog(lines[act.magic]);
+        showLog(lines[act.magic] || (actor.name + ' spends a held word. ' + target.name + ' takes ' + dmg + '.'));
         flashMesh(combatEnemyMeshes[targetIdx], sp.flash);
         if (target.hp <= 0) markDead(targetIdx);
         if (actor.id === 'lira' && spark.path === 'mage') grantPathXp(8);
@@ -2682,7 +2837,9 @@
       victoryTag = null;
       showLog(locale === 'root-cellar'
         ? 'You break contact. The dark keeps your place.'
-        : 'You break contact. The field takes you back.');
+        : regionId === 'stormreach'
+          ? 'You break contact. The shale takes you back.'
+          : 'You break contact. The field takes you back.');
       later(() => endCombatReturn(), 800);
     } else {
       const hard = enemies.some((e) => e.id === 'echo' && e.alive);
@@ -2770,7 +2927,7 @@
     combatGroup.visible = false;
     scene.fog.near = 18;
     scene.fog.far = 55;
-    const sky = locale === 'root-cellar' ? 0x1a1410 : locale !== 'field' ? 0x3a342c : onCoast ? 0x6e7e90 : 0x87b5d9;
+    const sky = locale === 'root-cellar' ? 0x1a1410 : locale === 'harbor-vault' ? 0x1a222c : locale !== 'field' ? 0x3a342c : onCoast ? 0x6e7e90 : 0x87b5d9;
     scene.fog.color.set(sky);
     renderer.setClearColor(sky);
     combatEnemyMeshes.forEach((m) => combatGroup.remove(m));
@@ -3258,6 +3415,7 @@
         region: regionId,
         mergeWord: mergeWord,
         duelWord: duelWord,
+        kestrelWord: kestrelWord,
         pos: { x: playerMesh.position.x, z: playerMesh.position.z },
         pools: pools.map((p) => ({
           id: p.id,
@@ -3288,6 +3446,7 @@
     regionId = data.region === 'stormreach' ? 'stormreach' : 'verdant-isle';
     mergeWord = data.mergeWord === 'plasma' || data.mergeWord === 'steam' ? data.mergeWord : null;
     duelWord = data.duelWord === 'press' || data.duelWord === 'hold' ? data.duelWord : null;
+    kestrelWord = data.kestrelWord === 'ask' || data.kestrelWord === 'leave' ? data.kestrelWord : null;
     shardSeq = shards.reduce((max, shard) => {
       const n = parseInt(String(shard.uid || '').replace(/\D/g, ''), 10) || 0;
       return Math.max(max, n);
@@ -3559,6 +3718,25 @@
     saveGame();
   }
 
+  function noteLedger(id) {
+    seenBeats['vault-ledger'] = true;
+    if (id === 'sign' && !seals.some((seal) => seal.name === 'Witness Line')) {
+      seals.push({
+        name: 'Witness Line',
+        desc: 'Not a licence. Lira’s name on the harbor vault’s short count. The bottles did not move. A clerk will remember the signature.',
+      });
+    }
+    refreshRumor();
+    saveGame();
+  }
+
+  function noteKestrelAsk(id) {
+    kestrelWord = id === 'ask' ? 'ask' : 'leave';
+    seenBeats['kestrel-ask'] = true;
+    refreshRumor();
+    saveGame();
+  }
+
   function noteDuel(id) {
     duelWord = id === 'press' ? 'press' : 'hold';
     seenBeats['vesper-duel'] = true;
@@ -3663,6 +3841,9 @@
   EW.noteDuel = noteDuel;
   EW.coastFed = coastFed;
   EW.seenVault = function () { return !!seenBeats['vault-face']; };
+  EW.noteLedger = noteLedger;
+  EW.seenLedger = function () { return !!seenBeats['vault-ledger']; };
+  EW.noteKestrelAsk = noteKestrelAsk;
   EW.revealCoastVesper = function () {
     if (coastVesper) coastVesper.visible = true;
   };
