@@ -7485,6 +7485,7 @@
     dialogueOnDone = null;
     dialogueOnPick = null;
     saveGame();
+    updateHUD();
     if (typeof done === 'function') done();
   }
 
