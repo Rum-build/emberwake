@@ -45,6 +45,26 @@
     return true;
   });
 
+  Emberwake.registerScene('coast-notice', function () {
+    const margin = Emberwake.hasMargin && Emberwake.hasMargin();
+    Emberwake.present({
+      lines: [
+        {
+          where: 'Stormreach shale',
+          speaker: 'A posted notice',
+          text: margin
+            ? 'Mouths are numbered. Weather is not. A margin already in the pack names the furrow they filed as weather.'
+            : 'Mouths are numbered. Weather is not. The harbor does not keep a page for a grey field.',
+        },
+        { speaker: 'Lira', text: 'The door is still the count. This board is not a key.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteNotice) Emberwake.noteNotice();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('vault-porter', function () {
     Emberwake.present({
       lines: [

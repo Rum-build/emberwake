@@ -169,6 +169,11 @@
   let coverReady = false;
   let assistUsed = {};
   let motes = [];
+  let hoods = [];
+  let phoneMode = false;
+  let nearChest = null;
+  let nearNotice = null;
+  let nearCord = null;
   let bedWanted = true;
   let motionWanted = true;
   let combatPace = 'steady';
@@ -570,6 +575,7 @@
 
   function initThree() {
     const phone = phoneGpu();
+    phoneMode = phone;
     renderer = new THREE.WebGLRenderer({
       canvas, antialias: !phone, alpha: false, powerPreference: 'high-performance',
     });
@@ -801,6 +807,8 @@
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
     overworldGroup.add(ground);
+    overworldGroup.add(makeWaysideChest(-2.2, 3.6));
+    overworldGroup.add(makeSaltCord(3.2, -8));
     overworldGroup.add(makeSky(0x6ea0c8, 0xf3e2c0));
 
     const grassMat = new THREE.MeshLambertMaterial({ color: 0x3d8b3d });
@@ -2855,6 +2863,51 @@
     };
   }
 
+  function nearestChest() {
+    if (!playerMesh || locale !== 'field' || regionId !== 'verdant-isle' || skyPass) return null;
+    if (Math.hypot(-2.2 - playerMesh.position.x, 3.6 - playerMesh.position.z) > 1.15) return null;
+    if (seenBeats['wayside-chest']) {
+      return {
+        title: 'Wayside chest',
+        hint: 'It is empty. One tonic already left it. Press E. The kiln is still the road.',
+      };
+    }
+    return {
+      title: 'Wayside chest',
+      hint: 'Off the path. No seal. Press E. It is not a pool and not a door.',
+    };
+  }
+
+  function nearestNotice() {
+    if (!playerMesh || locale !== 'field' || regionId !== 'stormreach' || skyPass) return null;
+    if (Math.hypot(-3.15 - playerMesh.position.x, 4.55 - playerMesh.position.z) > 1.15) return null;
+    if (seenBeats['coast-notice']) {
+      return {
+        title: 'Posted notice',
+        hint: 'It was already read. The vault door did not change. Press E to hear it again.',
+      };
+    }
+    return {
+      title: 'Posted notice',
+      hint: 'A board on the shale. Not the porter and not the door. Press E.',
+    };
+  }
+
+  function nearestCord() {
+    if (!playerMesh || locale !== 'field' || regionId !== 'verdant-isle' || skyPass) return null;
+    if (Math.hypot(3.2 - playerMesh.position.x, -8 - playerMesh.position.z) > 1.05) return null;
+    if (seenBeats['salt-cord']) {
+      return {
+        title: 'Salt cord',
+        hint: 'The coil is gone. The cord is in the pack. Press E to hear it again. The road did not change.',
+      };
+    }
+    return {
+      title: 'A waxed cord',
+      hint: 'In the grass, north of the ember. Press E. It is not a pool and not a licence.',
+    };
+  }
+
   function nearestPorter() {
     if (!playerMesh || locale !== 'field' || regionId !== 'stormreach' || skyPass) return null;
     if (Math.hypot(2.45 - playerMesh.position.x, 2.55 - playerMesh.position.z) > 1.45) return null;
@@ -3371,13 +3424,14 @@
     g.add(vaultLamp);
     g.userData.boltMat = boltMat;
     g.userData.storm = storm;
+    g.add(makeCoastNotice(-3.15, 4.55));
     scene.add(g);
     coastGroup = g;
   }
 
   function makeSilhouette(x, z) {
     const g = new THREE.Group();
-    const fig = makeCharacter(0x100c10, 1.35);
+    const fig = makeCharacter(0x100c10, 1.42);
     fig.traverse((c) => {
       if (!c.isMesh || !c.material) return;
       if (c.userData && c.userData.rim) {
@@ -3391,17 +3445,34 @@
       c.material.opacity = 0.94;
       if (c.material.emissive) c.material.emissive.setHex(0x14080c);
     });
+    const hood = new THREE.Mesh(
+      new THREE.ConeGeometry(0.38, 0.5, 6),
+      new THREE.MeshLambertMaterial({ color: 0x0c080c })
+    );
+    hood.position.y = 1.62;
+    fig.add(hood);
     g.add(fig);
-    const rim = new THREE.Mesh(
-      new THREE.PlaneGeometry(1.05, 1.85),
+    const veil = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.72, 0.95),
       new THREE.MeshBasicMaterial({
-        color: 0x3a2428, transparent: true, opacity: 0.45, side: THREE.DoubleSide, depthWrite: false,
+        color: 0x140c10, transparent: true, opacity: 0.62, side: THREE.DoubleSide, depthWrite: false, fog: false,
       })
     );
-    rim.position.set(0, 0.95, -0.12);
-    g.add(rim);
+    veil.position.set(0, 0.85, 0.22);
+    g.add(veil);
+    const ribbon = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.1, 1.05),
+      new THREE.MeshBasicMaterial({
+        color: 0xc45a28, transparent: true, opacity: 0.82, side: THREE.DoubleSide, fog: false,
+      })
+    );
+    ribbon.position.set(0.32, 0.72, 0.08);
+    g.add(ribbon);
+    g.userData.ribbon = ribbon;
+    g.userData.homeY = 0;
     g.visible = false;
     g.position.set(x, 0, z);
+    hoods.push(g);
     return g;
   }
 
@@ -3845,8 +3916,81 @@
     return pts;
   }
 
+  function makeWaysideChest(x, z) {
+    const g = new THREE.Group();
+    const wood = new THREE.MeshLambertMaterial({ color: 0x6a4a32 });
+    const box = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.38, 0.46), wood);
+    box.position.y = 0.22;
+    g.add(box);
+    const lid = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.1, 0.52), new THREE.MeshLambertMaterial({ color: 0x8a6240 }));
+    lid.position.y = 0.44;
+    g.add(lid);
+    const band = new THREE.Mesh(
+      new THREE.BoxGeometry(0.78, 0.06, 0.08),
+      new THREE.MeshBasicMaterial({ color: 0xc4a060, fog: false })
+    );
+    band.position.set(0, 0.28, 0.24);
+    g.add(band);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeSaltCord(x, z) {
+    const g = new THREE.Group();
+    const coil = new THREE.Mesh(
+      new THREE.TorusGeometry(0.22, 0.06, 6, 12),
+      new THREE.MeshLambertMaterial({ color: 0xd8d0c4 })
+    );
+    coil.rotation.x = Math.PI / 2;
+    coil.position.y = 0.08;
+    g.add(coil);
+    const wax = new THREE.Mesh(
+      new THREE.SphereGeometry(0.08, 6, 5),
+      new THREE.MeshBasicMaterial({ color: 0xe0c878, fog: false })
+    );
+    wax.position.set(0.12, 0.1, 0.08);
+    g.add(wax);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeCoastNotice(x, z) {
+    const g = new THREE.Group();
+    const post = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.06, 0.08, 1.15, 5),
+      new THREE.MeshLambertMaterial({ color: 0x4a4038 })
+    );
+    post.position.y = 0.55;
+    g.add(post);
+    const board = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.7, 0.48),
+      new THREE.MeshBasicMaterial({ color: 0xf0e2c4, fog: false, side: THREE.DoubleSide })
+    );
+    board.position.set(0, 1.05, 0);
+    g.add(board);
+    const nail = new THREE.Mesh(
+      new THREE.SphereGeometry(0.03, 5, 4),
+      new THREE.MeshBasicMaterial({ color: 0x2a2418, fog: false })
+    );
+    nail.position.set(0, 1.22, 0.02);
+    g.add(nail);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function bobHoods() {
+    if (!motionWanted || !hoods.length) return;
+    const t = performance.now() * 0.001;
+    hoods.forEach((g, i) => {
+      if (!g.visible) return;
+      g.position.y = Math.sin(t * 1.25 + i * 0.7) * 0.055;
+      if (g.userData.ribbon) g.userData.ribbon.rotation.z = Math.sin(t * 1.5 + i) * 0.28;
+    });
+  }
+
   function driftMotes() {
     if (!motes.length || !motionWanted) return;
+    if (phoneMode && ((Math.floor(performance.now() / 40) % 2) === 0)) return;
     const t = performance.now() * 0.001;
     motes.forEach((pts) => {
       let node = pts;
@@ -3998,6 +4142,22 @@
       );
       board.position.set(0, 0.95, 0.32);
       figure.add(board);
+      return figure;
+    }
+    if (enemy.shape === 'cowl') {
+      const figure = makeCharacter(enemy.color, 1.02);
+      const hood = new THREE.Mesh(
+        new THREE.ConeGeometry(0.34, 0.42, 6),
+        new THREE.MeshLambertMaterial({ color: 0x140c10 })
+      );
+      hood.position.y = 1.32;
+      figure.add(hood);
+      const ash = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.08, 0.7),
+        new THREE.MeshBasicMaterial({ color: 0xc45a28, fog: false, side: THREE.DoubleSide })
+      );
+      ash.position.set(0.28, 0.7, 0.12);
+      figure.add(ash);
       return figure;
     }
     if (enemy.shape === 'echo') {
@@ -4467,7 +4627,10 @@
     const showMargin = idle && nearMargin && !atExit && !showStair;
     const showChalk = idle && nearChalk && !atExit && !showGallery && !showKestrel;
     const showCamp = idle && nearCamp && !showAbsorb && !atExit && !showTalk && !showMark;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp);
+    const showChest = idle && nearChest && !showAbsorb && !showDoor && !showGate && !showReturn;
+    const showNotice = idle && nearNotice && !showAbsorb && !showDoor && !showGate && !showReturn && !showPorter && !showChest;
+    const showCord = idle && nearCord && !showAbsorb && !showDoor && !showChest;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showNotice && !showCord);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
@@ -4481,13 +4644,14 @@
     else if (showPerch || showKestrel) absorbBtn.textContent = 'Speak';
     else if (showLook || showPipe || showThroat || showStone || showMark || showNave || showGallery) absorbBtn.textContent = 'Enter';
     else if (showTalk) absorbBtn.textContent = 'Speak';
-    else if (showLetter || showMargin || showChalk || showCamp) absorbBtn.textContent = 'Look';
+    else if (showChest) absorbBtn.textContent = seenBeats['wayside-chest'] ? 'Look' : 'Open';
+    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord) absorbBtn.textContent = 'Look';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
   }
 
   function updatePrompt() {
     const atExit = atInteriorExit();
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !nearLetter && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !nearLetter && !nearChest && !nearNotice && !nearCord && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -4615,6 +4779,21 @@
       $('#interact-detail').textContent = nearCamp.hint;
       return;
     }
+    if (nearChest && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
+      $('#interact-title').textContent = nearChest.title;
+      $('#interact-detail').textContent = nearChest.hint;
+      return;
+    }
+    if (nearNotice) {
+      $('#interact-title').textContent = nearNotice.title;
+      $('#interact-detail').textContent = nearNotice.hint;
+      return;
+    }
+    if (nearCord && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
+      $('#interact-title').textContent = nearCord.title;
+      $('#interact-detail').textContent = nearCord.hint;
+      return;
+    }
     if (nearCrack) {
       $('#interact-title').textContent = nearCrack.title;
       $('#interact-detail').textContent = nearCrack.hint;
@@ -4681,6 +4860,9 @@
     if (roadNote) {
       const waiting = [];
       if (seenBeats['furrow-letter']) waiting.push('A cousin’s letter says Vesper walked the Concord to the well. The furrow was the price. The road did not change.');
+      if (seenBeats['wayside-chest']) waiting.push('The wayside chest gave one tonic. It is empty. The kiln is still the road.');
+      if (seenBeats['salt-cord']) waiting.push('A salt cord is in the pack. The vault does not count rope. The road did not change.');
+      if (seenBeats['coast-notice']) waiting.push('A notice on the shale says mouths are numbered. It is not the vault door.');
       if (seenBeats['gallery-margin']) {
         waiting.push(seals.some((seal) => seal.name === 'Cousin’s Margin')
           ? 'The gallery’s filed copy matches the cousin’s letter. The stair did not change.'
@@ -5111,6 +5293,18 @@
     }
     if (nearPorter) {
       talkPorter();
+      return;
+    }
+    if (nearNotice) {
+      talkNotice();
+      return;
+    }
+    if (nearChest) {
+      talkChest();
+      return;
+    }
+    if (nearCord) {
+      talkCord();
       return;
     }
     if (nearGate) {
@@ -6207,7 +6401,7 @@
 
   function updateClaimFight() {
     if (locale !== 'remnant-claim' || !playerMesh || dialogueOpen || encounterLocked || skyPass) return;
-    if (seenBeats.claimFight) return;
+    if (seenBeats.claimFight || claimWord) return;
     if (playerMesh.position.z > 2.4 || Math.abs(playerMesh.position.x) > 3.2) {
       claimLatch = false;
       return;
@@ -6658,6 +6852,7 @@
   }
 
   function driftNave(dt) {
+    if (!motionWanted) return;
     const t = performance.now() * 0.001;
     if (naveGroup && naveGroup.userData.banners) {
       naveGroup.userData.banners.forEach((banner, i) => {
@@ -6798,6 +6993,82 @@
       const played = fn();
       if (played !== false && dialogueOpen) pendingBeat = 'furrow-letter';
     }
+  }
+
+  function hasMargin() {
+    return seals.some((seal) => seal.name === 'Cousin’s Margin');
+  }
+
+  function talkChest() {
+    if (locale !== 'field' || regionId !== 'verdant-isle' || dialogueOpen) return;
+    if (seenBeats['wayside-chest']) {
+      showToast('The wayside chest stays empty. The tonic is already in the pack.');
+      return;
+    }
+    const fn = EW.scenes['wayside-chest'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'wayside-chest';
+    }
+  }
+
+  function noteChest() {
+    seenBeats['wayside-chest'] = true;
+    const stack = items.find((row) => row.id === 'tonic');
+    if (stack) stack.count += 1;
+    else items.push({ id: 'tonic', count: 1 });
+    showToast('One verdant tonic. The chest is empty. The kiln is still the road.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function talkCord() {
+    if (locale !== 'field' || regionId !== 'verdant-isle' || dialogueOpen) return;
+    if (seenBeats['salt-cord']) {
+      showToast('The salt cord is in the pack. The vault does not count rope. The road did not change.');
+      return;
+    }
+    const fn = EW.scenes['salt-cord'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'salt-cord';
+    }
+  }
+
+  function noteCord() {
+    seenBeats['salt-cord'] = true;
+    if (!seals.some((seal) => seal.name === 'Salt Cord')) {
+      seals.push({
+        name: 'Salt Cord',
+        desc: 'A waxed cord from the isle grass. The coast ties rope like this. The vault does not count rope. It does not open a door.',
+      });
+    }
+    showToast('The cord is in the pack. The scar is still the other way.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function talkNotice() {
+    if (locale !== 'field' || regionId !== 'stormreach' || dialogueOpen) return;
+    if (seenBeats['coast-notice']) {
+      showToast('The notice stays posted. Mouths are numbered. The door did not change.');
+      return;
+    }
+    const fn = EW.scenes['coast-notice'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'coast-notice';
+    }
+  }
+
+  function noteNotice() {
+    seenBeats['coast-notice'] = true;
+    showToast('The board is read. The vault door is still the count.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
   }
 
   function noteLetter() {
@@ -7008,6 +7279,9 @@
       nearMargin = null;
       nearChalk = null;
       nearCamp = null;
+      nearChest = null;
+      nearNotice = null;
+      nearCord = null;
       joy.active = false;
       joy.dx = 0;
       joy.dy = 0;
@@ -7105,13 +7379,19 @@
         nearMargin = nearestMargin();
         nearChalk = nearestChalk();
         nearCamp = nearestCamp();
+        nearChest = nearestChest();
+        nearNotice = nearestNotice();
+        nearCord = nearestCord();
         const safe = nearPool && !nearPool.absorbed;
         const cooled = performance.now() < suppressEncountersUntil;
         const onField = locale === 'field' && (regionId === 'verdant-isle' || regionId === 'stormreach');
         const onAsh = locale === 'ashen-marrow';
-        if ((onField || onAsh) && !safe && !nearPipe && !nearThroat && !nearStone && !cooled && stepsSinceEncounter > ENCOUNTER_STEPS) {
+        const onApproach = (locale === 'ash-nave' || locale === 'first-breach' || (locale === 'remnant-claim' && !claimWord))
+          && !nearNave && !nearGallery && !nearBar && !nearEnd && !nearPerch && !nearKestrel;
+        const stepsNeed = onApproach ? ENCOUNTER_STEPS * 1.8 : ENCOUNTER_STEPS;
+        if ((onField || onAsh || onApproach) && !safe && !nearPipe && !nearThroat && !nearStone && !cooled && stepsSinceEncounter > stepsNeed) {
           const pressure = rotPressure();
-          const chancePerSec = onAsh ? 0.18 + pressure * 0.35 : 0.32 + pressure * 0.7;
+          const chancePerSec = onApproach ? 0.1 : onAsh ? 0.18 + pressure * 0.35 : 0.32 + pressure * 0.7;
           if (Math.random() < chancePerSec * dt) triggerEncounter();
         }
       } else {
@@ -7140,6 +7420,9 @@
         nearMargin = nearestMargin();
         nearChalk = nearestChalk();
         nearCamp = nearestCamp();
+        nearChest = nearestChest();
+        nearNotice = nearestNotice();
+        nearCord = nearestCord();
         poseHost('idle');
       }
 
@@ -7197,9 +7480,13 @@
       nearMargin = nearestMargin();
       nearChalk = nearestChalk();
       nearCamp = nearestCamp();
+        nearChest = nearestChest();
+        nearNotice = nearestNotice();
+        nearCord = nearestCord();
       poseHost('still');
     }
 
+    bobHoods();
     driftNave(dt);
     if (skyPass) updateSkyPass(dt);
     else {
@@ -7219,6 +7506,11 @@
     coughPuff.visible = sick;
     if (!sick) {
       coughPuff.material.opacity = 0;
+      return;
+    }
+    if (!motionWanted) {
+      coughPuff.material.opacity = 0.7;
+      coughPuff.scale.setScalar(1);
       return;
     }
     const pulse = Math.sin(performance.now() * 0.007) * 0.5 + 0.5;
@@ -7259,6 +7551,7 @@
   }
 
   function rollEncounter() {
+    if (locale === 'ash-nave' || locale === 'first-breach' || locale === 'remnant-claim') return [spawnEnemy('penitent')];
     if (locale === 'ashen-marrow') return rollMarrowEncounter();
     if (regionId === 'stormreach') return rollCoastEncounter();
     const pressure = rotPressure();
@@ -7330,9 +7623,15 @@
     return e;
   }
 
+  function clearAsh() {
+    if (!party) return;
+    party.forEach((member) => { if (member) member.ash = 0; });
+  }
+
   function startCombat() {
     combatEpoch++;
     combatsFought += 1;
+    clearAsh();
     coverReady = false;
     assistUsed = {};
     gameState = State.COMBAT;
@@ -7389,7 +7688,9 @@
     buildTurnQueue();
     updateCombatUI();
     showMenus('main');
-    const teach = enemies.some((e) => e.id === 'celebrant')
+    const teach = enemies.some((e) => e.id === 'penitent')
+      ? 'An ash penitent on the approach. It kneels once. Ash sits in the teeth and coughs on the next turn. It is not a scar.'
+      : enemies.some((e) => e.id === 'celebrant')
       ? 'A Concord last rite. The ward drinks a knife. A merge on the list tears it. A shoulder still stands in front.'
       : enemies.some((e) => e.id === 'captain')
       ? 'A Concord last stand. The captain’s licence hits once, hard, unless a shoulder is already in front. Nima’s steady keeps the line.'
@@ -7446,6 +7747,18 @@
     const t = currentTurn();
     updateCombatUI();
     if (t.type === 'party') {
+      const coughing = party[t.index];
+      if (coughing && coughing.ash) {
+        const bite = 6;
+        coughing.ash = 0;
+        coughing.hp = Math.max(0, coughing.hp - bite);
+        showLog('Ash in the teeth. ' + coughing.name + ' loses ' + bite + '.');
+        updateCombatUI();
+        if (coughing.hp <= 0) {
+          later(() => { if (!checkCombatEnd()) advanceTurn(); }, 420);
+          return;
+        }
+      }
       if (partyAssist(t.index)) return;
       combatBusy = false;
       inputEnabled = true;
@@ -7933,6 +8246,16 @@
       later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
       return;
     }
+    if (enemy.id === 'penitent' && !enemy.knelt) {
+      enemy.knelt = true;
+      const livingNow = party.map((p, i) => ({ p, i })).filter((x) => x.p.hp > 0);
+      const host = livingNow.find((x) => x.p.id === 'lira') || livingNow[0];
+      if (host && !host.p.ash) host.p.ash = 1;
+      showLog('The penitent kneels. Ash sits in ' + (host ? host.p.name : 'the line') + '’s teeth.');
+      updateCombatUI();
+      later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
+      return;
+    }
     if (enemy.id === 'clerk' && !enemy.stamped) {
       enemy.stamped = true;
       enemy.stamp = true;
@@ -8106,6 +8429,7 @@
 
   function endCombatReturn() {
     combatEpoch++;
+    clearAsh();
     combatUI.classList.add('hidden');
     victoryOverlay.classList.add('hidden');
     gameoverScreen.classList.add('hidden');
@@ -8173,30 +8497,48 @@
   function updateCombatUI() {
     const turn = currentTurn();
     const active = turn && turn.type === 'party' ? turn.index : -1;
+    function statusMarkup(bits) {
+      if (!bits.length) return '';
+      return '<div class="status-row">' + bits.map((bit) => `<span class="status-icon status-${bit.kind}">${esc(bit.label)}</span>`).join('') + '</div>';
+    }
     enemyPanel.innerHTML = enemies.map((e) => {
       const pct = Math.max(0, Math.min(100, (e.hp / e.maxHp) * 100));
-      const burn = e.burn ? ' · magma ' + e.burn : '';
-      return `<div class="enemy-card ${e.alive ? '' : 'dead'}"><div class="name">${esc(e.name)}${burn}</div><div class="bar-wrap"><div class="bar-hp" style="width:${pct}%"></div></div></div>`;
+      const bits = [];
+      if (e.burn) bits.push({ kind: 'burn', label: 'Burn ' + e.burn });
+      if (e.stamp) bits.push({ kind: 'stamp', label: 'Stamp' });
+      if (e.air) bits.push({ kind: 'air', label: 'Air' });
+      if (e.licence) bits.push({ kind: 'stamp', label: 'Licence' });
+      if (e.page) bits.push({ kind: 'stamp', label: 'Page' });
+      if (e.rite) bits.push({ kind: 'burn', label: 'Rite' });
+      if (e.knelt) bits.push({ kind: 'ash', label: 'Knelt' });
+      return `<div class="enemy-card ${e.alive ? '' : 'dead'}"><div class="name">${esc(e.name)}</div>${statusMarkup(bits)}<div class="bar-wrap"><div class="bar-hp" style="width:${pct}%"></div></div></div>`;
     }).join('');
     partyPanel.innerHTML = party.map((p, i) => {
       const cap = maxHp(p);
       const hpPct = Math.max(0, Math.min(100, (p.hp / cap) * 100));
       const mpPct = p.maxMp ? Math.max(0, Math.min(100, (p.mp / p.maxMp) * 100)) : 0;
+      const bits = [];
+      if (p.ash) bits.push({ kind: 'ash', label: 'Ash' });
+      if (p.id === 'lira' && scarDebt > 0) bits.push({ kind: 'stamp', label: 'Scar ' + scarDebt });
       return `<div class="party-card ${p.hp <= 0 ? 'dead' : ''} ${i === active ? 'active' : ''}">
         <div class="name">${esc(p.name)}</div>
         <div class="role">${esc(p.role)}</div>
+        ${statusMarkup(bits)}
         <div class="bar-row"><span class="label">HP</span><div class="bar-wrap"><div class="bar-hp" style="width:${hpPct}%"></div></div><span class="nums">${p.hp}/${cap}</span></div>
         <div class="bar-row"><span class="label">MP</span><div class="bar-wrap"><div class="bar-mp" style="width:${mpPct}%"></div></div><span class="nums">${p.mp}/${p.maxMp}</span></div>
       </div>`;
     }).join('');
     const order = $('#turn-order');
     if (order) {
-      order.innerHTML = turnQueue.map((t, i) => {
+      const chips = turnQueue.map((t, i) => {
         const name = t.type === 'party' ? party[t.index].name : enemies[t.index].name;
         const dead = t.type === 'party' ? party[t.index].hp <= 0 : !enemies[t.index].alive;
         if (dead) return '';
-        return `<span class="turn-chip${i === combatTurnIndex ? ' now' : ''}">${esc(name)}</span>`;
+        const side = t.type === 'party' ? ' ally' : ' foe';
+        const now = i === combatTurnIndex;
+        return `<span class="turn-chip${side}${now ? ' now' : ''}">${now ? 'Now · ' : ''}${esc(name)}</span>`;
       }).join('');
+      order.innerHTML = '<span class="turn-label">Order</span>' + chips;
     }
     const held = $('#combat-held');
     if (held && spark) {
@@ -8242,13 +8584,22 @@
     }, 340);
   }
 
+  function bobParty(on) {
+    combatPartyMeshes.forEach((mesh, i) => {
+      if (!mesh) return;
+      mesh.position.y = on && mesh.visible ? Math.sin(performance.now() * 0.0022 + i * 0.8) * 0.045 : 0;
+    });
+  }
+
   function updateCombatCamera(dt) {
     if (!motionWanted) {
       combatKick = 0;
+      bobParty(false);
       camera.position.set(0.4, 4.8, 8.4);
       camera.lookAt(0.2, 1.2, -0.4);
       return;
     }
+    bobParty(true);
     combatCameraAngle += dt * 0.12;
     combatKick = Math.max(0, combatKick - dt * 1.6);
     const kick = combatKick * 0.42;
@@ -9930,6 +10281,10 @@
   EW.seenLedger = function () { return !!seenBeats['vault-ledger']; };
   EW.noteKestrelAsk = noteKestrelAsk;
   EW.noteLetter = noteLetter;
+  EW.hasMargin = hasMargin;
+  EW.noteChest = noteChest;
+  EW.noteCord = noteCord;
+  EW.noteNotice = noteNotice;
   EW.noteMargin = noteMargin;
   EW.notePressure = notePressure;
   EW.noteCamp = noteCamp;

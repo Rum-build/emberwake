@@ -987,22 +987,59 @@ body.still-motion .encounter-flash.active {
   flex-wrap: wrap;
   gap: 4px;
   justify-content: center;
+  align-items: center;
   pointer-events: none;
+  max-width: min(96vw, 720px);
+}
+
+.turn-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #ffe0a0;
+  padding-right: 4px;
 }
 
 .turn-chip {
-  background: rgba(8, 10, 18, 0.72);
-  border: 1px solid rgba(255, 220, 170, 0.2);
-  border-radius: 999px;
+  background: rgba(8, 10, 18, 0.82);
+  border: 1px solid rgba(255, 220, 170, 0.28);
+  border-radius: 2px;
   padding: 3px 8px;
   font-size: 0.72rem;
   color: #e6dcc8;
 }
 
+.turn-chip.ally { border-color: rgba(126, 176, 208, 0.7); }
+.turn-chip.foe { border-color: rgba(176, 92, 72, 0.75); }
+
 .turn-chip.now {
   border-color: #ffe0a0;
-  color: #ffe0a0;
+  color: #ffe7c2;
+  background: rgba(48, 32, 14, 0.94);
+  box-shadow: inset 0 0 0 1px rgba(255, 224, 160, 0.35);
 }
+
+.status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  justify-content: center;
+  margin: 2px 0 4px;
+}
+
+.status-icon {
+  font-size: 0.62rem;
+  letter-spacing: 0.03em;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  padding: 0 5px;
+  line-height: 1.35;
+}
+
+.status-burn { color: #ffb060; }
+.status-stamp { color: #e0cc8a; }
+.status-ash { color: #d2c4b4; }
+.status-air { color: #d5e4ee; }
 
 .enemy-panel {
   display: flex;
@@ -1068,7 +1105,8 @@ body.still-motion .encounter-flash.active {
 
 .party-card.active {
   border-color: #ffe0a0;
-  box-shadow: 0 0 12px rgba(255, 210, 140, 0.28);
+  border-left: 3px solid #ffe0a0;
+  box-shadow: inset 0 0 0 1px rgba(255, 224, 160, 0.28), 0 0 12px rgba(255, 210, 140, 0.22);
 }
 
 .party-card.dead { opacity: 0.4; }
@@ -1102,12 +1140,13 @@ body.still-motion .encounter-flash.active {
 
 .menu-panel {
   background: rgba(12, 10, 9, 0.94);
-  border: 1px solid rgba(212, 176, 112, 0.48);
+  border: 2px solid rgba(212, 176, 112, 0.78);
   border-radius: 2px;
   padding: 8px;
   width: 280px;
   flex: 0 0 280px;
   min-height: 0;
+  box-shadow: inset 0 0 0 1px rgba(255, 224, 160, 0.28), 0 10px 28px rgba(0, 0, 0, 0.35);
 }
 
 .menu-grid {
@@ -1199,8 +1238,8 @@ body.still-motion .encounter-flash.active {
   width: min(640px, calc(100% - 48px));
   z-index: 90;
   background: rgba(12, 10, 9, 0.96);
-  border: 1px solid rgba(212, 176, 112, 0.55);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  border: 2px solid rgba(212, 176, 112, 0.78);
+  box-shadow: inset 0 0 0 1px rgba(255, 224, 160, 0.22), 0 16px 40px rgba(0, 0, 0, 0.45);
   padding: 14px 16px 12px;
   pointer-events: auto;
 }
