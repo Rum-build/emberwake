@@ -551,8 +551,8 @@
   function buildOverworld() {
     const groundGeo = new THREE.PlaneGeometry(WORLD_SIZE * 1.5, WORLD_SIZE * 1.5, 32, 32);
     raisePlane(groundGeo, (x, y) => (
-      Math.sin(x * 0.3) * Math.cos(y * 0.25) * 0.22
-      + Math.sin(x * 0.82 + 1.4) * Math.cos(y * 0.66) * 0.06
+      Math.sin(x * 0.3) * Math.cos(y * 0.25) * 0.34
+      + Math.sin(x * 0.82 + 1.4) * Math.cos(y * 0.66) * 0.09
     ));
     const low = new THREE.Color(0x24562c);
     const high = new THREE.Color(0x9cb85a);
@@ -684,8 +684,8 @@
     playerMesh = makeCharacter(0xc47a4a, 0.95);
     playerMesh.position.set(spawnPin.x, 0, spawnPin.z);
     coughPuff = new THREE.Mesh(
-      new THREE.SphereGeometry(0.16, 7, 6),
-      new THREE.MeshBasicMaterial({ color: 0xd9d2c8, transparent: true, opacity: 0, depthWrite: false })
+      new THREE.SphereGeometry(0.22, 8, 6),
+      new THREE.MeshBasicMaterial({ color: 0xc5d0bc, transparent: true, opacity: 0, depthWrite: false })
     );
     coughPuff.position.set(0.08, 1.16, 0.32);
     coughPuff.visible = false;
@@ -926,8 +926,8 @@
     g.add(new THREE.HemisphereLight(0x8a4030, 0x1a100c, 0.35));
     const ashGeo = new THREE.PlaneGeometry(36, 28, 22, 16);
     raisePlane(ashGeo, (x, y) => (
-      Math.sin(x * 0.38) * Math.cos(y * 0.33) * 0.16
-      + Math.sin(x * 1.15 + y * 0.4) * 0.045
+      Math.sin(x * 0.38) * Math.cos(y * 0.33) * 0.26
+      + Math.sin(x * 1.15 + y * 0.4) * 0.07
     ));
     const ashDark = new THREE.Color(0x241410);
     const ashRed = new THREE.Color(0x6a3424);
@@ -1334,8 +1334,8 @@
 
     const shelfGeo = new THREE.PlaneGeometry(24, 16, 18, 12);
     raisePlane(shelfGeo, (x, y) => (
-      Math.sin(x * 0.42) * Math.cos(y * 0.36) * 0.22
-      + Math.sin(x * 1.25 + y * 0.5) * 0.05
+      Math.sin(x * 0.42) * Math.cos(y * 0.36) * 0.32
+      + Math.sin(x * 1.25 + y * 0.5) * 0.08
     ));
     const stone = new THREE.Color(0x6a6258);
     const wetStone = new THREE.Color(0x314048);
@@ -2825,8 +2825,8 @@
       return;
     }
     const pulse = Math.sin(performance.now() * 0.007) * 0.5 + 0.5;
-    coughPuff.material.opacity = 0.14 + pulse * 0.62;
-    coughPuff.scale.setScalar(0.62 + pulse * 0.95);
+    coughPuff.material.opacity = 0.55 + pulse * 0.35;
+    coughPuff.scale.setScalar(0.85 + pulse * 0.7);
   }
 
   function triggerEncounter() {
