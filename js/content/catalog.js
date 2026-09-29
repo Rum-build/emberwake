@@ -53,13 +53,19 @@
     echo: { name: "Vesper's Echo", color: 0x2a2030, maxHp: 80, atk: 14, def: 5, xp: 36, gold: 24, shape: 'echo' },
   };
 
-  // Phase 1 opens with the three who already share the road.
-  // Act I's next build meets Nima and Torren in scenes; Kestrel stays a recruit record.
-  content.openingParty = [
-    { id: 'lira', name: 'Lira', role: 'Host', maxHp: 100, hp: 100, maxMp: 30, mp: 30, atk: 10, def: 7, magAtk: 8, color: 0xc47a4a },
-    { id: 'torren', name: 'Torren', role: 'Anchor · ex-Concord', maxHp: 128, hp: 128, maxMp: 18, mp: 18, atk: 13, def: 11, magAtk: 4, color: 0x5c6b5a },
-    { id: 'nima', name: 'Nima', role: 'Heart · herbalist', maxHp: 82, hp: 82, maxMp: 64, mp: 64, atk: 7, def: 5, magAtk: 15, color: 0x6aa8a0 },
-  ];
+  content.roster = {
+    lira: { id: 'lira', name: 'Lira', role: 'Host', maxHp: 100, hp: 100, maxMp: 30, mp: 30, atk: 10, def: 7, magAtk: 8, color: 0xc47a4a },
+    torren: { id: 'torren', name: 'Torren', role: 'Anchor · ex-Concord', maxHp: 128, hp: 128, maxMp: 18, mp: 18, atk: 13, def: 11, magAtk: 4, color: 0x5c6b5a },
+    nima: { id: 'nima', name: 'Nima', role: 'Heart · herbalist', maxHp: 82, hp: 82, maxMp: 64, mp: 64, atk: 7, def: 5, magAtk: 15, color: 0x6aa8a0 },
+  };
+
+  // Act I opens with Lira alone. Nima joins in the leaf-village. Torren joins at the patrol.
+  content.openingParty = [content.roster.lira];
+
+  content.joinKits = {
+    nima: { weapon: 'herb-rod', armor: 'herb-shawl' },
+    torren: { weapon: 'ledger-cudgel', armor: 'seal-coat' },
+  };
 
   content.recruits = [
     {
@@ -67,7 +73,7 @@
       name: 'Kestrel',
       role: 'Edge · eagle-rider',
       joins: 'sky-routes',
-      note: 'Wind and the ranged path. Unlocks eagle routes. Not in the Phase 1 roster.',
+      note: 'Wind and the ranged path. Unlocks eagle routes. Not on the Act I road.',
     },
   ];
 })(window.Emberwake);

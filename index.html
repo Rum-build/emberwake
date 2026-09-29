@@ -17,9 +17,10 @@
       <h1 class="game-title">Emberwake</h1>
       <p class="subtitle">Power is immortal. You are the spark inside Lira.</p>
       <p class="tease">The Ashen Concord bottles magic and calls the quiet safety. Another spark, Vesper, drinks faster than you and leaves the rot behind as a receipt.</p>
+      <button id="btn-continue" class="btn btn-primary btn-xl hidden" type="button">Continue</button>
       <button id="btn-start" class="btn btn-primary btn-xl" type="button">Wake</button>
       <button id="btn-credits" class="btn btn-quiet" type="button">Credits</button>
-      <p class="hint">Play with the on-screen stick and buttons — mouse or touch, no keyboard needed. WASD, E, I, and Enter still work if you have a keyboard.<br />Drag the stick to walk. Absorb and Pack sit on the right. Click menus and scene choices.</p>
+      <p class="hint">Mouse or WASD to walk. Absorb or E drinks a pool and steps through a door. Pack or I opens the pack. Click or Enter advances a scene.<br />Continue picks up this browser’s save. On a phone the stick and the large buttons do the same work.</p>
     </div>
   </div>
 
@@ -94,7 +95,7 @@
     <div class="inv-header">
       <div>
         <h2 id="inv-heading">The pack</h2>
-        <p class="inv-sub">Lira carries it. Torren counts it. Nima knows which leaves are medicine. The spark’s pockets are a fiction.</p>
+        <p class="inv-sub">Lira carries it. Whoever walks with her counts it. The spark’s pockets are a fiction.</p>
       </div>
       <button id="btn-inv-close" class="btn btn-menu btn-back" type="button">Close</button>
     </div>
@@ -102,7 +103,7 @@
       <section class="inv-section">
         <h3>Party</h3>
         <div id="inv-party" class="party-strip"></div>
-        <p class="inv-note">Kestrel, the eagle-rider, is not with you. Sky routes stay a rumor with feathers.</p>
+        <p class="inv-note" id="inv-road-note">Nima is in the leaf-village until she chooses the road. Torren is still in a Concord coat. Kestrel is not on this isle.</p>
       </section>
       <section class="inv-section">
         <h3>Path</h3>

@@ -1,7 +1,7 @@
 /**
  * Verdant Isle — Act I field data.
  * Pools, landmarks, and field beats. Scenes live in act1-scenes.js.
- * Interiors stay null until a later build walks inside them.
+ * Village and root-cellar interiors are entered from their doors.
  */
 (function (Emberwake) {
   'use strict';
@@ -13,9 +13,9 @@
     name: 'Verdant Isle',
     landmarks: [
       { id: 'spawn', kind: 'spawn', x: 0, z: 0, clear: 3.2 },
-      { id: 'leaf-village', kind: 'village', x: -8, z: -10, clear: 4.2, interior: null },
+      { id: 'leaf-village', kind: 'village', x: -8, z: -10, clear: 4.2, interior: 'leaf-village' },
       { id: 'concord-banner', kind: 'banner', x: -6.2, z: -11.6, clear: 1.6 },
-      { id: 'root-cellar', kind: 'cellar', x: 10, z: 8, clear: 3.6, interior: null },
+      { id: 'root-cellar', kind: 'cellar', x: 10, z: 8, clear: 3.6, interior: 'root-cellar' },
       { id: 'sleeping-waystone', kind: 'waystone', x: 0, z: 18, clear: 3.4 },
       { id: 'vesper-ridge', kind: 'silhouette', x: 8, z: 20.5, clear: 2.6 },
     ],
@@ -71,16 +71,10 @@
     ],
     beats: [
       {
-        id: 'village',
-        scene: 'village-argument',
-        x: -8, z: -10, r: 4.3,
-        toast: 'The leaf-village keeps its doors half shut. They have heard the Ashen Concord bottles wells and calls the quiet safety.',
-      },
-      {
-        id: 'cellar',
-        scene: null,
-        x: 10, z: 8, r: 3.5,
-        toast: 'The root-cellar breathes old fire. Lira is not ready to go down. Pools still rot in the open air.',
+        id: 'scar',
+        scene: 'scar-witnesses',
+        x: 14.2, z: -5.5, r: 5.4,
+        toast: 'People are standing at Vesper’s scar. They are not here for the view.',
       },
       {
         id: 'patrol',

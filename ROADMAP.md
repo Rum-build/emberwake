@@ -19,7 +19,7 @@ The shell stays a no-build page: Three.js from the CDN, scripts in order, conten
 
 A beat with `scene: null` speaks its `toast`. When `scene` names a registered function, that function runs instead. Act I scenes are registered in `js/content/act1-scenes.js`.
 
-Landmarks carry `interior: null` until a build gives the village and the root-cellar a place to walk into.
+The leaf-village and the root-cellar landmarks set `interior` to a walkable room. Other landmarks still leave that field empty.
 
 ## Phase 1 — systems (in this branch)
 
@@ -41,14 +41,21 @@ Playable on the Verdant Isle field:
 - A sleeping waystone. Stormreach is named. The road does not open
 - Vesper’s silhouette on the ridge after the village, the patrol, and the first ember. No duel. The scar pool is still a different wound
 
+## Act I, continued (this same branch)
+
+- The leaf-village is a room. The argument happens inside. Nima joins there.
+- The root-cellar is a room with a shut door at the back. The dungeon under it is not open.
+- Torren is with the patrol until he refuses the seal, then he fights beside Lira.
+- Ilan and Maud stand at Vesper’s scar. Drinking it costs extra strain and their thanks. Leaving it locks the scar and puts rot-ash in the pack. The rot stays.
+- Continue on the title reads a browser save. Wake throws that save out.
+
 ## Still ahead on Act I
 
-From DESIGN.md, after this slice:
+From DESIGN.md, after these rooms:
 
-1. Village and root-cellar as interiors, not only a dialogue on the green.
-2. Nima and Torren met in those scenes, instead of already walking. Kestrel once, in the air, still not recruited.
-3. Witnesses at Vesper’s scar who will say what passed there, with a consequence.
-4. Save and continue: spark, strain, inventory, path, quiet pools, played scenes.
+1. Kestrel, once, in the air. She does not join.
+2. The root-cellar’s deeper door, when the isle is ready to be a dungeon.
+3. Whatever the scar’s debt still owes the later acts.
 
 Combat menus stay Fight / Magic / Item / Flee. New panels stay desktop-first.
 
