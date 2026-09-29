@@ -245,12 +245,20 @@ Playable on the Verdant Isle field:
 - A tally clerk on the east shale counts weather. If the bound cord is held, he says the knot is not a licence. If Cousin’s Margin is held, he says the furrow is already filed. If both are held, he says neither opens the door. He is not the porter. The vault stays shut.
 - Phone controls, Absorb, Pack, and Continue stay. A phone-width walk from the claim into the aftermath still works with motion stilled.
 
-## Ground and ration (this branch)
+## Ground and ration (shipped)
 
 - The isle, the shale, and the ash sit a little higher in places. A mound, a log, a cairn, driftwood, and ash ribs are props, not doors. Ash streaks on the marrow and weather streaks on the shale when motion is on. Still holds them. The claim figure keeps a foot ring and a hotter edge.
 - A verdant tonic and a wellwater phial say, on the pack and in a fight, how much HP or mind they return, and the toast names the new total. A stall on the west shale trades one rot-ash for a Concord ration that closes up to 22 HP. It does not take marks and it does not open the vault.
 - Short of the yard’s north stone, a bench is a private word. Torren speaks if he came. If he did not and Nima did, she speaks. If neither came, Lira says so. It does not open the mark or drink the slag.
 - Phone controls, Absorb, Pack, and Continue stay. Enter, Leave, and Continue still keep a claim flag.
+
+## Foam and Nima (this branch)
+
+- The isle sea and the shale water carry a slow foam when motion is on. Still holds the foam. On a phone the foam skips every other tick. The leaf-village has a cart, crates, a fence, and a rack, all outside the door. The remnant shafts wear a stained pane. The fight ring has posts and an inner line. No new lights were added.
+- Drinking a pool whose rot is heavy puts one rot-ash in the pack. Brine, cinder mites, and the shelf gull can also drop it. The stall still trades one rot-ash for a ration and does not open the vault.
+- A Concord ration can close up to 22 HP or return 12 mind, in the pack and in a fight. If that wound or that mind is already full, it stays in the pack.
+- East of the Concord yard, a dry bundle is Nima’s private word. If Torren is there, they answer each other. On the bench short of the north stone, if both came, Nima answers Torren. Neither word opens the mark or drinks the slag. The new props do not sit on Enter.
+- Phone controls, Absorb, Pack, and Continue stay.
 
 ## Still ahead
 

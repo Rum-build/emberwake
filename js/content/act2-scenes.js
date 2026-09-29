@@ -87,7 +87,7 @@
   Emberwake.registerScene('ration-swap', function () {
     Emberwake.present({
       lines: [
-        { where: 'Stormreach shale', speaker: 'A stall clerk', text: 'Rot-ash for a stamped biscuit. Twenty-two life, if a wound is open. I do not take marks, and I do not open the vault.' },
+        { where: 'Stormreach shale', speaker: 'A stall clerk', text: 'Rot-ash for a stamped biscuit. Twenty-two life if a wound is open, or twelve mind if the wound is not. I do not take marks, and I do not open the vault.' },
         { speaker: 'Lira', text: 'Then it is food, not a licence. The door stays the other board.' },
       ],
       onDone: function () {
@@ -104,13 +104,36 @@
       { where: 'Concord yard, short of the north stone', speaker: 'Lira', text: 'A bench. This is not the rest, and it is not the mark.' },
     ];
     if (torren) lines.push({ speaker: 'Torren', text: 'I left the coat. The pillar ahead is not a promotion. If you drink what leaks there, that is your mouth, not my rank.' });
+    if (nima && torren) lines.push({ speaker: 'Nima', text: 'Then keep the coat off. I am not your medic, and I am not the pillar. If she drinks it, that is her mouth.' });
     else if (nima) lines.push({ speaker: 'Nima', text: 'The air here is not a tonic. If the pillar is a mouth, I will not call it medicine. I am still walking with you.' });
-    else lines.push({ speaker: 'Lira', text: 'Torren is not at this shoulder. Nima is not either. The stone is still north.' });
+    else if (!torren) lines.push({ speaker: 'Lira', text: 'Torren is not at this shoulder. Nima is not either. The stone is still north.' });
     lines.push({ speaker: 'The spark', text: 'A private word does not open the mark. The slag stays where it was.' });
     Emberwake.present({
       lines: lines,
       onDone: function () {
         if (Emberwake.noteAside) Emberwake.noteAside();
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('yard-nima', function () {
+    const torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    const nima = Emberwake.companyHas && Emberwake.companyHas('nima');
+    const lines = [
+      { where: 'Concord yard, east fence', speaker: 'Lira', text: 'A bundle of dry herbs. This is not a tonic, and it is not the mark.' },
+    ];
+    if (nima && torren) {
+      lines.push({ speaker: 'Nima', text: 'I set them here so the air would have a name that is not medicine. The pillar is still a mouth.' });
+      lines.push({ speaker: 'Torren', text: 'Then we agree. I left the coat. Neither of us opens the stone.' });
+    } else if (nima) lines.push({ speaker: 'Nima', text: 'These are not a cure. If the pillar leaks, I will not call the leak a dose. I am still walking with you.' });
+    else if (torren) lines.push({ speaker: 'Torren', text: 'That bundle is hers. I do not carry herbs, and I do not open the pillar for a rank I already left.' });
+    else lines.push({ speaker: 'Lira', text: 'Nima is not at this shoulder. Torren is not either. The stone is still north.' });
+    lines.push({ speaker: 'The spark', text: 'A second private word does not open the mark. The slag stays where it was.' });
+    Emberwake.present({
+      lines: lines,
+      onDone: function () {
+        if (Emberwake.noteNima) Emberwake.noteNima();
       },
     });
     return true;

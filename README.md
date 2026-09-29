@@ -92,6 +92,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - Vesper wears a hood. A wayside chest, a salt cord, and a shale notice are optional. The cord can be bound once from the pack. Ash then coughs for 4. It does not open a door. Fights list the turn order and status chips. An ash penitent can appear on the nave, the breach, or the claim before the flag. Still and Slow still walk the ending.
 - The title wears a gold frame. When a save is waiting, Continue is the gold action. A mile post and a cold ring on the isle are optional. A tally clerk on the shale reacts to a bound cord and to Cousin’s Margin, and he does not open the vault. A shelf gull on the coast cries once and spends mind. It is not a scar.
 - The isle, the shale, and the ash have a little more ground, and weather or ash moves when motion is on. A tonic from the pack names the HP or the mind it returns. A shale stall trades rot-ash for a ration and does not open the vault. Short of the yard’s north stone, Torren or Nima can speak once. It does not open the mark.
+- The sea foams when motion is on. The leaf-village has a cart and a fence that do not sit on the door. The remnant light is stained, and the fight ring has posts. A rotten drink or some fights can drop rot-ash. A ration closes 22 HP or returns 12 mind. East of the yard, Nima can speak once, and if Torren is there they answer each other. It does not open the mark.
 
 ## Play on your phone
 
