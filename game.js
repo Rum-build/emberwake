@@ -4214,6 +4214,22 @@
       veil.rotation.y = spot[3];
       g.add(veil);
     });
+    const bandMat = haze.clone();
+    bandMat.opacity = 0.14;
+    const band = new THREE.Mesh(new THREE.PlaneGeometry(16, 7), bandMat);
+    band.rotation.x = -Math.PI / 2;
+    band.position.set(1.2, 2.15, 5.6);
+    g.add(band);
+    const streakMat = new THREE.MeshBasicMaterial({
+      color: 0xeaf4ff, transparent: true, opacity: 0.7, depthWrite: false,
+    });
+    [[2.4, 2.7, 6.3], [4.2, 3.4, 5.5], [1.1, 2.2, 7.1], [5.6, 2.9, 4.7], [0.2, 3.5, 6.6], [3.5, 1.85, 5.0], [-1.6, 2.5, 5.8], [6.4, 3.1, 7.3]].forEach((spot) => {
+      const streak = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.9, 0.035), streakMat);
+      streak.position.set(spot[0], spot[1], spot[2]);
+      streak.rotation.z = 0.22;
+      streak.rotation.x = 0.15;
+      g.add(streak);
+    });
   }
 
   function dressHarbor(g) {
@@ -5849,8 +5865,9 @@
     const gustOn = ashen && ashDensity !== 'thin';
     weather.rain.visible = coast || (isleWet && motionWanted);
     if (weather.rain.material) {
-      weather.rain.material.opacity = coast ? 0.5 : 0.72;
-      weather.rain.material.size = coast ? 0.1 : 0.12;
+      weather.rain.material.opacity = coast ? 0.82 : 0.72;
+      weather.rain.material.size = coast ? 0.22 : 0.12;
+      weather.rain.material.color.setHex(coast ? 0xeaf4ff : 0xb7c6d4);
     }
     weather.gust.visible = !!(gustOn && motionWanted);
     if (coast) weather.rain.position.set(playerMesh.position.x, playerMesh.position.y, playerMesh.position.z);
