@@ -74,3 +74,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - No music or SFX. See `CREDITS.md`. The Credits button on the title repeats that policy.
 - Encounters are tuned so a short walk can start a fight after the first pool. The patrol is a separate, scripted fight.
 - Low-poly placeholders. Three.js must load from the CDN once.
+
+## Play on your phone
+
+Open **https://rum-build.github.io/emberwake/** in Safari or Chrome. Use the on-screen MOVE stick, Pack, and Absorb.
