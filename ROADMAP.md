@@ -114,18 +114,24 @@ Playable on the Verdant Isle field:
 - Skies grade from the ground color toward a lighter horizon. The pipe has a stain and a lamp. The field bed stays. An absorb sting, original and CC0, plays when a pool is drunk and Sound is on.
 - The mouse stick, Absorb, and Pack stay.
 
-## Remnant Mark (this branch)
+## Remnant Mark (shipped)
 
 - North of the Concord yard, a stone opens the Remnant Mark. It is a numbered pillar, not the Prime Remnant. A Concord counter stands on the road. After him, the weep can be drunk, which scars, or left for the count to number. Vesper names the rumour and does not enter the host. **Leave** at the south returns to the yard. Continue stores the mark and the choice. Kestrel does not join and does not carry the crossing.
 - Places names unfinished beats — a slag still open, a counter still on the road, a weep still a mouth — and does not travel. Scar stays on the HUD at zero. Strain says steady, taxed, or tearing. A hit shows a number as well as the log.
 - The isle has a cooler fill light beside the sun. Characters and the yard and mark ground take a low shine. The mark fog sits close. An original CC0 merge sting plays when a merge is spent and Sound is on.
 - The mouse stick, Absorb, and Pack stay.
 
+## Ash nave (this branch)
+
+- North of the Remnant Mark, after the counter, a stone opens the ash nave. The cathedral is in sight and sealed. Name the hinge, which scars, or leave the seal. The door does not open. Vesper is on the roof and does not enter the host. **Leave** at the south returns to the pillar. Continue stores the nave and the choice. Kestrel does not join and does not carry the crossing.
+- Ash architecture, Concord banners, and falling ash sit on that road. Figures in the distance read as cutouts. The path screen says which strike is true and that the other two land thin. If Torren is in a fight, his first action sets his shoulder in front of the next blow. If Nima is, hers steadies whoever is lowest.
+- The mouse stick, Absorb, and Pack stay.
+
 ## Still ahead
 
-From DESIGN.md, after this mark:
+From DESIGN.md, after this nave:
 
-1. The rest of the scar’s debt. The kiln, the earth cork, a fed leak, Vesper’s taste, the spoken name, a drunk yard slag, and a drunk remnant weep each add a point. Banking the marrow leak eases one. The rest stays.
+1. The rest of the scar’s debt. The kiln, the earth cork, a fed leak, Vesper’s taste, the spoken name, a drunk yard slag, a drunk remnant weep, and a named cathedral hinge each add a point. Banking the marrow leak eases one. The rest stays.
 2. The wider waystone network, the wind merges (ice, thunder, tide, root), and a party slot for Kestrel if she ever takes one.
 
 Combat menus stay Fight / Magic / Item / Flee. New panels stay desktop-first.

@@ -493,4 +493,36 @@
     });
     return true;
   });
+
+  Emberwake.registerScene('nave-gate', function () {
+    Emberwake.present({
+      lines: [
+        {
+          where: 'Ash nave',
+          speaker: 'Vesper',
+          text: 'That mass is the cathedral they built on the first death. The Prime Remnant is behind the bar. I am on the roof. I am not coming down, and I will not step into her.',
+        },
+        {
+          speaker: 'Lira',
+          text: 'The door is shut. The road is not.',
+          choices: [
+            {
+              label: 'Name the hinge.',
+              pick: 'name',
+              reply: { speaker: 'Vesper', text: 'Then the road has your mouth on it. The door stays shut. Kestrel is not on this roof, and she is not in the pack.' },
+            },
+            {
+              label: 'Leave the seal.',
+              pick: 'turn',
+              reply: { speaker: 'Vesper', text: 'Then the bar stays theirs. You saw it. That is enough for the road to keep going, and I still do not enter the host.' },
+            },
+          ],
+        },
+      ],
+      onPick: function (id) {
+        if (Emberwake.noteNave) Emberwake.noteNave(id);
+      },
+    });
+    return true;
+  });
 })(window.Emberwake);
