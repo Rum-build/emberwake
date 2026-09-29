@@ -70,6 +70,7 @@
     celebrant: { name: 'Rite Celebrant', color: 0x3a2418, maxHp: 108, atk: 14, def: 8, xp: 52, gold: 32, shape: 'rite' },
     penitent: { name: 'Ash Penitent', color: 0x3a221c, maxHp: 40, atk: 8, def: 3, xp: 20, gold: 12, shape: 'cowl' },
     gull: { name: 'Shelf Gull', color: 0xc8d0d8, maxHp: 30, atk: 8, def: 2, xp: 14, gold: 7, shape: 'wing' },
+    spire: { name: 'Spire Mite', color: 0x6a88c8, maxHp: 34, atk: 8, def: 2, xp: 15, gold: 8, shape: 'spire' },
   };
 
   content.roster = {
