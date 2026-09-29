@@ -37,7 +37,7 @@ Three.js **r128** loads from the unpkg CDN, so the first launch needs a network.
    - **Flee** — harder in rot, and against Vesper’s echo.
 7. Victory pays spark XP and Concord **marks**. Defeat drops the body; **Drag her up** restores HP and MP, keeps what the spark already ate, and loses 12 marks.
 
-The Ashen Concord and the rival spark **Vesper** are on the isle, not only in rumors. After you wake, step into the leaf-village: the argument about the seal does not settle, and Nima walks out with Lira. The root-cellar under the arch opens into a throat: jar mites, then the Kiln Heart, then the buried fire. Drink it, and Kestrel crosses on an eagle without landing. A patrol bottles a lesser spring in sight; Torren refuses the licence and the fight starts with him in it. Ilan and Maud stand at Vesper’s scar. Drink it in front of them, or leave it and keep the rot. More pools burn, pool, and storm in the open. A waystone past the patrol is shut — Stormreach is named, not opened. When the village, the patrol, and the first ember are done, Vesper stands on the ridge and does not offer a duel.
+The Ashen Concord and the rival spark **Vesper** are on the isle, not only in rumors. After you wake, step into the leaf-village: the argument about the seal does not settle, and Nima walks out with Lira. The root-cellar under the arch opens into a throat: jar mites, then the Kiln Heart, then the buried fire. Drink it, and Kestrel crosses on an eagle without landing. A patrol bottles a lesser spring in sight; Torren refuses the licence and the fight starts with him in it. Ilan and Maud stand at Vesper’s scar. Drink it in front of them, or leave it and keep the rot. More pools burn, pool, and storm in the open. The waystone on the ridge stays shut until that kiln is drunk and the scar has a verdict. Then the stones wake. Kestrel carries a thermal over Stormreach: a harbor vault, corked, not entered. She still does not join. Press E on the woken stone to look again. When the village, the patrol, and the first ember are done, Vesper stands on the ridge and does not offer a duel.
 
 ## Files
 
@@ -48,7 +48,7 @@ The Ashen Concord and the rival spark **Vesper** are on the isle, not only in ru
 | `js/emberwake.js` | Namespace: phase, regions, scenes, content registers |
 | `js/content/catalog.js` | Paths, gear, items, spells, bestiary, opening roster |
 | `js/content/verdant-isle.js` | Act I field: landmarks, pools, beats |
-| `js/content/act1-scenes.js` | Wake, village argument, cellar threshold, scar witnesses, patrol, waystone, Vesper on the ridge |
+| `js/content/act1-scenes.js` | Wake, village argument, cellar threshold, scar witnesses, patrol, waystone, the coast glimpse, Vesper on the ridge |
 | `game.js` | Overworld, absorb, inventory, turn-based combat |
 | `DESIGN.md` | Design bible (canon) |
 | `STORY.md` | Player-facing synopsis (canon) |
@@ -66,7 +66,8 @@ The Ashen Concord and the rival spark **Vesper** are on the isle, not only in ru
 
 Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 
-- Kestrel does not join. The eagle is a crossing, not a party slot. Sky routes and waystone travel wait for Act II.
+- Kestrel does not join. The eagle opens a thermal to a corked vault. Landing on Stormreach, walking the vault, lightning pools, and the duel wait for Act II.
+- The scar’s debt is counted by the waystone and not paid.
 - Element merges and the later acts.
 - No music or SFX. See `CREDITS.md`. The Credits button on the title repeats that policy.
 - Encounters are tuned so a short walk can start a fight after the first pool. The patrol is a separate, scripted fight.

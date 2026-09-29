@@ -81,6 +81,7 @@
   let villageRoom = null;
   let cellarRoom = null;
   let nearDoor = null;
+  let nearGate = null;
   let scarVerdict = null;
   let runLive = false;
   const SAVE_KEY = 'emberwake.save.v1';
@@ -92,6 +93,8 @@
   let kilnLatch = false;
   let skyPass = null;
   let eagleGroup = null;
+  let waystoneGroup = null;
+  let coastGroup = null;
   let combatInRot = false;
   let combatEpoch = 0;
   let enemies = [];
@@ -333,7 +336,15 @@
     crawlLatch = false;
     kilnLatch = false;
     skyPass = null;
-    if (eagleGroup) eagleGroup.visible = false;
+    if (eagleGroup) {
+      eagleGroup.visible = false;
+      if (overworldGroup && eagleGroup.parent && eagleGroup.parent !== overworldGroup) {
+        eagleGroup.parent.remove(eagleGroup);
+        overworldGroup.add(eagleGroup);
+      }
+    }
+    if (coastGroup) coastGroup.visible = false;
+    sleepWaystone();
     const dialoguePanel = $('#dialogue');
     if (dialoguePanel) dialoguePanel.classList.add('hidden');
     rumor = 'The leaf-villages pretend the Concord’s seals are mercy.';
@@ -348,7 +359,11 @@
       if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
       overworldGroup.add(playerMesh);
     }
-    scene && scene.fog && scene.fog.color.set(0x87b5d9);
+    if (scene && scene.fog) {
+      scene.fog.color.set(0x87b5d9);
+      scene.fog.near = 18;
+      scene.fog.far = 55;
+    }
     if (renderer) renderer.setClearColor(0x87b5d9);
     inventoryOpen = false;
     inventoryPanel.classList.add('hidden');
@@ -378,6 +393,7 @@
 
     buildOverworld();
     buildInteriors();
+    buildCoast();
     buildCombatArena();
     window.addEventListener('resize', onResize);
   }
@@ -472,7 +488,10 @@
     const bannerPin = landmark('concord-banner');
     overworldGroup.add(makeConcordBanner(bannerPin.x, bannerPin.z));
     const stonePin = landmark('sleeping-waystone');
-    if (stonePin) overworldGroup.add(makeWaystone(stonePin.x, stonePin.z));
+    if (stonePin) {
+      waystoneGroup = makeWaystone(stonePin.x, stonePin.z);
+      overworldGroup.add(waystoneGroup);
+    }
     const ridgePin = landmark('vesper-ridge');
     if (ridgePin) {
       vesperFigure = makeSilhouette(ridgePin.x, ridgePin.z);
@@ -698,6 +717,19 @@
     return best;
   }
 
+  function nearestGate() {
+    if (!playerMesh || locale !== 'field' || !seenBeats.coastRoute) return null;
+    if (skyPass && skyPass.mode === 'coast') return null;
+    const pin = landmark('sleeping-waystone');
+    if (!pin) return null;
+    const d = Math.hypot(pin.x - playerMesh.position.x, pin.z - playerMesh.position.z);
+    if (d > 3.2) return null;
+    return {
+      title: 'Woken waystone',
+      hint: 'The road to Stormreach is a thermal, not a harbour. Press E to look at the vault again. It does not open.',
+    };
+  }
+
   function enterInterior(id, opts) {
     const silent = opts && opts.silent;
     locale = id;
@@ -773,14 +805,145 @@
       slab.rotation.y = -a;
       g.add(slab);
     }
-    const heart = new THREE.Mesh(
-      new THREE.OctahedronGeometry(0.16, 0),
-      new THREE.MeshLambertMaterial({ color: 0x8aa4b0, emissive: new THREE.Color(0x142028) })
-    );
+    const heartMat = new THREE.MeshLambertMaterial({ color: 0x8aa4b0, emissive: new THREE.Color(0x142028) });
+    const heart = new THREE.Mesh(new THREE.OctahedronGeometry(0.16, 0), heartMat);
     heart.position.y = 0.85;
     g.add(heart);
+    const beamMat = new THREE.MeshBasicMaterial({
+      color: 0x9fd0ff, transparent: true, opacity: 0, depthWrite: false,
+    });
+    const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.22, 3.4, 8), beamMat);
+    beam.position.y = 2.5;
+    g.add(beam);
+    const glow = new THREE.PointLight(0x9ec8ff, 0, 9);
+    glow.position.y = 1.5;
+    g.add(glow);
+    g.userData.heartMat = heartMat;
+    g.userData.beamMat = beamMat;
+    g.userData.glow = glow;
+    g.userData.awake = false;
     g.position.set(x, 0, z);
     return g;
+  }
+
+  function wakeWaystone() {
+    if (!waystoneGroup) return;
+    const data = waystoneGroup.userData;
+    data.awake = true;
+    if (data.heartMat) {
+      data.heartMat.color.setHex(0xd6ecff);
+      data.heartMat.emissive.setHex(0x2a6ea8);
+    }
+    if (data.beamMat) data.beamMat.opacity = 0.8;
+    if (data.glow) data.glow.intensity = 1.6;
+  }
+
+  function sleepWaystone() {
+    if (!waystoneGroup) return;
+    const data = waystoneGroup.userData;
+    data.awake = false;
+    if (data.heartMat) {
+      data.heartMat.color.setHex(0x8aa4b0);
+      data.heartMat.emissive.setHex(0x142028);
+    }
+    if (data.beamMat) data.beamMat.opacity = 0;
+    if (data.glow) data.glow.intensity = 0;
+  }
+
+  function stoneReady() {
+    const kiln = pools.find((p) => p.id === 'kiln');
+    return !!(kiln && kiln.absorbed && scarVerdict);
+  }
+
+  function buildCoast() {
+    const g = new THREE.Group();
+    g.visible = false;
+    g.add(new THREE.AmbientLight(0xb7c4d4, 0.62));
+    g.add(new THREE.HemisphereLight(0x8aa4c0, 0x2a2418, 0.42));
+    const sun = new THREE.DirectionalLight(0xfff0d8, 0.7);
+    sun.position.set(12, 20, 16);
+    g.add(sun);
+
+    const water = new THREE.Mesh(
+      new THREE.PlaneGeometry(90, 90),
+      new THREE.MeshLambertMaterial({ color: 0x163044 })
+    );
+    water.rotation.x = -Math.PI / 2;
+    water.position.y = -0.2;
+    g.add(water);
+
+    const cliff = new THREE.Mesh(
+      new THREE.BoxGeometry(22, 8, 12),
+      new THREE.MeshLambertMaterial({ color: 0x5a5148 })
+    );
+    cliff.position.set(0, 3.4, -11);
+    g.add(cliff);
+    const shoulder = new THREE.Mesh(
+      new THREE.BoxGeometry(8, 5, 7),
+      new THREE.MeshLambertMaterial({ color: 0x4a433c })
+    );
+    shoulder.position.set(-10, 2.2, -6);
+    g.add(shoulder);
+
+    const beach = new THREE.Mesh(
+      new THREE.PlaneGeometry(26, 9),
+      new THREE.MeshLambertMaterial({ color: 0xc2b48c })
+    );
+    beach.rotation.x = -Math.PI / 2;
+    beach.position.set(1, 0.04, -1.5);
+    g.add(beach);
+
+    const mouth = new THREE.Mesh(
+      new THREE.BoxGeometry(3.4, 4.4, 1.4),
+      new THREE.MeshBasicMaterial({ color: 0x0c0e14 })
+    );
+    mouth.position.set(0.4, 2.5, -4.85);
+    g.add(mouth);
+    const lintel = new THREE.Mesh(
+      new THREE.BoxGeometry(4.8, 0.5, 0.9),
+      new THREE.MeshLambertMaterial({ color: 0x6e675c })
+    );
+    lintel.position.set(0.4, 4.85, -4.6);
+    g.add(lintel);
+    [-1.7, 2.5].forEach((x) => {
+      const jamb = new THREE.Mesh(
+        new THREE.BoxGeometry(0.55, 4.6, 0.9),
+        new THREE.MeshLambertMaterial({ color: 0x6a6258 })
+      );
+      jamb.position.set(x, 2.4, -4.55);
+      g.add(jamb);
+    });
+    const seal = new THREE.Mesh(
+      new THREE.OctahedronGeometry(0.38, 0),
+      new THREE.MeshLambertMaterial({ color: 0xe2c878, emissive: new THREE.Color(0x6a5010) })
+    );
+    seal.position.set(0.4, 2.7, -4.05);
+    g.add(seal);
+    const banner = makeConcordBanner(2.8, -3.2);
+    g.add(banner);
+
+    const spire = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.12, 0.38, 3.4, 6),
+      new THREE.MeshLambertMaterial({ color: 0x8aa0b8 })
+    );
+    spire.position.set(-4.6, 8.2, -10);
+    g.add(spire);
+    const boltMat = new THREE.MeshBasicMaterial({
+      color: 0xd0e8ff, transparent: true, opacity: 0.85,
+    });
+    const bolt = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 7, 5), boltMat);
+    bolt.position.set(-4.6, 12.2, -10);
+    g.add(bolt);
+    const storm = new THREE.PointLight(0x99c4ff, 1.5, 32);
+    storm.position.set(-4.2, 9, -6);
+    g.add(storm);
+    const vaultLamp = new THREE.PointLight(0xd4c08a, 0.9, 14);
+    vaultLamp.position.set(0.4, 3.4, -2.2);
+    g.add(vaultLamp);
+    g.userData.boltMat = boltMat;
+    g.userData.storm = storm;
+    scene.add(g);
+    coastGroup = g;
   }
 
   function makeSilhouette(x, z) {
@@ -1240,7 +1403,16 @@
     const wellDone = pools.some((p) => p.id === 'well' && p.absorbed);
     const left = pools.filter((p) => !p.absorbed && !p.bottled && !p.interior).length;
     const kilnQuiet = pools.some((p) => p.id === 'kiln' && p.absorbed);
-    if (scarVerdict === 'leave') {
+    if (seenBeats.coastRoute) {
+      const scarBit = scarVerdict === 'leave'
+        ? ' Ilan’s sister still coughs. The vault does not pay that.'
+        : scarVerdict === 'drink'
+          ? ' The scar’s witnesses will not thank you on the coast either.'
+          : '';
+      rumor = 'The waystone is awake. Kestrel carried the thermal to a Stormreach vault and did not land. The door stayed corked.' + scarBit;
+    } else if (stoneReady() && !seenBeats['waystone-wake']) {
+      rumor = 'The kiln is quiet, and the scar has a verdict. The north stones are warm. They have not opened.';
+    } else if (scarVerdict === 'leave') {
       rumor = 'Ilan’s sister still coughs at the scar. You left Vesper’s wound in the ground, and took the ash they scraped off it.';
     } else if (scarVerdict === 'drink') {
       rumor = 'You drank the scar in front of Maud and Ilan. The ground may green. They will not thank you.';
@@ -1293,15 +1465,17 @@
     const poolReady = !!(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld && !kilnGuarded);
     const showAbsorb = idle && poolReady && (locale === 'field' ? !nearPool.interior : !atExit);
     const showDoor = idle && locale === 'field' && nearDoor && !showAbsorb;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit);
+    const showGate = idle && locale === 'field' && nearGate && !showAbsorb && !showDoor;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
+    else if (showGate) absorbBtn.textContent = 'Cross';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
   }
 
   function updatePrompt() {
     const atExit = locale !== 'field' && playerMesh && playerMesh.position.z > 2.55;
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || (!nearPool && !nearDoor && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || (!nearPool && !nearDoor && !nearGate && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -1326,6 +1500,11 @@
     if (nearDoor && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
       $('#interact-title').textContent = nearDoor.title;
       $('#interact-detail').textContent = nearDoor.hint;
+      return;
+    }
+    if (nearGate && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
+      $('#interact-title').textContent = nearGate.title;
+      $('#interact-detail').textContent = nearGate.hint;
       return;
     }
     $('#interact-title').textContent = nearPool.name;
@@ -1358,9 +1537,13 @@
       const waiting = [];
       if (!findMember('nima')) waiting.push('Nima is still in the leaf-village.');
       if (!findMember('torren')) waiting.push('Torren has not refused the Concord yet.');
-      waiting.push(seenBeats.kestrel
-        ? 'Kestrel crossed overhead. She did not join.'
-        : 'Kestrel is not on this road.');
+      if (seenBeats.coastRoute) {
+        waiting.push('Kestrel opened a thermal to Stormreach. She did not join. The harbor vault stayed corked.');
+      } else if (seenBeats.kestrel) {
+        waiting.push('Kestrel crossed overhead. She did not join.');
+      } else {
+        waiting.push('Kestrel is not on this road.');
+      }
       roadNote.textContent = waiting.join(' ');
     }
 
@@ -1562,11 +1745,15 @@
       return;
     }
     const poolReady = nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld;
-    if (poolReady || (nearPool && !nearDoor)) {
+    if (poolReady || (nearPool && !nearDoor && !nearGate)) {
       tryAbsorb();
       return;
     }
-    if (nearDoor) enterInterior(nearDoor.id);
+    if (nearDoor) {
+      enterInterior(nearDoor.id);
+      return;
+    }
+    if (nearGate) playCoastCrossing();
   }
 
   function tryAbsorb() {
@@ -1688,7 +1875,18 @@
 
   function updateOverworld(dt) {
     const camTarget = playerMesh.position;
-    if (!inventoryOpen && !encounterLocked && !dialogueOpen) {
+    const coasting = !!(skyPass && skyPass.mode === 'coast');
+    if (waystoneGroup && waystoneGroup.userData.awake && waystoneGroup.userData.beamMat) {
+      waystoneGroup.userData.beamMat.opacity = 0.55 + Math.sin(performance.now() * 0.004) * 0.25;
+    }
+    if (coasting) {
+      nearPool = null;
+      nearDoor = null;
+      nearGate = null;
+      joy.active = false;
+      joy.dx = 0;
+      joy.dy = 0;
+    } else if (!inventoryOpen && !encounterLocked && !dialogueOpen) {
       let mx = 0;
       let mz = 0;
       if (keys.KeyW || keys.ArrowUp) mz -= 1;
@@ -1719,6 +1917,7 @@
         stepsSinceEncounter += speed * 10;
         nearPool = nearestPool();
         nearDoor = nearestDoor();
+        nearGate = nearestGate();
         const safe = nearPool && !nearPool.absorbed;
         const cooled = performance.now() < suppressEncountersUntil;
         if (locale === 'field' && !safe && !cooled && stepsSinceEncounter > ENCOUNTER_STEPS) {
@@ -1730,9 +1929,11 @@
         playerMesh.position.y = 0;
         nearPool = nearestPool();
         nearDoor = nearestDoor();
+        nearGate = nearestGate();
       }
 
       updateCellarTriggers();
+      maybeResumeCoast();
 
       if (locale === 'field') BEATS.forEach((b) => {
         const inside = Math.hypot(b.x - playerMesh.position.x, b.z - playerMesh.position.z) < b.r;
@@ -1743,9 +1944,10 @@
         if (seenBeats[b.id] || beatHold[b.id]) return;
         fireBeat(b);
       });
-    } else {
+    } else if (!coasting) {
       nearPool = nearestPool();
       nearDoor = nearestDoor();
+      nearGate = nearestGate();
       playerMesh.position.y = 0;
     }
 
@@ -2578,7 +2780,7 @@
     }
     if (locale === 'leaf-village') seenBeats.village = true;
     else if (locale === 'root-cellar') seenBeats.cellar = true;
-    if (gameState === State.OVERWORLD && !inventoryOpen && !encounterLocked) {
+    if (gameState === State.OVERWORLD && !inventoryOpen && !encounterLocked && !(skyPass && skyPass.mode === 'coast')) {
       setFieldControls(true);
     }
     const done = dialogueOnDone;
@@ -2885,6 +3087,7 @@
       playerMesh.position.set(data.pos.x || 0, 0, data.pos.z || 0);
     }
     syncSilhouette();
+    if (seenBeats['waystone-wake']) wakeWaystone();
     refreshRumor();
   }
 
@@ -2950,13 +3153,107 @@
   }
 
   function playSkyPass() {
+    if (skyPass && skyPass.mode === 'coast') return;
     if (!eagleGroup) eagleGroup = makeEagle();
+    if (overworldGroup && eagleGroup.parent !== overworldGroup) {
+      if (eagleGroup.parent) eagleGroup.parent.remove(eagleGroup);
+      overworldGroup.add(eagleGroup);
+    }
     eagleGroup.visible = true;
-    skyPass = { t: 0, dur: 8.5 };
+    skyPass = { t: 0, dur: 8.5, mode: 'cross' };
+  }
+
+  function playCoastCrossing() {
+    if (locale !== 'field' || dialogueOpen) return;
+    if (skyPass && skyPass.mode === 'coast') return;
+    beginCoastVisual();
+    const fn = EW.scenes['stormreach-glimpse'];
+    if (typeof fn === 'function') fn();
+  }
+
+  function maybeResumeCoast() {
+    if (locale !== 'field' || dialogueOpen || skyPass) return;
+    if (!seenBeats['waystone-wake'] || seenBeats.coastRoute) return;
+    const pin = landmark('sleeping-waystone');
+    if (!pin || !playerMesh) return;
+    if (Math.hypot(pin.x - playerMesh.position.x, pin.z - playerMesh.position.z) < 3.4) playCoastCrossing();
+  }
+
+  function beginCoastVisual() {
+    if (!coastGroup) buildCoast();
+    if (!eagleGroup) eagleGroup = makeEagle();
+    if (eagleGroup.parent) eagleGroup.parent.remove(eagleGroup);
+    coastGroup.add(eagleGroup);
+    eagleGroup.visible = true;
+    coastGroup.visible = true;
+    overworldGroup.visible = false;
+    scene.fog.color.set(0x6e7e90);
+    scene.fog.near = 24;
+    scene.fog.far = 80;
+    renderer.setClearColor(0x6e7e90);
+    skyPass = { t: 0, dur: 13, mode: 'coast' };
+    eagleGroup.position.set(-16, 6.6, 2.4);
+    eagleGroup.rotation.y = -Math.PI / 2;
+    eagleGroup.scale.setScalar(1.55);
+    camera.position.set(8, 6.3, 14);
+    camera.lookAt(0.4, 3.2, -5);
+    setFieldControls(false);
+  }
+
+  function finishCoast() {
+    if (eagleGroup) {
+      if (eagleGroup.parent) eagleGroup.parent.remove(eagleGroup);
+      if (overworldGroup) overworldGroup.add(eagleGroup);
+      eagleGroup.visible = false;
+    }
+    if (coastGroup) coastGroup.visible = false;
+    if (locale === 'field' && overworldGroup) {
+      overworldGroup.visible = true;
+      scene.fog.color.set(0x87b5d9);
+      scene.fog.near = 18;
+      scene.fog.far = 55;
+      renderer.setClearColor(0x87b5d9);
+    }
+    skyPass = null;
+    if (playerMesh && locale === 'field') {
+      camera.position.set(playerMesh.position.x, playerMesh.position.y + CAMERA_HEIGHT, playerMesh.position.z + CAMERA_DIST);
+      camera.lookAt(playerMesh.position.x, playerMesh.position.y + 1, playerMesh.position.z);
+    }
+    suppressEncountersUntil = performance.now() + 2200;
+    if (gameState === State.OVERWORLD && !dialogueOpen && !inventoryOpen && !encounterLocked) {
+      setFieldControls(true);
+    }
+    saveGame();
+  }
+
+  function noteCoast() {
+    seenBeats.coastRoute = true;
+    if (!seals.some((seal) => seal.name === 'Unwritten Passage')) {
+      seals.push({
+        name: 'Unwritten Passage',
+        desc: 'Not a licence. The thermal from the woken waystone to the Stormreach harbor vault. The door stayed shut. The route did not.',
+      });
+    }
+    refreshRumor();
+    saveGame();
+  }
+
+  function flapEagle(rate) {
+    if (!eagleGroup) return;
+    const flap = Math.sin((skyPass ? skyPass.t : 0) * rate) * 0.7;
+    const wings = eagleGroup.userData.wings || [];
+    if (wings[0]) wings[0].rotation.x = flap;
+    if (wings[1]) wings[1].rotation.x = -flap;
   }
 
   function updateSkyPass(dt) {
-    if (!skyPass || !eagleGroup || !playerMesh) return;
+    if (!skyPass) return;
+    if (skyPass.mode === 'coast') updateCoastPass(dt);
+    else updateEagleCross(dt);
+  }
+
+  function updateEagleCross(dt) {
+    if (!eagleGroup || !playerMesh) return;
     skyPass.t += dt;
     const u = Math.min(1, skyPass.t / skyPass.dur);
     const x = playerMesh.position.x - 14 + u * 28;
@@ -2965,10 +3262,7 @@
     eagleGroup.position.set(x, y, z);
     eagleGroup.rotation.y = -Math.PI / 2;
     eagleGroup.scale.setScalar(1.8);
-    const flap = Math.sin(skyPass.t * 8) * 0.7;
-    const wings = eagleGroup.userData.wings || [];
-    if (wings[0]) wings[0].rotation.x = flap;
-    if (wings[1]) wings[1].rotation.x = -flap;
+    flapEagle(8);
     const lift = Math.min(1, skyPass.t / 0.8);
     camera.position.lerp(new THREE.Vector3(
       playerMesh.position.x - 2,
@@ -2982,6 +3276,27 @@
     }
   }
 
+  function updateCoastPass(dt) {
+    if (!eagleGroup) return;
+    skyPass.t += dt;
+    const u = Math.min(1, skyPass.t / skyPass.dur);
+    const x = -16 + u * 34;
+    const y = 6.6 + Math.sin(u * Math.PI) * 1.3;
+    eagleGroup.position.set(x, y, 2.4);
+    eagleGroup.rotation.y = -Math.PI / 2;
+    eagleGroup.scale.setScalar(1.55);
+    flapEagle(7);
+    if (coastGroup && coastGroup.userData.boltMat) {
+      coastGroup.userData.boltMat.opacity = 0.45 + Math.abs(Math.sin(skyPass.t * 9)) * 0.5;
+    }
+    if (coastGroup && coastGroup.userData.storm) {
+      coastGroup.userData.storm.intensity = 1.1 + Math.abs(Math.sin(skyPass.t * 9)) * 0.8;
+    }
+    camera.position.lerp(new THREE.Vector3(8 - u * 12, 6.3, 14), 0.1);
+    camera.lookAt(0.4, 3.2, -5);
+    if (skyPass.t >= skyPass.dur && !dialogueOpen) finishCoast();
+  }
+
   EW.present = function (script, done) { openDialogue(script, done); };
   EW.bottlePool = bottlePool;
   EW.beginEncounter = function (ids, tag) {
@@ -2991,7 +3306,13 @@
     const pool = pools.find((p) => p.id === 'kiln');
     return !!(pool && pool.absorbed);
   };
+  EW.stoneReady = stoneReady;
+  EW.scarWord = function () { return scarVerdict; };
+  EW.wakeWaystone = wakeWaystone;
+  EW.companyHas = function (id) { return !!(party && party.some((member) => member.id === id)); };
   EW.playSkyPass = playSkyPass;
+  EW.playCoastCrossing = playCoastCrossing;
+  EW.noteCoast = noteCoast;
   EW.actReady = actReady;
   EW.whisper = showToast;
   EW.revealSilhouette = function () {

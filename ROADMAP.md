@@ -38,7 +38,7 @@ Playable on the Verdant Isle field:
 - Leaf-village argument about the Concord seal. Three answers. None of them clean
 - A patrol bottles the leaf-cup in sight, then fights
 - Further pools: ash copse, ridge vein, and the cup they cork
-- A sleeping waystone. Stormreach is named. The road does not open
+- A waystone on the ridge. It sleeps until the kiln and the scar; then it wakes into a thermal, not a harbour
 - Vesper’s silhouette on the ridge after the village, the patrol, and the first ember. No duel. The scar pool is still a different wound
 
 ## Act I, continued (this same branch)
@@ -50,12 +50,18 @@ Playable on the Verdant Isle field:
 - Ilan and Maud stand at Vesper’s scar. Drinking it costs extra strain and their thanks. Leaving it locks the scar and puts rot-ash in the pack. The rot stays.
 - Continue on the title reads a browser save. Wake throws that save out. The mouse stick keeps the drag until the button comes up.
 
-## Still ahead on Act I
+## Act I wrap, Act II tease (this same branch)
 
-From DESIGN.md, after the kiln and the crossing:
+- The waystone wakes only after the buried kiln is drunk and Ilan and Maud have a verdict, drink or leave.
+- Kestrel then carries a short sky route over Stormreach Coast. The harbor vault is in the cliff, gold-sealed, leaking lightning. The door does not open. She does not join.
+- E on the woken stone looks again. Continue keeps the woken stone, the passage in the pack, and the route.
 
-1. Whatever the scar’s debt still owes the later acts.
-2. Sky routes and a woken waystone. Those are Act II, not a door on this isle.
+## Still ahead
+
+From DESIGN.md, after this tease:
+
+1. The scar’s debt, counted and not paid.
+2. Act II proper: land on Stormreach, walk the vault, lightning pools, the non-lethal duel, merges, and a party slot for Kestrel if the road ever offers one.
 
 Combat menus stay Fight / Magic / Item / Flee. New panels stay desktop-first.
 

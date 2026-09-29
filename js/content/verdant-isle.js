@@ -96,6 +96,12 @@
         toast: 'A ring of stones. The road inside them is shut.',
       },
       {
+        id: 'waystone-wake',
+        scene: 'waystone-wake',
+        x: 0, z: 18, r: 3.2,
+        toast: 'The stones are warm.',
+      },
+      {
         id: 'kestrel',
         scene: 'kestrel-pass',
         x: 10, z: 10.4, r: 3.4,

@@ -126,6 +126,7 @@
   });
 
   Emberwake.registerScene('waystone-tease', function () {
+    if (Emberwake.stoneReady && Emberwake.stoneReady()) return false;
     Emberwake.present({
       lines: [
         { where: 'A sleeping stone', speaker: 'Lira', text: 'Riders call these waystones. Doors, if you carry the right death.' },
@@ -133,6 +134,48 @@
         { speaker: 'Lira', text: 'Something with wings crossed the sun once and did not land. She laughed. I do not know her.' },
         { speaker: 'The spark', text: 'Remember the shape of the stones. When the road opens, it will not open here out of pity.' },
       ],
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('waystone-wake', function () {
+    if (!Emberwake.stoneReady || !Emberwake.stoneReady()) return false;
+    if (Emberwake.wakeWaystone) Emberwake.wakeWaystone();
+    var drank = Emberwake.scarWord && Emberwake.scarWord() === 'drink';
+    Emberwake.present({
+      lines: [
+        { where: 'The woken stones', speaker: 'Lira', text: 'They are warm. A shut door does not warm.' },
+        {
+          speaker: 'The spark',
+          text: drank
+            ? 'You drank the scar while they watched, and the kiln under the jars. The stone is not grateful. It is awake.'
+            : 'You left the scar in the ground and drank what the village buried. A debt unpaid is still a death this door can use.',
+        },
+        { speaker: 'Kestrel', text: 'Look up. I said I would be the road. Stormreach keeps a vault in the cliff. I will not land on it.' },
+        { speaker: 'Lira', text: 'Then show me the cork, and bring me back. I have not earned a coast.' },
+      ],
+      onDone: function () {
+        if (Emberwake.playCoastCrossing) Emberwake.playCoastCrossing();
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('stormreach-glimpse', function () {
+    var torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    Emberwake.present({
+      lines: [
+        { where: 'Above Stormreach', speaker: 'Lira', text: 'The water is the wrong color. The cliff has a door a clerk would love.' },
+        { speaker: 'Kestrel', text: 'Harbor vault. They drain lightning into bottles so the city can pretend weather is a licence. The cork leaks. You can smell the leak on this thermal.' },
+        torren
+          ? { speaker: 'Torren', text: 'I counted doors like that. The ledger always came up short, and the short part fell on someone else’s roof.' }
+          : { speaker: 'The spark', text: 'A gold seal on a living storm. That is their word for mercy when the weather is still alive inside.' },
+        { speaker: 'Kestrel', text: 'The route is open. The vault is not. When the isle is finished with you, this is the road. I am still not in the pack.' },
+        { speaker: 'Lira', text: 'The eagle turns. The door stays lit and shut. The isle takes us back like a debt.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteCoast) Emberwake.noteCoast();
+      },
     });
     return true;
   });
