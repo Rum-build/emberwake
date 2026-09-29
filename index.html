@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>Emberwake</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Title Screen -->
+  <div id="title-screen" class="screen">
+    <div class="title-bg"></div>
+    <div class="title-content">
+      <h1 class="game-title">Emberwake</h1>
+      <p class="subtitle">Power is immortal. You are the spark.</p>
+      <button id="btn-start" class="btn btn-primary btn-xl">Start Adventure</button>
+      <p class="hint">WASD / joystick · I inventory · E absorb pools · Fight paths in battle</p>
+    </div>
+  </div>
+
+  <!-- Overworld HUD -->
+  <div id="hud" class="hud hidden">
+    <div class="hud-left">
+      <div class="hud-location" id="hud-location">Verdant Isle</div>
+      <div class="hud-row">
+        <span class="hud-gold">🪙 <span id="hud-gold">0</span></span>
+        <span class="hud-xp">Spark Lv<span id="hud-level">1</span> · <span id="hud-xp">0</span>/<span id="hud-xp-next">40</span> XP</span>
+      </div>
+      <div class="hud-elements" id="hud-elements">
+        <span class="el fire" title="Fire">🔥 <span id="el-fire">0</span></span>
+        <span class="el water" title="Water">💧 <span id="el-water">0</span></span>
+        <span class="el lightning" title="Lightning">⚡ <span id="el-lightning">0</span></span>
+      </div>
+      <div class="hud-strain">
+        <span class="label">Host strain</span>
+        <div class="strain-wrap"><div class="strain-bar" id="strain-bar" style="width:0%"></div></div>
+        <span class="nums" id="strain-nums">0/100</span>
+      </div>
+    </div>
+    <div class="hud-right">
+      <button id="btn-inventory" class="btn btn-hud" type="button" title="Inventory (I)">🎒 Inv</button>
+      <button id="btn-absorb" class="btn btn-hud btn-absorb hidden" type="button">Absorb (E)</button>
+    </div>
+  </div>
+
+  <!-- Inventory panel (host Lira) -->
+  <div id="inventory-panel" class="inventory-panel hidden">
+    <div class="inv-header">
+      <h2>Lira’s Pack</h2>
+      <p class="inv-sub">Inventory lives on the host — the spark carries nothing.</p>
+      <button id="btn-inv-close" class="btn btn-menu btn-back" type="button">Close (I)</button>
+    </div>
+    <div class="inv-body">
+      <section class="inv-section">
+        <h3>Equipment</h3>
+        <div class="equip-slots" id="equip-slots"></div>
+      </section>
+      <section class="inv-section">
+        <h3>Items</h3>
+        <ul class="inv-list" id="inv-items"></ul>
+      </section>
+      <section class="inv-section">
+        <h3>Pool-shards</h3>
+        <ul class="inv-list" id="inv-shards"></ul>
+      </section>
+      <section class="inv-section inv-stats">
+        <h3>Spark</h3>
+        <p>Level <span id="inv-level">1</span> · XP <span id="inv-xp">0</span>/<span id="inv-xp-next">40</span></p>
+        <p>Gold <span id="inv-gold">0</span> · Strain <span id="inv-strain">0</span>/100</p>
+        <p class="el-line">🔥 <span id="inv-fire">0</span> · 💧 <span id="inv-water">0</span> · ⚡ <span id="inv-lightning">0</span></p>
+      </section>
+    </div>
+  </div>
+
+  <!-- Virtual Joystick -->
+  <div id="joystick-zone" class="joystick-zone hidden">
+    <div id="joystick-base" class="joystick-base">
+      <div id="joystick-knob" class="joystick-knob"></div>
+    </div>
+  </div>
+
+  <!-- Encounter flash -->
+  <div id="encounter-flash" class="encounter-flash"></div>
+
+  <!-- Combat Screen -->
+  <div id="combat-ui" class="combat-ui hidden">
+    <div class="combat-top">
+      <div id="enemy-panel" class="enemy-panel"></div>
+    </div>
+    <div class="combat-bottom">
+      <div id="party-panel" class="party-panel"></div>
+      <div id="menu-panel" class="menu-panel">
+        <div id="main-menu" class="menu-grid">
+          <button class="btn btn-menu" data-action="fight">Fight</button>
+          <button class="btn btn-menu" data-action="magic">Magic</button>
+          <button class="btn btn-menu" data-action="item">Item</button>
+          <button class="btn btn-menu" data-action="flee">Flee</button>
+        </div>
+        <div id="path-menu" class="menu-grid hidden">
+          <button class="btn btn-menu" data-path="warrior">Warrior <span class="cost">blade</span></button>
+          <button class="btn btn-menu" data-path="mage">Mage <span class="cost">mind</span></button>
+          <button class="btn btn-menu" data-path="ranged">Ranged <span class="cost">focus</span></button>
+          <button class="btn btn-menu btn-back" data-action="back">◀ Back</button>
+        </div>
+        <div id="magic-menu" class="menu-grid hidden">
+          <button class="btn btn-menu" data-magic="fire">Ember <span class="cost">🔥1 · 4 MP</span></button>
+          <button class="btn btn-menu" data-magic="water">Tide <span class="cost">💧1 · 4 MP</span></button>
+          <button class="btn btn-menu" data-magic="lightning">Sparkbolt <span class="cost">⚡1 · 5 MP</span></button>
+          <button class="btn btn-menu" data-magic="cure">Mend <span class="cost">💧1 · 5 MP</span></button>
+          <button class="btn btn-menu btn-back" data-action="back">◀ Back</button>
+        </div>
+        <div id="item-menu" class="menu-grid hidden">
+          <button class="btn btn-menu" data-item="potion">Potion <span class="cost" id="potion-count">x3</span></button>
+          <button class="btn btn-menu" data-item="ether">Ether <span class="cost" id="ether-count">x1</span></button>
+          <button class="btn btn-menu btn-back" data-action="back">◀ Back</button>
+        </div>
+        <div id="target-menu" class="menu-list hidden">
+          <p class="menu-label">Select Target</p>
+          <div id="target-buttons"></div>
+          <button class="btn btn-menu btn-back" data-action="back-target">◀ Back</button>
+        </div>
+      </div>
+    </div>
+    <div id="combat-log" class="combat-log"></div>
+    <div id="turn-indicator" class="turn-indicator"></div>
+  </div>
+
+  <!-- Toast notifications -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- Game Over -->
+  <div id="gameover-screen" class="screen hidden">
+    <div class="title-content">
+      <h1 class="game-title defeat">Game Over</h1>
+      <p class="subtitle">The spark dims… Lira falls.</p>
+      <button id="btn-retry" class="btn btn-primary btn-xl">Retry</button>
+    </div>
+  </div>
+
+  <!-- Victory overlay (brief) -->
+  <div id="victory-overlay" class="victory-overlay hidden">
+    <h2>Victory!</h2>
+    <p id="victory-text"></p>
+  </div>
+
+  <canvas id="game-canvas"></canvas>
+
+  <script src="https://unpkg.com/three@0.128.0/build/three.min.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
