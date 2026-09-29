@@ -386,6 +386,7 @@ button, .inventory-panel, .inv-body, .credits-content {
 .el.fire { color: #ffb089; border-color: rgba(255, 120, 60, 0.35); }
 .el.water { color: #9fd4ee; border-color: rgba(80, 170, 220, 0.35); }
 .el.lightning { color: #e2d2ff; border-color: rgba(180, 150, 255, 0.35); }
+.el.earth { color: #e4c49a; border-color: rgba(196, 150, 80, 0.4); }
 
 .hud-strain {
   display: flex;

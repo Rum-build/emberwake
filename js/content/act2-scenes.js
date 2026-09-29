@@ -49,21 +49,25 @@
     var fire = Emberwake.elementCount ? Emberwake.elementCount('fire') : 0;
     var bolt = Emberwake.elementCount ? Emberwake.elementCount('lightning') : 0;
     var water = Emberwake.elementCount ? Emberwake.elementCount('water') : 0;
-    if (!(fire >= 1 && (bolt >= 1 || water >= 1))) return false;
-    var plasma = bolt >= 1;
+    if (!(fire >= 1 && (bolt >= 1 || water >= 1)) && !(water >= 1 && bolt >= 1)) return false;
+    var plasma = bolt >= 1 && fire >= 1;
+    var lines = plasma
+      ? [
+        { where: 'Between her hands', speaker: 'The spark', text: 'The kiln’s fire and this cliff’s lightning are trying to become one word.' },
+        { speaker: 'Lira', text: 'It burns the air. This time it does not go out.' },
+        { speaker: 'The spark', text: 'Plasma. It stays on the magic list. It spends fire and lightning together. A spell that stays is a debt with a name.' },
+        { speaker: 'Lira', text: 'Then we carry it into a fight. The vault’s bottles are still not ours.' },
+      ]
+      : [
+        { where: 'Between her hands', speaker: 'The spark', text: 'Fire she already swallowed, and water. They meet and fog the shale.' },
+        { speaker: 'Lira', text: 'Steam. It stayed. My palms are hot, and the air is wet.' },
+        { speaker: 'The spark', text: 'Steam is on the magic list. It spends fire and water together. It is not mercy. It is weather you can aim.' },
+      ];
+    if (water >= 1 && bolt >= 1) {
+      lines.push({ speaker: 'The spark', text: 'Water and lightning have a word of their own. Storm. It spends both, and the coast already knows the shape.' });
+    }
     Emberwake.present({
-      lines: plasma
-        ? [
-          { where: 'Between her hands', speaker: 'The spark', text: 'The kiln’s fire and this cliff’s lightning are trying to become one word.' },
-          { speaker: 'Lira', text: 'It burns the air. This time it does not go out.' },
-          { speaker: 'The spark', text: 'Plasma. It stays on the magic list. It spends fire and lightning together. A spell that stays is a debt with a name.' },
-          { speaker: 'Lira', text: 'Then we carry it into a fight. The vault’s bottles are still not ours.' },
-        ]
-        : [
-          { where: 'Between her hands', speaker: 'The spark', text: 'Fire she already swallowed, and water. They meet and fog the shale.' },
-          { speaker: 'Lira', text: 'Steam. It stayed. My palms are hot, and the air is wet.' },
-          { speaker: 'The spark', text: 'Steam is on the magic list. It spends fire and water together. It is not mercy. It is weather you can aim.' },
-        ],
+      lines: lines,
       onDone: function () {
         if (Emberwake.noteMerge) Emberwake.noteMerge(plasma ? 'plasma' : 'steam');
       },
@@ -122,16 +126,16 @@
             {
               label: 'Sign the shortage. Let the book admit it.',
               pick: 'sign',
-              reply: { speaker: 'A clerk', text: 'Signed. You are a witness, not a licence. If a harbor asks who counted the missing storm, the book will say your mouth. The iron does not open for witnesses.' },
+              reply: { speaker: 'A clerk', text: 'Signed. You are a witness, not a licence. The bottle-hall is the show we give people whose names are already in a book. Walk north. The iron will pretend it was always a door.' },
             },
             {
               label: 'Refuse the line. Leave the shortage rude.',
               pick: 'refuse',
-              reply: { speaker: 'A clerk', text: 'Then it stays rude. Rude shortages feed no one and blame no one, which is how a harbour prefers its theft. The door back to the shale is behind you. The bottles are not.' },
+              reply: { speaker: 'A clerk', text: 'Then it stays rude. The hall is still the show. We let refusals look, so they can describe the corks to someone who pays. Walk north. Looking is not a licence.' },
             },
           ],
         },
-        { speaker: 'The spark', text: 'Grey work. The coast is still leaking. Kestrel would not put her boots on this floor, and the iron agrees with her.' },
+        { speaker: 'The spark', text: 'Grey work. The iron was a courtesy. The show is north, and Kestrel still will not stand on this floor.' },
       ],
       onPick: function (id) {
         if (Emberwake.noteLedger) Emberwake.noteLedger(id);
@@ -167,6 +171,55 @@
       ],
       onPick: function (id) {
         if (Emberwake.noteKestrelAsk) Emberwake.noteKestrelAsk(id);
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('bottle-hall', function () {
+    var torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    Emberwake.present({
+      lines: [
+        { where: 'Bottle-hall', speaker: 'A clerk', text: 'This is the spectacle. Gold on every cork, light in every glass, and a count that does not match the shelves. Clap if you like. The seals do not clap back.' },
+        { speaker: 'Lira', text: 'They bottled weather and called it mercy. The room is beautiful the way a ledger is beautiful.' },
+        torren
+          ? { speaker: 'Torren', text: 'I have walked a hall like this with a lamp and a lie. The dark bottle at the end does not face the harbor. It faces inland.' }
+          : { speaker: 'The spark', text: 'The dark bottle at the end does not face the sea. Something inland is already drinking what this room would not admit.' },
+        { speaker: 'A clerk', text: 'That cork is Ashen Marrow. A digest-engine in the ash eats what leaked. The earth bottle beside you is a different theft. Crack it and your mouth keeps a mouthful. Leave it and the show stays intact. Neither choice feeds the inland engine. Both will be remembered.' },
+        {
+          speaker: 'Lira',
+          text: 'The earth bottle is dull brown under a gold seal. The marrow bottle is the color of a closed road.',
+          choices: [
+            {
+              label: 'Crack the earth cork. Take the mouthful.',
+              pick: 'crack',
+              reply: { speaker: 'A clerk', text: 'Cracked. You are hungrier than the licence, which is how rot learns a new name. Magma and glass, if the other elements are already in her, will sit on the magic list. The marrow bottle stays corked. Look north if you want the road you are not walking.' },
+            },
+            {
+              label: 'Leave every cork. Name the inland leak.',
+              pick: 'leave',
+              reply: { speaker: 'A clerk', text: 'Then the show stays pretty. Ashen Marrow keeps the leak, and you keep your teeth clean of earth. The north arch is a look, not a gate. Describe it badly, if you describe it at all.' },
+            },
+          ],
+        },
+        { speaker: 'The spark', text: 'Spectacle and shortage in the same room. The inland road is still a cork with a view.' },
+      ],
+      onPick: function (id) {
+        if (Emberwake.noteHall) Emberwake.noteHall(id);
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('marrow-road', function () {
+    Emberwake.present({
+      lines: [
+        { where: 'Ashen Marrow', speaker: 'A clerk', text: 'Inland. Ash under a red sky. The digest-engine sits where the seals failed, and it eats. This is not a door. This is the bill the harbor sent somewhere else.' },
+        { speaker: 'Lira', text: 'They keep the hall bright by pushing the rot where the ships do not have to smell it.' },
+        { speaker: 'The spark', text: 'Your feet are still on harbor stone. When this road opens, it will ask what you already swallowed, and what you refused.' },
+      ],
+      onDone: function () {
+        if (Emberwake.finishMarrow) Emberwake.finishMarrow();
       },
     });
     return true;

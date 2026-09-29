@@ -44,6 +44,9 @@
     cure: { element: 'water', cost: 1, mp: 5, kind: 'heal', flash: 0x9dffc8 },
     plasma: { element: 'lightning', cost: 1, also: 'fire', alsoCost: 1, mp: 7, kind: 'dmg', power: 22, flash: 0xfff1c2, merge: 'plasma' },
     steam: { element: 'water', cost: 1, also: 'fire', alsoCost: 1, mp: 6, kind: 'dmg', power: 16, flash: 0xd8e4ea, merge: 'steam' },
+    storm: { element: 'lightning', cost: 1, also: 'water', alsoCost: 1, mp: 7, kind: 'dmg', power: 18, flash: 0xb7d4ff, merge: 'storm' },
+    magma: { element: 'fire', cost: 1, also: 'earth', alsoCost: 1, mp: 7, kind: 'dmg', power: 20, flash: 0xff6a2a, merge: 'magma' },
+    glass: { element: 'lightning', cost: 1, also: 'earth', alsoCost: 1, mp: 6, kind: 'dmg', power: 15, flash: 0xe7fff6, merge: 'glass' },
   };
 
   content.enemies = {
