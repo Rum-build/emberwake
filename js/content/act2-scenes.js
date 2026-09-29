@@ -396,8 +396,13 @@
     var coughing = Emberwake.scarCount && Emberwake.scarCount() >= 2;
     var dusk = Emberwake.heardDusk && Emberwake.heardDusk();
     var brawl = Emberwake.foughtPatrol && Emberwake.foughtPatrol();
+    var cork = Emberwake.corkedCup && Emberwake.corkedCup();
     var heard = null;
-    if (dusk && brawl) heard = 'You named the dusk, and the coats on the shale answered you. The vault stayed shut. So do I. I still do not enter.';
+    if (dusk && cork && brawl) heard = 'You named the dusk, they corked a cup, and the coats on the shale answered you. The vault stayed shut. So do I. I still do not enter.';
+    else if (dusk && cork) heard = 'You named the dusk, and they corked a cup in front of you. The mouth stayed hers. I still do not enter.';
+    else if (cork && brawl) heard = 'They corked a cup, and the coats on the shale answered you. The vault stayed shut. So do I. I still do not enter.';
+    else if (dusk && brawl) heard = 'You named the dusk, and the coats on the shale answered you. The vault stayed shut. So do I. I still do not enter.';
+    else if (cork) heard = 'They corked a cup and wrote the spark beside the host. The furrow stayed shut. So do I. I still do not enter.';
     else if (brawl) heard = 'The coats on the shale answered you. The vault did not. I am not their licence, and I still do not enter.';
     else if (dusk) heard = 'The sky went down on this ash and the mouth stayed hers. I saw that. I still do not enter.';
     var lines = [
