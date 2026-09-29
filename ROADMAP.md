@@ -238,12 +238,19 @@ Playable on the Verdant Isle field:
 - The ash penitent is a shorter fight: less life, a lighter blow. Status chips are filled, and on a phone they are larger.
 - Phone controls, Absorb, Pack, and Continue stay.
 
-## Title and tally (this branch)
+## Title and tally (shipped)
 
 - The title, the path, and the credits sit in a gold frame. When a save is waiting, Continue is the gold action and Wake stays quiet until it asks. Lira’s ember is a core, a glow, and three motes. Still parks the motes. On a phone they skip every other orbit.
 - A snapped mile post and a cold ring on the isle are optional looks. They do not open the kiln, drink a pool, or add a scar. A shelf gull can meet her on the coast. It cries once, spends up to 4 mind, and the cry fades on that person’s next turn. It does not add scar debt.
 - A tally clerk on the east shale counts weather. If the bound cord is held, he says the knot is not a licence. If Cousin’s Margin is held, he says the furrow is already filed. If both are held, he says neither opens the door. He is not the porter. The vault stays shut.
 - Phone controls, Absorb, Pack, and Continue stay. A phone-width walk from the claim into the aftermath still works with motion stilled.
+
+## Ground and ration (this branch)
+
+- The isle, the shale, and the ash sit a little higher in places. A mound, a log, a cairn, driftwood, and ash ribs are props, not doors. Ash streaks on the marrow and weather streaks on the shale when motion is on. Still holds them. The claim figure keeps a foot ring and a hotter edge.
+- A verdant tonic and a wellwater phial say, on the pack and in a fight, how much HP or mind they return, and the toast names the new total. A stall on the west shale trades one rot-ash for a Concord ration that closes up to 22 HP. It does not take marks and it does not open the vault.
+- Short of the yard’s north stone, a bench is a private word. Torren speaks if he came. If he did not and Nima did, she speaks. If neither came, Lira says so. It does not open the mark or drink the slag.
+- Phone controls, Absorb, Pack, and Continue stay. Enter, Leave, and Continue still keep a claim flag.
 
 ## Still ahead
 
