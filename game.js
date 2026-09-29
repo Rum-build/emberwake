@@ -2133,7 +2133,13 @@
     const left = pools.filter((p) => !p.absorbed && !p.bottled && !p.interior).length;
     const kilnQuiet = pools.some((p) => p.id === 'kiln' && p.absorbed);
     const mergeNames = earnedMergeNames();
-    if (seenBeats.marrowStep) {
+    if (seenBeats.marrowStep && locale === 'marrow-pipe') {
+      rumor = pipeWord === 'crack'
+        ? 'The feed is cracked. The engine is hungrier. South of this iron is the ash.'
+        : pipeWord === 'leave'
+          ? 'The feed stayed corked. The name is in the pack. South of this iron is the ash.'
+          : 'Iron. The valve is north. The ash is south.';
+    } else if (seenBeats.marrowStep) {
       const vesperBit = seenBeats['marrow-vesper']
         ? (vesperAsh === 'taste'
           ? 'Vesper tasted the scar and did not step in. '
