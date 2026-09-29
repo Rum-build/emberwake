@@ -22,8 +22,8 @@ Three.js **r128** loads from the unpkg CDN, so the first launch needs a network.
 
 1. **Wake** on the title, then choose how Lira fights: **Warrior**, **Mage**, or **Ranged**. The choice can be wrenched later from the pack. That costs host strain.
 2. **Verdant Isle**
-   - **PC:** WASD or arrow keys to walk. Mouse for menus, Pack, Absorb, and battle commands. In battle, **1–4** pick the open command and **Esc** steps back.
-   - **Phone:** virtual joystick (bottom-left) and the large Pack and Absorb buttons. The same battle commands are full-width taps.
+   - **PC:** WASD or arrow keys to walk, or drag the stick at the bottom-left. Absorb and Pack sit at the bottom-right; the mouse can use those, the menus, and battle commands. In battle, **1–4** pick the open command and **Esc** steps back.
+   - **Phone:** the same stick and the large Absorb and Pack buttons. Battle commands are full-width taps.
    - **E** absorbs a pool, enters the leaf-village or the root-cellar, or leaves those rooms. **I** opens the pack. **Esc** closes it.
    - **Continue** on the title restores this browser’s save: spark, strain, inventory, path, who has joined, which pools are quiet, and which scenes have played. **Wake** starts over.
    - **Enter** or click advances a scene. Number keys pick a line when someone asks you to answer.
