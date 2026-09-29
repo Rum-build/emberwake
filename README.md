@@ -73,7 +73,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - Ashen Marrow is a shelf, a pipe, a sealed throat, a Concord yard, the Remnant Mark, the sealed ash nave, the watch gallery, the count crypt under that stair, after Cracked Zero, a first breach, after Held Threshold a remnant claim past the bar, and after a claim flag the aftermath. The four flags write four endings. The wider waystone network is still ahead. Wind merges are still ahead. Burn already paid its scar when the flag was set. The ending echoes that debt and does not add another point.
 - The field bed, the absorb sting, and the merge sting are original CC0 cues generated in the browser. See `CREDITS.md`. Press Silent to stop them. No other music or effects.
 - Encounters are tuned so a short walk can start a fight after the first pool. The patrol is a separate, scripted fight.
-- Ground has height and a few materials. People, houses, and the engine are still simple meshes. Three.js must load from the CDN once.
+- The isle, the coast, the ash, the remnant claim, and the fight have a stronger light: figures read at a distance, Lira carries a spark ember, and the claim mass sits in a darker room. People, houses, and the engine are still simple meshes. Three.js must load from the CDN once.
 
 ## Play on your phone
 
