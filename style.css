@@ -444,6 +444,63 @@ button, .inventory-panel, .inv-body, .credits-content {
   color: #f0d7a4;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
 }
+.hp-wrap {
+  display: inline-block;
+  width: 72px;
+  height: 8px;
+  margin-left: 6px;
+  vertical-align: middle;
+  background: #1a1010;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.hp-bar {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: #d4543c;
+}
+.places-panel {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 18px 12px;
+  background: rgba(8, 6, 8, 0.55);
+}
+.places-panel.hidden { display: none; }
+.places-card {
+  width: min(420px, 100%);
+  max-height: min(70vh, 520px);
+  overflow: auto;
+  background: rgba(22, 16, 14, 0.94);
+  color: #f4ead8;
+  border: 1px solid rgba(232, 196, 138, 0.45);
+  border-radius: 14px;
+  padding: 16px 16px 18px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+.places-card h2 { margin: 0 0 6px; font-size: 1.25rem; }
+.places-note { margin: 0 0 10px; color: #e6d3b4; font-size: 0.85rem; }
+.places-card ul { list-style: none; margin: 0 0 12px; padding: 0; }
+.places-card li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.92rem;
+}
+.places-card li span { color: #e7d7c0; font-size: 0.8rem; }
+.hud-location { cursor: pointer; }
+@keyframes hitflash {
+  from { filter: brightness(1.35); }
+  to { filter: none; }
+}
+.combat-ui.hit { animation: hitflash 0.16s linear; }
 
 .hud-rumor {
   font-size: 0.72rem;

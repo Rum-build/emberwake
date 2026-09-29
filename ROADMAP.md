@@ -99,7 +99,7 @@ Playable on the Verdant Isle field:
 - The coast can throw a Brine Skitter. The ash shelf can throw a Cinder Mite, and rarely another stoker. The pipe itself does not throw random fights.
 - The leaf-village floor and the bottle-hall floor have grain. The mouse stick, Absorb, and Pack stay.
 
-## Sealed throat (this branch)
+## Sealed throat (shipped)
 
 - North of the digest-engine, **Enter** opens a short sealed room. Speak the bottle’s name into the spark, which adds one scar debt, or cork it and leave the word. **Leave** at the south returns to the ash. Continue stores the choice.
 - After either choice, Kestrel is overhead. Ask her to walk as far as the next stone, or leave her the air. Both answers keep her out of the pack.
@@ -107,12 +107,19 @@ Playable on the Verdant Isle field:
 - People have hair, shoulders, and a cloak. Ash, the village, and the vault carry a few motes. The village has a hearth. The bottle-hall has a shaft of light. The field bed is a quiet original loop. Silent stops it.
 - The mouse stick, Absorb, and Pack stay.
 
+## Concord yard (this branch)
+
+- West of the digest-engine, a stone opens the Concord yard. Drink the slag pool, which scars, or let the warden seal it. Vesper argues in the yard and does not enter the host. **Leave** at the south stone-gate returns to the ash. Continue stores the yard and the choice. Kestrel does not join and does not carry the crossing.
+- Tap or hold the place name, or press Places, for a list of where the feet have been. It does not travel. Lira’s health is a bar as well as a number. Fights step a little faster, and a hit brightens the combat frame.
+- Skies grade from the ground color toward a lighter horizon. The pipe has a stain and a lamp. The field bed stays. An absorb sting, original and CC0, plays when a pool is drunk and Sound is on.
+- The mouse stick, Absorb, and Pack stay.
+
 ## Still ahead
 
-From DESIGN.md, after this throat:
+From DESIGN.md, after this yard:
 
-1. The rest of the scar’s debt. One banked leak does not pay the kiln, Vesper’s taste is another point if you let her, and speaking the name is another. Cracking the feed does not pay any of them.
-2. The next waystone, the wind merges (ice, thunder, tide, root), and a party slot for Kestrel if she ever takes one. The stone she smelled is not on this shelf.
+1. The rest of the scar’s debt. The kiln, the earth cork, a fed leak, Vesper’s taste, the spoken name, and a drunk yard slag each add a point. Banking the marrow leak eases one. The rest stays.
+2. The wider waystone network, the wind merges (ice, thunder, tide, root), and a party slot for Kestrel if she ever takes one.
 
 Combat menus stay Fight / Magic / Item / Flee. New panels stay desktop-first.
 
