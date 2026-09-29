@@ -49,6 +49,7 @@
     weevil: { name: 'Blight Weevil', color: 0x44502e, maxHp: 34, atk: 8, def: 2, xp: 12, gold: 6, shape: 'bug' },
     whelp: { name: 'Ash Whelp', color: 0xc45c28, maxHp: 50, atk: 11, def: 4, xp: 18, gold: 11, shape: 'sphere' },
     scribe: { name: 'Concord Scribe', color: 0x3e4550, maxHp: 54, atk: 10, def: 5, xp: 20, gold: 18, shape: 'human' },
+    warden: { name: 'Concord Warden', color: 0x2a3038, maxHp: 72, atk: 13, def: 6, xp: 26, gold: 20, shape: 'human' },
     echo: { name: "Vesper's Echo", color: 0x2a2030, maxHp: 80, atk: 14, def: 5, xp: 36, gold: 24, shape: 'echo' },
   };
 

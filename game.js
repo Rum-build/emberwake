@@ -66,6 +66,15 @@
   let nearPool = null;
   let rumor = '';
   let seenBeats = {};
+  let beatHold = {};
+  let dialogueOpen = false;
+  let dialogueLines = [];
+  let dialogueIndex = 0;
+  let dialogueOnDone = null;
+  let dialogueWhere = '';
+  let scriptedEncounter = null;
+  let silhouetteGone = false;
+  let vesperFigure = null;
   let combatsFought = 0;
   let introToastShown = false;
   let combatInRot = false;
@@ -281,8 +290,15 @@
     encounterLocked = false;
     suppressEncountersUntil = 0;
     seenBeats = {};
+    beatHold = {};
+    dialogueOpen = false;
+    dialogueOnDone = null;
+    scriptedEncounter = null;
+    silhouetteGone = false;
     combatsFought = 0;
     introToastShown = false;
+    const dialoguePanel = $('#dialogue');
+    if (dialoguePanel) dialoguePanel.classList.add('hidden');
     rumor = 'The leaf-villages pretend the Concord’s seals are mercy.';
     if (playerMesh) {
       playerMesh.position.set(0, 0, 0);
@@ -408,6 +424,13 @@
     overworldGroup.add(village);
     const bannerPin = landmark('concord-banner');
     overworldGroup.add(makeConcordBanner(bannerPin.x, bannerPin.z));
+    const stonePin = landmark('sleeping-waystone');
+    if (stonePin) overworldGroup.add(makeWaystone(stonePin.x, stonePin.z));
+    const ridgePin = landmark('vesper-ridge');
+    if (ridgePin) {
+      vesperFigure = makeSilhouette(ridgePin.x, ridgePin.z);
+      overworldGroup.add(vesperFigure);
+    }
 
     const cellarPin = landmark('root-cellar');
     const dungeon = new THREE.Group();
@@ -480,6 +503,42 @@
     g.add(seal);
     g.position.set(x, 0, z);
     return g;
+  }
+
+  function makeWaystone(x, z) {
+    const g = new THREE.Group();
+    for (let i = 0; i < 3; i++) {
+      const slab = new THREE.Mesh(
+        new THREE.BoxGeometry(0.42, 2.15, 0.7),
+        new THREE.MeshLambertMaterial({ color: 0x6d727c })
+      );
+      const a = (i / 3) * Math.PI * 2;
+      slab.position.set(Math.cos(a) * 1.25, 1.05, Math.sin(a) * 1.25);
+      slab.rotation.y = -a;
+      g.add(slab);
+    }
+    const heart = new THREE.Mesh(
+      new THREE.OctahedronGeometry(0.16, 0),
+      new THREE.MeshLambertMaterial({ color: 0x8aa4b0, emissive: new THREE.Color(0x142028) })
+    );
+    heart.position.y = 0.85;
+    g.add(heart);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeSilhouette(x, z) {
+    const fig = makeCharacter(0x120c14, 1.35);
+    fig.traverse((c) => {
+      if (c.isMesh && c.material) {
+        c.material = c.material.clone();
+        c.material.transparent = true;
+        c.material.opacity = 0.88;
+      }
+    });
+    fig.visible = false;
+    fig.position.set(x, 0, z);
+    return fig;
   }
 
   function makePool(def) {
@@ -573,29 +632,41 @@
     }
 
     let seal = null;
-    if (def.concord) {
-      const ring = new THREE.Mesh(
+    let sealRing = null;
+    if (def.concord || def.patrol) {
+      sealRing = new THREE.Mesh(
         new THREE.TorusGeometry(0.85, 0.12, 6, 14),
         new THREE.MeshLambertMaterial({ color: 0x8d877c })
       );
-      ring.rotation.x = Math.PI / 2;
-      ring.position.y = 0.25;
-      g.add(ring);
+      sealRing.rotation.x = Math.PI / 2;
+      sealRing.position.y = 0.25;
+      if (def.patrol) sealRing.visible = false;
+      g.add(sealRing);
       seal = new THREE.Mesh(
         new THREE.OctahedronGeometry(0.28, 0),
         new THREE.MeshLambertMaterial({ color: 0xe0cc8a, emissive: new THREE.Color(0x554410) })
       );
       seal.position.set(0.15, 1.7, 0.15);
+      if (def.patrol) seal.visible = false;
       g.add(seal);
+    }
+
+    if (def.patrol) {
+      [[1.6, 0.4], [-1.3, 1.1], [0.2, -1.7]].forEach((spot, i) => {
+        const fig = makeCharacter(i === 0 ? 0x2a3038 : 0x3e4550, 0.9);
+        fig.position.set(spot[0], 0, spot[1]);
+        fig.rotation.y = Math.atan2(-spot[0], -spot[1]);
+        g.add(fig);
+      });
     }
 
     const pool = {
       id: def.id, element: def.element, name: def.name, short: def.short,
       x: def.x, z: def.z, xp: def.xp, strain: def.strain,
-      hint: def.hint, line: def.line, vesper: !!def.vesper, concord: !!def.concord,
-      absorbed: false, healing: false, heal: 0,
+      hint: def.hint, line: def.line, vesper: !!def.vesper, concord: !!def.concord, patrol: !!def.patrol,
+      absorbed: false, bottled: false, healing: false, heal: 0,
       rotMat, rotColor, healColor, elColor, lifeMat, coreMat, core, beamMat,
-      spikes, flowers, motes, figure, seal, phase: Math.random() * 6,
+      spikes, flowers, motes, figure, seal, sealRing, phase: Math.random() * 6,
     };
     pools.push(pool);
     overworldGroup.add(g);
@@ -612,6 +683,7 @@
     pool.coreMat.color.copy(pool.elColor);
     pool.coreMat.emissive.copy(pool.elColor).multiplyScalar(0.35);
     pool.beamMat.opacity = 0.2;
+    pool.bottled = false;
     pool.spikes.forEach((s) => { s.scale.y = 1; s.visible = true; });
     pool.flowers.forEach((f) => { f.scale.y = 0.001; });
     if (pool.figure) {
@@ -622,10 +694,11 @@
       });
     }
     if (pool.seal) {
-      pool.seal.visible = true;
+      pool.seal.visible = !pool.patrol;
       pool.seal.rotation.z = 0;
       pool.seal.position.y = 1.7;
     }
+    if (pool.sealRing) pool.sealRing.visible = !pool.patrol;
   }
 
   function updatePools(dt) {
@@ -660,6 +733,10 @@
       if (pool.seal && pool.absorbed) {
         pool.seal.rotation.z = 1.35 * h;
         pool.seal.position.y = 1.7 - 1.35 * h;
+      }
+      if (pool.bottled) {
+        pool.beamMat.opacity = 0.04;
+        pool.coreMat.emissive.copy(pool.elColor).multiplyScalar(0.04);
       }
     });
   }
@@ -879,16 +956,23 @@
   function refreshRumor() {
     const vesperDone = pools.some((p) => p.id === 'vesper' && p.absorbed);
     const wellDone = pools.some((p) => p.id === 'well' && p.absorbed);
-    const left = pools.filter((p) => !p.absorbed).length;
-    if (pools.length && left === 0) {
+    const left = pools.filter((p) => !p.absorbed && !p.bottled).length;
+    if (seenBeats.silhouette) {
+      rumor = 'Vesper stood on the ridge and did not offer a fight. She named the coast. The scar in the grass is a different wound.';
+    } else if (pools.length && left === 0) {
       rumor = 'Verdant Isle is quieter. The Concord will call this unlicensed, not healed.';
     } else if (vesperDone) {
       rumor = 'Vesper drank here first. You finished the meal. She will notice the absence.';
+    } else if (seenBeats.patrol) {
+      rumor = 'You watched them cork a spring and call it mercy. The furrow will hear about it.';
     } else if (wellDone) {
       rumor = 'The well-seal is cracked in the pack. Somewhere a clerk is writing your name.';
+    } else if (seenBeats.waystone) {
+      rumor = 'A waystone sleeps on the north ridge. The road to Stormreach is shut.';
     } else if (seenBeats.village) {
-      rumor = 'Hearth-smoke and worry. The Ashen Concord calls a bottled well safety.';
+      rumor = 'Hearth-smoke and worry. Sera wants the seal. Joss wants the furrow. Neither is lying.';
     }
+    syncSilhouette();
     const el = $('#hud-rumor');
     if (el) el.textContent = rumor;
   }
@@ -912,19 +996,21 @@
     $('#hud-path').textContent = 'Path ' + (spark.path ? PATH_LABEL[spark.path] : '—');
     $('#hud-rumor').textContent = rumor;
     const absorbBtn = $('#btn-absorb');
-    const showAbsorb = nearPool && !nearPool.absorbed && gameState === State.OVERWORLD && !inventoryOpen && !encounterLocked;
+    const showAbsorb = nearPool && !nearPool.absorbed && !nearPool.bottled && gameState === State.OVERWORLD && !inventoryOpen && !encounterLocked && !dialogueOpen;
     absorbBtn.classList.toggle('hidden', !showAbsorb);
     if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
   }
 
   function updatePrompt() {
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || !nearPool) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || !nearPool) {
       interactPrompt.classList.add('hidden');
       return;
     }
     interactPrompt.classList.remove('hidden');
     $('#interact-title').textContent = nearPool.name;
-    $('#interact-detail').textContent = nearPool.absorbed
+    $('#interact-detail').textContent = nearPool.bottled
+      ? 'A Concord seal sits on the mouth. They called this safety while you watched.'
+      : nearPool.absorbed
       ? 'Quiet now. The ground kept what you did not need.'
       : nearPool.hint + ' Press E, or Absorb.';
   }
@@ -1113,8 +1199,12 @@
   }
 
   function tryAbsorb() {
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked) return;
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen) return;
     if (!nearPool) return;
+    if (nearPool.bottled) {
+      showToast('The seal is already on. Cracking it in the open is how rot learns your name. The well in the south is a different theft.');
+      return;
+    }
     if (nearPool.absorbed) {
       showToast('This pool is quiet. The land already kept the scrap.');
       return;
@@ -1153,16 +1243,41 @@
   }
 
   function fireBeat(b) {
-    seenBeats[b.id] = true;
     const sceneFn = b.scene && EW.scenes[b.scene];
-    if (typeof sceneFn === 'function') sceneFn(b);
-    else showToast(b.toast);
+    if (typeof sceneFn === 'function') {
+      const played = sceneFn(b);
+      if (played === false) {
+        beatHold[b.id] = true;
+        return;
+      }
+    } else showToast(b.toast);
+    seenBeats[b.id] = true;
+    refreshRumor();
+  }
+
+  function syncSilhouette() {
+    if (!vesperFigure) return;
+    vesperFigure.visible = actReady() && !silhouetteGone;
+  }
+
+  function actReady() {
+    const ember = pools.find((p) => p.id === 'ember');
+    return !!(seenBeats.village && seenBeats.patrol && ember && ember.absorbed);
+  }
+
+  function bottlePool(id) {
+    const pool = pools.find((p) => p.id === id);
+    if (!pool || pool.bottled) return;
+    pool.bottled = true;
+    if (pool.seal) pool.seal.visible = true;
+    if (pool.sealRing) pool.sealRing.visible = true;
+    if (pool.beamMat) pool.beamMat.opacity = 0.04;
     refreshRumor();
   }
 
   function updateOverworld(dt) {
     const camTarget = playerMesh.position;
-    if (!inventoryOpen && !encounterLocked) {
+    if (!inventoryOpen && !encounterLocked && !dialogueOpen) {
       let mx = 0;
       let mz = 0;
       if (keys.KeyW || keys.ArrowUp) mz -= 1;
@@ -1195,8 +1310,13 @@
       }
 
       BEATS.forEach((b) => {
-        if (seenBeats[b.id]) return;
-        if (Math.hypot(b.x - playerMesh.position.x, b.z - playerMesh.position.z) < b.r) fireBeat(b);
+        const inside = Math.hypot(b.x - playerMesh.position.x, b.z - playerMesh.position.z) < b.r;
+        if (!inside) {
+          beatHold[b.id] = false;
+          return;
+        }
+        if (seenBeats[b.id] || beatHold[b.id]) return;
+        fireBeat(b);
       });
     } else {
       nearPool = nearestPool();
@@ -1288,7 +1408,9 @@
     scene.fog.color.set(0x5c6c80);
     renderer.setClearColor(0x5c6c80);
 
-    enemies = rollEncounter();
+    const preset = scriptedEncounter;
+    scriptedEncounter = null;
+    enemies = preset && preset.length ? preset.map((id) => spawnEnemy(id)) : rollEncounter();
     combatEnemyMeshes.forEach((m) => combatGroup.remove(m));
     combatPartyMeshes.forEach((m) => combatGroup.remove(m));
     combatEnemyMeshes = [];
@@ -1875,7 +1997,7 @@
   // ─── Input & flow ─────────────────────────────────────────
   function setupJoystick() {
     const onStart = (e) => {
-      if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked) return;
+      if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen) return;
       const t = e.changedTouches ? e.changedTouches[0] : e;
       if (!t) return;
       e.preventDefault();
@@ -1935,11 +2057,99 @@
     joystickKnob.style.transform = 'translate(calc(-50% + ' + dx + 'px), calc(-50% + ' + dy + 'px))';
   }
 
+  function openDialogue(script, done) {
+    dialogueLines = (script.lines || []).slice();
+    dialogueIndex = 0;
+    dialogueWhere = '';
+    dialogueOnDone = (script && script.onDone) || done || null;
+    dialogueOpen = true;
+    if (inventoryOpen) setInventory(false);
+    const panel = $('#dialogue');
+    panel.classList.remove('hidden');
+    renderDialogue();
+  }
+
+  function renderDialogue() {
+    const line = dialogueLines[dialogueIndex];
+    if (!line) {
+      closeDialogue();
+      return;
+    }
+    if (line.where) dialogueWhere = line.where;
+    const whereEl = $('#dialogue-where');
+    whereEl.textContent = dialogueWhere;
+    whereEl.classList.toggle('hidden', !dialogueWhere);
+    $('#dialogue-speaker').textContent = line.speaker || '';
+    $('#dialogue-line').textContent = line.text || '';
+    const actions = $('#dialogue-actions');
+    actions.innerHTML = '';
+    if (line.choices && line.choices.length) {
+      line.choices.forEach((choice, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn dialogue-choice';
+        btn.innerHTML = '<kbd class="pc-key">' + (i + 1) + '</kbd><span>' + esc(choice.label) + '</span>';
+        btn.addEventListener('click', () => chooseDialogue(i));
+        actions.appendChild(btn);
+      });
+    } else {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn';
+      const last = dialogueIndex >= dialogueLines.length - 1;
+      btn.textContent = last ? 'Leave it' : 'Continue';
+      btn.addEventListener('click', advanceDialogue);
+      actions.appendChild(btn);
+    }
+  }
+
+  function advanceDialogue() {
+    if (!dialogueOpen) return;
+    const line = dialogueLines[dialogueIndex];
+    if (line && line.choices && line.choices.length) return;
+    dialogueIndex += 1;
+    if (dialogueIndex >= dialogueLines.length) closeDialogue();
+    else renderDialogue();
+  }
+
+  function chooseDialogue(i) {
+    if (!dialogueOpen) return;
+    const line = dialogueLines[dialogueIndex];
+    if (!line || !line.choices || !line.choices[i]) return;
+    const reply = line.choices[i].reply;
+    dialogueLines[dialogueIndex] = { where: line.where, speaker: line.speaker, text: line.text };
+    if (reply) dialogueLines.splice(dialogueIndex + 1, 0, reply);
+    advanceDialogue();
+  }
+
+  function closeDialogue() {
+    if (!dialogueOpen && !$('#dialogue') ) return;
+    dialogueOpen = false;
+    const panel = $('#dialogue');
+    if (panel) panel.classList.add('hidden');
+    const done = dialogueOnDone;
+    dialogueOnDone = null;
+    if (typeof done === 'function') done();
+  }
+
   function setupKeyboard() {
     window.addEventListener('keydown', (e) => {
       keys[e.code] = true;
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) e.preventDefault();
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) e.preventDefault();
       if (e.repeat) return;
+      if (dialogueOpen) {
+        if (e.code === 'Enter' || e.code === 'Space' || e.code === 'NumpadEnter') {
+          e.preventDefault();
+          advanceDialogue();
+        } else if (e.code.indexOf('Digit') === 0 || e.code.indexOf('Numpad') === 0) {
+          const digit = Number(e.code.replace(/\D/g, ''));
+          if (digit >= 1 && digit <= 9) {
+            e.preventDefault();
+            chooseDialogue(digit - 1);
+          }
+        }
+        return;
+      }
       if (e.code === 'KeyI' && gameState === State.OVERWORLD && !encounterLocked) setInventory(!inventoryOpen);
       if (e.code === 'KeyE' && gameState === State.OVERWORLD) tryAbsorb();
       if (e.code === 'Escape' && inventoryOpen) setInventory(false);
@@ -2048,7 +2258,9 @@
         : spark.path === 'ranged'
           ? ' The reed bow in the pack suits a focused shot.'
           : ' The ashwood blade in the pack suits a warrior.';
-      showToast('Follow the orange column. Stand in the sick grass and absorb — E, or Absorb. Feeding heals the ground. That is a side effect.' + gearHint);
+      const wake = EW.scenes['wake-spark'];
+      if (typeof wake === 'function') wake({ gearHint: gearHint });
+      else showToast('Follow the orange column. Stand in the sick grass and absorb — E, or Absorb. Feeding heals the ground. That is a side effect.' + gearHint);
     }
   }
 
@@ -2075,7 +2287,7 @@
       });
     });
     $('#btn-inventory').addEventListener('click', () => {
-      if (gameState === State.OVERWORLD && !encounterLocked) setInventory(!inventoryOpen);
+      if (gameState === State.OVERWORLD && !encounterLocked && !dialogueOpen) setInventory(!inventoryOpen);
     });
     $('#btn-inv-close').addEventListener('click', () => setInventory(false));
     $('#btn-absorb').addEventListener('click', (e) => {
@@ -2120,6 +2332,23 @@
     if (pools.length) updatePools(dt);
     renderer.render(scene, camera);
   }
+
+  EW.present = function (script, done) { openDialogue(script, done); };
+  EW.bottlePool = bottlePool;
+  EW.beginEncounter = function (ids) {
+    scriptedEncounter = ids;
+    triggerEncounter();
+  };
+  EW.actReady = actReady;
+  EW.whisper = showToast;
+  EW.revealSilhouette = function () {
+    silhouetteGone = false;
+    if (vesperFigure) vesperFigure.visible = true;
+  };
+  EW.dismissSilhouette = function () {
+    silhouetteGone = true;
+    syncSilhouette();
+  };
 
   function boot() {
     if (typeof THREE === 'undefined') {

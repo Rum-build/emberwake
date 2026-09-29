@@ -1,9 +1,7 @@
 /**
  * Verdant Isle — Act I field data.
- * Phase 1 plays this as an overworld: pools, landmarks, toast beats.
- * Year 1's vertical slice fills the reserved scene ids and interior flags
- * without rewriting combat. Register those scenes with Emberwake.registerScene
- * and point beat.scene at them. See ROADMAP.md.
+ * Pools, landmarks, and field beats. Scenes live in act1-scenes.js.
+ * Interiors stay null until a later build walks inside them.
  */
 (function (Emberwake) {
   'use strict';
@@ -18,6 +16,8 @@
       { id: 'leaf-village', kind: 'village', x: -8, z: -10, clear: 4.2, interior: null },
       { id: 'concord-banner', kind: 'banner', x: -6.2, z: -11.6, clear: 1.6 },
       { id: 'root-cellar', kind: 'cellar', x: 10, z: 8, clear: 3.6, interior: null },
+      { id: 'sleeping-waystone', kind: 'waystone', x: 0, z: 18, clear: 3.4 },
+      { id: 'vesper-ridge', kind: 'silhouette', x: 8, z: 20.5, clear: 2.6 },
     ],
     pools: [
       {
@@ -50,11 +50,29 @@
         hint: 'A shattered stone. Lightning still lives in the crack.',
         line: 'Lightning nests in the spark. Lira tastes storms. The stone stops screaming.',
       },
+      {
+        id: 'copse', element: 'fire', name: 'Ash Copse', short: 'Copse',
+        x: -18, z: -2, xp: 26, rot: 0.6, strain: 12,
+        hint: 'A grove that burned with no sky above it. The heat stayed in the roots.',
+        line: 'You take the root-fire. Leaves that were ash remember green. Lira’s hands smell of smoke.',
+      },
+      {
+        id: 'leaf-cup', element: 'water', name: 'Leaf Cup', short: 'Cup',
+        x: -4, z: 8, xp: 22, rot: 0.4, strain: 10, patrol: true,
+        hint: 'A lesser spring, clear enough to lie. Someone with a licence is already walking toward it.',
+        line: 'The cup was never yours to finish.',
+      },
+      {
+        id: 'ridge', element: 'lightning', name: 'Ridge Vein', short: 'Ridge',
+        x: -6, z: 16, xp: 32, rot: 0.55, strain: 14,
+        hint: 'The stone under the north ridge still argues with the weather.',
+        line: 'You drink the argument. Lightning sits behind Lira’s eyes. The vein goes quiet.',
+      },
     ],
     beats: [
       {
         id: 'village',
-        scene: null,
+        scene: 'village-argument',
         x: -8, z: -10, r: 4.3,
         toast: 'The leaf-village keeps its doors half shut. They have heard the Ashen Concord bottles wells and calls the quiet safety.',
       },
@@ -63,6 +81,24 @@
         scene: null,
         x: 10, z: 8, r: 3.5,
         toast: 'The root-cellar breathes old fire. Lira is not ready to go down. Pools still rot in the open air.',
+      },
+      {
+        id: 'patrol',
+        scene: 'concord-patrol',
+        x: -4, z: 8, r: 5.2,
+        toast: 'A Concord patrol stands over a lesser spring with a seal in hand.',
+      },
+      {
+        id: 'waystone',
+        scene: 'waystone-tease',
+        x: 0, z: 18, r: 3.2,
+        toast: 'A ring of stones. The road inside them is shut.',
+      },
+      {
+        id: 'silhouette',
+        scene: 'vesper-silhouette',
+        x: 8, z: 20.5, r: 3.1,
+        toast: 'The ridge is empty. Lira’s mouth tastes iron anyway.',
       },
     ],
   });

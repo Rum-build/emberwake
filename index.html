@@ -19,7 +19,7 @@
       <p class="tease">The Ashen Concord bottles magic and calls the quiet safety. Another spark, Vesper, drinks faster than you and leaves the rot behind as a receipt.</p>
       <button id="btn-start" class="btn btn-primary btn-xl" type="button">Wake</button>
       <button id="btn-credits" class="btn btn-quiet" type="button">Credits</button>
-      <p class="hint">PC first: mouse on menus, WASD to walk, E absorb, I pack. 1–4 choose a command in battle.<br />On a phone the joystick and the large buttons do the same work.</p>
+      <p class="hint">PC first: mouse on menus, WASD to walk, E absorb, I pack. Enter advances a scene. 1–4 choose a command in battle.<br />On a phone the joystick and the large buttons do the same work.</p>
     </div>
   </div>
 
@@ -195,6 +195,14 @@
     <div id="turn-indicator" class="turn-indicator"></div>
   </div>
 
+  <div id="dialogue" class="dialogue hidden" role="dialog" aria-labelledby="dialogue-speaker">
+    <p class="dialogue-where" id="dialogue-where"></p>
+    <p class="dialogue-speaker" id="dialogue-speaker"></p>
+    <p class="dialogue-line" id="dialogue-line"></p>
+    <div class="dialogue-actions" id="dialogue-actions"></div>
+    <p class="dialogue-keys">Enter or click to continue · number keys choose</p>
+  </div>
+
   <div id="toast" class="toast hidden"></div>
 
   <div id="gameover-screen" class="screen hidden">
@@ -216,6 +224,7 @@
   <script src="js/emberwake.js"></script>
   <script src="js/content/catalog.js"></script>
   <script src="js/content/verdant-isle.js"></script>
+  <script src="js/content/act1-scenes.js"></script>
   <script src="game.js"></script>
 </body>
 </html>

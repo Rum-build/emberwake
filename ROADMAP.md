@@ -17,34 +17,40 @@ The shell stays a no-build page: Three.js from the CDN, scripts in order, conten
 | Scenes that replace a toast | `Emberwake.registerScene(id, fn)` in `js/emberwake.js` | Village argument, patrol, act-end silhouette |
 | Inventory, absorb, XP, strain, turn combat | `game.js` | Only when a system itself must grow |
 
-A beat with `scene: null` speaks its `toast`. When `scene` names a registered function, that function runs instead. Phase 1 leaves every Verdant beat on the toast.
+A beat with `scene: null` speaks its `toast`. When `scene` names a registered function, that function runs instead. Act I scenes are registered in `js/content/act1-scenes.js`.
 
 Landmarks carry `interior: null` until a build gives the village and the root-cellar a place to walk into.
 
-## Phase 1 — systems (this branch)
+## Phase 1 — systems (in this branch)
 
 Playable on the Verdant Isle field:
 
 - Host and party inventory: equipment, consumables, pool-shards, seals
 - Fire, Water, Lightning absorption: spark XP, host strain, the scar greens
 - Path commitment: Warrior, Mage, Ranged, with Fight / Magic / Item / Flee
-- Concord and Vesper present in rumors, a sealed well, a scar, and fights
+- Desktop-first command UI; joystick and large taps on a phone
 
-## Next pull request — Year 1 vertical slice
+## Act I field slice (this same branch)
 
-**Act I — Ember in the Leaf**, the whole act, on Verdant Isle. These are the beats in DESIGN.md (“Timeline (acts)” and “First three regions”). Phase 1 already teaches movement, the first ember, rot on the ground, and a party that can fight. The next pull request stages the act as scenes and places.
+**Ember in the Leaf**, the beats that can be walked now. Not the whole act.
 
-1. **Village reaction.** The leaf-village is an interior (`landmarks` → `leaf-village.interior`), not a toast. People argue about the Concord seal. No clean answer. Witcher contract texture: who benefits, who is afraid, who is lying.
-2. **Party seed, met.** Nima is found in that village. Torren is found because of the patrol below, an ex-quartermaster with the coat still on his back. They join. They are not a silent trio at the first step. Kestrel stays the eagle-rider in `content.recruits` until sky routes exist; Act I may show her once, in the air, and not hand over the bow yet.
-3. **A Concord patrol bottles a lesser pool in sight.** Scripted, on the field. The player watches a seal go on. Absorbing the sealed well afterward is the system Phase 1 already has; the patrol is the act.
-4. **The rot has witnesses.** Vesper’s scar is already a pool. Act I gives it villagers who will say what passed there, and a consequence that is not optional flavor text.
-5. **Rival silhouette at the act’s end.** A closing scene after the isle’s work, distinct from the scar the spark can already drink. Vesper is seen. The duel is not this act (that is Act II in the bible).
-6. **The root-cellar is a threshold.** `root-cellar.interior` opens. The mouth is part of Act I. How deep the first dungeon runs is part of this slice if the scene needs a room on the other side of the door; it does not invent a second region.
-7. **Continue.** A save, because the act is longer than one sitting. Spark, strain, inventory, path, which pools are quiet, and which scenes have played.
+- Wake as the spark inside Lira, before the first step
+- Leaf-village argument about the Concord seal. Three answers. None of them clean
+- A patrol bottles the leaf-cup in sight, then fights
+- Further pools: ash copse, ridge vein, and the cup they cork
+- A sleeping waystone. Stormreach is named. The road does not open
+- Vesper’s silhouette on the ridge after the village, the patrol, and the first ember. No duel. The scar pool is still a different wound
 
-Still this tone. Still no shrine-gadget framing.
+## Still ahead on Act I
 
-Systems to extend, not replace: `registerScene` for the beats above, `interior` on the two landmarks, opening roster moved from “already walking” to “joined in scene” inside `catalog.js`. Combat menus stay Fight / Magic / Item / Flee.
+From DESIGN.md, after this slice:
+
+1. Village and root-cellar as interiors, not only a dialogue on the green.
+2. Nima and Torren met in those scenes, instead of already walking. Kestrel once, in the air, still not recruited.
+3. Witnesses at Vesper’s scar who will say what passed there, with a consequence.
+4. Save and continue: spark, strain, inventory, path, quiet pools, played scenes.
+
+Combat menus stay Fight / Magic / Item / Flee. New panels stay desktop-first.
 
 ## After Act I
 
