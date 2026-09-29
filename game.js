@@ -5877,7 +5877,7 @@
           : locale === 'concord-yard'
             ? 'Press E to step back through the stone. The yard stays licensed or leaking as you left it.'
           : locale === 'remnant-mark'
-            ? 'Press E to step back into the yard. The pillar stays numbered. Kestrel is not waiting.'
+            ? 'Press E to step back into the yard. The pillar stays numbered. The bird is not in the pack.'
           : locale === 'ash-nave'
             ? 'Press E to step back to the pillar. The cathedral door stays shut.'
           : locale === 'watch-gallery'
