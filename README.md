@@ -74,7 +74,8 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The field bed, the coast bed, the claim bed, the absorb sting, and the merge sting are original CC0 cues generated in the browser. The coast and the claim are the same loop, retuned. See `CREDITS.md`. Press Silent to stop them. No other music or effects.
 - The first drink says strain is not a scar. The first Fight menu names Cleave, Channel, or Aim. A wounded hare bolts. Brine hits two. The village shows the grey furrow, a porter stands short of the vault, the bottle-hall faces inland, and the ash writes the engine’s bill.
 - Encounters are tuned so a short walk can start a fight after the first pool. The patrol is a separate, scripted fight.
-- The isle, the coast, the ash, the remnant claim, and the fight have a stronger light: figures read at a distance, Lira carries a spark ember, and the claim mass sits in a darker room. People, houses, and the engine are still simple meshes. Three.js must load from the CDN once.
+- The isle, the coast, the ash, the remnant claim, and the fight have a stronger light: figures read at a distance, Lira carries a spark ember, and the claim mass sits in a darker room. The village, the counting room, the ash, and the claim read more as rooms than as boxes. People and the engine are still simple meshes. Three.js must load from the CDN once.
+- A missable letter in the leaf-village says Vesper walked the Concord to the well. It goes in the pack and does not change the road. Continue names the saved place. After the aftermath credits, Wake still throws that save out.
 
 ## Play on your phone
 

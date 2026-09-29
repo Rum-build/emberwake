@@ -181,6 +181,7 @@
   let vesperAshLatch = false;
   let nearWorker = null;
   let nearPorter = null;
+  let nearLetter = null;
   let runLive = false;
   const SAVE_KEY = 'emberwake.save.v1';
   let combatsFought = 0;
@@ -913,12 +914,13 @@
       wall: 0x8a6a48,
       light: 0xffc48a,
       intensity: 0.85,
+      phong: true,
     });
     layCloth(villageRoom, -1.1, 0.4, 1.35, 0x6a3030, 0.92);
     layCloth(villageRoom, 1.6, -1.4, 0.9, 0x3e4a38, 0.88);
     const hearth = new THREE.Mesh(
       new THREE.BoxGeometry(1.1, 0.45, 0.7),
-      new THREE.MeshLambertMaterial({ color: 0x4a3428 })
+      new THREE.MeshPhongMaterial({ color: 0x4a3428, shininess: 6, specular: new THREE.Color(0x2a1810) })
     );
     hearth.position.set(2.4, 0.22, 1.6);
     villageRoom.add(hearth);
@@ -965,8 +967,36 @@
       new THREE.CylinderGeometry(0.22, 0.16, 0.28, 7),
       new THREE.MeshLambertMaterial({ color: 0x8a6a38 })
     );
-    basket.position.set(-1.35, 0.16, 1.72);
+    basket.position.set(-1.35, 0.16, 1.15);
     villageRoom.add(basket);
+    const beamMat = new THREE.MeshLambertMaterial({ color: 0x4a3428 });
+    const beam = new THREE.Mesh(new THREE.BoxGeometry(8.4, 0.22, 0.28), beamMat);
+    beam.position.set(0, 2.42, 0.4);
+    villageRoom.add(beam);
+    const crossbeam = new THREE.Mesh(new THREE.BoxGeometry(6.2, 0.18, 0.22), beamMat);
+    crossbeam.rotation.y = Math.PI / 2;
+    crossbeam.position.set(0, 2.28, 0.2);
+    villageRoom.add(crossbeam);
+    [-3.55, 3.55].forEach((x) => {
+      const post = new THREE.Mesh(
+        new THREE.BoxGeometry(0.16, 2.45, 0.16),
+        new THREE.MeshLambertMaterial({ color: 0x3a2a22 })
+      );
+      post.position.set(x, 1.22, 1.5);
+      villageRoom.add(post);
+    });
+    const soot = new THREE.Mesh(
+      new THREE.CircleGeometry(0.9, 12),
+      new THREE.MeshBasicMaterial({ color: 0x1a100c, transparent: true, opacity: 0.5 })
+    );
+    soot.rotation.x = -Math.PI / 2;
+    soot.position.set(2.35, 0.045, 1.5);
+    villageRoom.add(soot);
+    const margin = makeCountPage('MARGIN', ['Not the clerk', 'Vesper walked them', 'The furrow paid']);
+    margin.position.set(-1.35, 0.95, 0.82);
+    margin.rotation.x = -0.42;
+    margin.scale.set(0.7, 0.7, 1);
+    villageRoom.add(margin);
     cellarRoom = buildCellar();
     cellarRoom.visible = false;
     vaultRoom = buildVaultRoom();
@@ -1067,13 +1097,32 @@
       light: 0xd4c08a,
       intensity: 0.72,
       openNorth: true,
+      phong: true,
     });
+    layCloth(g, 0.15, 1.2, 1.7, 0x3a2418, 0.9);
     const desk = new THREE.Mesh(
       new THREE.BoxGeometry(1.8, 0.7, 0.7),
-      new THREE.MeshLambertMaterial({ color: 0x4a4034 })
+      new THREE.MeshPhongMaterial({ color: 0x4a4034, shininess: 8, specular: new THREE.Color(0x3a3020) })
     );
     desk.position.set(-1.2, 0.35, -0.4);
     g.add(desk);
+    const ledger = new THREE.Mesh(
+      new THREE.BoxGeometry(0.62, 0.07, 0.42),
+      new THREE.MeshPhongMaterial({ color: 0xd2c09a, shininess: 3 })
+    );
+    ledger.position.set(-1.05, 0.74, -0.32);
+    g.add(ledger);
+    const countPage = makeCountPage('THE COUNT', ['Four storms', 'Three bottled', 'One sold']);
+    countPage.position.set(0.7, 1.22, 0.95);
+    countPage.rotation.x = -0.38;
+    countPage.scale.set(0.82, 0.82, 1);
+    g.add(countPage);
+    const ironBar = new THREE.Mesh(
+      new THREE.BoxGeometry(2.35, 0.08, 0.08),
+      new THREE.MeshPhongMaterial({ color: 0x2a241c, shininess: 22, specular: new THREE.Color(0x8a8478) })
+    );
+    ironBar.position.set(0, 0.62, -4.15);
+    g.add(ironBar);
     const clerk = makeCharacter(0x3a3532, 0.92);
     clerk.position.set(-1.2, 0, -1.5);
     clerk.rotation.y = Math.PI;
@@ -1338,10 +1387,12 @@
     const ashDark = new THREE.Color(0x241410);
     const ashRed = new THREE.Color(0x6a3424);
     const cinder = new THREE.Color(0x3a3834);
+    const sootAsh = new THREE.Color(0x100806);
     tintPlane(ashGeo, (c, x, y, h) => {
       const t = Math.max(0, Math.min(1, (h + 0.2) / 0.36));
       c.copy(ashDark).lerp(ashRed, t);
       if (Math.sin(x * 0.9) * Math.cos(y * 0.7) > 0.55) c.lerp(cinder, 0.4);
+      if (Math.hypot(x, y - 2) < 3.4) c.lerp(sootAsh, 0.5);
     });
     const ash = new THREE.Mesh(ashGeo, new THREE.MeshPhongMaterial({
       vertexColors: true, shininess: 4, specular: new THREE.Color(0x3a2018),
@@ -1349,9 +1400,18 @@
     ash.rotation.x = -Math.PI / 2;
     g.add(ash);
     g.add(makeSky(0x8a3a30));
+    [[1.7, 2.35, 0.85], [-1.85, 0.55, 0.65], [0.55, -1.05, 0.5]].forEach((spot) => {
+      const drift = new THREE.Mesh(
+        new THREE.SphereGeometry(spot[2], 8, 6),
+        new THREE.MeshLambertMaterial({ color: 0x2a1814 })
+      );
+      drift.scale.y = 0.28;
+      drift.position.set(spot[0], 0.06, spot[1]);
+      g.add(drift);
+    });
     const engine = new THREE.Mesh(
       new THREE.BoxGeometry(3.2, 2.4, 2.2),
-      new THREE.MeshLambertMaterial({ color: 0x3a3532 })
+      new THREE.MeshPhongMaterial({ color: 0x3a3532, shininess: 12, specular: new THREE.Color(0x4a4038) })
     );
     engine.position.set(0, 1.2, -2);
     g.add(engine);
@@ -2093,17 +2153,42 @@
     const geo = new THREE.PlaneGeometry(22, 24, 10, 10);
     const ash = new THREE.Color(0x120e10);
     const ember = new THREE.Color(0x8a3414);
+    const stone = new THREE.Color(0x1a1412);
     tintPlane(geo, (c, x, y) => {
       c.copy(ash);
       const core = Math.hypot(x, y + 6);
       if (core < 4.5) c.lerp(ember, 0.62);
       else if (y < 0) c.lerp(ember, 0.22);
+      else c.lerp(stone, 0.45);
     });
     const floor = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
       vertexColors: true, shininess: 6, specular: new THREE.Color(0x3a2010),
     }));
     floor.rotation.x = -Math.PI / 2;
     g.add(floor);
+    const crack = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.14, 9.2),
+      new THREE.MeshBasicMaterial({ color: 0x070406 })
+    );
+    crack.rotation.x = -Math.PI / 2;
+    crack.position.set(0.2, 0.05, -1.4);
+    g.add(crack);
+    [[2.35, 3.4], [-2.55, 1.5]].forEach((spot) => {
+      const pile = new THREE.Mesh(
+        new THREE.SphereGeometry(0.55, 8, 6),
+        new THREE.MeshLambertMaterial({ color: 0x1a1210 })
+      );
+      pile.scale.y = 0.32;
+      pile.position.set(spot[0], 0.06, spot[1]);
+      g.add(pile);
+    });
+    const dais = new THREE.Mesh(
+      new THREE.RingGeometry(3.55, 4.35, 28),
+      new THREE.MeshPhongMaterial({ color: 0x140e0c, shininess: 4, side: THREE.DoubleSide })
+    );
+    dais.rotation.x = -Math.PI / 2;
+    dais.position.set(0, 0.04, -6.05);
+    g.add(dais);
     const wallMat = new THREE.MeshLambertMaterial({ color: 0x1c1214 });
     function addWall(w, d, x, z, h) {
       const height = h || 7.2;
@@ -2117,7 +2202,7 @@
     addWall(5.4, 0.5, 6.2, 8.1);
     addWall(0.5, 16.4, -8.2, -0.2);
     addWall(0.5, 16.4, 8.2, -0.2);
-    const ribMat = new THREE.MeshLambertMaterial({ color: 0x3a2824 });
+    const ribMat = new THREE.MeshPhongMaterial({ color: 0x3a2824, shininess: 8, specular: new THREE.Color(0x2a1814) });
     [-6.2, -3.2, -0.2, 2.8, 5.4].forEach((z, i) => {
       [-5.2, 5.2].forEach((x) => {
         const h = 3.6 + i * 0.55;
@@ -2387,7 +2472,7 @@
     return false;
   }
 
-  function variedFloor(w, h, sx, sy, baseHex, altHex, amp) {
+  function variedFloor(w, h, sx, sy, baseHex, altHex, amp, phong) {
     const geo = new THREE.PlaneGeometry(w, h, sx, sy);
     raisePlane(geo, (x, y) => Math.sin(x * 1.25 + y * 0.35) * Math.cos(y * 1.05) * (amp || 0.045));
     const base = new THREE.Color(baseHex);
@@ -2398,14 +2483,16 @@
       if (n > 0.12) c.lerp(alt, 0.55);
       else if (n < -0.4) c.lerp(alt, 0.28);
     });
-    const mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ vertexColors: true }));
+    const mesh = new THREE.Mesh(geo, phong
+      ? new THREE.MeshPhongMaterial({ vertexColors: true, shininess: 10, specular: new THREE.Color(0x3a3024) })
+      : new THREE.MeshLambertMaterial({ vertexColors: true }));
     mesh.rotation.x = -Math.PI / 2;
     return mesh;
   }
 
   function buildRoom(opts) {
     const g = new THREE.Group();
-    const floor = variedFloor(9, 9, 8, 8, opts.floor, opts.floorAlt || opts.wall, 0.05);
+    const floor = variedFloor(9, 9, 8, 8, opts.floor, opts.floorAlt || opts.wall, 0.05, !!opts.phong);
     g.add(floor);
     const mat = new THREE.MeshLambertMaterial({ color: opts.wall });
     function addWall(w, d, x, z) {
@@ -2445,6 +2532,21 @@
       });
     });
     return doors;
+  }
+
+  function nearestLetter() {
+    if (!playerMesh || locale !== 'leaf-village') return null;
+    if (Math.hypot(-1.35 - playerMesh.position.x, 1.15 - playerMesh.position.z) > 1.05) return null;
+    if (seenBeats['furrow-letter']) {
+      return {
+        title: 'Cousin’s letter',
+        hint: 'It is already in the pack. Vesper walked them to the well. Press E to hear it again. The road did not change.',
+      };
+    }
+    return {
+      title: 'A folded letter',
+      hint: 'It sits in the basket by the grey furrow. Press E. It is not the door.',
+    };
   }
 
   function nearestPorter() {
@@ -3663,6 +3765,7 @@
     const weep = pools.find((p) => p.id === 'mark-weep');
     if (locale === 'aftermath') {
       if (!seenBeats.aftermath) return 'Hear the ending. Then the room stays.';
+      if (seenBeats.rematchTease) return 'The rite remembers. Wake starts a new host and throws this save out. The scar stays here. South is the claim.';
       if (claimWord === 'burn') return 'The ending is written. The scar is the echo. Scar debt ' + scarDebt + '. Credits are north. South is the claim.';
       if (claimWord === 'refuse') return 'The ending is written. Licence Zero kept its number. Credits are north. South is the claim.';
       if (claimWord === 'share') return 'The ending is written. Two hungers remain. Credits are north. South is the claim.';
@@ -3745,6 +3848,7 @@
     if (throatWord === 'cork') return 'The name stayed corked. The yard stone is still west of the engine.';
     if (locale === 'harbor-vault' && !seenBeats['bottle-hall']) return 'The bottle-hall is north of the count.';
     if (locale === 'field' && regionId === 'stormreach' && !seenBeats['vault-face']) return 'The harbor vault is in the cliff.';
+    if (locale === 'leaf-village' && !seenBeats['furrow-letter']) return 'A letter sits in the basket by the furrow. It is not the road. South is the isle.';
     if (locale === 'field' && regionId === 'verdant-isle' && !seenBeats.village) return 'The leaf-village is on the isle. The argument is inside.';
     if (locale === 'root-cellar' && !seenBeats.kiln) return 'The kiln is north. It still has a tenant.';
     if (!seenBeats['waystone-wake']) return 'The kiln, then the scar. The waystone stays shut until both.';
@@ -4001,7 +4105,8 @@
     const showPerch = idle && nearPerch && !showAbsorb && !atExit && !showBar && !showEnd;
     const showKestrel = idle && nearKestrel && !showAbsorb && !atExit && !showGallery;
     const showPorter = idle && locale === 'field' && nearPorter && !showAbsorb && !showDoor && !showGate && !showReturn;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter);
+    const showLetter = idle && nearLetter && !atExit && !showAbsorb;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter && !showLetter);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
@@ -4015,12 +4120,13 @@
     else if (showPerch || showKestrel) absorbBtn.textContent = 'Speak';
     else if (showLook || showPipe || showThroat || showStone || showMark || showNave || showGallery) absorbBtn.textContent = 'Enter';
     else if (showTalk) absorbBtn.textContent = 'Speak';
+    else if (showLetter) absorbBtn.textContent = 'Look';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
   }
 
   function updatePrompt() {
     const atExit = atInteriorExit();
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !nearLetter && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -4066,6 +4172,11 @@
             ? 'Press E to step back onto the coast. The hall stays lit. The inland road does not come with you.'
             : 'Press E to step back onto the coast. The iron stays shut.')
           : 'Press E to step back onto the isle.';
+      return;
+    }
+    if (nearLetter) {
+      $('#interact-title').textContent = nearLetter.title;
+      $('#interact-detail').textContent = nearLetter.hint;
       return;
     }
     if (nearDoor && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
@@ -4179,6 +4290,8 @@
   }
 
   function renderInventory() {
+    const questCard = $('#inv-quest');
+    if (questCard) questCard.textContent = questLine();
     $('#inv-party').innerHTML = party.map((p) => {
       const cap = maxHp(p);
       return `<div class="party-mini"><div><div class="name">${esc(p.name)}</div><div class="role">${esc(p.role)}</div></div><div class="nums">${p.hp}/${cap} HP · ${p.mp}/${p.maxMp} MP</div></div>`;
@@ -4191,6 +4304,7 @@
     const roadNote = $('#inv-road-note');
     if (roadNote) {
       const waiting = [];
+      if (seenBeats['furrow-letter']) waiting.push('A cousin’s letter says Vesper walked the Concord to the well. The furrow was the price. The road did not change.');
       if (!findMember('nima')) waiting.push('Nima is still in the leaf-village.');
       if (!findMember('torren')) waiting.push('Torren has not refused the Concord yet.');
       if (seenBeats['kestrel-ask']) {
@@ -4507,6 +4621,10 @@
       }
       if (nearPool && !atMouth) {
         tryAbsorb();
+        return;
+      }
+      if (nearLetter && locale === 'leaf-village' && !atMouth) {
+        talkLetter();
         return;
       }
       if (nearPipe && locale === 'ashen-marrow' && !atMouth) {
@@ -6206,6 +6324,33 @@
     }
   }
 
+  function talkLetter() {
+    if (locale !== 'leaf-village' || dialogueOpen) return;
+    if (seenBeats['furrow-letter']) {
+      showToast('The cousin’s letter is in the pack. Vesper walked them to the well. The road did not change.');
+      return;
+    }
+    const fn = EW.scenes['furrow-letter'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'furrow-letter';
+    }
+  }
+
+  function noteLetter() {
+    seenBeats['furrow-letter'] = true;
+    if (!seals.some((seal) => seal.name === 'Cousin’s Margin')) {
+      seals.push({
+        name: 'Cousin’s Margin',
+        desc: 'A letter from the basket. Vesper walked a clerk to the well and called the cork mercy. The grey furrow was the price, paid where the licence does not look. It does not open a door.',
+      });
+    }
+    showToast('The letter is in the pack. The kiln is still the road.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
   function talkPorter() {
     if (locale !== 'field' || regionId !== 'stormreach' || dialogueOpen) return;
     if (seenBeats['vault-porter']) {
@@ -6396,6 +6541,7 @@
       nearPerch = null;
       nearKestrel = null;
       nearPorter = null;
+      nearLetter = null;
       joy.active = false;
       joy.dx = 0;
       joy.dy = 0;
@@ -6489,6 +6635,7 @@
         nearPerch = nearestPerch();
         nearKestrel = nearestKestrel();
         nearPorter = nearestPorter();
+        nearLetter = nearestLetter();
         const safe = nearPool && !nearPool.absorbed;
         const cooled = performance.now() < suppressEncountersUntil;
         const onField = locale === 'field' && (regionId === 'verdant-isle' || regionId === 'stormreach');
@@ -6521,6 +6668,7 @@
         nearPerch = nearestPerch();
         nearKestrel = nearestKestrel();
         nearPorter = nearestPorter();
+        nearLetter = nearestLetter();
       }
 
       updateCellarTriggers();
@@ -6573,6 +6721,7 @@
       nearPerch = nearestPerch();
       nearKestrel = nearestKestrel();
       nearPorter = nearestPorter();
+      nearLetter = nearestLetter();
       playerMesh.position.y = 0;
     }
 
@@ -8199,6 +8348,12 @@
       if (creditsFromRun) {
         creditsFromRun = false;
         titleScreen.classList.add('hidden');
+        if (locale === 'aftermath' && !seenBeats.rematchTease) {
+          seenBeats.rematchTease = true;
+          showToast('The rite remembers the ward. A second walk is not this save. Wake throws the ending out. The scar stays on Lira.');
+          updateHUD();
+          saveGame();
+        }
         return;
       }
       titleScreen.classList.remove('hidden');
@@ -8433,9 +8588,46 @@
     refreshRumor();
   }
 
+  function savePlaceName(data) {
+    const names = {
+      field: data.region === 'stormreach' ? 'Stormreach Coast' : 'Verdant Isle',
+      'leaf-village': 'Leaf-village',
+      'root-cellar': 'Root-cellar',
+      'harbor-vault': 'Harbor Vault',
+      'marrow-pipe': 'Engine pipe',
+      'engine-throat': 'Sealed throat',
+      'ashen-marrow': 'Ashen Marrow',
+      'concord-yard': 'Concord Yard',
+      'remnant-mark': 'Remnant Mark',
+      'ash-nave': 'Ash Nave',
+      'watch-gallery': 'Watch Gallery',
+      'count-crypt': 'Count Crypt',
+      'first-breach': 'First Breach',
+      'remnant-claim': 'Remnant Claim',
+      aftermath: 'Aftermath',
+    };
+    return names[data.locale] || names.field;
+  }
+
+  function saveBlurb(data) {
+    const beats = data.seenBeats || {};
+    if (data.locale === 'aftermath' || beats.aftermath) return 'The ending is written on this save. Wake throws it out and starts another host.';
+    if (beats['furrow-letter']) return 'The cousin’s letter is in the pack. One save in this browser.';
+    return 'One save in this browser. Wake throws it out.';
+  }
+
   function refreshTitle() {
     const btn = $('#btn-continue');
-    if (btn) btn.classList.toggle('hidden', !readSave());
+    const note = $('#continue-note');
+    const data = readSave();
+    if (btn) {
+      btn.classList.toggle('hidden', !data);
+      btn.textContent = data ? ('Continue — ' + savePlaceName(data)) : 'Continue';
+    }
+    if (note) {
+      note.textContent = data ? saveBlurb(data) : '';
+      note.classList.toggle('hidden', !data);
+    }
   }
 
   function continueRun() {
@@ -9115,6 +9307,7 @@
   EW.noteLedger = noteLedger;
   EW.seenLedger = function () { return !!seenBeats['vault-ledger']; };
   EW.noteKestrelAsk = noteKestrelAsk;
+  EW.noteLetter = noteLetter;
   EW.noteHall = noteHall;
   EW.finishMarrow = finishMarrow;
   EW.noteMarrowStep = noteMarrowStep;

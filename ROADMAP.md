@@ -168,7 +168,7 @@ Playable on the Verdant Isle field:
 - The remnant claim is darker so the mass, the shafts, and the floor light own the room. A fill keeps the host readable. The fight stands on a ring: warm light on her side, cold light on theirs.
 - Phone controls, Absorb, Pack, and Continue are unchanged.
 
-## Midgame flesh (this branch)
+## Midgame flesh (shipped)
 
 - The leaf-village keeps a grey-furrow tray. Old Joss names it. The argument still recruits Nima.
 - A porter stands short of the Stormreach vault door, wet because the book is not. Speak once. The door stays Enter. Continue stores the beat.
@@ -178,6 +178,15 @@ Playable on the Verdant Isle field:
 - A Hollow Hare below half health bolts. The next physical blow finds almost nothing. A Brine Skitter splashes a second living person.
 - The first absorb says strain cuts her while it is high, and a scar is a separate cut to max life. The kiln is named as the first scar.
 - Stormreach retunes the bed higher. The remnant claim and the aftermath retune it lower. Both are the original loop. Silent still stops it. CREDITS names them.
+- Phone controls, Absorb, Pack, and Continue stay.
+
+## Place and letter (this branch)
+
+- The leaf-village has beams, posts, and hearth soot. The counting room has a rug, a ledger, an iron bar, and a readable count. The ash has drifts and engine soot. The remnant claim has a floor crack, ash piles, and a stone ring under the mass. No new lights.
+- A cousin’s letter in the village basket is missable. It says Vesper walked the Concord to the well. Look once and it sits in the pack as Cousin’s Margin. It does not open a door or change the kiln.
+- The pack repeats the quest line. On a phone the quest under the place name stays to three lines.
+- Continue names the saved place. One line under it says this browser keeps one save, and that Wake throws an ending out.
+- After Aftermath credits, one toast says the rite remembers and a second walk is not this save. Wake still starts a new host.
 - Phone controls, Absorb, Pack, and Continue stay.
 
 ## Still ahead
