@@ -2229,7 +2229,7 @@
     }
     cryptPile(-1.55, 1.2, 0.36);
     cryptPile(1.35, 0.7, 0.26);
-    g.add(makeCryptNotice(1.72, 0.85));
+    g.add(makeCryptNotice(1.75, 1.65));
     const floorCrack = new THREE.Mesh(
       new THREE.PlaneGeometry(0.07, 1.7),
       new THREE.MeshBasicMaterial({ color: 0x0a0604, fog: false })
@@ -2955,7 +2955,7 @@
 
   function nearestJournal() {
     if (!playerMesh || locale !== 'count-crypt' || skyPass) return null;
-    if (Math.hypot(1.72 - playerMesh.position.x, 0.85 - playerMesh.position.z) > 0.85) return null;
+    if (Math.hypot(1.75 - playerMesh.position.x, 1.65 - playerMesh.position.z) > 0.7) return null;
     if (seenBeats['crypt-notice']) {
       return {
         title: 'A filed notice',
