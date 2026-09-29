@@ -41,8 +41,8 @@ Three.js **r128** loads from the unpkg CDN, so the first launch needs a network.
 
 One save, one host, from the isle through the aftermath. **Leave** walks south. **Continue** puts you back in the room. **Wake** throws that save out. Wind merges, the wider waystone network, and a party slot for Kestrel are still ahead.
 
-1. **Act I — Verdant Isle.** Wake, then Warrior, Mage, or Ranged. The leaf-village (Nima can join; a cousin’s letter in the basket is optional). A wayside chest and a salt cord in the grass are optional and do not open a door. The root-cellar kiln. The scar. The patrol, where Torren can refuse the licence. The waystone opens after the kiln and a scar verdict.
-2. **Act II — Stormreach Coast.** Land on the shale. Lightning pools, a porter, a posted notice, the harbor vault, and the bottle-hall. The notice does not open the door. Kestrel can be asked. She refuses.
+1. **Act I — Verdant Isle.** Wake, then Warrior, Mage, or Ranged. The leaf-village (Nima can join; a cousin’s letter in the basket is optional). A wayside chest, a salt cord, a snapped mile post, and a cold ring in the grass are optional and do not open a door. The root-cellar kiln. The scar. The patrol, where Torren can refuse the licence. The waystone opens after the kiln and a scar verdict.
+2. **Act II — Stormreach Coast.** Land on the shale. Lightning pools, a porter, a posted notice, a tally clerk, the harbor vault, and the bottle-hall. The notice and the clerk do not open the door. A shelf gull can cry on the coast. Kestrel can be asked. She refuses.
 3. **Act III — Ashen Marrow.** The ash shelf, the digest-engine, the tender, the leak, and Vesper. The pipe and the sealed throat. The Concord yard: drink the slag or let the warden seal it. West of the south gate, a rest is optional — Torren and Nima speak if they came, and Lira speaks if they did not. It does not open the mark. North of the yard is the Remnant Mark.
 4. **Act IV — the remnant, through the aftermath.** The ash nave (west chalk is optional), the watch gallery (a filed copy is optional), the count crypt, the first breach, the remnant claim, and the aftermath. Claim, refuse, share, or burn. **Credits** are north of that room.
 
@@ -90,6 +90,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - A rest west of the Concord yard’s south gate is optional. It does not drink the slag or open the mark. A pool bursts when it is drunk. Ash falls a little wider. A blow flashes warmer. Continue keeps a saved step whose height is zero.
 - Skies have a horizon, the ground has a grain, and the fog changes with the place. The remnant mass is a column you can read. Each ending shows one object with the plaque. Torren and Nima can speak after a claim flag if they came. Motion and combat pace are on the title, in the pack, and in a fight. On a phone the taps are larger.
 - Vesper wears a hood. A wayside chest, a salt cord, and a shale notice are optional. The cord can be bound once from the pack. Ash then coughs for 4. It does not open a door. Fights list the turn order and status chips. An ash penitent can appear on the nave, the breach, or the claim before the flag. Still and Slow still walk the ending.
+- The title wears a gold frame. When a save is waiting, Continue is the gold action. A mile post and a cold ring on the isle are optional. A tally clerk on the shale reacts to a bound cord and to Cousin’s Margin, and he does not open the vault. A shelf gull on the coast cries once and spends mind. It is not a scar.
 
 ## Play on your phone
 

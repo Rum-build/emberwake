@@ -174,6 +174,9 @@
   let nearChest = null;
   let nearNotice = null;
   let nearCord = null;
+  let nearPost = null;
+  let nearRing = null;
+  let nearClerk = null;
   let bedWanted = true;
   let motionWanted = true;
   let combatPace = 'steady';
@@ -809,6 +812,8 @@
     overworldGroup.add(ground);
     overworldGroup.add(makeWaysideChest(-2.2, 3.6));
     overworldGroup.add(makeSaltCord(3.2, -8));
+    overworldGroup.add(makeWayPost(-11.2, 1.6));
+    overworldGroup.add(makeColdRing(9.2, -12.4));
     overworldGroup.add(makeSky(0x6ea0c8, 0xf3e2c0));
 
     const grassMat = new THREE.MeshLambertMaterial({ color: 0x3d8b3d });
@@ -2915,6 +2920,51 @@
     };
   }
 
+  function nearestPost() {
+    if (!playerMesh || locale !== 'field' || regionId !== 'verdant-isle' || skyPass) return null;
+    if (Math.hypot(-11.2 - playerMesh.position.x, 1.6 - playerMesh.position.z) > 1.1) return null;
+    if (seenBeats['way-post']) {
+      return {
+        title: 'Snapped mile post',
+        hint: 'It was already read. The kiln stays shut. Press E to hear it again.',
+      };
+    }
+    return {
+      title: 'A snapped mile post',
+      hint: 'Off the west grass. Press E. It is not a door and not the kiln.',
+    };
+  }
+
+  function nearestRing() {
+    if (!playerMesh || locale !== 'field' || regionId !== 'verdant-isle' || skyPass) return null;
+    if (Math.hypot(9.2 - playerMesh.position.x, -12.4 - playerMesh.position.z) > 1.1) return null;
+    if (seenBeats['cold-ring']) {
+      return {
+        title: 'Cold ring',
+        hint: 'The stones stay cold. It is not a pool. Press E to hear it again.',
+      };
+    }
+    return {
+      title: 'A cold ring',
+      hint: 'Stones in the south grass. Press E. It is not a pool and not the scar.',
+    };
+  }
+
+  function nearestClerk() {
+    if (!playerMesh || locale !== 'field' || regionId !== 'stormreach' || skyPass) return null;
+    if (Math.hypot(9.2 - playerMesh.position.x, 5.4 - playerMesh.position.z) > 1.15) return null;
+    if (seenBeats['clerk-tally']) {
+      return {
+        title: 'A tally clerk',
+        hint: 'He already counted the weather. The vault door did not change. Press E to hear it again.',
+      };
+    }
+    return {
+      title: 'A tally clerk',
+      hint: 'East of the shale, counting weather. Press E. He is not the porter and not the door.',
+    };
+  }
+
   function nearestPorter() {
     if (!playerMesh || locale !== 'field' || regionId !== 'stormreach' || skyPass) return null;
     if (Math.hypot(2.45 - playerMesh.position.x, 2.55 - playerMesh.position.z) > 1.45) return null;
@@ -3434,6 +3484,7 @@
     g.userData.boltMat = boltMat;
     g.userData.storm = storm;
     g.add(makeCoastNotice(-3.15, 4.55));
+    g.add(makeClerkTally(9.2, 5.4));
     scene.add(g);
     coastGroup = g;
   }
@@ -3877,14 +3928,36 @@
     );
     sash.position.set(0, 0.74 * scale, 0.2 * scale);
     g.add(sash);
-    const ember = new THREE.Mesh(
+    const ember = new THREE.Group();
+    ember.position.set(0.1 * scale, 0.78 * scale, 0.22 * scale);
+    ember.visible = false;
+    const emberCore = new THREE.Mesh(
       new THREE.SphereGeometry(0.075 * scale, 6, 5),
       new THREE.MeshBasicMaterial({ color: 0xff8a3a, fog: false })
     );
-    ember.position.set(0.1 * scale, 0.78 * scale, 0.22 * scale);
-    ember.visible = false;
+    ember.add(emberCore);
+    const emberGlow = new THREE.Mesh(
+      new THREE.SphereGeometry(0.16 * scale, 8, 6),
+      new THREE.MeshBasicMaterial({
+        color: 0xffb060, transparent: true, opacity: 0.35, depthWrite: false, fog: false,
+      })
+    );
+    ember.add(emberGlow);
+    const emberMotes = [];
+    for (let i = 0; i < 3; i++) {
+      const mote = new THREE.Mesh(
+        new THREE.SphereGeometry(0.028 * scale, 5, 4),
+        new THREE.MeshBasicMaterial({
+          color: 0xffd090, transparent: true, opacity: 0.85, depthWrite: false, fog: false,
+        })
+      );
+      ember.add(mote);
+      emberMotes.push(mote);
+    }
     g.add(ember);
     g.userData.ember = ember;
+    g.userData.emberGlow = emberGlow;
+    g.userData.emberMotes = emberMotes;
     const nose = new THREE.Mesh(
       new THREE.BoxGeometry(0.06 * scale, 0.06 * scale, 0.08 * scale),
       new THREE.MeshLambertMaterial({ color: 0xe0a080 })
@@ -3996,6 +4069,61 @@
     return g;
   }
 
+  function makeWayPost(x, z) {
+    const g = new THREE.Group();
+    const post = new THREE.Mesh(
+      new THREE.BoxGeometry(0.12, 0.72, 0.1),
+      new THREE.MeshLambertMaterial({ color: 0x6a5340 })
+    );
+    post.position.y = 0.28;
+    post.rotation.z = 0.42;
+    g.add(post);
+    const cap = new THREE.Mesh(
+      new THREE.BoxGeometry(0.28, 0.08, 0.16),
+      new THREE.MeshBasicMaterial({ color: 0xc4a060, fog: false })
+    );
+    cap.position.set(0.12, 0.58, 0);
+    cap.rotation.z = 0.42;
+    g.add(cap);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeColdRing(x, z) {
+    const g = new THREE.Group();
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(0.42, 0.07, 6, 14),
+      new THREE.MeshLambertMaterial({ color: 0x5a5854 })
+    );
+    ring.rotation.x = Math.PI / 2;
+    ring.position.y = 0.06;
+    g.add(ring);
+    const ash = new THREE.Mesh(
+      new THREE.CircleGeometry(0.22, 8),
+      new THREE.MeshBasicMaterial({ color: 0x2a2826, fog: false })
+    );
+    ash.rotation.x = -Math.PI / 2;
+    ash.position.y = 0.04;
+    g.add(ash);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeClerkTally(x, z) {
+    const g = new THREE.Group();
+    const figure = makeCharacter(0x4a4038, 0.72);
+    figure.position.y = 0;
+    g.add(figure);
+    const board = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.42, 0.55),
+      new THREE.MeshBasicMaterial({ color: 0xf0e2c4, fog: false, side: THREE.DoubleSide })
+    );
+    board.position.set(0.22, 0.72, 0.16);
+    g.add(board);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
   function bobHoods() {
     if (!motionWanted || !hoods.length) return;
     const t = performance.now() * 0.001;
@@ -4081,10 +4209,29 @@
     const meshes = [];
     if (playerMesh) meshes.push(playerMesh);
     combatPartyMeshes.forEach((mesh) => meshes.push(mesh));
-    const scale = 0.82 + Math.sin(performance.now() * 0.006) * 0.22;
+    const now = performance.now();
+    const still = !motionWanted;
+    const skipOrbit = phoneMode && ((Math.floor(now / 40) % 2) === 0);
+    const scale = still ? 1 : (0.82 + Math.sin(now * 0.006) * 0.22);
+    const t = now * 0.001;
     meshes.forEach((mesh) => {
       const ember = mesh && mesh.userData.ember;
-      if (ember && ember.visible) ember.scale.setScalar(scale);
+      if (!ember || !ember.visible) return;
+      ember.scale.setScalar(scale);
+      const glow = mesh.userData.emberGlow;
+      if (glow && glow.material) glow.material.opacity = still ? 0.28 : (0.22 + Math.sin(t * 3.2) * 0.12);
+      const motes = mesh.userData.emberMotes;
+      if (!motes) return;
+      motes.forEach((mote, i) => {
+        if (still) {
+          mote.position.set(0.08, 0.04 + i * 0.03, 0);
+          return;
+        }
+        if (skipOrbit) return;
+        const a = t * 1.6 + i * 2.1;
+        const r = 0.14 + i * 0.03;
+        mote.position.set(Math.cos(a) * r, 0.04 + Math.sin(a * 1.3) * 0.08, Math.sin(a) * r);
+      });
     });
   }
 
@@ -4177,6 +4324,22 @@
       ash.position.set(0.28, 0.7, 0.12);
       figure.add(ash);
       return figure;
+    }
+    if (enemy.shape === 'wing') {
+      const bird = new THREE.Group();
+      const body = new THREE.Mesh(
+        new THREE.SphereGeometry(0.28, 8, 6),
+        new THREE.MeshLambertMaterial({ color: enemy.color })
+      );
+      body.position.y = 0.85;
+      bird.add(body);
+      const wing = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.9, 0.28),
+        new THREE.MeshBasicMaterial({ color: 0xe8eef4, fog: false, side: THREE.DoubleSide, transparent: true, opacity: 0.9 })
+      );
+      wing.position.set(0, 0.92, 0);
+      bird.add(wing);
+      return bird;
     }
     if (enemy.shape === 'echo') {
       const m = makeCharacter(0x241828, 1.18);
@@ -4648,7 +4811,10 @@
     const showChest = idle && nearChest && !showAbsorb && !showDoor && !showGate && !showReturn;
     const showNotice = idle && nearNotice && !showAbsorb && !showDoor && !showGate && !showReturn && !showPorter && !showChest;
     const showCord = idle && nearCord && !showAbsorb && !showDoor && !showChest;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showNotice && !showCord);
+    const showPost = idle && nearPost && !showAbsorb && !showDoor && !showChest && !showCord;
+    const showRing = idle && nearRing && !showAbsorb && !showDoor && !showChest && !showCord && !showPost;
+    const showClerk = idle && nearClerk && !showAbsorb && !showDoor && !showGate && !showReturn && !showPorter && !showNotice && !showChest;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showNotice && !showCord && !showPost && !showRing && !showClerk);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
@@ -4663,13 +4829,13 @@
     else if (showLook || showPipe || showThroat || showStone || showMark || showNave || showGallery) absorbBtn.textContent = 'Enter';
     else if (showTalk) absorbBtn.textContent = 'Speak';
     else if (showChest) absorbBtn.textContent = seenBeats['wayside-chest'] ? 'Look' : 'Open';
-    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord) absorbBtn.textContent = 'Look';
+    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showRing || showClerk) absorbBtn.textContent = 'Look';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
   }
 
   function updatePrompt() {
     const atExit = atInteriorExit();
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !nearLetter && !nearChest && !nearNotice && !nearCord && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !nearLetter && !nearChest && !nearNotice && !nearCord && !nearPost && !nearRing && !nearClerk && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -4812,6 +4978,21 @@
       $('#interact-detail').textContent = nearCord.hint;
       return;
     }
+    if (nearPost && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
+      $('#interact-title').textContent = nearPost.title;
+      $('#interact-detail').textContent = nearPost.hint;
+      return;
+    }
+    if (nearRing && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
+      $('#interact-title').textContent = nearRing.title;
+      $('#interact-detail').textContent = nearRing.hint;
+      return;
+    }
+    if (nearClerk && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
+      $('#interact-title').textContent = nearClerk.title;
+      $('#interact-detail').textContent = nearClerk.hint;
+      return;
+    }
     if (nearCrack) {
       $('#interact-title').textContent = nearCrack.title;
       $('#interact-detail').textContent = nearCrack.hint;
@@ -4882,6 +5063,9 @@
       if (seenBeats['cord-bound']) waiting.push('The salt cord is bound around the jerkin. Ash coughs for 4. It does not open a door and it does not pay a scar.');
       else if (seenBeats['salt-cord']) waiting.push('A salt cord is in the pack. Bind it once. The vault does not count rope. The road did not change.');
       if (seenBeats['coast-notice']) waiting.push('A notice on the shale says mouths are numbered. It is not the vault door.');
+      if (seenBeats['way-post']) waiting.push('A snapped mile post on the isle does not open the kiln.');
+      if (seenBeats['cold-ring']) waiting.push('A cold ring in the grass is not a pool and not the scar.');
+      if (seenBeats['clerk-tally']) waiting.push('A tally clerk on the shale counted weather. The vault door did not change.');
       if (seenBeats['gallery-margin']) {
         waiting.push(seals.some((seal) => seal.name === 'Cousin’s Margin')
           ? 'The gallery’s filed copy matches the cousin’s letter. The stair did not change.'
@@ -5329,6 +5513,18 @@
     }
     if (nearCord) {
       talkCord();
+      return;
+    }
+    if (nearPost) {
+      talkPost();
+      return;
+    }
+    if (nearRing) {
+      talkRing();
+      return;
+    }
+    if (nearClerk) {
+      talkClerk();
       return;
     }
     if (nearGate) {
@@ -7023,6 +7219,10 @@
     return seals.some((seal) => seal.name === 'Cousin’s Margin');
   }
 
+  function hasBound() {
+    return !!seenBeats['cord-bound'] || seals.some((seal) => seal.name === 'Bound Cord');
+  }
+
   function talkChest() {
     if (locale !== 'field' || regionId !== 'verdant-isle' || dialogueOpen) return;
     if (seenBeats['wayside-chest']) {
@@ -7123,6 +7323,69 @@
   function noteNotice() {
     seenBeats['coast-notice'] = true;
     showToast('The board is read. The vault door is still the count.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function talkPost() {
+    if (locale !== 'field' || regionId !== 'verdant-isle' || dialogueOpen) return;
+    if (seenBeats['way-post']) {
+      showToast('The mile post stays snapped. The kiln did not open.');
+      return;
+    }
+    const fn = EW.scenes['way-post'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'way-post';
+    }
+  }
+
+  function notePost() {
+    seenBeats['way-post'] = true;
+    showToast('The post is read. The kiln is still the road.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function talkRing() {
+    if (locale !== 'field' || regionId !== 'verdant-isle' || dialogueOpen) return;
+    if (seenBeats['cold-ring']) {
+      showToast('The ring stays cold. It is not a pool. The scar is the other way.');
+      return;
+    }
+    const fn = EW.scenes['cold-ring'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'cold-ring';
+    }
+  }
+
+  function noteRing() {
+    seenBeats['cold-ring'] = true;
+    showToast('The stones stay cold. Nothing was drunk. The scar did not change.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function talkClerk() {
+    if (locale !== 'field' || regionId !== 'stormreach' || dialogueOpen) return;
+    if (seenBeats['clerk-tally']) {
+      showToast('The tally stays counted. The vault door did not change.');
+      return;
+    }
+    const fn = EW.scenes['clerk-tally'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'clerk-tally';
+    }
+  }
+
+  function noteClerk() {
+    seenBeats['clerk-tally'] = true;
+    showToast('The clerk counted weather. The vault door is still the other board.');
     refreshRumor();
     updateHUD();
     saveGame();
@@ -7339,6 +7602,9 @@
       nearChest = null;
       nearNotice = null;
       nearCord = null;
+      nearPost = null;
+      nearRing = null;
+      nearClerk = null;
       joy.active = false;
       joy.dx = 0;
       joy.dy = 0;
@@ -7439,6 +7705,9 @@
         nearChest = nearestChest();
         nearNotice = nearestNotice();
         nearCord = nearestCord();
+        nearPost = nearestPost();
+        nearRing = nearestRing();
+        nearClerk = nearestClerk();
         const safe = nearPool && !nearPool.absorbed;
         const cooled = performance.now() < suppressEncountersUntil;
         const onField = locale === 'field' && (regionId === 'verdant-isle' || regionId === 'stormreach');
@@ -7480,6 +7749,9 @@
         nearChest = nearestChest();
         nearNotice = nearestNotice();
         nearCord = nearestCord();
+        nearPost = nearestPost();
+        nearRing = nearestRing();
+        nearClerk = nearestClerk();
         poseHost('idle');
       }
 
@@ -7540,6 +7812,9 @@
         nearChest = nearestChest();
         nearNotice = nearestNotice();
         nearCord = nearestCord();
+        nearPost = nearestPost();
+        nearRing = nearestRing();
+        nearClerk = nearestClerk();
       poseHost('still');
     }
 
@@ -7634,8 +7909,8 @@
     if (echoReady && Math.random() < 0.16) return [spawnEnemy('echo')];
     const n = 1 + (Math.random() < (pressure > 0.45 ? 0.6 : 0.3) ? 1 : 0);
     const table = pressure > 0.4
-      ? ['wisp', 'wisp', 'clerk', 'brine', 'scribe']
-      : ['wisp', 'brine', 'clerk', 'scribe', 'wisp'];
+      ? ['wisp', 'wisp', 'clerk', 'brine', 'scribe', 'gull']
+      : ['wisp', 'brine', 'clerk', 'scribe', 'gull'];
     const list = [];
     for (let i = 0; i < n; i++) list.push(table[rand(0, table.length - 1)]);
     const counts = {};
@@ -7685,10 +7960,16 @@
     party.forEach((member) => { if (member) member.ash = 0; });
   }
 
+  function clearCry() {
+    if (!party) return;
+    party.forEach((member) => { if (member) member.cry = 0; });
+  }
+
   function startCombat() {
     combatEpoch++;
     combatsFought += 1;
     clearAsh();
+    clearCry();
     coverReady = false;
     assistUsed = {};
     gameState = State.COMBAT;
@@ -7745,7 +8026,9 @@
     buildTurnQueue();
     updateCombatUI();
     showMenus('main');
-    const teach = enemies.some((e) => e.id === 'penitent')
+    const teach = enemies.some((e) => e.id === 'gull')
+      ? 'A shelf gull on the coast. It cries once and spends up to 4 mind. The cry fades on that person’s next turn. It is not a scar.'
+      : enemies.some((e) => e.id === 'penitent')
       ? (seenBeats['cord-bound']
         ? 'An ash penitent on the approach. It kneels once. The bound cord keeps the cough at 4. It is not a scar.'
         : 'An ash penitent on the approach. It kneels once. Ash sits in the teeth and coughs for 6 on the next turn. It is not a scar.')
@@ -7817,6 +8100,11 @@
           later(() => { if (!checkCombatEnd()) advanceTurn(); }, 420);
           return;
         }
+      }
+      if (coughing && coughing.cry) {
+        coughing.cry = 0;
+        showLog('The cry fades. ' + coughing.name + ' keeps the mind that is left.');
+        updateCombatUI();
       }
       if (partyAssist(t.index)) return;
       combatBusy = false;
@@ -8305,6 +8593,23 @@
       later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
       return;
     }
+    if (enemy.id === 'gull' && !enemy.cried) {
+      enemy.cried = true;
+      const livingNow = party.map((p, i) => ({ p, i })).filter((x) => x.p.hp > 0);
+      let host = livingNow[0];
+      livingNow.forEach((row) => { if (row.p.mp > host.p.mp) host = row; });
+      if (!host || host.p.mp <= 0) {
+        showLog('The gull cries. No mind is left.');
+      } else {
+        const spent = Math.min(4, host.p.mp);
+        host.p.mp -= spent;
+        host.p.cry = true;
+        showLog('The gull cries. ' + host.p.name + ' loses ' + spent + ' mind.');
+      }
+      updateCombatUI();
+      later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
+      return;
+    }
     if (enemy.id === 'penitent' && !enemy.knelt) {
       enemy.knelt = true;
       const livingNow = party.map((p, i) => ({ p, i })).filter((x) => x.p.hp > 0);
@@ -8489,6 +8794,7 @@
   function endCombatReturn() {
     combatEpoch++;
     clearAsh();
+    clearCry();
     combatUI.classList.add('hidden');
     victoryOverlay.classList.add('hidden');
     gameoverScreen.classList.add('hidden');
@@ -8578,6 +8884,7 @@
       const mpPct = p.maxMp ? Math.max(0, Math.min(100, (p.mp / p.maxMp) * 100)) : 0;
       const bits = [];
       if (p.ash) bits.push({ kind: 'ash', label: 'Ash' });
+      if (p.cry) bits.push({ kind: 'air', label: 'Cry' });
       if (p.id === 'lira' && scarDebt > 0) bits.push({ kind: 'stamp', label: 'Scar ' + scarDebt });
       return `<div class="party-card ${p.hp <= 0 ? 'dead' : ''} ${i === active ? 'active' : ''}">
         <div class="name">${esc(p.name)}</div>
@@ -9661,6 +9968,13 @@
       note.textContent = data ? saveBlurb(data) : '';
       note.classList.toggle('hidden', !data);
     }
+    const wake = $('#btn-start');
+    if (wake) {
+      wake.classList.toggle('btn-primary', !data);
+      wake.classList.toggle('btn-quiet', !!data);
+    }
+    const hostLine = $('#wake-host');
+    if (hostLine) hostLine.classList.toggle('hidden', !data);
   }
 
   function continueRun() {
@@ -10342,6 +10656,10 @@
   EW.noteKestrelAsk = noteKestrelAsk;
   EW.noteLetter = noteLetter;
   EW.hasMargin = hasMargin;
+  EW.hasBound = hasBound;
+  EW.notePost = notePost;
+  EW.noteRing = noteRing;
+  EW.noteClerk = noteClerk;
   EW.noteChest = noteChest;
   EW.noteCord = noteCord;
   EW.noteBind = noteBind;

@@ -65,6 +65,25 @@
     return true;
   });
 
+  Emberwake.registerScene('clerk-tally', function () {
+    const bound = Emberwake.hasBound && Emberwake.hasBound();
+    const margin = Emberwake.hasMargin && Emberwake.hasMargin();
+    let board = 'Unlicensed feet. I am counting weather, not mouths. The door is the other board.';
+    if (bound && margin) board = 'The knot is not a number. The furrow in the pack already is. Neither opens the door.';
+    else if (bound) board = 'Rope on a coat is not a licence. The count does not move.';
+    else if (margin) board = 'The cousin’s letter is a margin already filed as weather. This tally adds no line.';
+    Emberwake.present({
+      lines: [
+        { where: 'Stormreach shale', speaker: 'A tally clerk', text: board },
+        { speaker: 'Lira', text: 'He is not the porter. The vault stays shut.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteClerk) Emberwake.noteClerk();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('vault-porter', function () {
     Emberwake.present({
       lines: [
