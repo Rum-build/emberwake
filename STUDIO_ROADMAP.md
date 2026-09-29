@@ -1,0 +1,255 @@
+# Emberwake — Studio Roadmap
+
+> A multi-year production plan for **Emberwake**, a party-driven turn-based RPG with Final Fantasy-style jobs, menus, set-piece battles, and emotional spectacle, set in the Witcher-like moral mud of a world damaged by bottled magic. This is **not a Zelda-style shrine, gadget, or puzzle-box open-world plan**.
+
+This roadmap turns [`DESIGN.md`](./DESIGN.md) into an executable production sequence while preserving its fixed premise: the player is a spark inside Lira, elemental power pools after death, digestion heals as a side effect, and every gain can cost the host, the land, or the conscience.
+
+## Production north stars
+
+1. **Party and consequence first.** Lira, Torren, Nima, Kestrel, and Vesper must drive the emotional arc; systems exist to make their choices legible.
+2. **Turn-based RPG readability.** Clear party turns, path identity, elemental resources, status effects, and deliberate set-piece encounters take priority over action-game spectacle.
+3. **The world remembers feeding.** Absorbing pools changes rot, host strain, faction responses, routes, and endings; it is never only an XP pickup.
+4. **Content follows the design bible.** Verdant Isle, Stormreach Coast, Ashen Marrow, and the Prime Remnant remain the spine. New material must reinforce the pool/rot/Concord conflict.
+5. **Open-licence by default.** Music and SFX are CC0, CC-BY, or a similarly permissive licence with complete attribution. If provenance is uncertain, ship the scene silent until cleared.
+6. **Mobile-friendly, no-build shell until proven otherwise.** Protect the current browser slice and its low-friction development loop while measuring when a more formal pipeline is justified.
+
+## Definition of done for the full production
+
+- A complete playable Acts I–IV campaign, from Lira's awakening on Verdant Isle through the Prime Remnant and faction-dependent endings.
+- A stable party RPG loop: exploration, contracts/quests, turn-based encounters, camp/inventory, equipment, pool digestion, merge knowledge, and meaningful consequences.
+- Warrior, Mage, and Ranged paths with hybrid elemental expression; the merge tree in `DESIGN.md` is implemented with clear unlocks and costs.
+- Waystones and eagle routes connect the world without turning traversal into a gadget collection.
+- Vesper's recurring mirror encounters support rivalry, optional redemption, or final ruin.
+- Accessibility, mobile controls, save/load, performance, and recovery from soft-locks are production requirements, not postscript polish.
+- `CREDITS.md` and an in-game credits roll identify every music and SFX asset, author, licence, and source URL.
+- A reproducible release build, smoke-test checklist, attribution audit, and rollback plan exist for every public milestone.
+
+## Schedule at a glance
+
+| Phase | Primary outcome | Content boundary | Release gate |
+|---|---|---|---|
+| **Year 0 — Prototype systems** | Prove the core loop and technical risks | One small Verdant Isle test map; representative combat only | A stranger can learn, fight, digest, strain, save, and recover without assistance |
+| **Year 1 — Vertical slice: Act I** | Prove the complete player-facing experience | Full Act I, **Verdant Isle**, including opening, village, rot patch, dungeon mouth, patrol, party seed, and Vesper silhouette | A polished beginning-to-end slice demonstrates the final tone, loop, UX, and audio-credit practice |
+| **Year 2 — World expansion: Acts II–III** | Build the middle game and systemic breadth | **Stormreach Coast** and **Ashen Marrow**; waystones, eagle routes, merges, Concord vault/digest-engine, Vesper reveal | External playtesters can complete the middle game and understand the consequences of overfeeding |
+| **Year 3 — Finale, polish, and release readiness** | Deliver Act IV and make the whole campaign shippable | **Prime Remnant**, endings, final balance, accessibility, optimization, credits, certification/release work | Campaign-complete candidate passes regression, performance, content, licence, and release sign-off |
+| **Ongoing — Art, audio, and open-licence stewardship** | Keep quality and legal provenance healthy throughout production | All phases and post-launch maintenance | No uncleared asset enters a milestone build; credits remain auditable and current |
+
+---
+
+## Year 0 — Prototype systems
+
+### Objective
+Answer the highest-risk questions before content production: does absorbing a pool feel like growth with a cost, does turn-based combat make the three paths distinct, and can the no-build mobile web shell support a larger RPG without becoming fragile?
+
+### Scope
+Build a deliberately small, disposable test route rather than a mini-campaign:
+
+- Lira as host/spark with one ember pool, one rot patch, and a visible host-strain consequence.
+- A three-member test party using Lira, Torren, and Nima; Kestrel can remain a stub until the travel prototype.
+- Fight / Magic / Item / Flee, target selection, turn order, victory rewards, defeat, retry, and a small encounter table.
+- One representative ability for Warrior, Mage, and Ranged, plus Fire, Water, and Lightning resource costs.
+- Inventory categories from `DESIGN.md`: consumables, equipment, pool-shards, seals, and key items; validate that the spark itself carries nothing.
+- A first-pass merge data model, even if only Fire+Water and Fire+Earth are exposed.
+- Save/load, reset, versioned save data, and a safe recovery path after a failed encounter.
+- Input parity for touch and keyboard, portrait-first layout, readable menus, and a basic performance budget on a representative mobile device.
+
+### Milestones
+
+- **Quarter 1 — Foundations:** document data schemas and scene boundaries; isolate game state from rendering; establish test fixtures, debug overlays, and a content-authoring convention.
+- **Quarter 2 — Core loop:** implement exploration, pool absorption, XP, host strain, combat turn flow, inventory, and save/load with placeholder art/audio.
+- **Quarter 3 — System proof:** prototype path abilities, elemental costs, one merge, rot-state changes, and a controlled Vesper-style rival encounter; run usability tests.
+- **Quarter 4 — Prototype gate:** freeze the system contract for Year 1, remove failed experiments, record technical debt, and produce a short internal build review.
+
+### Exit criteria
+
+- New testers can identify Lira's role as host and the spark's role without a verbal explanation.
+- A complete 15–30 minute loop works: explore → encounter → fight or flee → absorb → observe a land/strain change → spend/recover → save and reload.
+- Warrior, Mage, and Ranged choices are mechanically different, not only renamed attacks.
+- Core state is deterministic enough to reproduce reported bugs; no critical save corruption, unwinnable soft-lock, or input dead end remains.
+- A measured mobile performance baseline and a list of deferred optimizations exist.
+
+### Explicit non-goals
+No full overworld, deep crafting, final voice acting, large quest graph, online features, or final asset production. Prototype breadth must not consume the time needed to validate the core loop.
+
+---
+
+## Year 1 — Vertical slice: Act I, Verdant Isle
+
+### Objective
+Produce a polished, self-contained vertical slice that demonstrates the eventual game rather than a collection of prototypes. It should begin with the spark waking in Lira and end with the first clear Vesper silhouette, matching Act I in `DESIGN.md`.
+
+### Act I content
+
+- Opening sequence: Lira, the dying ember-pool, and the spark awakening.
+- Verdant Isle overworld with soft beauty, village life, first rot scars, readable landmarks, and a dungeon mouth.
+- First absorption and the player-facing explanation that healing is a side effect of feeding, not charity.
+- Village reaction, a small contract/quest with a grey outcome, and a party seed for Torren and Nima.
+- Concord patrol bottling a lesser pool in sight of the player; establish the Empire as bureaucratic and consequential rather than cartoon evil.
+- Tutorial and showcase encounters, one dungeon set piece, one boss or elite, and a short aftermath that records a choice or state change.
+- Camp, shared party inventory, basic equipment affinity, gold, pool-shards, seals, and rest/recovery rules.
+- Act-end Vesper silhouette and a promise of the Stormreach crossing; do not resolve the rival early.
+
+### Production milestones
+
+- **Q1 — Slice lock and pre-production:** lock Act I beats, encounter matrix, map plan, UI flows, art direction, accessibility targets, and asset list. Convert Year 0 schemas into content tools or documented data files.
+- **Q2 — Greybox complete:** playable Verdant Isle route, village, dungeon, combat arenas, camera/collision, quest flags, save points, and complete Act I scripting in placeholder presentation.
+- **Q3 — Content and presentation pass:** final or near-final environments, characters, VFX, encounter tuning, cutscene beats, mobile UI, music/SFX integration, and first attribution ledger.
+- **Q4 — Vertical-slice polish:** accessibility and usability pass, performance pass, external playtest, bug burn-down, credits verification, and a review build suitable for greenlighting Year 2.
+
+### Vertical-slice gate
+
+The slice is complete when an external player can finish Act I without staff intervention, understand the spark/host/rot conflict, make at least one consequential choice, see a meaningful difference between two combat paths, and describe why the Concord and Vesper are not simple good/evil opponents. The build must run on supported mobile and desktop browsers with no known release-blocking save, input, or attribution defects.
+
+### Year 1 discipline
+
+- Keep the playable route compact; polish the beginning-to-end experience instead of expanding Verdant Isle indefinitely.
+- Use placeholder content only when it is clearly labelled and tracked for replacement.
+- Establish naming, localization keys, UI copy style, and a content review cadence before more regions multiply the cost of change.
+
+---
+
+## Year 2 — Stormreach Coast and Ashen Marrow
+
+### Objective
+Expand from the Act I promise into the middle game: travel, party growth, the first real merge choices, and the moral consequences of Concord bottling. This year covers Acts II and III, not the finale.
+
+### Act II — Stormreach Coast
+
+- Eagle routes and waystones as authored traversal choices, with Kestrel's introduction and sky-route unlock.
+- Cliffs, storm weather, lightning pools, Concord harbor vaults, roosts, and a route structure that supports backtracking without becoming a checklist.
+- First Warrior/Mage/Ranged branch choice with clear respec or consequence policy.
+- Vesper named; recurring mirror encounters and a non-lethal debate/duel.
+- Party expansion and camp/inventory depth; introduce lend/trade-at-rest rules.
+- Open the merge tree with Fire+Water, Fire+Earth, Water+Lightning, and a deliberately paced set of follow-on combinations.
+
+### Act III — Ashen Marrow
+
+- Inland blight, volcano ashfields, fire/earth merges, and contracts where feeding helps one group while harming another.
+- Concord digest-engine dungeon: a mechanically legible, story-critical set piece rather than a puzzle shrine.
+- Overfeeding consequences: host strain, temporary debuffs, story flags, faction responses, and visible land changes.
+- Reveal Vesper's method and sharpen the question of digestion versus dominion without resolving the Prime Remnant choice.
+- End with the world map/waystone network ready for Act IV and a clear set of surviving/changed relationships.
+
+### Production milestones
+
+- **Q1 — Systems expansion:** finalize travel graph, encounter taxonomy, status/strain rules, merge tree data, party progression, and narrative state model; run a middle-game economy pass.
+- **Q2 — Stormreach alpha:** complete greybox region, quests, eagle/waystone travel, party beats, vault, and first Vesper duel; begin focused playtests for navigation and combat clarity.
+- **Q3 — Ashen Marrow alpha:** complete greybox region, rot set pieces, digest-engine, moral contracts, and Vesper reveal; test how overfeeding changes subsequent scenes.
+- **Q4 — Middle-game beta:** art/audio integration, tuning, accessibility, performance, save migration, external playtest, and a full campaign continuity review from Act I through Act III.
+
+### Year 2 exit criteria
+
+- Players can travel between regions with understandable route choices and no required knowledge of the developer's map.
+- The merge tree is desirable but not mandatory for one correct build; each path has viable choices and readable costs.
+- Stormreach and Ashen Marrow have distinct visual, mechanical, and political identities.
+- At least two choices produce persistent, testable consequences across quests or encounters.
+- Full Act I–III progression can be completed from a clean save and from representative migrated saves.
+- All middle-game assets have known owners, status, replacement dates, and licence records.
+
+---
+
+## Year 3 — Prime Remnant, polish, and audio credits
+
+### Objective
+Finish Act IV, integrate the whole campaign, and spend the second half of the year removing friction and uncertainty rather than adding unbounded features.
+
+### Act IV — Remnant Wake
+
+- World map and waystone network become the staging ground for the final race.
+- Prime Remnant: the first death that taught the world that power is immortal; present it as a continent-scale pool with systemic and narrative weight.
+- Rival race with Vesper, including the consequences of prior rivalry encounters and the player's digestion choices.
+- Final choice between true digestion and dominion, with faction and relationship state affecting outcomes.
+- Endings that account for merges, who lived, the land's condition, and whether Lira remains host or becomes something else.
+- Final battle/sequence designed around party roles and consequence, not a one-off mechanical exception.
+- Credits roll with complete open-licence attribution and an in-game reference to the full `CREDITS.md` record where appropriate.
+
+### Polish tracks
+
+**Campaign and narrative**
+
+- Continuity audit for names, flags, inventory, world-state changes, Vesper's arc, and all four acts.
+- Dialogue edit for grounded, consequential Witcher-like moral ambiguity and concise Final Fantasy-style emotional beats.
+- Quest failure/recovery, party survival states, ending permutations, and localization-ready text review.
+
+**Combat and progression**
+
+- Balance XP, gold, pool capacity, host strain, equipment affinity, merge costs, encounter pacing, flee odds, and boss readability.
+- Ensure no single element, path, merge, or inventory strategy trivializes the campaign.
+- Add combat telemetry in development builds only; remove or protect it before release.
+
+**UX, accessibility, and performance**
+
+- Keyboard, touch, focus order, readable type, contrast, reduced-motion option, timing alternatives, captions/text treatment, and non-audio cues.
+- Loading, error, save migration, low-memory recovery, and clear feedback for every irreversible-feeling choice.
+- Profile supported browsers/devices; optimize draw calls, asset size, audio loading, and scene transitions against the Year 0 budget.
+
+**Audio and credits**
+
+- Replace temporary tracks and SFX only with verified open-licence assets or original work with documented ownership.
+- For every asset, record title, author, source URL, licence, required attribution text, modification status, and where it is used.
+- Run a release audit against the build, `CREDITS.md`, in-game credits, store/readme copy, and any bundled archive.
+- If a licence, author, or URL cannot be verified, remove the asset or leave the relevant moment silent; do not ship an assumption.
+
+### Production milestones
+
+- **Q1 — Act IV alpha:** Prime Remnant, final race, endings, final Vesper resolution, and all major state dependencies playable in greybox.
+- **Q2 — Campaign complete:** full Acts I–IV content integrated, save migration stable, ending matrix exercised, and feature scope frozen.
+- **Q3 — Release candidate 1:** art, audio, UI, accessibility, performance, credits, regression, and external playtest passes; no new features without a documented release-blocking reason.
+- **Q4 — Final release readiness:** bug burn-down, licence/attribution sign-off, supported-browser/device verification, backup and rollback rehearsal, final credits capture, and release decision.
+
+### Year 3 release gate
+
+A release candidate must support a clean campaign completion and representative alternate routes, pass all critical regression and save tests, meet the agreed performance/accessibility baseline, contain no unverified audio, and provide a complete credits trail. “Content complete” is not enough; the campaign must be understandable and recoverable for a first-time player.
+
+---
+
+## Ongoing — Art, audio, and open-licence stewardship
+
+These are continuous production lanes, not a final-year cleanup task.
+
+### Art direction and production
+
+- Maintain a visual bible for Verdant Isle's soft beauty, Stormreach's charged coast, Ashen Marrow's blight, and the Prime Remnant's scale.
+- Keep silhouettes and colour language readable on small screens; test scenes at actual mobile display sizes.
+- Track every environment, character, VFX, UI, and illustration through concept → greybox → in-game → polish → approved.
+- Prefer authored landmarks, party staging, and political spaces over generic collectible density or puzzle-box filler.
+- Review new art against the fixed spark/host/rot premise and the Final Fantasy + Witcher tone before production approval.
+
+### Audio stewardship
+
+- Maintain a source-of-truth audio ledger from the first placeholder track onward.
+- Tag assets by scene, mood, loop/one-shot behaviour, loudness, licence, attribution, and replacement status.
+- Provide silence/fallback behaviour so missing or blocked audio never prevents play.
+- Re-run the attribution audit at every milestone, after every asset swap, and before every public build.
+- Keep credits legible in-game and in repository documentation; preserve URLs and licence text in case a source page changes.
+
+### Open-licence and release hygiene
+
+- Do not import commercial libraries, ripped game assets, unverified “free” packs, or generative outputs with unclear rights.
+- Store licence evidence and attribution metadata with the project record; never rely on memory or a bookmarked page alone.
+- Flag any asset with incompatible share-alike, editorial-only, non-commercial, or missing attribution terms before it reaches a milestone branch.
+- Maintain a release manifest listing code/content version, supported browsers, known issues, audio assets, and credits revision.
+
+### Quality and team cadence
+
+- Weekly: playable build, blocker triage, content/engineering review, and asset provenance updates.
+- Per milestone: external playtest, accessibility pass, performance sample, save compatibility check, and credits audit.
+- Per release: clean checkout/rebuild test, backup/rollback rehearsal, smoke test, full regression sweep, and sign-off from design, engineering, art, audio, and production.
+
+---
+
+## Scope guardrails and decision policy
+
+- **Protect the spine:** Lira → Verdant Isle → Stormreach → Ashen Marrow → Prime Remnant. Side content must support character, faction, pool, or rot themes.
+- **No feature without a player-facing reason:** proposed systems must improve party identity, consequence, exploration between authored beats, or turn-based combat clarity.
+- **Cut breadth before coherence:** if schedule slips, cut optional quests, enemy variants, and traversal branches before cutting save reliability, accessibility, credits, or the main emotional arc.
+- **Prototype risky work early:** multiplayer, voice acting, large procedural worlds, complex crafting, and a build migration are separate proposals, not assumed scope.
+- **Respect the fixed tone:** Final Fantasy party/jobs/turns/set pieces plus Witcher moral ambiguity/politics/consequences; explicitly reject Zelda-like shrine/gadget/open-world framing.
+- **Document changes:** every change to a fixed premise, act boundary, licence policy, or release gate gets a short design note and a link from the relevant milestone review.
+
+## Reference map
+
+- `DESIGN.md` — fixed premise, story spine, acts, party, rival, regions, systems, audio policy, implementation snapshot, and tone constraints.
+- `STORY.md` — player-facing synopsis and core vocabulary.
+- `README.md` — current no-build web slice, controls, supported loop, and technical shell.
+- `CREDITS.md` — required source of truth for open-licence music and SFX as soon as audio production begins.
