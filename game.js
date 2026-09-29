@@ -6401,7 +6401,7 @@
 
   function updateClaimFight() {
     if (locale !== 'remnant-claim' || !playerMesh || dialogueOpen || encounterLocked || skyPass) return;
-    if (seenBeats.claimFight) return;
+    if (seenBeats.claimFight || claimWord) return;
     if (playerMesh.position.z > 2.4 || Math.abs(playerMesh.position.x) > 3.2) {
       claimLatch = false;
       return;
