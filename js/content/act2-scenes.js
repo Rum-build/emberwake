@@ -394,32 +394,58 @@
 
   Emberwake.registerScene('marrow-vesper', function () {
     var coughing = Emberwake.scarCount && Emberwake.scarCount() >= 2;
-    Emberwake.present({
-      lines: [
-        { where: 'Ashen Marrow', speaker: 'Vesper', text: 'I am not here for the coat. I will not step into her. The scar in her teeth is already a door, and I only breathe across it.' },
-        { speaker: 'Lira', text: coughing
-          ? 'She is standing in the ash, not in me. The cough is mine. Her mouth is worse.'
-          : 'She is standing in the ash, not in me. Her mouth is still worse than the engine.' },
-        { speaker: 'The spark', text: 'She worsens rot. She does not take the host. Kestrel is still in the air. This ash is not a roost. Taste is a debt. Refusal still leaves a stain.' },
+    var dusk = Emberwake.heardDusk && Emberwake.heardDusk();
+    var brawl = Emberwake.foughtPatrol && Emberwake.foughtPatrol();
+    var cork = Emberwake.corkedCup && Emberwake.corkedCup();
+    var heard = null;
+    if (dusk && cork && brawl) heard = 'You named the dusk, they corked a cup, and the coats on the shale answered you. The vault stayed shut. So do I. I still do not enter.';
+    else if (dusk && cork) heard = 'You named the dusk, and they corked a cup in front of you. The mouth stayed hers. I still do not enter.';
+    else if (cork && brawl) heard = 'They corked a cup, and the coats on the shale answered you. The vault stayed shut. So do I. I still do not enter.';
+    else if (dusk && brawl) heard = 'You named the dusk, and the coats on the shale answered you. The vault stayed shut. So do I. I still do not enter.';
+    else if (cork) heard = 'They corked a cup and wrote the spark beside the host. The furrow stayed shut. So do I. I still do not enter.';
+    else if (brawl) heard = 'The coats on the shale answered you. The vault did not. I am not their licence, and I still do not enter.';
+    else if (dusk) heard = 'The sky went down on this ash and the mouth stayed hers. I saw that. I still do not enter.';
+    var lines = [
+      { where: 'Ashen Marrow', speaker: 'Vesper', text: 'I am not here for the coat. I will not step into her. The scar in her teeth is already a door, and I only breathe across it.' },
+      { speaker: 'Lira', text: coughing
+        ? 'She is standing in the ash, not in me. The cough is mine. Her mouth is worse.'
+        : 'She is standing in the ash, not in me. Her mouth is still worse than the engine.' },
+      { speaker: 'The spark', text: 'She worsens rot. She does not take the host. Kestrel is still in the air. This ash is not a roost. Taste is a debt. Refusal still leaves a stain.' },
+    ];
+    if (heard) lines.push({ speaker: 'Vesper', text: heard });
+    lines.push({
+      speaker: 'Lira',
+      text: coughing ? 'The cough answers before I do.' : 'The ash is quiet enough to hear her.',
+      choices: [
         {
-          speaker: 'Lira',
-          text: coughing ? 'The cough answers before I do.' : 'The ash is quiet enough to hear her.',
-          choices: [
-            {
-              label: 'Let her taste the scar.',
-              pick: 'taste',
-              reply: { speaker: 'Vesper', text: 'A breath across the mouth. I do not enter. The rot in her teeth thickens, and the ash remembers the favor.' },
-            },
-            {
-              label: 'Refuse her mouth.',
-              pick: 'refuse',
-              reply: { speaker: 'Vesper', text: 'Refusal is not a cleaning. I leave the stain on the ash and walk. The rot still has my name on it.' },
-            },
-          ],
+          label: 'Let her taste the scar.',
+          pick: 'taste',
+          reply: { speaker: 'Vesper', text: 'A breath across the mouth. I do not enter. The rot in her teeth thickens, and the ash remembers the favor.' },
+        },
+        {
+          label: 'Refuse her mouth.',
+          pick: 'refuse',
+          reply: { speaker: 'Vesper', text: 'Refusal is not a cleaning. I leave the stain on the ash and walk. The rot still has my name on it.' },
         },
       ],
+    });
+    Emberwake.present({
+      lines: lines,
       onPick: function (id) {
         if (Emberwake.noteVesperAsh) Emberwake.noteVesperAsh(id);
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('crypt-notice', function () {
+    Emberwake.present({
+      lines: [
+        { where: 'Count crypt, east dust', speaker: 'Lira', text: 'A folded notice. They filed the crack as weather. Weather is not a licence, and this page is not the ledger.' },
+        { speaker: 'The spark', text: 'A page does not open the bar. The mouth stays hers. The breach is still the other step.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteJournal) Emberwake.noteJournal();
       },
     });
     return true;

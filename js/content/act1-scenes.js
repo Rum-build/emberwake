@@ -70,6 +70,19 @@
     return true;
   });
 
+  Emberwake.registerScene('spare-green', function () {
+    Emberwake.present({
+      lines: [
+        { where: 'Verdant Isle', speaker: 'Lira', text: 'A spare green, off the west path. The same bitter wrap as the wayside chest. Someone left a second one.' },
+        { speaker: 'The spark', text: 'It closes a wound. It does not open the kiln, and it is not the first cloth.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteSpare) Emberwake.noteSpare();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('wayside-chest', function () {
     Emberwake.present({
       lines: [
