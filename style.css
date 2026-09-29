@@ -398,11 +398,18 @@ button, .inventory-panel, .inv-body, .credits-content {
 }
 
 .hud-scar {
-  color: #e7b0a4;
-  border: 1px solid rgba(180, 80, 60, 0.45);
+  color: #ffe4dc;
+  border: 1px solid rgba(212, 120, 96, 0.7);
   border-radius: 999px;
   padding: 1px 8px;
-  background: rgba(40, 12, 10, 0.55);
+  background: rgba(62, 18, 14, 0.82);
+  font-weight: 700;
+}
+.hud-scar.quiet {
+  color: #e4d5c4;
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(20, 14, 12, 0.45);
+  font-weight: 600;
 }
 
 .strain-wrap {
@@ -1009,6 +1016,28 @@ button, .inventory-panel, .inv-body, .credits-content {
 }
 
 .combat-log.show { opacity: 1; }
+
+.hit-float {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  transform: translate(-50%, 0);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 46;
+  text-shadow: 0 2px 0 #2a100c, 0 0 12px rgba(0, 0, 0, 0.85);
+}
+.hit-float.harm { color: #ffb089; }
+.hit-float.heal { color: #b7e6c2; }
+.hit-float.show { animation: hitpop 0.55s ease-out; }
+@keyframes hitpop {
+  0% { opacity: 0; transform: translate(-50%, 10px); }
+  18% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -32px); }
+}
 
 .turn-indicator {
   position: absolute;

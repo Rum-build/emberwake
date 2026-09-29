@@ -63,6 +63,7 @@
     brine: { name: 'Brine Skitter', color: 0x3a5a48, maxHp: 44, atk: 10, def: 3, xp: 16, gold: 9, shape: 'bug' },
     cinder: { name: 'Cinder Mite', color: 0x8a3018, maxHp: 38, atk: 9, def: 2, xp: 15, gold: 8, shape: 'sphere' },
     stoker: { name: 'Pipe Stoker', color: 0x4a4038, maxHp: 78, atk: 12, def: 16, xp: 36, gold: 22, shape: 'human' },
+    counter: { name: 'Concord Counter', color: 0x3a3530, maxHp: 48, atk: 13, def: 7, xp: 30, gold: 18, shape: 'human' },
   };
 
   content.roster = {
