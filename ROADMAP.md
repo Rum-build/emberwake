@@ -226,7 +226,7 @@ Playable on the Verdant Isle field:
 
 - Vesper’s silhouette is a hood and an ash ribbon, and it lifts a little when motion is on. In a fight the party does the same. Still holds them quiet. The command window and the dialogue frame take a gold inner line. The turn ribbon names who is Now, and party and foe chips sit in different colors.
 - A wayside chest on the isle gives one tonic and then stays empty. A waxed salt cord in the grass north of the ember goes in the pack and does not open a door. A posted notice on the shale says mouths are numbered. If Cousin’s Margin is already held, it names the furrow. It does not open the vault.
-- Fights show chips for burn, stamp, air, licence, page, rite, knelt, ash in the teeth, and scar debt on Lira. Walking the ash nave, the first breach, or the remnant claim before the flag can meet an ash penitent. It kneels once. Ash coughs for 6 on that person’s next turn and does not add scar debt. After the flag, the claim stays quiet.
+- Fights show chips for burn, stamp, air, licence, page, rite, knelt, ash in the teeth, and scar debt on Lira. Walking the ash nave, the first breach, or the remnant claim before the flag can meet an ash penitent. It kneels once. Ash coughs for 5 on that person’s next turn, or 4 if the salt cord is bound, and does not add scar debt. After the flag, the claim stays quiet.
 - Still freezes the nave banners and the cough pulse. On a phone the ash motes update every other tick. Credits still return to the aftermath when motion is stilled and pace is slow. Continue stores both.
 - Phone controls, Absorb, Pack, and Continue stay.
 
@@ -234,7 +234,7 @@ Playable on the Verdant Isle field:
 
 - The isle sun is harder and the fill is thinner. The coast and the ash sit darker, so day and night are not the same wash. Room walls catch the lamp they already have. The remnant floor and the chamber walls take a hotter specular from the fire that is already there. No new light was added.
 - A living pool wears its element on a brighter rim and a taller column. A drunk or bottled mouth goes quiet.
-- The salt cord can be bound once from the pack. Torren and Nima speak if they came. If they did not, Lira still ties it. Ash in the teeth then coughs for 4, not 6. It does not open a door, add a scar, or change a claim flag.
+- The salt cord can be bound once from the pack. Torren and Nima speak if they came. If they did not, Lira still ties it. Ash in the teeth then coughs for 4, not 5. It does not open a door, add a scar, or change a claim flag.
 - The ash penitent is a shorter fight: less life, a lighter blow. Status chips are filled, and on a phone they are larger.
 - Phone controls, Absorb, Pack, and Continue stay.
 
@@ -299,7 +299,7 @@ Playable on the Verdant Isle field:
 - On a phone the place list starts under the HUD. The stick, Absorb, and Enter stay live.
 - If she has named the dusk, corked the leaf-cup, or provoked the shale patrol, Vesper says so when she meets Lira on the ash. She still does not enter the host.
 
-## Remnant night (this branch)
+## Remnant night (shipped)
 
 - The Remnant Mark carries broken piers, brass beams, and a night sky with an ember horizon. The nave uses the same night. The coast skies use dusk. Day on the isle stays day.
 - A pool shows a ripple and a sheen while it is still a mouth. A bottled cup stays quiet.
@@ -307,6 +307,17 @@ Playable on the Verdant Isle field:
 - A bird sits on the west pier. Leave her the air, or ask her to keep company. Both end in a refusal. She is not in the pack.
 - A brine wets the stone before the splash. A stoker opens the plate before the heat. A mite lifts a jaw before the second bite. The chips say Wet, Heat, and Jaw, and on a phone they are large enough to read.
 - Wake says the first pool is behind her. Flat stones lead to it. Absorb is named. Credits lists the eight cues that ship and says telegraphs stay silent.
+- Phone controls, Absorb, Pack, and Continue stay.
+
+## Nave and scrap (this branch)
+
+- The ash nave has pews, choir stalls, and a brass inlay off the aisle. The first breach has fallen voussoirs, a side colonnade, and more ash. Neither sits on the door, the bar, or the south step.
+- Walking swings the arms and shifts the weight. Standing breathes. Still freezes both.
+- A fight’s floor and lights follow the place: day on the isle, dusk on the shale and in the vault, night-ember on the ash and the remnant rooms.
+- The numbered scrap can be read once from the pack. Reading it does not open the nave, the weep, or the vault. A tally clerk on the shale can see that count, and the door stays the other board.
+- A Concord counter lifts a bead before his next blow, and that blow lands thin. A cinder splits before a small spark. The chips say Bead and Flare.
+- An ash penitent still kneels. The cough is 5, or 4 if the cord is bound, and the swing is lighter. A brine’s splash on a second body is a nick of at most 3.
+- Places lists the numbered scrap once it is in the pack. On a phone the place list still starts under the HUD.
 - Phone controls, Absorb, Pack, and Continue stay.
 
 ## Still ahead

@@ -139,7 +139,7 @@
     const torren = Emberwake.companyHas && Emberwake.companyHas('torren');
     const nima = Emberwake.companyHas && Emberwake.companyHas('nima');
     const lines = [
-      { where: 'The pack', speaker: 'Lira', text: 'I tie the waxed cord around the jerkin. The vault does not count it. Ash in the teeth will cough for four, not six.' },
+      { where: 'The pack', speaker: 'Lira', text: 'I tie the waxed cord around the jerkin. The vault does not count it. Ash in the teeth will cough for four, not five.' },
     ];
     if (torren) lines.push({ speaker: 'Torren', text: 'Rope is not a licence. A knot on the jerkin is still not a door.' });
     if (nima) lines.push({ speaker: 'Nima', text: 'Wax is not a tonic. The cough will sit quieter. It does not pay the scar.' });

@@ -61,14 +61,14 @@
     'kiln-heart': { name: 'Kiln Heart', color: 0x8a2410, maxHp: 98, atk: 15, def: 6, xp: 42, gold: 28, shape: 'kiln' },
     wisp: { name: 'Charged Wisp', color: 0x9ec6ff, maxHp: 36, atk: 11, def: 2, xp: 16, gold: 9, shape: 'sphere' },
     clerk: { name: 'Licence Clerk', color: 0x4a453c, maxHp: 48, atk: 10, def: 4, xp: 18, gold: 16, shape: 'human' },
-    brine: { name: 'Brine Skitter', color: 0x3a5a48, maxHp: 44, atk: 10, def: 3, xp: 16, gold: 9, shape: 'bug' },
+    brine: { name: 'Brine Skitter', color: 0x3a5a48, maxHp: 40, atk: 9, def: 3, xp: 16, gold: 9, shape: 'bug' },
     cinder: { name: 'Cinder Mite', color: 0x8a3018, maxHp: 38, atk: 9, def: 2, xp: 15, gold: 8, shape: 'sphere' },
     stoker: { name: 'Pipe Stoker', color: 0x4a4038, maxHp: 78, atk: 12, def: 16, xp: 36, gold: 22, shape: 'human' },
     counter: { name: 'Concord Counter', color: 0x3a3530, maxHp: 48, atk: 13, def: 7, xp: 30, gold: 18, shape: 'human' },
     auditor: { name: 'Count Auditor', color: 0x6a5840, maxHp: 64, atk: 11, def: 6, xp: 28, gold: 16, shape: 'ledger' },
     captain: { name: 'Concord Captain', color: 0x2a2420, maxHp: 88, atk: 13, def: 7, xp: 46, gold: 28, shape: 'banner' },
     celebrant: { name: 'Rite Celebrant', color: 0x3a2418, maxHp: 108, atk: 14, def: 8, xp: 52, gold: 32, shape: 'rite' },
-    penitent: { name: 'Ash Penitent', color: 0x3a221c, maxHp: 44, atk: 10, def: 3, xp: 20, gold: 12, shape: 'cowl' },
+    penitent: { name: 'Ash Penitent', color: 0x3a221c, maxHp: 40, atk: 8, def: 3, xp: 20, gold: 12, shape: 'cowl' },
     gull: { name: 'Shelf Gull', color: 0xc8d0d8, maxHp: 30, atk: 8, def: 2, xp: 14, gold: 7, shape: 'wing' },
   };
 

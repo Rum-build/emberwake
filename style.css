@@ -1133,6 +1133,8 @@ body:not(.still-motion) .btn-absorb.is-ready {
 .status-heat { color: #ffb060; background: rgba(92, 28, 8, 0.96); }
 .status-jaw { color: #e4f0c8; background: rgba(28, 40, 18, 0.96); }
 .status-wet { color: #c8e4f4; background: rgba(12, 36, 52, 0.96); }
+.status-bead { color: #f4e6c0; background: rgba(48, 40, 18, 0.96); }
+.status-flare { color: #ffd0a0; background: rgba(72, 28, 8, 0.96); }
 .status-page { color: #f0e6c8; background: rgba(48, 40, 22, 0.96); }
 .status-rite { color: #ffc0a0; background: rgba(72, 24, 16, 0.96); }
 .status-cry { color: #e4f2ff; background: rgba(18, 36, 52, 0.96); }
