@@ -50,18 +50,26 @@ Playable on the Verdant Isle field:
 - Ilan and Maud stand at Vesper’s scar. Drinking it costs extra strain and their thanks. Leaving it locks the scar and puts rot-ash in the pack. The rot stays.
 - Continue on the title reads a browser save. Wake throws that save out. The mouse stick keeps the drag until the button comes up.
 
-## Act I wrap, Act II tease (this same branch)
+## Act I wrap, Act II tease (shipped)
 
 - The waystone wakes only after the buried kiln is drunk and Ilan and Maud have a verdict, drink or leave.
 - Kestrel then carries a short sky route over Stormreach Coast. The harbor vault is in the cliff, gold-sealed, leaking lightning. The door does not open. She does not join.
-- E on the woken stone looks again. Continue keeps the woken stone, the passage in the pack, and the route.
+
+## Act II start (this branch)
+
+- **Land** on the woken waystone puts feet on a walkable Stormreach shelf. The first descent is a short thermal. Later crossings are quieter. **Return** at the roost puts her back by the stone.
+- The harbor vault is a face: a clerk, a gold seal, a door that does not open. Walk up to it.
+- Two lightning pools, Harbor Leak and Spire Bone, feed the spark the same way the isle pools do. Random fights stay on the isle.
+- If she already holds fire and water, or fire and lightning, the shelf speaks steam or plasma. The word leaves. It is not a spell in the combat menu.
+- After a coast pool and the vault’s face, Vesper offers a measuring duel. Throw the blow (a little strain) or hold it. She walks away alive.
+- Continue stores the coast, the merge word, and the duel, along with the rest of the browser save. The mouse stick and Absorb/Pack stay.
 
 ## Still ahead
 
-From DESIGN.md, after this tease:
+From DESIGN.md, after this landing:
 
 1. The scar’s debt, counted and not paid.
-2. Act II proper: land on Stormreach, walk the vault, lightning pools, the non-lethal duel, merges, and a party slot for Kestrel if the road ever offers one.
+2. The rest of Act II: the vault interior, merge words that become spells, a longer coast, and a party slot for Kestrel if the road ever offers one.
 
 Combat menus stay Fight / Magic / Item / Flee. New panels stay desktop-first.
 

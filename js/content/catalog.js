@@ -75,7 +75,7 @@
       name: 'Kestrel',
       role: 'Edge · eagle-rider',
       joins: 'sky-routes',
-      note: 'Crosses once after the buried kiln. After the scar has a verdict, she opens the thermal to Stormreach. She does not land, and she does not join.',
+      note: 'Opens the thermal to Stormreach after the kiln and the scar. She brings Lira to the shale and still does not join.',
     },
   ];
 })(window.Emberwake);
