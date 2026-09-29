@@ -9,14 +9,52 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Title Screen -->
+  <!-- Title -->
   <div id="title-screen" class="screen">
     <div class="title-bg"></div>
     <div class="title-content">
+      <p class="eyebrow">Verdant Isle · Act I</p>
       <h1 class="game-title">Emberwake</h1>
-      <p class="subtitle">Power is immortal. You are the spark.</p>
-      <button id="btn-start" class="btn btn-primary btn-xl">Start Adventure</button>
-      <p class="hint">WASD / joystick · I inventory · E absorb pools · Fight paths in battle</p>
+      <p class="subtitle">Power is immortal. You are the spark inside Lira.</p>
+      <p class="tease">The Ashen Concord bottles magic and calls the quiet safety. Another spark, Vesper, drinks faster than you and leaves the rot behind as a receipt.</p>
+      <button id="btn-start" class="btn btn-primary btn-xl" type="button">Wake</button>
+      <button id="btn-credits" class="btn btn-quiet" type="button">Credits</button>
+      <p class="hint">Walk · absorb pools · fight as Warrior, Mage, or Ranged<br />Touch joystick · WASD · E absorb · I pack</p>
+    </div>
+  </div>
+
+  <!-- Path commitment -->
+  <div id="path-screen" class="screen hidden">
+    <div class="title-bg"></div>
+    <div class="title-content path-content">
+      <p class="eyebrow">Lira’s hands, your choice</p>
+      <h2 class="screen-title">How will she fight?</h2>
+      <p class="subtitle path-lead">The spark rides a body, a mind, or an aim. You may wrench the path later at camp. The first choosing is free. The next costs her.</p>
+      <div class="path-choices">
+        <button class="btn path-choice" type="button" data-path="warrior">
+          Warrior
+          <small>Blade and ember. Fire likes a body that steps in. She pays in bruises.</small>
+        </button>
+        <button class="btn path-choice" type="button" data-path="mage">
+          Mage
+          <small>Mind, tide, and sparkbolt. Spells spend what you have digested.</small>
+        </button>
+        <button class="btn path-choice" type="button" data-path="ranged">
+          Ranged
+          <small>Focus and the pause before the shot. Lightning makes the aim crueler.</small>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Credits -->
+  <div id="credits-screen" class="screen hidden">
+    <div class="title-content credits-content">
+      <h2 class="screen-title">Credits</h2>
+      <p>Emberwake uses open-licence audio only — CC0, CC-BY with attribution, or a similarly clear grant. Every cue that ships is named in <strong>CREDITS.md</strong> and on this screen.</p>
+      <p>This Verdant Isle slice is silent on purpose. No music and no effects are loaded until their licences are written down.</p>
+      <p class="credits-note">Commercial libraries stay out. If a licence is doubtful, the moment stays quiet.</p>
+      <button id="btn-credits-close" class="btn btn-primary" type="button">Return</button>
     </div>
   </div>
 
@@ -24,38 +62,65 @@
   <div id="hud" class="hud hidden">
     <div class="hud-left">
       <div class="hud-location" id="hud-location">Verdant Isle</div>
+      <div class="hud-path" id="hud-path">Path —</div>
       <div class="hud-row">
-        <span class="hud-gold">🪙 <span id="hud-gold">0</span></span>
-        <span class="hud-xp">Spark Lv<span id="hud-level">1</span> · <span id="hud-xp">0</span>/<span id="hud-xp-next">40</span> XP</span>
+        <span class="hud-gold" title="Concord-rim coin">Marks <span id="hud-gold">0</span></span>
+        <span class="hud-hp" id="hud-hp">Lira —</span>
+        <span class="hud-xp">Spark Lv<span id="hud-level">1</span> · <span id="hud-xp">0</span>/<span id="hud-xp-next">44</span> XP</span>
       </div>
       <div class="hud-elements" id="hud-elements">
-        <span class="el fire" title="Fire">🔥 <span id="el-fire">0</span></span>
-        <span class="el water" title="Water">💧 <span id="el-water">0</span></span>
-        <span class="el lightning" title="Lightning">⚡ <span id="el-lightning">0</span></span>
+        <span class="el fire" title="Fire digested">Fire <span id="el-fire">0</span></span>
+        <span class="el water" title="Water digested">Water <span id="el-water">0</span></span>
+        <span class="el lightning" title="Lightning digested">Bolt <span id="el-lightning">0</span></span>
       </div>
       <div class="hud-strain">
         <span class="label">Host strain</span>
-        <div class="strain-wrap"><div class="strain-bar" id="strain-bar" style="width:0%"></div></div>
+        <div class="strain-wrap"><div class="strain-bar" id="strain-bar"></div></div>
         <span class="nums" id="strain-nums">0/100</span>
       </div>
+      <p class="hud-rumor" id="hud-rumor">The leaf-villages pretend the Concord’s seals are mercy.</p>
+      <p class="hud-keys">WASD move · E absorb · I pack</p>
     </div>
     <div class="hud-right">
-      <button id="btn-inventory" class="btn btn-hud" type="button" title="Inventory (I)">🎒 Inv</button>
-      <button id="btn-absorb" class="btn btn-hud btn-absorb hidden" type="button">Absorb (E)</button>
+      <button id="btn-inventory" class="btn btn-hud" type="button">Pack</button>
+      <button id="btn-absorb" class="btn btn-hud btn-absorb hidden" type="button">Absorb</button>
     </div>
   </div>
 
-  <!-- Inventory panel (host Lira) -->
-  <div id="inventory-panel" class="inventory-panel hidden">
+  <div id="interact-prompt" class="interact-prompt hidden">
+    <div id="interact-title"></div>
+    <div id="interact-detail"></div>
+  </div>
+
+  <!-- Inventory (host + party) -->
+  <div id="inventory-panel" class="inventory-panel hidden" role="dialog" aria-labelledby="inv-heading">
     <div class="inv-header">
-      <h2>Lira’s Pack</h2>
-      <p class="inv-sub">Inventory lives on the host — the spark carries nothing.</p>
-      <button id="btn-inv-close" class="btn btn-menu btn-back" type="button">Close (I)</button>
+      <div>
+        <h2 id="inv-heading">The pack</h2>
+        <p class="inv-sub">Lira carries it. Torren counts it. Nima knows which leaves are medicine. The spark’s pockets are a fiction.</p>
+      </div>
+      <button id="btn-inv-close" class="btn btn-menu btn-back" type="button">Close</button>
     </div>
     <div class="inv-body">
       <section class="inv-section">
+        <h3>Party</h3>
+        <div id="inv-party" class="party-strip"></div>
+        <p class="inv-note">Kestrel, the eagle-rider, is not with you. Sky routes stay a rumor with feathers.</p>
+      </section>
+      <section class="inv-section">
+        <h3>Path</h3>
+        <p class="inv-note">Committed path sets Lira’s body. In battle, Fight still offers all three strikes — off-path blows land thin.</p>
+        <div class="path-row" id="inv-path-row">
+          <button class="btn btn-small" type="button" data-respec="warrior">Warrior</button>
+          <button class="btn btn-small" type="button" data-respec="mage">Mage</button>
+          <button class="btn btn-small" type="button" data-respec="ranged">Ranged</button>
+        </div>
+      </section>
+      <section class="inv-section">
         <h3>Equipment</h3>
         <div class="equip-slots" id="equip-slots"></div>
+        <h3 class="subhead">In the pack</h3>
+        <ul class="inv-list" id="inv-gear"></ul>
       </section>
       <section class="inv-section">
         <h3>Items</h3>
@@ -63,63 +128,66 @@
       </section>
       <section class="inv-section">
         <h3>Pool-shards</h3>
+        <p class="inv-note">Undigested. Digest them cleanly, or dump them in a fight the way Vesper would — power now, rot later.</p>
         <ul class="inv-list" id="inv-shards"></ul>
+      </section>
+      <section class="inv-section">
+        <h3>Seals &amp; keys</h3>
+        <ul class="inv-list" id="inv-seals"></ul>
       </section>
       <section class="inv-section inv-stats">
         <h3>Spark</h3>
-        <p>Level <span id="inv-level">1</span> · XP <span id="inv-xp">0</span>/<span id="inv-xp-next">40</span></p>
-        <p>Gold <span id="inv-gold">0</span> · Strain <span id="inv-strain">0</span>/100</p>
-        <p class="el-line">🔥 <span id="inv-fire">0</span> · 💧 <span id="inv-water">0</span> · ⚡ <span id="inv-lightning">0</span></p>
+        <p>Level <span id="inv-level">1</span> · XP <span id="inv-xp">0</span>/<span id="inv-xp-next">44</span> · capacity <span id="inv-cap">3</span></p>
+        <p>Path <span id="inv-path">—</span> · attunement <span id="inv-path-xp">0</span>/20</p>
+        <p>Marks <span id="inv-gold">0</span> · Strain <span id="inv-strain">0/100</span></p>
+        <p class="el-line">Fire <span id="inv-fire">0</span> · Water <span id="inv-water">0</span> · Lightning <span id="inv-lightning">0</span></p>
       </section>
     </div>
   </div>
 
-  <!-- Virtual Joystick -->
+  <!-- Virtual joystick -->
   <div id="joystick-zone" class="joystick-zone hidden">
     <div id="joystick-base" class="joystick-base">
       <div id="joystick-knob" class="joystick-knob"></div>
     </div>
   </div>
 
-  <!-- Encounter flash -->
   <div id="encounter-flash" class="encounter-flash"></div>
 
-  <!-- Combat Screen -->
+  <!-- Combat -->
   <div id="combat-ui" class="combat-ui hidden">
     <div class="combat-top">
+      <div id="turn-order" class="turn-order"></div>
       <div id="enemy-panel" class="enemy-panel"></div>
     </div>
     <div class="combat-bottom">
       <div id="party-panel" class="party-panel"></div>
       <div id="menu-panel" class="menu-panel">
         <div id="main-menu" class="menu-grid">
-          <button class="btn btn-menu" data-action="fight">Fight</button>
-          <button class="btn btn-menu" data-action="magic">Magic</button>
-          <button class="btn btn-menu" data-action="item">Item</button>
-          <button class="btn btn-menu" data-action="flee">Flee</button>
+          <button class="btn btn-menu" type="button" data-action="fight">Fight</button>
+          <button class="btn btn-menu" type="button" data-action="magic">Magic</button>
+          <button class="btn btn-menu" type="button" data-action="item">Item</button>
+          <button class="btn btn-menu" type="button" data-action="flee">Flee</button>
         </div>
         <div id="path-menu" class="menu-grid hidden">
-          <button class="btn btn-menu" data-path="warrior">Warrior <span class="cost">blade</span></button>
-          <button class="btn btn-menu" data-path="mage">Mage <span class="cost">mind</span></button>
-          <button class="btn btn-menu" data-path="ranged">Ranged <span class="cost">focus</span></button>
-          <button class="btn btn-menu btn-back" data-action="back">◀ Back</button>
+          <p class="menu-label span-2">Lira’s strike</p>
+          <button class="btn btn-menu" type="button" data-path="warrior">Cleave <span class="cost">Warrior</span></button>
+          <button class="btn btn-menu" type="button" data-path="mage">Channel <span class="cost">Mage</span></button>
+          <button class="btn btn-menu" type="button" data-path="ranged">Aim <span class="cost">Ranged</span></button>
+          <button class="btn btn-menu btn-back span-2" type="button" data-action="back">Back</button>
         </div>
         <div id="magic-menu" class="menu-grid hidden">
-          <button class="btn btn-menu" data-magic="fire">Ember <span class="cost">🔥1 · 4 MP</span></button>
-          <button class="btn btn-menu" data-magic="water">Tide <span class="cost">💧1 · 4 MP</span></button>
-          <button class="btn btn-menu" data-magic="lightning">Sparkbolt <span class="cost">⚡1 · 5 MP</span></button>
-          <button class="btn btn-menu" data-magic="cure">Mend <span class="cost">💧1 · 5 MP</span></button>
-          <button class="btn btn-menu btn-back" data-action="back">◀ Back</button>
+          <button class="btn btn-menu" type="button" data-magic="fire">Ember <span class="cost">Fire 1 · 4 MP</span></button>
+          <button class="btn btn-menu" type="button" data-magic="water">Tide <span class="cost">Water 1 · 4 MP</span></button>
+          <button class="btn btn-menu" type="button" data-magic="lightning">Sparkbolt <span class="cost">Bolt 1 · 5 MP</span></button>
+          <button class="btn btn-menu" type="button" data-magic="cure">Mend <span class="cost">Water 1 · 5 MP</span></button>
+          <button class="btn btn-menu btn-back span-2" type="button" data-action="back">Back</button>
         </div>
-        <div id="item-menu" class="menu-grid hidden">
-          <button class="btn btn-menu" data-item="potion">Potion <span class="cost" id="potion-count">x3</span></button>
-          <button class="btn btn-menu" data-item="ether">Ether <span class="cost" id="ether-count">x1</span></button>
-          <button class="btn btn-menu btn-back" data-action="back">◀ Back</button>
-        </div>
+        <div id="item-menu" class="menu-grid hidden"></div>
         <div id="target-menu" class="menu-list hidden">
-          <p class="menu-label">Select Target</p>
+          <p class="menu-label">Choose</p>
           <div id="target-buttons"></div>
-          <button class="btn btn-menu btn-back" data-action="back-target">◀ Back</button>
+          <button class="btn btn-menu btn-back" type="button" data-action="back-target">Back</button>
         </div>
       </div>
     </div>
@@ -127,21 +195,18 @@
     <div id="turn-indicator" class="turn-indicator"></div>
   </div>
 
-  <!-- Toast notifications -->
   <div id="toast" class="toast hidden"></div>
 
-  <!-- Game Over -->
   <div id="gameover-screen" class="screen hidden">
     <div class="title-content">
-      <h1 class="game-title defeat">Game Over</h1>
-      <p class="subtitle">The spark dims… Lira falls.</p>
-      <button id="btn-retry" class="btn btn-primary btn-xl">Retry</button>
+      <h1 class="game-title defeat">The body fails</h1>
+      <p class="subtitle">Lira falls. The spark does not die. It only goes quiet, and hates the quiet.</p>
+      <button id="btn-retry" class="btn btn-primary btn-xl" type="button">Drag her up</button>
     </div>
   </div>
 
-  <!-- Victory overlay (brief) -->
   <div id="victory-overlay" class="victory-overlay hidden">
-    <h2>Victory!</h2>
+    <h2>They fall</h2>
     <p id="victory-text"></p>
   </div>
 

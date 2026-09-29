@@ -1,56 +1,63 @@
 # Emberwake
 
-A mobile-friendly epic 3D RPG slice — you are a spark in a human host. Single self-contained web game — open in a browser, no build step.
+A mobile-friendly 3D RPG slice. You are a spark inside Lira, a border scout on Verdant Isle. Power pools in the land; you grow by absorbing it, and the ground heals as a side effect. Final Fantasy turn structure, Witcher-grey consequences.
+
+Single self-contained page. No build step.
 
 ## How to open
 
+From the repository root (the folder that contains `index.html`):
+
 ```bash
-cd /workspace/emberwake
 python3 -m http.server 8766
 ```
 
-Then visit **http://localhost:8766** (or your machine’s IP on port 8766 from a phone on the same network).
+Visit **http://localhost:8766**. On a phone sharing the network, use this machine’s address on port 8766.
 
-You can also open `index.html` directly in a desktop browser; Three.js loads from the unpkg CDN (network required once).
+You can also open `index.html` in a desktop browser. Three.js **r128** loads from the unpkg CDN, so the first launch needs a network.
 
 ## How to play
 
-1. Tap **Start Adventure** on the title screen.
-2. **Overworld (Verdant Isle)**
-   - **Touch:** virtual joystick (bottom-left) to move.
+1. **Wake** on the title, then choose how Lira fights: **Warrior**, **Mage**, or **Ranged**. The choice can be wrenched later from the pack. That costs host strain.
+2. **Verdant Isle**
+   - **Touch:** virtual joystick (bottom-left).
    - **Desktop:** WASD or arrow keys.
-   - Explore the island — trees, rocks, a village, and a dungeon entrance.
-3. **Random encounters** occur after walking in the field. A flash transition leads into battle.
-4. **Combat (turn-based)**
-   - Party: **Cecil** (Warrior), **Rosa** (White Mage), **Rydia** (Black Mage).
-   - Each living party member acts, then enemies — clear turn order.
-   - **Fight** — physical attack (pick an enemy).
-   - **Magic** — **Fire** (4 MP, damage) or **Cure** (5 MP, heal an ally).
-   - **Item** — Potion (heal HP) or Ether (restore MP).
-   - **Flee** — chance to escape back to the overworld.
-5. Win for XP/gold toast and return to the overworld. Lose shows Game Over → **Retry**.
+   - **E** or the **Absorb** button, when you stand in a pool.
+   - **I** or **Pack** opens the party inventory. **Esc** closes it.
+3. **Pools** (fire, water, lightning) are columns of light over sick ground. Absorbing one feeds the spark (**XP**, an element, **host strain**) and the scar visibly greens. Overfilling her capacity scorches harder. Strain cuts Lira’s max HP.
+4. **Pack** (host and party — the spark carries nothing): equipment, tonics and phials, pool-shards (digest cleanly, or dump them in a fight), Concord seals, the border badge. Torren and Nima walk with Lira. Kestrel, the eagle-rider, is not here yet.
+5. **Encounters** happen after you walk the field. Rot near an undigested pool raises the rate. Standing in a pool to feed is quiet.
+6. **Combat** is turn-based. Order is your party, then the enemy, shown as chips.
+   - **Fight** — Lira chooses **Cleave** (Warrior), **Channel** (Mage), or **Aim** (Ranged). The committed path hits true; the others land thin. Torren and Nima simply strike.
+   - **Magic** — **Ember**, **Tide**, **Sparkbolt**, **Mend**. Each spends digested element and MP.
+   - **Item** — tonic, phial, or a dumped shard (power now, strain after — Vesper’s habit, small).
+   - **Flee** — harder in rot, and against Vesper’s echo.
+7. Victory pays spark XP and Concord **marks**. Defeat drops the body; **Drag her up** restores HP and MP, keeps what the spark already ate, and loses 12 marks.
+
+The Ashen Concord and the rival spark **Vesper** are present in the isle’s rumors, a sealed well, a scar, and some fights. They are not yet bosses.
 
 ## Files
 
-| File        | Role                          |
-|-------------|-------------------------------|
-| `index.html`| Shell, UI overlays, Three.js CDN |
-| `style.css` | Mobile-friendly UI            |
-| `game.js`   | Overworld, combat, input      |
-| `DESIGN.md` | Game bible / design doc       |
-| `STORY.md`  | Short player-facing synopsis  |
-| `README.md` | This file                     |
+| File | Role |
+|------|------|
+| `index.html` | Shell, HUD, combat menus, inventory |
+| `style.css` | Portrait-first UI, desktop and landscape tweaks |
+| `game.js` | Overworld, pools, inventory, turn-based combat |
+| `DESIGN.md` | Design bible (canon) |
+| `STORY.md` | Player-facing synopsis (canon) |
+| `CREDITS.md` | Open-licence audio log |
+| `README.md` | This file |
 
 ## Tech
 
-- Three.js **r128** via unpkg CDN
+- Three.js **r128** via unpkg
 - No bundler, no npm install
-- Portrait-first UI; landscape supported
+- Portrait-first; landscape supported
 
 ## Known limitations
 
-- Short playable slice (one island, no town/dungeon interiors).
-- No save system; Retry restores the party after a wipe.
-- Encounter rate is tuned for a quick demo — short walks can trigger battles.
-- Requires network once to load Three.js from CDN.
-- Low-poly placeholders only (no external textures/models).
+- One island. No village or cellar interior, no save, no element-merge crafting yet.
+- Kestrel is mentioned, not recruited. Waystones and eagles are not in this slice.
+- No music or SFX. See `CREDITS.md`. The Credits button on the title repeats that policy.
+- Encounters are tuned so a short walk can start a fight after the first pool.
+- Low-poly placeholders. Three.js must load from the CDN once.
