@@ -1,6 +1,6 @@
 # Emberwake
 
-A mobile-friendly 3D RPG. You are a spark inside Lira, a border scout. Power pools in the land; you grow by absorbing it, and the ground heals as a side effect. Final Fantasy turn structure, Witcher-grey consequences.
+A 3D RPG, designed for PC and still playable on a phone. You are a spark inside Lira, a border scout. Power pools in the land; you grow by absorbing it, and the ground heals as a side effect. Final Fantasy turn structure, Witcher-grey consequences.
 
 [DESIGN.md](DESIGN.md) is the production bible (four acts, no reduced ending). [ROADMAP.md](ROADMAP.md) says what is playable now and what the next pull request builds. This page is **Phase 1**: the systems, played on the Verdant Isle field. Year 1’s vertical slice — full Act I, **Ember in the Leaf** — follows on the same shell.
 
@@ -14,18 +14,17 @@ From the repository root (the folder that contains `index.html`):
 python3 -m http.server 8766
 ```
 
-Visit **http://localhost:8766**. On a phone sharing the network, use this machine’s address on port 8766.
+Visit **http://localhost:8766** in a desktop browser. That is the layout this page is designed for. On a phone sharing the network, use this machine’s address on port 8766 — the joystick and the large buttons take over.
 
-You can also open `index.html` in a desktop browser. Three.js **r128** loads from the unpkg CDN, so the first launch needs a network.
+Three.js **r128** loads from the unpkg CDN, so the first launch needs a network.
 
 ## How to play
 
 1. **Wake** on the title, then choose how Lira fights: **Warrior**, **Mage**, or **Ranged**. The choice can be wrenched later from the pack. That costs host strain.
 2. **Verdant Isle**
-   - **Touch:** virtual joystick (bottom-left).
-   - **Desktop:** WASD or arrow keys.
-   - **E** or the **Absorb** button, when you stand in a pool.
-   - **I** or **Pack** opens the party inventory. **Esc** closes it.
+   - **PC:** WASD or arrow keys to walk. Mouse for menus, Pack, Absorb, and battle commands. In battle, **1–4** pick the open command and **Esc** steps back.
+   - **Phone:** virtual joystick (bottom-left) and the large Pack and Absorb buttons. The same battle commands are full-width taps.
+   - **E** absorbs when you stand in a pool. **I** opens the pack. **Esc** closes it.
 3. **Pools** (fire, water, lightning) are columns of light over sick ground. Absorbing one feeds the spark (**XP**, an element, **host strain**) and the scar visibly greens. Overfilling her capacity scorches harder. Strain cuts Lira’s max HP.
 4. **Pack** (host and party — the spark carries nothing): equipment, tonics and phials, pool-shards (digest cleanly, or dump them in a fight), Concord seals, the border badge. Torren and Nima walk with Lira. Kestrel, the eagle-rider, is not here yet.
 5. **Encounters** happen after you walk the field. Rot near an undigested pool raises the rate. Standing in a pool to feed is quiet.
@@ -43,7 +42,7 @@ The Ashen Concord and the rival spark **Vesper** are present in the isle’s rum
 | File | Role |
 |------|------|
 | `index.html` | Shell, HUD, combat menus, inventory |
-| `style.css` | Portrait-first UI, desktop and landscape tweaks |
+| `style.css` | Desktop command UI; phone layout under a coarse pointer or a narrow window |
 | `js/emberwake.js` | Namespace: phase, regions, scenes, content registers |
 | `js/content/catalog.js` | Paths, gear, items, spells, bestiary, opening roster |
 | `js/content/verdant-isle.js` | Act I field: landmarks, pools, toast beats |
@@ -58,7 +57,7 @@ The Ashen Concord and the rival spark **Vesper** are present in the isle’s rum
 
 - Three.js **r128** via unpkg
 - No bundler, no npm install
-- Portrait-first; landscape supported
+- Desktop first (keyboard and mouse, denser windows). Phone second (joystick, large taps)
 
 ## Not in Phase 1 yet
 

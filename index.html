@@ -19,7 +19,7 @@
       <p class="tease">The Ashen Concord bottles magic and calls the quiet safety. Another spark, Vesper, drinks faster than you and leaves the rot behind as a receipt.</p>
       <button id="btn-start" class="btn btn-primary btn-xl" type="button">Wake</button>
       <button id="btn-credits" class="btn btn-quiet" type="button">Credits</button>
-      <p class="hint">Walk · absorb pools · fight as Warrior, Mage, or Ranged<br />Touch joystick · WASD · E absorb · I pack</p>
+      <p class="hint">PC first: mouse on menus, WASD to walk, E absorb, I pack. 1–4 choose a command in battle.<br />On a phone the joystick and the large buttons do the same work.</p>
     </div>
   </div>
 
@@ -79,7 +79,7 @@
         <span class="nums" id="strain-nums">0/100</span>
       </div>
       <p class="hud-rumor" id="hud-rumor">The leaf-villages pretend the Concord’s seals are mercy.</p>
-      <p class="hud-keys">WASD move · E absorb · I pack</p>
+      <p class="hud-keys">WASD move · E absorb · I pack · mouse on commands</p>
     </div>
     <div class="hud-right">
       <button id="btn-inventory" class="btn btn-hud" type="button">Pack</button>
@@ -164,24 +164,24 @@
       <div id="party-panel" class="party-panel"></div>
       <div id="menu-panel" class="menu-panel">
         <div id="main-menu" class="menu-grid">
-          <button class="btn btn-menu" type="button" data-action="fight">Fight</button>
-          <button class="btn btn-menu" type="button" data-action="magic">Magic</button>
-          <button class="btn btn-menu" type="button" data-action="item">Item</button>
-          <button class="btn btn-menu" type="button" data-action="flee">Flee</button>
+          <button class="btn btn-menu" type="button" data-action="fight"><span class="cmd">Fight</span><kbd class="pc-key">1</kbd></button>
+          <button class="btn btn-menu" type="button" data-action="magic"><span class="cmd">Magic</span><kbd class="pc-key">2</kbd></button>
+          <button class="btn btn-menu" type="button" data-action="item"><span class="cmd">Item</span><kbd class="pc-key">3</kbd></button>
+          <button class="btn btn-menu" type="button" data-action="flee"><span class="cmd">Flee</span><kbd class="pc-key">4</kbd></button>
         </div>
         <div id="path-menu" class="menu-grid hidden">
           <p class="menu-label span-2">Lira’s strike</p>
-          <button class="btn btn-menu" type="button" data-path="warrior">Cleave <span class="cost">Warrior</span></button>
-          <button class="btn btn-menu" type="button" data-path="mage">Channel <span class="cost">Mage</span></button>
-          <button class="btn btn-menu" type="button" data-path="ranged">Aim <span class="cost">Ranged</span></button>
-          <button class="btn btn-menu btn-back span-2" type="button" data-action="back">Back</button>
+          <button class="btn btn-menu" type="button" data-path="warrior"><span class="cmd">Cleave</span><span class="meta"><span class="cost">Warrior</span><kbd class="pc-key">1</kbd></span></button>
+          <button class="btn btn-menu" type="button" data-path="mage"><span class="cmd">Channel</span><span class="meta"><span class="cost">Mage</span><kbd class="pc-key">2</kbd></span></button>
+          <button class="btn btn-menu" type="button" data-path="ranged"><span class="cmd">Aim</span><span class="meta"><span class="cost">Ranged</span><kbd class="pc-key">3</kbd></span></button>
+          <button class="btn btn-menu btn-back span-2" type="button" data-action="back"><span class="cmd">Back</span><kbd class="pc-key">Esc</kbd></button>
         </div>
         <div id="magic-menu" class="menu-grid hidden">
-          <button class="btn btn-menu" type="button" data-magic="fire">Ember <span class="cost">Fire 1 · 4 MP</span></button>
-          <button class="btn btn-menu" type="button" data-magic="water">Tide <span class="cost">Water 1 · 4 MP</span></button>
-          <button class="btn btn-menu" type="button" data-magic="lightning">Sparkbolt <span class="cost">Bolt 1 · 5 MP</span></button>
-          <button class="btn btn-menu" type="button" data-magic="cure">Mend <span class="cost">Water 1 · 5 MP</span></button>
-          <button class="btn btn-menu btn-back span-2" type="button" data-action="back">Back</button>
+          <button class="btn btn-menu" type="button" data-magic="fire"><span class="cmd">Ember</span><span class="meta"><span class="cost">Fire 1 · 4 MP</span><kbd class="pc-key">1</kbd></span></button>
+          <button class="btn btn-menu" type="button" data-magic="water"><span class="cmd">Tide</span><span class="meta"><span class="cost">Water 1 · 4 MP</span><kbd class="pc-key">2</kbd></span></button>
+          <button class="btn btn-menu" type="button" data-magic="lightning"><span class="cmd">Sparkbolt</span><span class="meta"><span class="cost">Bolt 1 · 5 MP</span><kbd class="pc-key">3</kbd></span></button>
+          <button class="btn btn-menu" type="button" data-magic="cure"><span class="cmd">Mend</span><span class="meta"><span class="cost">Water 1 · 5 MP</span><kbd class="pc-key">4</kbd></span></button>
+          <button class="btn btn-menu btn-back span-2" type="button" data-action="back"><span class="cmd">Back</span><kbd class="pc-key">Esc</kbd></button>
         </div>
         <div id="item-menu" class="menu-grid hidden"></div>
         <div id="target-menu" class="menu-list hidden">

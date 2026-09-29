@@ -1398,6 +1398,42 @@
     }
     if (which === 'magic') refreshMagicButtons();
     if (which === 'item') renderCombatItems();
+    const open = [mainMenu, pathMenu, magicMenu, itemMenu, targetMenu].find((menu) => menu && !menu.classList.contains('hidden'));
+    if (open) tagCommandKeys(open);
+  }
+
+  function tagCommandKeys(root) {
+    const buttons = Array.from(root.querySelectorAll('button')).filter((btn) => {
+      return btn.dataset.action !== 'back' && btn.dataset.action !== 'back-target';
+    });
+    buttons.forEach((btn, i) => {
+      if (i > 8 || btn.querySelector('.pc-key')) return;
+      const kbd = document.createElement('kbd');
+      kbd.className = 'pc-key';
+      kbd.textContent = String(i + 1);
+      btn.appendChild(kbd);
+    });
+  }
+
+  function openCombatMenu() {
+    return [mainMenu, pathMenu, magicMenu, itemMenu, targetMenu].find((menu) => menu && !menu.classList.contains('hidden')) || null;
+  }
+
+  function pressCombatCommand(index) {
+    const open = openCombatMenu();
+    if (!open) return;
+    const buttons = Array.from(open.querySelectorAll('button')).filter((btn) => {
+      return btn.dataset.action !== 'back' && btn.dataset.action !== 'back-target';
+    });
+    const btn = buttons[index];
+    if (btn && !btn.disabled) btn.click();
+  }
+
+  function pressCombatBack() {
+    const open = openCombatMenu();
+    if (!open) return;
+    const back = open.querySelector('[data-action="back"], [data-action="back-target"]');
+    if (back) back.click();
   }
 
   function refreshMagicButtons() {
@@ -1907,6 +1943,19 @@
       if (e.code === 'KeyI' && gameState === State.OVERWORLD && !encounterLocked) setInventory(!inventoryOpen);
       if (e.code === 'KeyE' && gameState === State.OVERWORLD) tryAbsorb();
       if (e.code === 'Escape' && inventoryOpen) setInventory(false);
+      if (gameState === State.COMBAT && inputEnabled && !combatBusy) {
+        if (e.code === 'Escape' || e.code === 'Backspace') {
+          pressCombatBack();
+          return;
+        }
+        let digit = 0;
+        if (e.code.indexOf('Digit') === 0) digit = Number(e.code.slice(5));
+        else if (e.code.indexOf('Numpad') === 0) digit = Number(e.code.slice(6));
+        if (digit >= 1 && digit <= 9) {
+          e.preventDefault();
+          pressCombatCommand(digit - 1);
+        }
+      }
     });
     window.addEventListener('keyup', (e) => { keys[e.code] = false; });
   }

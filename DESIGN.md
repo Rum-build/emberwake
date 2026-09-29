@@ -140,7 +140,7 @@ Merges are permanent spark knowledge; host must still equip or attune to express
 
 ## Implementation snapshot
 
-This bible is the production target: four acts, the regions, and the systems above. Phase 1 has landed the foundation on the Verdant Isle field — inventory, element absorb, spark XP, host strain, and Final Fantasy combat paths — as a no-build page served from the repository root. The next build is Year 1 Act I in full (**Ember in the Leaf**). See `README.md` and `ROADMAP.md`. Story canon in this file and in `STORY.md` is unchanged.
+This bible is the production target: four acts, the regions, and the systems above. Phase 1 has landed the foundation on the Verdant Isle field — inventory, element absorb, spark XP, host strain, and Final Fantasy combat paths — as a no-build page served from the repository root. The shell is desktop-first (keyboard and mouse, denser command windows). Touch keeps a joystick and large taps. The next build is Year 1 Act I in full (**Ember in the Leaf**). See `README.md` and `ROADMAP.md`. Story canon in this file and in `STORY.md` is unchanged.
 
 ---
 

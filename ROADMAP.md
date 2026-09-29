@@ -6,6 +6,8 @@ Tone stays Final Fantasy (party, paths, turn-based set pieces) and The Witcher (
 
 The shell stays a no-build page: Three.js from the CDN, scripts in order, content registered on `window.Emberwake`.
 
+**Platform.** PC is the design target: keyboard and mouse, denser Final Fantasy command windows and a Witcher-weight panel. Phones stay playable — a virtual joystick and large taps, switched on by a coarse pointer or a narrow window. New scenes and panels follow that order.
+
 ## How content is added
 
 | Seam | File | What the next build touches |

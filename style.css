@@ -147,12 +147,13 @@ button, .inventory-panel, .inv-body, .credits-content {
 }
 
 .path-content {
-  width: min(560px, 100%);
+  width: min(920px, 100%);
 }
 
 .path-choices {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: stretch;
   gap: 10px;
 }
 
@@ -176,24 +177,29 @@ button, .inventory-panel, .inv-body, .credits-content {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  min-width: 48px;
-  padding: 12px 18px;
-  border: 2px solid rgba(255, 210, 150, 0.4);
-  border-radius: 10px;
-  background: linear-gradient(180deg, rgba(36, 44, 72, 0.96), rgba(16, 22, 40, 0.98));
+  min-height: 32px;
+  min-width: 32px;
+  padding: 6px 12px;
+  border: 1px solid rgba(212, 176, 112, 0.45);
+  border-radius: 2px;
+  background: linear-gradient(180deg, rgba(28, 26, 24, 0.96), rgba(14, 13, 12, 0.98));
   color: #f0e6d2;
-  font-size: 1.02rem;
-  font-weight: 650;
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   cursor: pointer;
-  box-shadow: 0 4px 0 #0a0e1a, 0 6px 16px rgba(0, 0, 0, 0.35);
-  transition: transform 0.08s, filter 0.15s;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
   font-family: inherit;
 }
 
 .btn:active {
-  transform: translateY(3px);
-  box-shadow: 0 1px 0 #0a0e1a, 0 2px 8px rgba(0, 0, 0, 0.3);
+  background: rgba(48, 36, 24, 0.98);
+}
+
+.btn:focus-visible {
+  outline: 1px solid #ffe0a0;
+  outline-offset: 2px;
 }
 
 .btn:disabled {
@@ -218,16 +224,17 @@ button, .inventory-panel, .inv-body, .credits-content {
 }
 
 .btn-xl {
-  padding: 16px 42px;
-  min-height: 56px;
-  font-size: 1.2rem;
+  padding: 8px 28px;
+  min-height: 38px;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .btn-small {
-  min-height: 40px;
-  padding: 8px 12px;
-  font-size: 0.9rem;
-  box-shadow: 0 2px 0 #0a0e1a;
+  min-height: 28px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
 }
 
 .btn.is-on,
@@ -238,9 +245,32 @@ button, .inventory-panel, .inv-body, .credits-content {
 
 .btn-menu {
   width: 100%;
-  font-size: 0.98rem;
+  font-size: 0.84rem;
   justify-content: space-between;
   gap: 8px;
+  text-align: left;
+}
+
+.btn-menu .cmd { pointer-events: none; }
+.btn-menu .meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  pointer-events: none;
+}
+
+.pc-key {
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #e0c48a;
+  border: 1px solid rgba(212, 176, 112, 0.4);
+  background: rgba(0, 0, 0, 0.35);
+  padding: 0 5px;
+  border-radius: 2px;
+  pointer-events: none;
 }
 
 .btn-menu .cost {
@@ -257,11 +287,12 @@ button, .inventory-panel, .inv-body, .credits-content {
 
 .btn-hud {
   pointer-events: auto;
-  min-width: 92px;
-  min-height: 44px;
-  padding: 8px 12px;
-  font-size: 0.92rem;
-  box-shadow: 0 3px 0 #0a0e1a, 0 4px 12px rgba(0, 0, 0, 0.35);
+  min-width: 72px;
+  min-height: 28px;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .btn-absorb {
@@ -270,27 +301,32 @@ button, .inventory-panel, .inv-body, .credits-content {
   color: #ffe6c8;
 }
 
-/* HUD */
+/* HUD — desktop plate, bottom-left, out of the center of the field */
 .hud {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: auto;
+  bottom: 16px;
+  left: 16px;
+  right: auto;
+  width: 340px;
   z-index: 20;
-  padding: max(10px, env(safe-area-inset-top)) 12px 8px;
+  padding: 10px 12px 8px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 8px;
+  gap: 10px;
   pointer-events: none;
+  background: rgba(12, 10, 9, 0.88);
+  border: 1px solid rgba(212, 176, 112, 0.42);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
 }
 
 .hud-left {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   min-width: 0;
-  max-width: calc(100% - 108px);
+  flex: 1;
 }
 
 .hud-right {
@@ -303,10 +339,10 @@ button, .inventory-panel, .inv-body, .credits-content {
 
 .hud-location {
   font-family: Georgia, Palatino, serif;
-  font-size: 1.15rem;
+  font-size: 1.02rem;
   font-weight: 700;
   color: #ffe1a8;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.75);
+  letter-spacing: 0.02em;
 }
 
 .hud-path,
@@ -377,11 +413,13 @@ button, .inventory-panel, .inv-body, .credits-content {
 .strain-bar.danger { background: #d4543c; }
 
 .hud-rumor {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: #d9cbb6;
   line-height: 1.35;
-  max-width: 52ch;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .hud-keys {
@@ -398,7 +436,7 @@ button, .inventory-panel, .inv-body, .credits-content {
   width: min(46vw, 220px);
   height: min(42vh, 220px);
   z-index: 25;
-  display: flex;
+  display: none;
   align-items: flex-end;
   justify-content: flex-start;
   padding: 12px;
@@ -434,16 +472,16 @@ button, .inventory-panel, .inv-body, .credits-content {
 
 .interact-prompt {
   position: fixed;
-  left: 12px;
-  top: 38%;
+  left: 372px;
+  bottom: 22px;
+  top: auto;
   z-index: 21;
-  max-width: min(78vw, 380px);
-  background: rgba(8, 10, 18, 0.82);
-  border: 1px solid rgba(255, 196, 140, 0.4);
-  border-radius: 10px;
+  max-width: 420px;
+  background: rgba(12, 10, 9, 0.9);
+  border: 1px solid rgba(212, 176, 112, 0.45);
+  border-radius: 2px;
   padding: 8px 12px;
   pointer-events: none;
-  text-shadow: 0 1px 2px #000;
 }
 
 #interact-title {
@@ -462,16 +500,17 @@ button, .inventory-panel, .inv-body, .credits-content {
 /* Inventory */
 .inventory-panel {
   position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: min(460px, 100%);
+  top: 18px;
+  right: 18px;
+  bottom: 18px;
+  width: min(860px, calc(100% - 36px));
   z-index: 70;
-  background: linear-gradient(180deg, rgba(12, 14, 24, 0.97), rgba(18, 16, 22, 0.98));
-  border-left: 1px solid rgba(255, 206, 150, 0.28);
+  background: rgba(14, 12, 11, 0.97);
+  border: 1px solid rgba(212, 176, 112, 0.4);
+  border-radius: 2px;
   display: flex;
   flex-direction: column;
-  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
 }
 
 .inv-header {
@@ -498,9 +537,15 @@ button, .inventory-panel, .inv-body, .credits-content {
 
 .inv-body {
   overflow-y: auto;
-  padding: 8px 14px max(20px, env(safe-area-inset-bottom));
+  padding: 8px 16px 18px;
   -webkit-overflow-scrolling: touch;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 28px;
+  align-content: start;
 }
+
+.inv-section.inv-stats { grid-column: 1 / -1; }
 
 .inv-section {
   margin: 12px 0 16px;
@@ -524,10 +569,10 @@ button, .inventory-panel, .inv-body, .credits-content {
 }
 
 .inv-card, .equip-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 220, 170, 0.14);
-  border-radius: 10px;
-  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(212, 176, 112, 0.16);
+  border-radius: 2px;
+  padding: 6px 8px;
 }
 
 .inv-card .name, .equip-card .who {
@@ -691,10 +736,11 @@ button, .inventory-panel, .inv-body, .credits-content {
 
 .combat-bottom {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 8px 12px max(12px, env(safe-area-inset-bottom));
-  background: linear-gradient(0deg, rgba(8, 10, 18, 0.96) 62%, transparent);
+  flex-direction: row;
+  align-items: stretch;
+  gap: 12px;
+  padding: 12px 22px 18px;
+  background: linear-gradient(0deg, rgba(8, 8, 10, 0.94) 55%, rgba(8, 8, 10, 0.2) 100%);
 }
 
 .party-panel {
@@ -705,11 +751,11 @@ button, .inventory-panel, .inv-body, .credits-content {
 
 .party-card {
   flex: 1;
-  min-width: 108px;
-  background: rgba(14, 18, 34, 0.92);
-  border: 2px solid rgba(120, 150, 180, 0.28);
-  border-radius: 8px;
-  padding: 8px 10px;
+  min-width: 140px;
+  background: rgba(14, 12, 11, 0.92);
+  border: 1px solid rgba(160, 170, 180, 0.28);
+  border-radius: 2px;
+  padding: 6px 8px;
 }
 
 .party-card.active {
@@ -747,17 +793,19 @@ button, .inventory-panel, .inv-body, .credits-content {
 }
 
 .menu-panel {
-  background: rgba(10, 12, 22, 0.94);
-  border: 2px solid rgba(255, 206, 150, 0.28);
-  border-radius: 12px;
-  padding: 10px;
-  min-height: 132px;
+  background: rgba(12, 10, 9, 0.94);
+  border: 1px solid rgba(212, 176, 112, 0.48);
+  border-radius: 2px;
+  padding: 8px;
+  width: 280px;
+  flex: 0 0 280px;
+  min-height: 0;
 }
 
 .menu-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  grid-template-columns: 1fr;
+  gap: 4px;
 }
 
 .span-2 { grid-column: 1 / -1; }
@@ -813,18 +861,18 @@ button, .inventory-panel, .inv-body, .credits-content {
 .toast {
   position: fixed;
   left: 50%;
-  top: 38%;
-  transform: translate(-50%, -50%);
+  top: 18%;
+  transform: translate(-50%, 0);
   z-index: 80;
-  background: rgba(10, 12, 20, 0.94);
-  border: 2px solid #e0b56a;
-  border-radius: 12px;
-  padding: 14px 18px;
-  font-size: 0.98rem;
+  background: rgba(12, 10, 9, 0.94);
+  border: 1px solid #e0b56a;
+  border-radius: 2px;
+  padding: 12px 16px;
+  font-size: 0.92rem;
   font-weight: 600;
   text-align: center;
   line-height: 1.4;
-  max-width: min(92vw, 460px);
+  max-width: min(92vw, 520px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   pointer-events: none;
 }
@@ -856,39 +904,107 @@ button, .inventory-panel, .inv-body, .credits-content {
   line-height: 1.45;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .joystick-zone { opacity: 0.85; }
+/* Desktop pointer: menus take the mouse. The stick stays a touch control. */
+@media (hover: hover) and (pointer: fine) and (min-width: 821px) {
+  .btn:hover:not(:disabled) {
+    border-color: #ffe0a0;
+    color: #ffe7c2;
+    background: rgba(48, 36, 24, 0.98);
+  }
+  .btn:focus-visible {
+    outline: 1px solid #ffe0a0;
+    outline-offset: 2px;
+  }
 }
 
-@media (hover: none), (pointer: coarse) {
+/* Phone and narrow windows: large taps, joystick, stacked windows. */
+@media (pointer: coarse), (max-width: 820px) {
+  .pc-key { display: none; }
   .hud-keys { display: none; }
+
+  .btn {
+    min-height: 48px;
+    min-width: 48px;
+    padding: 12px 16px;
+    font-size: 1.02rem;
+    border-width: 2px;
+    border-radius: 10px;
+  }
+  .btn-xl { min-height: 56px; font-size: 1.15rem; padding: 14px 28px; }
+  .btn-small { min-height: 44px; font-size: 0.95rem; }
+  .btn-hud { min-height: 48px; min-width: 92px; font-size: 0.95rem; letter-spacing: 0; text-transform: none; }
+  .btn-menu { font-size: 1rem; }
+
+  .path-choices { flex-direction: column; }
+  .path-content { width: min(560px, 100%); }
+
+  .hud {
+    top: 0;
+    bottom: auto;
+    left: 0;
+    right: 0;
+    width: auto;
+    padding: max(10px, env(safe-area-inset-top)) 12px 8px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+  .hud-left { max-width: calc(100% - 108px); }
+  .hud-location { font-size: 1.1rem; text-shadow: 0 2px 6px rgba(0, 0, 0, 0.75); }
+  .hud-rumor {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  }
+
+  .interact-prompt {
+    left: 12px;
+    top: 34%;
+    bottom: auto;
+    max-width: min(78vw, 380px);
+    border-radius: 10px;
+  }
+
+  .inventory-panel {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    border-radius: 0;
+    border-left: none;
+  }
+  .inv-body { display: block; padding-bottom: max(20px, env(safe-area-inset-bottom)); }
+  .inv-card, .equip-card { border-radius: 10px; padding: 10px; }
+
+  .combat-bottom {
+    flex-direction: column;
+    padding: 8px 12px max(12px, env(safe-area-inset-bottom));
+  }
+  .menu-panel { width: auto; flex: none; border-radius: 12px; padding: 10px; }
+  .menu-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .party-card { min-width: 108px; border-radius: 8px; padding: 8px 10px; }
+
+  .toast { top: 32%; border-radius: 12px; border-width: 2px; }
+
+  .joystick-zone { display: flex; }
+  .joystick-base { width: 128px; height: 128px; }
+  .joystick-knob { width: 56px; height: 56px; }
 }
 
 @media (max-width: 520px) {
-  .hud-rumor { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .joystick-base { width: 116px; height: 116px; }
   .joystick-knob { width: 50px; height: 50px; }
 }
 
 @media (orientation: landscape) and (max-height: 500px) {
-  .combat-bottom {
-    flex-direction: row;
-    align-items: stretch;
-  }
-  .party-panel {
-    flex: 1.15;
-    flex-direction: column;
-    overflow-y: auto;
-    max-height: 150px;
-  }
-  .menu-panel { flex: 1; min-height: 0; }
+  .combat-bottom { flex-direction: row; align-items: stretch; }
+  .party-panel { flex: 1.15; flex-direction: column; overflow-y: auto; max-height: 46vh; }
+  .menu-panel { flex: 1; width: auto; min-height: 0; }
+  .menu-grid { grid-template-columns: 1fr; }
   .game-title { font-size: 2.1rem; }
   .hud-rumor { display: none; }
-  .interact-prompt { top: 22%; }
-  .path-choices { max-height: 46vh; overflow: auto; }
-}
-
-@media (min-width: 720px) {
-  .menu-panel { max-width: 520px; margin-left: auto; }
-  .combat-bottom { padding-left: 8vw; padding-right: 8vw; }
+  .path-choices { flex-direction: row; max-height: 46vh; overflow: auto; }
+  .inv-body { display: grid; grid-template-columns: 1fr 1fr; }
 }
