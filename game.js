@@ -1479,6 +1479,36 @@
     );
     chain.position.set(0.15, 2.15, -11.4);
     g.add(chain);
+    const hallShelf = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.72, 0.95), shelfMat);
+    hallShelf.position.set(-2.55, 0.9, -8.35);
+    g.add(hallShelf);
+    [0xff6a1a, 0x3ec6ff, 0xd2b4ff].forEach((color, i) => {
+      const bottle = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.055, 0.065, 0.3, 6),
+        new THREE.MeshLambertMaterial({ color: color, emissive: new THREE.Color(color).multiplyScalar(0.2) })
+      );
+      bottle.position.set(-2.55, 1.38, -8.05 - i * 0.28);
+      g.add(bottle);
+    });
+    const hallSlate = new THREE.Mesh(
+      new THREE.BoxGeometry(0.5, 0.34, 0.04),
+      new THREE.MeshLambertMaterial({ color: 0x24282e })
+    );
+    hallSlate.position.set(2.2, 0.78, -7.55);
+    g.add(hallSlate);
+    const hallChalk = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.3, 0.14),
+      new THREE.MeshBasicMaterial({ color: 0xe8e0d0, fog: false })
+    );
+    hallChalk.position.set(2.2, 0.8, -7.52);
+    g.add(hallChalk);
+    const hallShade = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.15, 0.55),
+      new THREE.MeshBasicMaterial({ color: 0x05060a, transparent: true, opacity: 0.75, fog: false })
+    );
+    hallShade.rotation.x = -Math.PI / 2;
+    hallShade.position.set(-2.15, 0.045, -12.15);
+    g.add(hallShade);
     g.visible = false;
     return g;
   }
@@ -2523,6 +2553,25 @@
     tally.rotation.x = -Math.PI / 2;
     tally.position.set(-0.45, 0.045, -0.85);
     g.add(tally);
+    const slate = new THREE.Mesh(
+      new THREE.BoxGeometry(0.46, 0.52, 0.05),
+      new THREE.MeshLambertMaterial({ color: 0x2a2622 })
+    );
+    slate.position.set(-1.42, 0.78, 0.15);
+    g.add(slate);
+    const chalk = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.28, 0.2),
+      new THREE.MeshBasicMaterial({ color: 0xe4dcc8, fog: false })
+    );
+    chalk.position.set(-1.42, 0.8, 0.18);
+    g.add(chalk);
+    const grateShade = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.05, 0.72),
+      new THREE.MeshBasicMaterial({ color: 0x050304, transparent: true, opacity: 0.82, fog: false })
+    );
+    grateShade.rotation.x = -Math.PI / 2;
+    grateShade.position.set(0.02, 0.04, -1.52);
+    g.add(grateShade);
     cryptGroup = g;
     scene.add(g);
   }
@@ -4002,7 +4051,66 @@
     g.add(makeDriftwood(-9.4, 2.6));
     g.add(makeCairn(4.2, 8.8));
     g.add(makeRationStall(-8.6, 3.2));
+    dressHarbor(g);
     g.userData.gusts = makeGusts(g, 5, 0xd0e4f0);
+  }
+
+  function dressHarbor(g) {
+    const wood = new THREE.MeshLambertMaterial({ color: 0x6a4e32 });
+    const iron = new THREE.MeshLambertMaterial({ color: 0x3a3532 });
+    const wetMat = new THREE.MeshBasicMaterial({
+      color: 0x163044, transparent: true, opacity: 0.78, depthWrite: false, fog: false,
+    });
+    [[-2.2, 6.4, 0.9], [3.35, 6.15, 0.72]].forEach((spot) => {
+      const wet = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 12), wetMat);
+      wet.rotation.x = -Math.PI / 2;
+      wet.position.set(spot[0], 0.05, spot[1]);
+      g.add(wet);
+    });
+    function crate(x, z, s) {
+      const box = new THREE.Mesh(new THREE.BoxGeometry(0.46 * s, 0.34 * s, 0.4 * s), wood);
+      box.position.set(x, 0.17 * s, z);
+      box.rotation.y = 0.18;
+      g.add(box);
+    }
+    crate(-4.55, 1.72, 1.15);
+    crate(-4.18, 1.9, 0.72);
+    crate(8.15, 1.55, 1.05);
+    const coil = new THREE.Mesh(
+      new THREE.TorusGeometry(0.24, 0.055, 6, 14),
+      new THREE.MeshLambertMaterial({ color: 0xc4a46a })
+    );
+    coil.rotation.x = Math.PI / 2;
+    coil.position.set(-2.8, 0.08, 7.6);
+    g.add(coil);
+    function lantern(x, z) {
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 1.4, 5), iron);
+      post.position.set(x, 0.7, z);
+      g.add(post);
+      const lamp = new THREE.Mesh(
+        new THREE.BoxGeometry(0.18, 0.2, 0.18),
+        new THREE.MeshBasicMaterial({ color: 0xffc878, fog: false })
+      );
+      lamp.position.set(x, 1.48, z);
+      g.add(lamp);
+    }
+    lantern(6.4, 6.8);
+    lantern(-4.2, 8.6);
+    const perch = new THREE.Group();
+    const pPost = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.06, 1.15, 5), wood);
+    pPost.position.y = 0.58;
+    perch.add(pPost);
+    const arm = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.045, 0.045), wood);
+    arm.position.set(0.18, 1.12, 0);
+    perch.add(arm);
+    const bird = new THREE.Mesh(
+      new THREE.SphereGeometry(0.09, 6, 5),
+      new THREE.MeshLambertMaterial({ color: 0xe4ddd0 })
+    );
+    bird.position.set(0.32, 1.22, 0);
+    perch.add(bird);
+    perch.position.set(8.8, 0, 7.2);
+    g.add(perch);
   }
 
   function buildCoast() {
@@ -5721,6 +5829,48 @@
       specular: new THREE.Color(concord ? 0xfff2c8 : 0xe4e8ee),
     });
     return { cloth, leather, metal };
+  }
+
+  function attachTell(mesh) {
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(0.68, 0.05, 6, 18),
+      new THREE.MeshBasicMaterial({
+        color: 0xffe6c0, transparent: true, opacity: 0, depthWrite: false, fog: false,
+      })
+    );
+    ring.rotation.x = Math.PI / 2;
+    ring.position.y = 0.06;
+    ring.visible = false;
+    mesh.add(ring);
+    mesh.userData.tell = ring;
+  }
+
+  function tellColor(enemy) {
+    if (!enemy || !enemy.alive) return 0;
+    if (enemy.licence) return 0xffe7b0;
+    if (enemy.heat) return 0xff6a18;
+    if (enemy.burn) return 0xff3a10;
+    if (enemy.flare) return 0xffb060;
+    if (enemy.stamp) return 0xffe0a0;
+    if (enemy.bead) return 0xf4e6c0;
+    if (enemy.ink) return 0x9eb6ff;
+    if (enemy.salt) return 0xd6e8ff;
+    if (enemy.wet) return 0x7ec8f0;
+    if (enemy.air) return 0xe4f2ff;
+    if (enemy.jaw) return 0xc8e090;
+    return 0;
+  }
+
+  function paintTelegraphs() {
+    enemies.forEach((enemy, i) => {
+      const mesh = combatEnemyMeshes[i];
+      const ring = mesh && mesh.userData && mesh.userData.tell;
+      if (!ring) return;
+      const color = tellColor(enemy);
+      ring.visible = !!color;
+      ring.material.opacity = color ? 0.95 : 0;
+      if (color) ring.material.color.setHex(color);
+    });
   }
 
   function combatSilhouette(parent, color, w, h, y) {
@@ -10139,6 +10289,7 @@
     const startX = -1.6 - ((enemies.length - 1) * spacing) / 2;
     enemies.forEach((e, i) => {
       const mesh = makeEnemyMesh(e);
+      attachTell(mesh);
       mesh.position.set(startX + i * spacing, 0, -1.5);
       mesh.rotation.y = -Math.PI / 2;
       combatGroup.add(mesh);
@@ -11270,6 +11421,7 @@
       held.textContent = 'Held · Fire ' + spark.fire + ' · Water ' + spark.water + ' · Bolt ' + spark.lightning + ' · Earth ' + (spark.earth || 0)
         + (scarDebt > 0 ? ' · Scar ' + scarDebt + ' (−' + (scarDebt * SCAR_CUT) + ' HP, Mend keeps ' + (scarDebt * SCAR_MEND) + ')' : '');
     }
+    paintTelegraphs();
   }
 
   const MERGE_JUICE = { plasma: 'juice-plasma', steam: 'juice-steam', storm: 'juice-storm', magma: 'juice-magma', glass: 'juice-glass' };
