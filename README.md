@@ -107,6 +107,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The ash nave, the first breach, and the remnant claim carry more fallen wood, ash, and iron off the south steps. Before the village, the quest names the leaf-village and the letter inside. Drinking a pool throws a ring and a short burst of embers. That burst is not a cue.
 - After the village, the quest names Nima and the letter still in the basket. After the letter, it names the leaf-cup south-west of the wake. The path line names who walks with her. The cup has licence stakes and a wax cloth. The scar has an ash pile and two posts. A warden fight with Torren in it opens on the coat. No new cue.
 - The ash shelf, the sealed throat, and the yard sit in a closer dusk, with a few more pieces off the mouths and the south steps. Torren’s shoulder and Nima’s steady show as a chip in a fight. A hit flashes hotter. On a phone, owed scar debt reads as Debt. The eight cues stay the full set.
+- After the waystone, the quest names the harbor vault and the tally clerk before the bottle-hall. A light mist and rain sit on the shale. A coast fight with a clerk and a warden opens on the licence. No new cue.
 
 ## Play on your phone
 

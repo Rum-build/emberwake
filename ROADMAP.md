@@ -388,6 +388,14 @@ Playable on the Verdant Isle field:
 - A fight that has a warden, and Torren in the line, opens on the coat and the seal. The blow is unchanged.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Coast vault, mist, and the licence (this branch)
+
+- After the waystone, and before the bottle-hall, the quest and Places name the harbor vault and the tally clerk east of the door. They do not open a tutorial.
+- After the vault is named, and before the clerk, the line stays on the clerk. The hall waits.
+- Stormreach wears a closer mist. A light rain hangs on the shale even when Motion is off, and it falls when Motion is on. The vault door, the clerk, the roost, and the porter stay clear.
+- A coast fight with a clerk and a warden opens on the licence. The blow’s numbers stay where they were. That line is not a cue.
+- Phone controls, Absorb, Pack, and Continue stay.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
