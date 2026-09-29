@@ -19,6 +19,7 @@ Add a row before a file is referenced by the game. Leave the row in place if a c
 | Claim bed | Emberwake (original, this repository) | CC0 | Procedural. No recording. The field bed retuned: lower filter, tones at 55 and 82. | Remnant claim and the aftermath, until Silent is pressed |
 | Absorb sting | Emberwake (original, this repository) | CC0 | Procedural. No recording. Two short triangle tones in `game.js`. | Plays when a pool is absorbed, if Sound is on |
 | Merge sting | Emberwake (original, this repository) | CC0 | Procedural. No recording. Three short triangle tones in `game.js`. | Plays when a merge is spent in a fight, if Sound is on |
+| Door sting | Emberwake (original, this repository) | CC0 | Procedural. No recording. Two short low sine tones in `game.js`. | Plays when she steps through a door, if Sound is on |
 
 ## Attribution rules
 

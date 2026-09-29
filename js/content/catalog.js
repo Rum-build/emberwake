@@ -42,11 +42,11 @@
     water: { element: 'water', cost: 1, mp: 4, kind: 'dmg', power: 9, flash: 0x2a9adf },
     lightning: { element: 'lightning', cost: 1, mp: 5, kind: 'dmg', power: 14, flash: 0xd2b4ff },
     cure: { element: 'water', cost: 1, mp: 5, kind: 'heal', flash: 0x9dffc8 },
-    plasma: { element: 'lightning', cost: 1, also: 'fire', alsoCost: 1, mp: 7, kind: 'dmg', power: 22, flash: 0xfff1c2, merge: 'plasma' },
-    steam: { element: 'water', cost: 1, also: 'fire', alsoCost: 1, mp: 6, kind: 'dmg', power: 16, flash: 0xd8e4ea, merge: 'steam' },
-    storm: { element: 'lightning', cost: 1, also: 'water', alsoCost: 1, mp: 7, kind: 'dmg', power: 18, flash: 0xb7d4ff, merge: 'storm' },
-    magma: { element: 'fire', cost: 1, also: 'earth', alsoCost: 1, mp: 7, kind: 'dmg', power: 20, flash: 0xff6a2a, merge: 'magma' },
-    glass: { element: 'lightning', cost: 1, also: 'earth', alsoCost: 1, mp: 6, kind: 'dmg', power: 15, flash: 0xe7fff6, merge: 'glass' },
+    plasma: { element: 'lightning', cost: 1, also: 'fire', alsoCost: 1, mp: 6, kind: 'dmg', power: 22, flash: 0xfff1c2, merge: 'plasma' },
+    steam: { element: 'water', cost: 1, also: 'fire', alsoCost: 1, mp: 5, kind: 'dmg', power: 16, flash: 0xd8e4ea, merge: 'steam' },
+    storm: { element: 'lightning', cost: 1, also: 'water', alsoCost: 1, mp: 6, kind: 'dmg', power: 18, flash: 0xb7d4ff, merge: 'storm' },
+    magma: { element: 'fire', cost: 1, also: 'earth', alsoCost: 1, mp: 6, kind: 'dmg', power: 20, flash: 0xff6a2a, merge: 'magma' },
+    glass: { element: 'lightning', cost: 1, also: 'earth', alsoCost: 1, mp: 5, kind: 'dmg', power: 15, flash: 0xe7fff6, merge: 'glass' },
   };
 
   content.enemies = {
@@ -64,9 +64,9 @@
     cinder: { name: 'Cinder Mite', color: 0x8a3018, maxHp: 38, atk: 9, def: 2, xp: 15, gold: 8, shape: 'sphere' },
     stoker: { name: 'Pipe Stoker', color: 0x4a4038, maxHp: 78, atk: 12, def: 16, xp: 36, gold: 22, shape: 'human' },
     counter: { name: 'Concord Counter', color: 0x3a3530, maxHp: 48, atk: 13, def: 7, xp: 30, gold: 18, shape: 'human' },
-    auditor: { name: 'Count Auditor', color: 0x6a5840, maxHp: 52, atk: 11, def: 6, xp: 28, gold: 16, shape: 'ledger' },
-    captain: { name: 'Concord Captain', color: 0x2a2420, maxHp: 78, atk: 13, def: 7, xp: 46, gold: 28, shape: 'banner' },
-    celebrant: { name: 'Rite Celebrant', color: 0x3a2418, maxHp: 90, atk: 14, def: 8, xp: 52, gold: 32, shape: 'rite' },
+    auditor: { name: 'Count Auditor', color: 0x6a5840, maxHp: 64, atk: 11, def: 6, xp: 28, gold: 16, shape: 'ledger' },
+    captain: { name: 'Concord Captain', color: 0x2a2420, maxHp: 88, atk: 13, def: 7, xp: 46, gold: 28, shape: 'banner' },
+    celebrant: { name: 'Rite Celebrant', color: 0x3a2418, maxHp: 108, atk: 14, def: 8, xp: 52, gold: 32, shape: 'rite' },
   };
 
   content.roster = {
