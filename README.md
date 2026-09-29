@@ -98,6 +98,8 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - After the leaf-cup patrol, Lira and the spark name the cork. Torren keeps the coat if he came. The cup shows a waxed stake. A warden lifts a licence before it lands, and a scribe wets a pen before it takes mind. A short draw plays when a fight starts, if Sound is on.
 - Hair has a fringe and a fall. Concord hair stays short. Vesper’s is longer. The vault and the yard have licence piers off the walk. Rain or an ash gust moves when Motion is on, and Still hides it. Thin ash fall skips the gust. A notice in the count crypt and a spare green on the isle are optional. The green is a second tonic. The fight order is a ribbon. Ash fall names how thick the motes are. On a phone the place list starts under the HUD. If the dusk was named, the leaf-cup was corked, or the patrol was provoked, Vesper says so on the ash. She does not enter.
 
+- The Remnant Mark has a night arcade. A numbered scrap on a peg does not open the nave. A bird on the west pier can be asked to keep company, and she still refuses. Coast skies sit at dusk. The nave and the mark sit at night, with an ember horizon. A pool carries a ripple. A brine, a stoker, and a mite telegraph the next bite. On a phone the status chips are larger and named. The wake tells her to turn: flat stones lead to the first pool, and Absorb drinks it. Credits names the eight cues that ship, and says the rest stay silent.
+
 ## Play on your phone
 
 Open **https://rum-build.github.io/emberwake/** in Safari or Chrome. Use the on-screen MOVE stick, Pack, and Absorb.

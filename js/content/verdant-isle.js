@@ -23,7 +23,7 @@
       {
         id: 'ember', element: 'fire', name: 'Dying Ember Pool', short: 'Ember',
         x: 5.4, z: 2.4, xp: 48, rot: 0.75, strain: 14,
-        hint: 'The pool that woke the spark. It is still dying, and still offering.',
+        hint: 'The pool that woke the spark. The flat stones lead here. It is still dying, and still offering.',
         line: 'You drink the dying ember. It hurts Lira, and the scar greens. That is the bargain.',
       },
       {
