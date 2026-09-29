@@ -91,6 +91,9 @@ body.still-motion .combat-ui.hit::after,
 body.still-motion .combat-ui.juice-cleave,
 body.still-motion .combat-ui.juice-channel,
 body.still-motion .combat-ui.juice-aim,
+body.still-motion .combat-ui.juice-plasma,
+body.still-motion .combat-ui.juice-steam,
+body.still-motion .combat-ui.juice-storm,
 body.still-motion .combat-ui.juice-magma,
 body.still-motion .combat-ui.juice-glass,
 body.still-motion .encounter-flash.active {
@@ -749,7 +752,7 @@ body:not(.still-motion) .btn-absorb.is-ready {
   background: radial-gradient(circle at 50% 42%, rgba(255, 150, 80, 0.34), transparent 58%);
   animation: hitwash 0.36s ease-out;
 }
-.combat-ui.hit:not(.juice-cleave):not(.juice-channel):not(.juice-aim):not(.juice-magma):not(.juice-glass) { animation: hitflash 0.32s ease-out; }
+.combat-ui.hit:not(.juice-cleave):not(.juice-channel):not(.juice-aim):not(.juice-plasma):not(.juice-steam):not(.juice-storm):not(.juice-magma):not(.juice-glass) { animation: hitflash 0.32s ease-out; }
 @keyframes juiceCleave {
   0% { filter: saturate(1.7) brightness(1.42); }
   100% { filter: saturate(1.12); }
@@ -765,6 +768,15 @@ body:not(.still-motion) .btn-absorb.is-ready {
 .combat-ui.juice-cleave { animation: juiceCleave 0.38s ease-out; }
 .combat-ui.juice-channel { animation: juiceChannel 0.42s ease-out; }
 .combat-ui.juice-aim { animation: juiceAim 0.38s ease-out; }
+.combat-ui.hit.juice-plasma::after {
+  background: radial-gradient(circle at 50% 42%, rgba(255, 220, 70, 0.58), rgba(255, 120, 40, 0.18) 44%, transparent 64%);
+}
+.combat-ui.hit.juice-steam::after {
+  background: radial-gradient(circle at 50% 42%, rgba(232, 244, 255, 0.55), rgba(170, 196, 214, 0.16) 44%, transparent 64%);
+}
+.combat-ui.hit.juice-storm::after {
+  background: radial-gradient(circle at 50% 42%, rgba(90, 170, 255, 0.55), rgba(30, 50, 140, 0.18) 44%, transparent 64%);
+}
 .combat-ui.hit.juice-magma::after {
   background: radial-gradient(circle at 50% 42%, rgba(255, 58, 16, 0.58), rgba(160, 36, 8, 0.2) 44%, transparent 64%);
 }
@@ -779,6 +791,21 @@ body:not(.still-motion) .btn-absorb.is-ready {
   0% { filter: saturate(0.35) brightness(1.48); }
   100% { filter: none; }
 }
+@keyframes juicePlasma {
+  0% { filter: saturate(1.7) brightness(1.45); }
+  100% { filter: none; }
+}
+@keyframes juiceSteam {
+  0% { filter: saturate(0.45) brightness(1.42); }
+  100% { filter: none; }
+}
+@keyframes juiceStorm {
+  0% { filter: hue-rotate(18deg) saturate(1.45) brightness(1.28); }
+  100% { filter: none; }
+}
+.combat-ui.juice-plasma { animation: juicePlasma 0.46s ease-out; }
+.combat-ui.juice-steam { animation: juiceSteam 0.46s ease-out; }
+.combat-ui.juice-storm { animation: juiceStorm 0.46s ease-out; }
 .combat-ui.juice-magma { animation: juiceMagma 0.46s ease-out; }
 .combat-ui.juice-glass { animation: juiceGlass 0.46s ease-out; }
 
@@ -1383,6 +1410,9 @@ body:not(.still-motion) .btn-absorb.is-ready {
 .hit-float.juice-cleave { color: #ff6a2a; text-shadow: 0 0 14px #ff6a2a, 0 2px 0 #2a100c; }
 .hit-float.juice-channel { color: #7ec8e8; text-shadow: 0 0 14px #7ec8e8, 0 2px 0 #102028; }
 .hit-float.juice-aim { color: #d8c8ff; text-shadow: 0 0 14px #d8c8ff, 0 2px 0 #1a1428; }
+.hit-float.juice-plasma { color: #ffe14a; text-shadow: 0 0 16px #ffb020, 0 2px 0 #2a1808; }
+.hit-float.juice-steam { color: #e8f4ff; text-shadow: 0 0 16px #c5d8ea, 0 2px 0 #101820; }
+.hit-float.juice-storm { color: #6eb6ff; text-shadow: 0 0 16px #3a78e0, 0 2px 0 #101828; }
 .hit-float.juice-magma { color: #ff3a10; text-shadow: 0 0 16px #ff3a10, 0 2px 0 #2a100c; }
 .hit-float.juice-glass { color: #d6fff6; text-shadow: 0 0 16px #b8fff0, 0 2px 0 #102820; }
 .hit-float.show { animation: hitpop 0.68s ease-out; }

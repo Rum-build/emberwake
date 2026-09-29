@@ -320,7 +320,7 @@ Playable on the Verdant Isle field:
 - Places lists the numbered scrap once it is in the pack. On a phone the place list still starts under the HUD.
 - Phone controls, Absorb, Pack, and Continue stay.
 
-## Crypt and hall (this branch)
+## Crypt and hall (shipped)
 
 - The count crypt has urns, side posts, and a brass tally off the aisle, the notice, and the south step. The bottle-hall has a side colonnade, small vials, a wax circle, and a gold chain. The center walk, the earth jar, and the marrow jar stay clear.
 - Each aftermath object is a little fuller: a stand and a cup under the claim, a plate under the refuse number, a seam between the share halves, a coal beside the burn. The words and the lights do not change.
@@ -328,6 +328,18 @@ Playable on the Verdant Isle field:
 - If Torren or Nima is in the company when the scrap is read, they answer once. If neither is, the spark says the page stays in the pack. Reading it still does not open the nave.
 - Magma and Glass show their colour in the fight. That colour is not a cue. The eight sounds stay the set in CREDITS.
 - After the harbor vault has been seen, a spire mite can meet her on the shale. It lifts salt. The next bite costs a little life and a little mind. The chip says Salt. It does not appear on the first coast walks.
+- Phone controls, Absorb, Pack, and Continue stay.
+
+## Coast and claim (this branch)
+
+- The shale water carries buoys, a broken hull, and a net, past the walk. The isle’s north rim carries the same buoys. They are not doors.
+- The counting room has a shelf, ink, a spare ledger, a stool, and a brass tally off the aisle and off the north iron.
+- The remnant mass sits on a plinth, with a bright column through it, so the claim reads from the south step.
+- Ash motes carry a little colour of their own. Still still holds them.
+- After the scrap is read, the quest says a tally clerk can see the count and the nave stays shut.
+- A tally clerk names salt if a spire mite has bitten. If the scrap is also read, he names both, and the door stays the other board. On the ash, Vesper names the salt and still does not enter.
+- The pack stacks items, sorts them, and says the stack count. Shards stay one each, sorted by element. Seals sit in name order under the badge.
+- Plasma, Steam, and Storm show their colour the way Magma and Glass do. That colour is not a cue. The eight sounds stay the set in CREDITS.
 - Phone controls, Absorb, Pack, and Continue stay.
 
 ## Still ahead
