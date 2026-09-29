@@ -15,6 +15,7 @@ Add a row before a file is referenced by the game. Leave the row in place if a c
 | Title | Author | Licence | Source | Used for |
 |-------|--------|---------|--------|----------|
 | Field bed | Emberwake (original, this repository) | CC0 | Procedural. No recording. `game.js` loops filtered noise and two slow tones. | Quiet ambient after Wake or Continue, until Silent is pressed |
+| Absorb sting | Emberwake (original, this repository) | CC0 | Procedural. No recording. Two short triangle tones in `game.js`. | Plays when a pool is absorbed, if Sound is on |
 
 ## Attribution rules
 

@@ -413,4 +413,44 @@
     });
     return true;
   });
+
+  Emberwake.registerScene('yard-vesper', function () {
+    var mark = Emberwake.poolMark ? Emberwake.poolMark('yard-slag') : 'open';
+    var lines = [
+      {
+        where: 'Concord yard',
+        speaker: 'Vesper',
+        text: mark === 'drunk'
+          ? 'You drank the slag. The warden is already writing your name on a leak they swore was corked. I am not here for the coat.'
+          : 'They bottled this yard and it leaked through the licence. Drink it and they will say the rot has your name. Leave it and the yard keeps eating the road.',
+      },
+    ];
+    if (mark === 'open') {
+      lines.push({
+        speaker: 'Lira',
+        text: 'The warden has the book. The pool has the mouth.',
+        choices: [
+          {
+            label: 'Drink it before they cork it.',
+            pick: 'drink',
+            reply: { speaker: 'Vesper', text: 'Then it stays a mouth. He will write the theft. I will not step into her to take it.' },
+          },
+          {
+            label: 'Let the warden seal it.',
+            pick: 'seal',
+            reply: { speaker: 'Vesper', text: 'Then the licence goes on. The slag stays. The rot does not leave, and neither do I enter the host.' },
+          },
+        ],
+      });
+    } else {
+      lines.push({ speaker: 'The spark', text: 'Kestrel is not in this yard. The stone did the carrying.' });
+    }
+    Emberwake.present({
+      lines: lines,
+      onPick: function (id) {
+        if (Emberwake.noteYard) Emberwake.noteYard(id);
+      },
+    });
+    return true;
+  });
 })(window.Emberwake);

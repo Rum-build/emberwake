@@ -54,6 +54,7 @@
       <h2 class="screen-title">Credits</h2>
       <p>Emberwake uses open-licence audio only — CC0, CC-BY with attribution, or a similarly clear grant. Every cue that ships is named in <strong>CREDITS.md</strong> and on this screen.</p>
       <p><strong>Field bed.</strong> Original, this repository. CC0. A quiet loop of filtered noise and two slow tones, generated in the browser. No sample is loaded. Press Silent on the field to stop it.</p>
+      <p><strong>Absorb sting.</strong> Original, this repository. CC0. Two short tones when a pool is drunk. No sample is loaded. Silent stops it with the bed.</p>
       <p class="credits-note">Commercial libraries stay out. If a licence is doubtful, the moment stays quiet.</p>
       <button id="btn-credits-close" class="btn btn-primary" type="button">Return</button>
     </div>
@@ -63,7 +64,8 @@
   <div id="hud" class="hud hidden">
     <div class="hud-left">
       <div class="hud-location-row">
-        <div class="hud-location" id="hud-location">Verdant Isle</div>
+        <div class="hud-location" id="hud-location" role="button" tabindex="0" title="Hold or tap for places">Verdant Isle</div>
+        <button id="btn-places" class="btn btn-quiet btn-bed" type="button">Places</button>
         <button id="btn-bed" class="btn btn-quiet btn-bed" type="button" aria-pressed="true">Sound</button>
       </div>
       <p class="hud-quest" id="hud-quest"></p>
@@ -71,6 +73,7 @@
       <div class="hud-row">
         <span class="hud-gold" title="Concord-rim coin">Marks <span id="hud-gold">0</span></span>
         <span class="hud-hp" id="hud-hp">Lira —</span>
+        <span class="hp-wrap" title="Lira’s health"><span class="hp-bar" id="hp-bar"></span></span>
         <span class="hud-xp">Spark Lv<span id="hud-level">1</span> · <span id="hud-xp">0</span>/<span id="hud-xp-next">44</span> XP</span>
       </div>
       <div class="hud-elements" id="hud-elements">
@@ -89,6 +92,15 @@
       <p class="hud-keys">Stick or WASD · Absorb / E · Pack / I · click commands</p>
     </div>
     <div class="hud-right" aria-hidden="true"></div>
+  </div>
+
+  <div id="places-panel" class="places-panel hidden" role="dialog" aria-labelledby="places-heading">
+    <div class="places-card">
+      <h2 id="places-heading">Places</h2>
+      <p class="places-note">Where the feet have been. This list does not carry you.</p>
+      <ul id="places-list"></ul>
+      <button id="btn-places-close" class="btn btn-primary" type="button">Close</button>
+    </div>
   </div>
 
   <div id="interact-prompt" class="interact-prompt hidden">
