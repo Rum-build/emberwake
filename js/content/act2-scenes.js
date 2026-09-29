@@ -288,4 +288,55 @@
     });
     return true;
   });
+
+  Emberwake.registerScene('pipe-feed', function () {
+    var torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    var nima = Emberwake.companyHas && Emberwake.companyHas('nima');
+    var coughing = Emberwake.scarCount && Emberwake.scarCount() >= 2;
+    Emberwake.present({
+      lines: [
+        {
+          where: 'Engine pipe',
+          speaker: torren ? 'Torren' : 'Lira',
+          text: torren
+            ? 'I kept ledgers for pipes like this. The marks on the iron are a quartermaster’s hand. The harbor’s shortage comes out here as hunger. Cracking it is not a kindness. Leaving it is not either.'
+            : 'The marks on the iron are a quartermaster’s hand. I can read the theft without the man who used to sign it. Cracking it is not a kindness. Leaving it is not either.',
+        },
+        nima
+          ? {
+            speaker: 'Nima',
+            text: coughing
+              ? 'The air in this throat is what she has been coughing. I can cool a wound. I cannot cork a province.'
+              : 'This air is the engine’s breath. I will not call it weather, and I will not call it medicine.',
+          }
+          : {
+            speaker: 'The spark',
+            text: 'Kestrel is not in this pipe. She kept the air. The feed is a choice with dirt on both hands.',
+          },
+        {
+          speaker: 'Lira',
+          text: 'The valve is gold on iron. The stoker’s coat is the licence.',
+          choices: [
+            {
+              label: 'Crack the feed. The stoker will answer.',
+              pick: 'crack',
+              reply: { speaker: 'Lira', text: 'Then the iron opens. The coat on the stoker is the licence. A plain knife will hate it.' },
+            },
+            {
+              label: 'Leave the cork. Name the theft and walk.',
+              pick: 'leave',
+              reply: { speaker: torren ? 'Torren' : 'Lira', text: 'Then it stays a throat. The engine keeps its meal. We keep the name.' },
+            },
+          ],
+        },
+      ],
+      onPick: function (id) {
+        if (Emberwake.notePipe) Emberwake.notePipe(id);
+      },
+      onDone: function () {
+        if (Emberwake.maybeStartPipeFight) Emberwake.maybeStartPipeFight();
+      },
+    });
+    return true;
+  });
 })(window.Emberwake);

@@ -105,6 +105,11 @@
   let scarDebt = 0;
   let scarMarks = {};
   let vesperAsh = null;
+  let pipeWord = null;
+  let pipeFight = false;
+  let pipeLatch = false;
+  let pipeRoom = null;
+  let nearPipe = null;
   let coughPuff = null;
   let marrowVesper = null;
   let marrowStain = null;
@@ -363,6 +368,11 @@
     scarMarks = {};
     vesperAsh = null;
     vesperAshLatch = false;
+    pipeWord = null;
+    pipeFight = false;
+    pipeLatch = false;
+    nearPipe = null;
+    if (pipeRoom) pipeRoom.visible = false;
     if (marrowStain) marrowStain.visible = false;
     if (coughPuff) {
       coughPuff.visible = false;
@@ -491,6 +501,11 @@
       scene.fog.near = 18;
       scene.fog.far = 55;
       if (renderer) renderer.setClearColor(0x1a222c);
+    } else if (place === 'pipe') {
+      scene.fog.color.set(0x1a1412);
+      scene.fog.near = 6;
+      scene.fog.far = 18;
+      if (renderer) renderer.setClearColor(0x1a1412);
     } else if (place === 'cellar') {
       scene.fog.color.set(0x1a1410);
       scene.fog.near = 8;
@@ -700,10 +715,13 @@
     interiorGroup.add(new THREE.HemisphereLight(0x8a7a68, 0x2a241c, 0.35));
     villageRoom = buildRoom({
       floor: 0x6a5344,
+      floorAlt: 0x8d6b42,
       wall: 0x8a6a48,
       light: 0xffc48a,
       intensity: 0.85,
     });
+    layCloth(villageRoom, -1.1, 0.4, 1.35, 0x6a3030, 0.92);
+    layCloth(villageRoom, 1.6, -1.4, 0.9, 0x3e4a38, 0.88);
     [[-1.4, -1.1, 0xc47a6a], [1.3, -0.8, 0x6a5a48], [0.1, 0.4, 0x6aa8a0]].forEach((spec) => {
       const fig = makeCharacter(spec[2], 0.9);
       fig.position.set(spec[0], 0, spec[1]);
@@ -713,9 +731,11 @@
     cellarRoom = buildCellar();
     cellarRoom.visible = false;
     vaultRoom = buildVaultRoom();
+    pipeRoom = buildPipe();
     interiorGroup.add(villageRoom);
     interiorGroup.add(cellarRoom);
     interiorGroup.add(vaultRoom);
+    interiorGroup.add(pipeRoom);
     pools.forEach((p) => {
       if (p.interior === 'root-cellar' && p.group) cellarRoom.add(p.group);
     });
@@ -725,6 +745,7 @@
   function buildCellar() {
     const g = buildRoom({
       floor: 0x3a322c,
+      floorAlt: 0x2a201c,
       wall: 0x4a4038,
       light: 0xff8844,
       intensity: 0.55,
@@ -800,6 +821,7 @@
   function buildVaultRoom() {
     const g = buildRoom({
       floor: 0x3e4550,
+      floorAlt: 0x6a6258,
       wall: 0x2c3138,
       light: 0xd4c08a,
       intensity: 0.72,
@@ -842,13 +864,11 @@
       g.add(wall);
     });
 
-    const hallFloor = new THREE.Mesh(
-      new THREE.PlaneGeometry(7.4, 10.2),
-      new THREE.MeshLambertMaterial({ color: 0x1c2430 })
-    );
-    hallFloor.rotation.x = -Math.PI / 2;
+    const hallFloor = variedFloor(7.4, 10.2, 10, 8, 0x1c2430, 0x4a463c, 0.04);
     hallFloor.position.set(0, 0.03, -11);
     g.add(hallFloor);
+    layCloth(g, -1.4, -10.2, 1.1, 0x2a2418, 0.8);
+    layCloth(g, 1.6, -12.4, 0.85, 0x243038, 0.72);
     [[-3.7, -11, 10.2, 0.3], [3.7, -11, 10.2, 0.3]].forEach((spec) => {
       const wall = new THREE.Mesh(new THREE.BoxGeometry(spec[3], 2.6, spec[2]), wallMat);
       wall.position.set(spec[0], 1.3, spec[1]);
@@ -908,6 +928,59 @@
     g.add(hallClerk);
     g.visible = false;
     return g;
+  }
+
+  function buildPipe() {
+    const g = new THREE.Group();
+    g.visible = false;
+    const floor = variedFloor(3.4, 7.6, 6, 10, 0x2a2422, 0x4a3830, 0.035);
+    floor.position.set(0, 0, -0.3);
+    g.add(floor);
+    const wallMat = new THREE.MeshLambertMaterial({ color: 0x2c2826 });
+    [[-1.55, -0.3], [1.55, -0.3]].forEach((spot) => {
+      const wall = new THREE.Mesh(new THREE.BoxGeometry(0.28, 2.3, 7.4), wallMat);
+      wall.position.set(spot[0], 1.15, spot[1]);
+      g.add(wall);
+    });
+    const end = new THREE.Mesh(new THREE.BoxGeometry(3.4, 2.3, 0.28), wallMat);
+    end.position.set(0, 1.15, -3.85);
+    g.add(end);
+    const iron = new THREE.MeshLambertMaterial({ color: 0x4a453c });
+    [-1.05, 1.05].forEach((x) => {
+      const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 6.2, 7), iron);
+      pipe.rotation.x = Math.PI / 2;
+      pipe.position.set(x, 1.55, -0.4);
+      g.add(pipe);
+    });
+    const valve = new THREE.Mesh(
+      new THREE.TorusGeometry(0.42, 0.07, 6, 12),
+      new THREE.MeshLambertMaterial({ color: 0xc4a46a, emissive: new THREE.Color(0x3a2810) })
+    );
+    valve.position.set(0, 1.15, -3.35);
+    g.add(valve);
+    const hub = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.08, 0.08, 0.5, 6),
+      iron
+    );
+    hub.rotation.x = Math.PI / 2;
+    hub.position.set(0, 1.15, -3.2);
+    g.add(hub);
+    const stoker = makeCharacter(0x4a4038, 0.9);
+    stoker.position.set(0.35, 0, -2.55);
+    stoker.rotation.y = Math.PI;
+    g.add(stoker);
+    const lamp = new THREE.PointLight(0xff7744, 0.85, 10);
+    lamp.position.set(0, 2.1, -2.2);
+    g.add(lamp);
+    const drip = layCloth(g, -0.2, -2.7, 0.7, 0x3a1814, 0.85);
+    drip.position.y = 0.04;
+    return g;
+  }
+
+  function pipeFits(x, z) {
+    if (z > 3.15 || z < -3.55) return false;
+    if (Math.abs(x) > 1.25) return false;
+    return true;
   }
 
   function vaultFits(x, z) {
@@ -1000,6 +1073,28 @@
     );
     lintel.position.set(0, 2.2, 4.55);
     g.add(lintel);
+    const pipeMouth = new THREE.Group();
+    pipeMouth.position.set(5.55, 0, -3.15);
+    const tube = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.62, 0.78, 1.5, 8),
+      new THREE.MeshLambertMaterial({ color: 0x3a3532 })
+    );
+    tube.rotation.x = Math.PI / 2;
+    tube.position.set(0, 0.72, 0);
+    pipeMouth.add(tube);
+    const lip = new THREE.Mesh(
+      new THREE.TorusGeometry(0.62, 0.1, 6, 12),
+      new THREE.MeshLambertMaterial({ color: 0x6e675c })
+    );
+    lip.position.set(0, 0.72, 0.72);
+    pipeMouth.add(lip);
+    const hole = new THREE.Mesh(
+      new THREE.CircleGeometry(0.46, 10),
+      new THREE.MeshBasicMaterial({ color: 0x100c0c })
+    );
+    hole.position.set(0, 0.72, 0.78);
+    pipeMouth.add(hole);
+    g.add(pipeMouth);
     pools.forEach((pool) => {
       if (pool.id === 'marrow-leak' && pool.group) {
         pool.group.scale.setScalar(0.55);
@@ -1026,13 +1121,25 @@
     return false;
   }
 
+  function variedFloor(w, h, sx, sy, baseHex, altHex, amp) {
+    const geo = new THREE.PlaneGeometry(w, h, sx, sy);
+    raisePlane(geo, (x, y) => Math.sin(x * 1.25 + y * 0.35) * Math.cos(y * 1.05) * (amp || 0.045));
+    const base = new THREE.Color(baseHex);
+    const alt = new THREE.Color(altHex);
+    tintPlane(geo, (c, x, y) => {
+      const n = Math.sin(x * 1.55) * Math.cos(y * 1.2);
+      c.copy(base);
+      if (n > 0.12) c.lerp(alt, 0.55);
+      else if (n < -0.4) c.lerp(alt, 0.28);
+    });
+    const mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ vertexColors: true }));
+    mesh.rotation.x = -Math.PI / 2;
+    return mesh;
+  }
+
   function buildRoom(opts) {
     const g = new THREE.Group();
-    const floor = new THREE.Mesh(
-      new THREE.PlaneGeometry(9, 9),
-      new THREE.MeshLambertMaterial({ color: opts.floor })
-    );
-    floor.rotation.x = -Math.PI / 2;
+    const floor = variedFloor(9, 9, 8, 8, opts.floor, opts.floorAlt || opts.wall, 0.05);
     g.add(floor);
     const mat = new THREE.MeshLambertMaterial({ color: opts.wall });
     function addWall(w, d, x, z) {
@@ -1143,16 +1250,20 @@
     if (silent && opts.pos) playerMesh.position.x = opts.pos.x;
     overworldGroup.visible = false;
     if (stormreachGroup) stormreachGroup.visible = false;
+    if (marrowGroup) marrowGroup.visible = false;
     interiorGroup.visible = true;
     villageRoom.visible = id === 'leaf-village';
     cellarRoom.visible = id === 'root-cellar';
     if (vaultRoom) vaultRoom.visible = id === 'harbor-vault';
-    const dusk = id === 'root-cellar' ? 0x1a1410 : id === 'harbor-vault' ? 0x1a222c : 0x3a342c;
-    scene.fog.color.set(dusk);
-    renderer.setClearColor(dusk);
+    if (pipeRoom) pipeRoom.visible = id === 'marrow-pipe';
     beatHold = {};
     const locLabel = $('#hud-location');
-    if (id === 'harbor-vault') {
+    if (id === 'marrow-pipe') {
+      placeFog('pipe');
+      if (locLabel) locLabel.textContent = 'Engine pipe';
+      if (!silent) playerMesh.position.set(0, 0, 2.2);
+    } else if (id === 'harbor-vault') {
+      placeFog('vault');
       if (locLabel) locLabel.textContent = 'Harbor Vault';
       if (!silent && !seenBeats['vault-ledger']) {
         const fn = EW.scenes['vault-ledger'];
@@ -1162,6 +1273,7 @@
         }
       }
     } else {
+      placeFog(id === 'root-cellar' ? 'cellar' : 'village');
       if (locLabel && id === 'leaf-village') locLabel.textContent = 'Leaf-village';
       else if (locLabel && id === 'root-cellar') locLabel.textContent = 'Root-cellar';
       const beatKey = id === 'leaf-village' ? 'village' : 'cellar';
@@ -2028,11 +2140,16 @@
           : 'You refused Vesper’s mouth. The stain is on the ash. ')
         : '';
       const coughBit = scarDebt >= 2 ? ' Lira coughs. The feet go slower.' : '';
+      const pipeBit = pipeWord === 'crack'
+        ? ' The engine pipe is cracked.'
+        : pipeWord === 'leave'
+          ? ' The engine pipe stayed corked.'
+          : '';
       rumor = vesperBit + (marrowWord === 'bank'
         ? 'You walked the ash and banked the leak. Scar debt is ' + scarDebt + '. The hall is south of the engine.'
         : scarMarks.leak
           ? 'You fed the digest-engine. The scar took the mouthful. Scar debt is ' + scarDebt + '.'
-          : 'Your feet are on Ashen Marrow. The engine eats what the harbor would not keep. The hall is south.') + coughBit;
+          : 'Your feet are on Ashen Marrow. The engine eats what the harbor would not keep. The hall is south.') + coughBit + pipeBit;
     } else if (seenBeats.marrowRoad) {
       rumor = 'You looked down the corked road. Ashen Marrow is inland, where a bottle already leaked. Your feet stayed in the hall.';
     } else if (seenBeats['bottle-hall']) {
@@ -2132,20 +2249,21 @@
     const showGate = idle && locale === 'field' && nearGate && !showAbsorb && !showDoor;
     const showReturn = idle && locale === 'field' && nearReturn && !showAbsorb && !showDoor && !showGate;
     const showLook = idle && nearMarrow && !showAbsorb && !atExit;
-    const showTalk = idle && nearWorker && !showAbsorb && !atExit && !showLook;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showTalk);
+    const showPipe = idle && nearPipe && !showAbsorb && !atExit && !showLook;
+    const showTalk = idle && nearWorker && !showAbsorb && !atExit && !showLook && !showPipe;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showTalk);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
     else if (showGate) absorbBtn.textContent = 'Land';
-    else if (showLook) absorbBtn.textContent = 'Enter';
+    else if (showLook || showPipe) absorbBtn.textContent = 'Enter';
     else if (showTalk) absorbBtn.textContent = 'Speak';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
   }
 
   function updatePrompt() {
     const atExit = atInteriorExit();
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearPipe && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -2161,11 +2279,13 @@
       return;
     }
     if (atExit) {
-      $('#interact-title').textContent = locale === 'root-cellar' ? 'The mouth' : locale === 'ashen-marrow' ? 'The hall' : locale === 'harbor-vault' ? 'The shale' : 'The door';
+      $('#interact-title').textContent = locale === 'root-cellar' ? 'The mouth' : locale === 'ashen-marrow' ? 'The hall' : locale === 'marrow-pipe' ? 'The ash' : locale === 'harbor-vault' ? 'The shale' : 'The door';
       $('#interact-detail').textContent = locale === 'root-cellar'
         ? 'Press E to step back onto the isle. The throat stays open behind you.'
         : locale === 'ashen-marrow'
           ? 'Press E to step back into the bottle-hall. The engine stays on the ash.'
+          : locale === 'marrow-pipe'
+            ? 'Press E to step back onto the ash. The feed stays where you left it.'
           : locale === 'harbor-vault'
           ? (seenBeats['bottle-hall']
             ? 'Press E to step back onto the coast. The hall stays lit. The inland road does not come with you.'
@@ -2191,6 +2311,11 @@
     if (nearMarrow) {
       $('#interact-title').textContent = nearMarrow.title;
       $('#interact-detail').textContent = nearMarrow.hint;
+      return;
+    }
+    if (nearPipe) {
+      $('#interact-title').textContent = nearPipe.title;
+      $('#interact-detail').textContent = nearPipe.hint;
       return;
     }
     if (nearWorker) {
@@ -2265,6 +2390,8 @@
           ? 'Vesper tasted the scar on the ash and did not step into the host.'
           : 'You refused Vesper’s mouth. A stain stayed on the ash. She did not enter.');
       }
+      if (pipeWord === 'crack') waiting.push('You cracked the engine feed. The stoker’s coat was the licence. Kestrel still did not join.');
+      else if (pipeWord === 'leave') waiting.push('You left the engine feed corked and named the theft. Kestrel still did not join.');
       const heldMerges = earnedMergeNames();
       if (heldMerges.length) waiting.push(heldMerges.join(', ') + (heldMerges.length === 1 ? ' is' : ' are') + ' on the magic list.');
       if (seenBeats['vesper-duel']) waiting.push('Vesper measured a blow on the coast and walked away alive.');
@@ -2475,12 +2602,17 @@
         tryAbsorb();
         return;
       }
+      if (nearPipe && locale === 'ashen-marrow' && !atMouth) {
+        enterPipe();
+        return;
+      }
       if (nearWorker && !atMouth) {
         talkMarrow();
         return;
       }
       if (atMouth) {
         if (locale === 'ashen-marrow') exitMarrow();
+        else if (locale === 'marrow-pipe') exitPipe();
         else exitInterior();
       }
       return;
@@ -2594,6 +2726,27 @@
     };
   }
 
+  function nearestPipe() {
+    if (!playerMesh || locale !== 'ashen-marrow' || skyPass) return null;
+    if (Math.hypot(5.55 - playerMesh.position.x, -3.15 - playerMesh.position.z) > 1.65) return null;
+    if (pipeWord === 'crack') {
+      return {
+        title: 'Engine pipe',
+        hint: 'The feed is cracked. Press E. South of the iron is the ash.',
+      };
+    }
+    if (pipeWord === 'leave') {
+      return {
+        title: 'Engine pipe',
+        hint: 'The feed stayed corked. Press E if you mean to look again. The name is already in the pack.',
+      };
+    }
+    return {
+      title: 'Engine pipe',
+      hint: 'A Concord pipe leaves the engine. Press E. The feed inside is a choice.',
+    };
+  }
+
   function nearestWorker() {
     if (!playerMesh || locale !== 'ashen-marrow' || skyPass) return null;
     if (Math.hypot(4.2 - playerMesh.position.x, 1.8 - playerMesh.position.z) > 1.7) return null;
@@ -2621,6 +2774,70 @@
     if (!playerMesh || locale === 'field') return false;
     if (locale === 'ashen-marrow') return playerMesh.position.z > 4.15;
     return playerMesh.position.z > 2.55;
+  }
+
+  function enterPipe() {
+    if (locale !== 'ashen-marrow' || dialogueOpen || skyPass || encounterLocked) return;
+    enterInterior('marrow-pipe');
+    showToast('Iron. The harbor’s shortage has a throat.');
+  }
+
+  function exitPipe() {
+    if (locale !== 'marrow-pipe' || !playerMesh || !marrowGroup) return;
+    locale = 'ashen-marrow';
+    if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
+    marrowGroup.add(playerMesh);
+    playerMesh.position.set(5.15, 0, -1.55);
+    if (interiorGroup) interiorGroup.visible = false;
+    if (pipeRoom) pipeRoom.visible = false;
+    if (overworldGroup) overworldGroup.visible = false;
+    if (stormreachGroup) stormreachGroup.visible = false;
+    marrowGroup.visible = true;
+    placeFog('marrow');
+    const locLabel = $('#hud-location');
+    if (locLabel) locLabel.textContent = 'Ashen Marrow';
+    camera.position.set(5.15, CAMERA_HEIGHT, -1.55 + CAMERA_DIST);
+    camera.lookAt(5.15, 1, -1.55);
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function updatePipeTrigger() {
+    if (locale !== 'marrow-pipe' || !playerMesh || dialogueOpen || encounterLocked || skyPass) return;
+    if (playerMesh.position.z > -1.2) pipeLatch = false;
+    if (pipeWord || seenBeats['pipe-feed'] || pipeLatch) return;
+    if (playerMesh.position.z > -2.35) return;
+    pipeLatch = true;
+    const fn = EW.scenes['pipe-feed'];
+    if (typeof fn === 'function') fn();
+  }
+
+  function notePipe(id) {
+    if (pipeWord) return;
+    if (id !== 'crack') {
+      pipeWord = 'leave';
+      pipeFight = false;
+      seenBeats['pipe-feed'] = true;
+      if (!seals.some((seal) => seal.name === 'Named Feed')) {
+        seals.push({
+          name: 'Named Feed',
+          desc: 'The pipe into the digest-engine stayed corked. The harbor’s shortage comes out here as hunger. The engine keeps drinking.',
+        });
+      }
+      showToast('You leave the feed corked. The engine keeps drinking. The name is in the pack.');
+      refreshRumor();
+      updateHUD();
+      saveGame();
+      return;
+    }
+    pipeFight = true;
+  }
+
+  function maybeStartPipeFight() {
+    if (!pipeFight || pipeWord) return;
+    pipeFight = false;
+    beginScriptedFight(['stoker'], 'pipe-stoker');
   }
 
   function updateMarrowVesper() {
@@ -2681,6 +2898,17 @@
     victoryTag = null;
     if (tag === 'cellar-crawl') seenBeats.cellarCrawl = true;
     if (tag === 'kiln-heart') seenBeats.kiln = true;
+    if (tag === 'pipe-stoker') {
+      pipeWord = 'crack';
+      seenBeats['pipe-feed'] = true;
+      applyStrain(4);
+      if (!seals.some((seal) => seal.name === 'Cracked Feed')) {
+        seals.push({
+          name: 'Cracked Feed',
+          desc: 'The pipe into the digest-engine was opened. The stoker’s coat was the licence. The engine is hungrier. The shelf is not cleaner.',
+        });
+      }
+    }
     return tag;
   }
 
@@ -2715,6 +2943,7 @@
       nearReturn = null;
       nearMarrow = null;
       nearWorker = null;
+      nearPipe = null;
       joy.active = false;
       joy.dx = 0;
       joy.dy = 0;
@@ -2750,6 +2979,9 @@
         } else if (locale === 'ashen-marrow') {
           if (marrowFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
           if (marrowFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
+        } else if (locale === 'marrow-pipe') {
+          if (pipeFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
+          if (pipeFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
         } else {
           if (cellarFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
           if (cellarFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
@@ -2763,11 +2995,14 @@
         nearReturn = nearestReturn();
         nearMarrow = nearestMarrow();
         nearWorker = nearestWorker();
+        nearPipe = nearestPipe();
         const safe = nearPool && !nearPool.absorbed;
         const cooled = performance.now() < suppressEncountersUntil;
-        if (locale === 'field' && (regionId === 'verdant-isle' || regionId === 'stormreach') && !safe && !cooled && stepsSinceEncounter > ENCOUNTER_STEPS) {
+        const onField = locale === 'field' && (regionId === 'verdant-isle' || regionId === 'stormreach');
+        const onAsh = locale === 'ashen-marrow';
+        if ((onField || onAsh) && !safe && !nearPipe && !cooled && stepsSinceEncounter > ENCOUNTER_STEPS) {
           const pressure = rotPressure();
-          const chancePerSec = 0.32 + pressure * 0.7;
+          const chancePerSec = onAsh ? 0.18 + pressure * 0.35 : 0.32 + pressure * 0.7;
           if (Math.random() < chancePerSec * dt) triggerEncounter();
         }
       } else {
@@ -2778,11 +3013,13 @@
         nearReturn = nearestReturn();
         nearMarrow = nearestMarrow();
         nearWorker = nearestWorker();
+        nearPipe = nearestPipe();
       }
 
       updateCellarTriggers();
       updateVaultTriggers();
       updateMarrowVesper();
+      updatePipeTrigger();
       maybeResumeCoast();
 
       if (locale === 'field') regionBeats().forEach((b) => {
@@ -2801,6 +3038,7 @@
       nearReturn = nearestReturn();
       nearMarrow = nearestMarrow();
       nearWorker = nearestWorker();
+      nearPipe = nearestPipe();
       playerMesh.position.y = 0;
     }
 
@@ -2856,6 +3094,7 @@
   }
 
   function rollEncounter() {
+    if (locale === 'ashen-marrow') return rollMarrowEncounter();
     if (regionId === 'stormreach') return rollCoastEncounter();
     const pressure = rotPressure();
     const echoReady = spark.strain >= 28 || pools.some((p) => p.vesper && p.absorbed) || combatsFought >= 2;
@@ -2880,8 +3119,8 @@
     if (echoReady && Math.random() < 0.16) return [spawnEnemy('echo')];
     const n = 1 + (Math.random() < (pressure > 0.45 ? 0.6 : 0.3) ? 1 : 0);
     const table = pressure > 0.4
-      ? ['wisp', 'wisp', 'clerk', 'scribe']
-      : ['wisp', 'clerk', 'scribe', 'wisp'];
+      ? ['wisp', 'wisp', 'clerk', 'brine', 'scribe']
+      : ['wisp', 'brine', 'clerk', 'scribe', 'wisp'];
     const list = [];
     for (let i = 0; i < n; i++) list.push(table[rand(0, table.length - 1)]);
     const counts = {};
@@ -2889,6 +3128,19 @@
       counts[id] = (counts[id] || 0) + 1;
       const dup = list.filter((x) => x === id).length > 1;
       return spawnEnemy(id, dup ? ' ' + counts[id] : '');
+    });
+  }
+
+  function rollMarrowEncounter() {
+    const id = Math.random() < 0.16 ? 'stoker' : 'cinder';
+    const n = id === 'stoker' ? 1 : (Math.random() < 0.45 ? 2 : 1);
+    const list = [];
+    for (let i = 0; i < n; i++) list.push(id);
+    const counts = {};
+    return list.map((kind) => {
+      counts[kind] = (counts[kind] || 0) + 1;
+      const dup = list.filter((x) => x === kind).length > 1;
+      return spawnEnemy(kind, dup ? ' ' + counts[kind] : '');
     });
   }
 
@@ -2963,7 +3215,13 @@
     buildTurnQueue();
     updateCombatUI();
     showMenus('main');
-    const teach = enemies.some((e) => e.id === 'echo')
+    const teach = enemies.some((e) => e.id === 'stoker')
+      ? 'Corked iron. A knife spends itself on the coat. Magma stays on them. Glass looks for the seam.'
+      : enemies.some((e) => e.id === 'cinder')
+        ? 'Ash that learned to crawl. The shelf is not empty.'
+        : enemies.some((e) => e.id === 'brine')
+          ? 'The coast grew a thing with too many legs. The wet is not only water.'
+      : enemies.some((e) => e.id === 'echo')
       ? 'Vesper is not on this field. Something that remembers her mouth is.'
       : enemies.some((e) => e.id === 'scribe')
         ? 'A Concord scribe reaches for a bottle. You are already inside the moment they meant to cork.'
@@ -3497,7 +3755,9 @@
       ? ' Somewhere Vesper looks up, as if named.'
       : tag === 'kiln-heart'
         ? ' The kiln is unguarded. What they buried is still offering.'
-        : ' Lira keeps the bruises.';
+        : tag === 'pipe-stoker'
+          ? ' The feed is cracked. The coat did not save him. The engine is hungrier, and the shelf is not cleaner.'
+          : ' Lira keeps the bruises.';
     victoryText.textContent = msg;
     victoryOverlay.classList.remove('hidden');
     turnIndicator.textContent = '';
@@ -3531,10 +3791,14 @@
     if (marrowGroup) marrowGroup.visible = onMarrow;
     if (interiorGroup) interiorGroup.visible = locale !== 'field' && !onMarrow;
     if (vaultRoom) vaultRoom.visible = locale === 'harbor-vault';
+    if (villageRoom) villageRoom.visible = locale === 'leaf-village';
+    if (cellarRoom) cellarRoom.visible = locale === 'root-cellar';
+    if (pipeRoom) pipeRoom.visible = locale === 'marrow-pipe';
     combatGroup.visible = false;
     if (onMarrow) placeFog('marrow');
     else if (locale === 'root-cellar') placeFog('cellar');
     else if (locale === 'harbor-vault') placeFog('vault');
+    else if (locale === 'marrow-pipe') placeFog('pipe');
     else if (locale !== 'field') placeFog('village');
     else if (onCoast) placeFog('stormreach');
     else placeFog('verdant');
@@ -4035,6 +4299,7 @@
         scarDebt: scarDebt,
         scarMarks: scarMarks,
         vesperAsh: vesperAsh,
+        pipeWord: pipeWord,
         duelWord: duelWord,
         kestrelWord: kestrelWord,
         pos: { x: playerMesh.position.x, z: playerMesh.position.z },
@@ -4077,6 +4342,7 @@
     scarDebt = typeof data.scarDebt === 'number' ? Math.max(0, data.scarDebt) : 0;
     scarMarks = data.scarMarks && typeof data.scarMarks === 'object' ? data.scarMarks : {};
     vesperAsh = data.vesperAsh === 'taste' || data.vesperAsh === 'refuse' ? data.vesperAsh : null;
+    pipeWord = data.pipeWord === 'crack' || data.pipeWord === 'leave' ? data.pipeWord : null;
     if (marrowStain) marrowStain.visible = vesperAsh === 'refuse';
     if (typeof spark.earth !== 'number') spark.earth = 0;
     duelWord = data.duelWord === 'press' || data.duelWord === 'hold' ? data.duelWord : null;
@@ -4791,6 +5057,8 @@
   EW.noteMarrowChoice = noteMarrowChoice;
   EW.noteVesperAsh = noteVesperAsh;
   EW.scarCount = function () { return scarDebt; };
+  EW.notePipe = notePipe;
+  EW.maybeStartPipeFight = maybeStartPipeFight;
   EW.revealCoastVesper = function () {
     if (coastVesper) coastVesper.visible = true;
   };

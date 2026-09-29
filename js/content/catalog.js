@@ -60,6 +60,9 @@
     'kiln-heart': { name: 'Kiln Heart', color: 0x8a2410, maxHp: 98, atk: 15, def: 6, xp: 42, gold: 28, shape: 'kiln' },
     wisp: { name: 'Charged Wisp', color: 0x9ec6ff, maxHp: 36, atk: 11, def: 2, xp: 16, gold: 9, shape: 'sphere' },
     clerk: { name: 'Licence Clerk', color: 0x4a453c, maxHp: 48, atk: 10, def: 4, xp: 18, gold: 16, shape: 'human' },
+    brine: { name: 'Brine Skitter', color: 0x3a5a48, maxHp: 44, atk: 10, def: 3, xp: 16, gold: 9, shape: 'bug' },
+    cinder: { name: 'Cinder Mite', color: 0x8a3018, maxHp: 38, atk: 9, def: 2, xp: 15, gold: 8, shape: 'sphere' },
+    stoker: { name: 'Pipe Stoker', color: 0x4a4038, maxHp: 78, atk: 12, def: 16, xp: 36, gold: 22, shape: 'human' },
   };
 
   content.roster = {
