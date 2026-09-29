@@ -75,7 +75,8 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The first drink says strain is not a scar. The first Fight menu names Cleave, Channel, or Aim. A wounded hare bolts. Brine hits two. The village shows the grey furrow, a porter stands short of the vault, the bottle-hall faces inland, and the ash writes the engine’s bill.
 - Encounters are tuned so a short walk can start a fight after the first pool. The patrol is a separate, scripted fight.
 - The isle, the coast, the ash, the remnant claim, and the fight have a stronger light: figures read at a distance, Lira carries a spark ember, and the claim mass sits in a darker room. The village, the counting room, the ash, and the claim read more as rooms than as boxes. People and the engine are still simple meshes. Three.js must load from the CDN once.
-- A missable letter in the leaf-village says Vesper walked the Concord to the well. It goes in the pack and does not change the road. Continue names the saved place. After the aftermath credits, Wake still throws that save out.
+- A missable letter in the leaf-village says Vesper walked the Concord to the well. It goes in the pack and does not change the road. Continue names the saved place. After the aftermath credits, Wake still throws that save out. Wake asks first if a save is already there.
+- The pipe, the gallery, the crypt, and the breach read as rooms. A filed copy in the gallery uses Cousin’s Margin if it is held, and a different line if it is not. The stair stays a separate choice. A clerk stamps the next blow thin.
 
 ## Play on your phone
 

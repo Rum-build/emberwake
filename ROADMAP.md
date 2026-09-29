@@ -180,13 +180,21 @@ Playable on the Verdant Isle field:
 - Stormreach retunes the bed higher. The remnant claim and the aftermath retune it lower. Both are the original loop. Silent still stops it. CREDITS names them.
 - Phone controls, Absorb, Pack, and Continue stay.
 
-## Place and letter (this branch)
+## Place and letter (shipped)
 
 - The leaf-village has beams, posts, and hearth soot. The counting room has a rug, a ledger, an iron bar, and a readable count. The ash has drifts and engine soot. The remnant claim has a floor crack, ash piles, and a stone ring under the mass. No new lights.
 - A cousin’s letter in the village basket is missable. It says Vesper walked the Concord to the well. Look once and it sits in the pack as Cousin’s Margin. It does not open a door or change the kiln.
 - The pack repeats the quest line. On a phone the quest under the place name stays to three lines.
 - Continue names the saved place. One line under it says this browser keeps one save, and that Wake throws an ending out.
 - After Aftermath credits, one toast says the rite remembers and a second walk is not this save. Wake still starts a new host.
+- Phone controls, Absorb, Pack, and Continue stay.
+
+## Deeper rooms (this branch)
+
+- The pipe walk, the watch gallery, the count crypt, and the first breach read as places: a feed plaque and a drip cup, a shelf of ledgers, dust and a rib, ash piles and a crack in the aisle. No new lights.
+- A filed copy on the gallery’s east wall is optional. If Cousin’s Margin is in the pack, the handwriting matches. If it is not, the village seal is filed as mercy and the furrow is not in the count. Look once. It does not open the stair, spend a seal, or block Leave.
+- The quest under the place name is labeled. On a phone it still stays to three lines. A licence clerk spends a turn stamping the page. The next blow lands thin.
+- Wake asks before it throws out a save that is already there. With no save, Wake still starts at once.
 - Phone controls, Absorb, Pack, and Continue stay.
 
 ## Still ahead

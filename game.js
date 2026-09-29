@@ -182,6 +182,7 @@
   let nearWorker = null;
   let nearPorter = null;
   let nearLetter = null;
+  let nearMargin = null;
   let runLive = false;
   const SAVE_KEY = 'emberwake.save.v1';
   let combatsFought = 0;
@@ -1253,10 +1254,11 @@
   function buildPipe() {
     const g = new THREE.Group();
     g.visible = false;
-    const floor = variedFloor(3.4, 7.6, 6, 10, 0x2a2422, 0x4a3830, 0.035);
+    const floor = variedFloor(3.4, 7.6, 6, 10, 0x2a2422, 0x4a3830, 0.035, true);
     floor.position.set(0, 0, -0.3);
     g.add(floor);
     layCloth(g, 0.2, -1.4, 0.85, 0x3a1814, 0.7);
+    layCloth(g, 0.1, 1.55, 0.55, 0x1a100c, 0.55);
     const pipeLamp = new THREE.PointLight(0xff8844, 0.45, 7);
     pipeLamp.position.set(0, 1.8, 0.4);
     g.add(pipeLamp);
@@ -1298,6 +1300,22 @@
     g.add(lamp);
     const drip = layCloth(g, -0.2, -2.7, 0.7, 0x3a1814, 0.85);
     drip.position.y = 0.04;
+    const bracket = new THREE.Mesh(
+      new THREE.BoxGeometry(2.35, 0.08, 0.12),
+      new THREE.MeshPhongMaterial({ color: 0x5a5348, shininess: 16, specular: new THREE.Color(0x2a2418) })
+    );
+    bracket.position.set(0, 1.18, 0.85);
+    g.add(bracket);
+    const cup = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.12, 0.09, 0.16, 6),
+      new THREE.MeshPhongMaterial({ color: 0x3a3028, shininess: 8 })
+    );
+    cup.position.set(-0.48, 0.1, 1.25);
+    g.add(cup);
+    const feed = makeCountPage('THE FEED', ['Harbor shortage', 'Ashen engine', 'The valve is a choice']);
+    feed.position.set(0, 1.42, 1.72);
+    feed.scale.set(0.58, 0.58, 1);
+    g.add(feed);
     return g;
   }
 
@@ -1871,7 +1889,7 @@
     const lamp = new THREE.PointLight(0xffb070, 0.8, 12);
     lamp.position.set(0.2, 2.3, 0.6);
     g.add(lamp);
-    g.add(variedFloor(8, 8, 8, 8, 0x2a201c, 0x161210, 0.03));
+    g.add(variedFloor(8, 8, 8, 8, 0x2a201c, 0x161210, 0.03, true));
     const wall = new THREE.MeshLambertMaterial({ color: 0x3a2c28 });
     function addWall(w, d, x, z) {
       const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, 2.8, d), wall);
@@ -1930,6 +1948,28 @@
     stainLight.position.set(-2.2, 1.6, 0.4);
     g.add(stainLight);
     g.userData.stain = stainLight;
+    const beam = new THREE.Mesh(
+      new THREE.BoxGeometry(6.2, 0.16, 0.2),
+      new THREE.MeshLambertMaterial({ color: 0x2a201c })
+    );
+    beam.position.set(0, 2.58, 0.35);
+    g.add(beam);
+    const shelfMat = new THREE.MeshPhongMaterial({ color: 0x3a2a22, shininess: 6 });
+    const shelf = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.08, 1.55), shelfMat);
+    shelf.position.set(3.02, 0.92, 1.2);
+    g.add(shelf);
+    [0.7, 1.15, 1.6].forEach((z, i) => {
+      const book = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.36, 0.28), shelfMat);
+      book.position.set(2.98, 1.14, z);
+      book.rotation.z = i === 1 ? 0.08 : 0;
+      g.add(book);
+    });
+    const filed = makeCountPage('FILED COPY', ['Village seal', 'Called mercy', 'Not the stair']);
+    filed.position.set(2.48, 1.55, 1.35);
+    filed.rotation.y = -Math.PI / 2;
+    filed.scale.set(0.52, 0.52, 1);
+    g.add(filed);
+    layCloth(g, 0.2, 0.85, 0.72, 0x1a100c, 0.42);
     galleryGroup = g;
     scene.add(g);
   }
@@ -2034,6 +2074,31 @@
     });
     g.add(watcher);
     g.userData.watcher = watcher;
+    function cryptPile(x, z, s) {
+      const pile = new THREE.Mesh(
+        new THREE.SphereGeometry(s, 6, 5),
+        new THREE.MeshLambertMaterial({ color: 0x2a221c })
+      );
+      pile.scale.y = 0.32;
+      pile.position.set(x, s * 0.18, z);
+      g.add(pile);
+    }
+    cryptPile(-1.55, 1.2, 0.36);
+    cryptPile(1.35, 0.7, 0.26);
+    const floorCrack = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.07, 1.7),
+      new THREE.MeshBasicMaterial({ color: 0x0a0604, fog: false })
+    );
+    floorCrack.rotation.x = -Math.PI / 2;
+    floorCrack.position.set(0.08, 0.04, 0.15);
+    g.add(floorCrack);
+    const rib = new THREE.Mesh(
+      new THREE.BoxGeometry(0.52, 0.07, 0.1),
+      new THREE.MeshPhongMaterial({ color: 0xc4b4a0, shininess: 8 })
+    );
+    rib.position.set(-0.9, 0.06, 0.95);
+    rib.rotation.y = 0.45;
+    g.add(rib);
     cryptGroup = g;
     scene.add(g);
   }
@@ -2069,7 +2134,7 @@
     addWall(3.6, 0.4, 5.2, 5.7);
     addWall(0.4, 12.2, -6.4, -0.4);
     addWall(0.4, 12.2, 6.4, -0.4);
-    const ribMat = new THREE.MeshLambertMaterial({ color: 0x3a2a28 });
+    const ribMat = new THREE.MeshPhongMaterial({ color: 0x4a3834, shininess: 8, specular: new THREE.Color(0x2a1810) });
     [-4.2, -1.6, 1.2, 3.6].forEach((z, i) => {
       [-3.6, 3.6].forEach((x) => {
         const h = 3.2 + i * 0.45;
@@ -2137,6 +2202,33 @@
     banner.position.set(-2.4, 1.7, 0.4);
     g.add(banner);
     g.userData.banner = banner;
+    function breachPile(x, z, s) {
+      const pile = new THREE.Mesh(
+        new THREE.SphereGeometry(s, 6, 5),
+        new THREE.MeshLambertMaterial({ color: 0x2a221c })
+      );
+      pile.scale.y = 0.3;
+      pile.position.set(x, s * 0.16, z);
+      g.add(pile);
+    }
+    breachPile(-2.35, 3.15, 0.55);
+    breachPile(2.15, 2.55, 0.42);
+    breachPile(3.1, -1.35, 0.48);
+    const aisle = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.1, 2.4),
+      new THREE.MeshBasicMaterial({ color: 0x0a0604, fog: false })
+    );
+    aisle.rotation.x = -Math.PI / 2;
+    aisle.position.set(0.05, 0.04, 2.85);
+    g.add(aisle);
+    const fallen = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.15, 0.42),
+      new THREE.MeshBasicMaterial({ color: 0x6a2820, side: THREE.DoubleSide, fog: false })
+    );
+    fallen.rotation.x = -Math.PI / 2;
+    fallen.rotation.z = 0.4;
+    fallen.position.set(-1.7, 0.05, 3.35);
+    g.add(fallen);
     makeMotes(g, 80, 0xc4b4a4, { x: 12, y: 4.2, z: 14 }, { fall: true });
     breachGroup = g;
     scene.add(g);
@@ -2546,6 +2638,21 @@
     return {
       title: 'A folded letter',
       hint: 'It sits in the basket by the grey furrow. Press E. It is not the door.',
+    };
+  }
+
+  function nearestMargin() {
+    if (!playerMesh || locale !== 'watch-gallery') return null;
+    if (Math.hypot(2.15 - playerMesh.position.x, 1.35 - playerMesh.position.z) > 0.95) return null;
+    if (seenBeats['gallery-margin']) {
+      return {
+        title: 'Filed copy',
+        hint: 'It was already read. The stair did not change. Press E to hear it again.',
+      };
+    }
+    return {
+      title: 'A filed copy',
+      hint: 'East wall. Not the count and not the stair. Press E.',
     };
   }
 
@@ -3917,6 +4024,7 @@
         : galleryWord === 'file'
           ? 'The nave’s word is filed into Licence Zero. The stair goes down. The cathedral bar stayed shut. South is the nave.'
           : 'A watch gallery. The ledger is still a choice. The count-stair stays shut until the count is made. Kestrel is not the road.';
+      if (!seenBeats['gallery-margin']) rumor += ' East, a filed copy is not the stair.';
     } else if (seenBeats.naveStep && locale === 'ash-nave') {
       rumor = galleryWord
         ? (cryptWord
@@ -4106,7 +4214,8 @@
     const showKestrel = idle && nearKestrel && !showAbsorb && !atExit && !showGallery;
     const showPorter = idle && locale === 'field' && nearPorter && !showAbsorb && !showDoor && !showGate && !showReturn;
     const showLetter = idle && nearLetter && !atExit && !showAbsorb;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter && !showLetter);
+    const showMargin = idle && nearMargin && !atExit && !showStair;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter && !showLetter && !showMargin);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
@@ -4120,13 +4229,13 @@
     else if (showPerch || showKestrel) absorbBtn.textContent = 'Speak';
     else if (showLook || showPipe || showThroat || showStone || showMark || showNave || showGallery) absorbBtn.textContent = 'Enter';
     else if (showTalk) absorbBtn.textContent = 'Speak';
-    else if (showLetter) absorbBtn.textContent = 'Look';
+    else if (showLetter || showMargin) absorbBtn.textContent = 'Look';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
   }
 
   function updatePrompt() {
     const atExit = atInteriorExit();
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !nearLetter && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !nearLetter && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -4239,6 +4348,11 @@
       $('#interact-detail').textContent = nearStair.hint;
       return;
     }
+    if (nearMargin) {
+      $('#interact-title').textContent = nearMargin.title;
+      $('#interact-detail').textContent = nearMargin.hint;
+      return;
+    }
     if (nearCrack) {
       $('#interact-title').textContent = nearCrack.title;
       $('#interact-detail').textContent = nearCrack.hint;
@@ -4305,6 +4419,11 @@
     if (roadNote) {
       const waiting = [];
       if (seenBeats['furrow-letter']) waiting.push('A cousin’s letter says Vesper walked the Concord to the well. The furrow was the price. The road did not change.');
+      if (seenBeats['gallery-margin']) {
+        waiting.push(seals.some((seal) => seal.name === 'Cousin’s Margin')
+          ? 'The gallery’s filed copy matches the cousin’s letter. The stair did not change.'
+          : 'The gallery filed the village seal as mercy. The furrow is not in the count.');
+      }
       if (!findMember('nima')) waiting.push('Nima is still in the leaf-village.');
       if (!findMember('torren')) waiting.push('Torren has not refused the Concord yet.');
       if (seenBeats['kestrel-ask']) {
@@ -4658,6 +4777,10 @@
       if (nearStair && locale === 'watch-gallery' && !atMouth) {
         if (galleryWord) enterCrypt();
         else lookStair();
+        return;
+      }
+      if (nearMargin && locale === 'watch-gallery' && !atMouth) {
+        talkMargin();
         return;
       }
       if (nearCrack && locale === 'count-crypt' && !atMouth) {
@@ -6324,6 +6447,27 @@
     }
   }
 
+  function talkMargin() {
+    if (locale !== 'watch-gallery' || dialogueOpen) return;
+    if (seenBeats['gallery-margin']) {
+      showToast('The filed copy stays on the wall. The stair did not change.');
+      return;
+    }
+    const fn = EW.scenes['gallery-margin'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'gallery-margin';
+    }
+  }
+
+  function noteMargin() {
+    seenBeats['gallery-margin'] = true;
+    showToast('The filing is read. The grate and the stair stay as they were.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
   function talkLetter() {
     if (locale !== 'leaf-village' || dialogueOpen) return;
     if (seenBeats['furrow-letter']) {
@@ -6542,6 +6686,7 @@
       nearKestrel = null;
       nearPorter = null;
       nearLetter = null;
+      nearMargin = null;
       joy.active = false;
       joy.dx = 0;
       joy.dy = 0;
@@ -6636,6 +6781,7 @@
         nearKestrel = nearestKestrel();
         nearPorter = nearestPorter();
         nearLetter = nearestLetter();
+        nearMargin = nearestMargin();
         const safe = nearPool && !nearPool.absorbed;
         const cooled = performance.now() < suppressEncountersUntil;
         const onField = locale === 'field' && (regionId === 'verdant-isle' || regionId === 'stormreach');
@@ -6669,6 +6815,7 @@
         nearKestrel = nearestKestrel();
         nearPorter = nearestPorter();
         nearLetter = nearestLetter();
+        nearMargin = nearestMargin();
       }
 
       updateCellarTriggers();
@@ -6722,6 +6869,7 @@
       nearKestrel = nearestKestrel();
       nearPorter = nearestPorter();
       nearLetter = nearestLetter();
+      nearMargin = nearestMargin();
       playerMesh.position.y = 0;
     }
 
@@ -7188,6 +7336,16 @@
     return { dmg: 1, text: text + ' The hare is in the air. The blow finds almost nothing.' };
   }
 
+  function noteStamp(target, dmg, text) {
+    if (!target || !target.stamp) return { dmg: dmg, text: text };
+    target.stamp = false;
+    if (dmg <= 1) return { dmg: 1, text: text + ' The clerk’s stamp holds. The blow lands thin.' };
+    const needle = String(dmg);
+    const at = text.lastIndexOf(needle);
+    const rewritten = at < 0 ? text : text.slice(0, at) + '1' + text.slice(at + needle.length);
+    return { dmg: 1, text: rewritten + ' The clerk’s stamp holds. The blow lands thin.' };
+  }
+
   function pathStrike(actor, target, path) {
     const s = actorStats(actor);
     if (actor.id !== 'lira' || !path) {
@@ -7199,7 +7357,8 @@
       else text = actor.name + ' strikes ' + target.name + ' for ' + dmg + '.';
       if (target.rite) text += ' The rite holds.';
       const thinAir = noteAir(target, dmg, text);
-      return { dmg: thinAir.dmg, text: thinAir.text, pathXp: 0, mpGain: 0 };
+      const stamped = noteStamp(target, thinAir.dmg, thinAir.text);
+      return { dmg: stamped.dmg, text: stamped.text, pathXp: 0, mpGain: 0 };
     }
     const thin = path !== spark.path;
     let raw = 1;
@@ -7238,7 +7397,8 @@
       text += ' The last rite takes the edge. ' + dmg + ' lands. A merge would tear the ward.';
     }
     const thinAir = noteAir(target, dmg, text);
-    return { dmg: thinAir.dmg, text: thinAir.text, pathXp: thin ? 0 : 7, mpGain };
+    const stamped = noteStamp(target, thinAir.dmg, thinAir.text);
+    return { dmg: stamped.dmg, text: stamped.text, pathXp: thin ? 0 : 7, mpGain };
   }
 
   function executeAction(targetIdx) {
@@ -7436,6 +7596,14 @@
       enemy.bolted = true;
       enemy.air = true;
       showLog('The hare bolts. The next blow finds almost nothing.');
+      updateCombatUI();
+      later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
+      return;
+    }
+    if (enemy.id === 'clerk' && !enemy.stamped) {
+      enemy.stamped = true;
+      enemy.stamp = true;
+      showLog('The clerk stamps the page. The next blow lands thin.');
       updateCombatUI();
       later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
       return;
@@ -8291,15 +8459,35 @@
 
   function setupUI() {
     readBedPref();
-    $('#btn-start').addEventListener('click', () => {
-      ensureBed();
+    function beginWake() {
       try { localStorage.removeItem(SAVE_KEY); } catch (err) { /* ignore */ }
       runLive = false;
       resetRun();
+      const confirm = $('#wake-confirm');
+      if (confirm) confirm.classList.add('hidden');
       titleScreen.classList.add('hidden');
       creditsScreen.classList.add('hidden');
       pathScreen.classList.remove('hidden');
       gameState = State.PATH;
+    }
+    $('#btn-start').addEventListener('click', () => {
+      ensureBed();
+      const confirm = $('#wake-confirm');
+      if (readSave() && confirm) {
+        confirm.classList.remove('hidden');
+        return;
+      }
+      beginWake();
+    });
+    const wakeYes = $('#btn-wake-yes');
+    if (wakeYes) wakeYes.addEventListener('click', () => {
+      ensureBed();
+      beginWake();
+    });
+    const wakeStay = $('#btn-wake-stay');
+    if (wakeStay) wakeStay.addEventListener('click', () => {
+      const confirm = $('#wake-confirm');
+      if (confirm) confirm.classList.add('hidden');
     });
     const continueBtn = $('#btn-continue');
     if (continueBtn) continueBtn.addEventListener('click', () => {
@@ -8613,6 +8801,7 @@
     const beats = data.seenBeats || {};
     if (data.locale === 'aftermath' || beats.aftermath) return 'The ending is written on this save. Wake throws it out and starts another host.';
     if (beats['furrow-letter']) return 'The cousin’s letter is in the pack. One save in this browser.';
+    if (beats['gallery-margin']) return 'The gallery’s filed copy was read. One save in this browser.';
     return 'One save in this browser. Wake throws it out.';
   }
 
@@ -9308,6 +9497,7 @@
   EW.seenLedger = function () { return !!seenBeats['vault-ledger']; };
   EW.noteKestrelAsk = noteKestrelAsk;
   EW.noteLetter = noteLetter;
+  EW.noteMargin = noteMargin;
   EW.noteHall = noteHall;
   EW.finishMarrow = finishMarrow;
   EW.noteMarrowStep = noteMarrowStep;
