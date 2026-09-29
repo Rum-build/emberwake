@@ -978,6 +978,7 @@
     overworldGroup.add(dungeon);
 
     POOL_DEFS.forEach((def) => makePool(def));
+    dressIsleGround();
 
     overworldGroup.add(new THREE.AmbientLight(0xfff4e4, 0.36));
     const sun = new THREE.DirectionalLight(0xfff6e0, 1.18);
@@ -5164,6 +5165,86 @@
     return g;
   }
 
+  function makeLicenceStake(x, z, yaw) {
+    const g = new THREE.Group();
+    const post = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.05, 0.07, 0.92, 5),
+      new THREE.MeshLambertMaterial({ color: 0x5c4030 })
+    );
+    post.position.y = 0.46;
+    g.add(post);
+    const plate = new THREE.Mesh(
+      new THREE.BoxGeometry(0.28, 0.18, 0.03),
+      new THREE.MeshBasicMaterial({ color: 0xc4a15a, fog: false })
+    );
+    plate.position.set(0, 0.72, 0.06);
+    g.add(plate);
+    g.position.set(x, 0, z);
+    g.rotation.y = yaw || 0;
+    return g;
+  }
+
+  function makeWaxCloth(x, z) {
+    const g = new THREE.Group();
+    const cloth = new THREE.Mesh(
+      new THREE.CircleGeometry(0.42, 8),
+      new THREE.MeshLambertMaterial({ color: 0x6a2428 })
+    );
+    cloth.rotation.x = -Math.PI / 2;
+    cloth.position.y = 0.04;
+    g.add(cloth);
+    const seal = new THREE.Mesh(
+      new THREE.OctahedronGeometry(0.1, 0),
+      new THREE.MeshBasicMaterial({ color: 0xe0cc8a, fog: false })
+    );
+    seal.position.set(0.08, 0.12, 0.04);
+    g.add(seal);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeAshPile(x, z) {
+    const g = new THREE.Group();
+    const grit = new THREE.Mesh(
+      new THREE.CircleGeometry(0.55, 8),
+      new THREE.MeshLambertMaterial({ color: 0x3a3034 })
+    );
+    grit.rotation.x = -Math.PI / 2;
+    grit.position.y = 0.03;
+    g.add(grit);
+    const pile = new THREE.Mesh(
+      new THREE.SphereGeometry(0.36, 7, 5),
+      new THREE.MeshLambertMaterial({ color: 0x2a2428 })
+    );
+    pile.scale.y = 0.32;
+    pile.position.y = 0.08;
+    g.add(pile);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeScarPost(x, z, lean) {
+    const g = new THREE.Group();
+    const post = new THREE.Mesh(
+      new THREE.BoxGeometry(0.08, 0.55, 0.08),
+      new THREE.MeshLambertMaterial({ color: 0x4a3830 })
+    );
+    post.position.y = 0.22;
+    post.rotation.z = lean || 0.18;
+    g.add(post);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function dressIsleGround() {
+    overworldGroup.add(makeLicenceStake(0.15, 8, 0.5));
+    overworldGroup.add(makeLicenceStake(-8.15, 7.4, -0.4));
+    overworldGroup.add(makeWaxCloth(-2.2, 11.6));
+    overworldGroup.add(makeAshPile(18.2, -6.4));
+    overworldGroup.add(makeScarPost(10.4, -7.1, 0.22));
+    overworldGroup.add(makeScarPost(11.2, -8.6, -0.16));
+  }
+
   function makeSaltCord(x, z) {
     const g = new THREE.Group();
     const coil = new THREE.Mesh(
@@ -6360,7 +6441,15 @@
     if (locale === 'harbor-vault' && !seenBeats['bottle-hall']) return 'The bottle-hall is north of the count.';
     if (locale === 'field' && regionId === 'stormreach' && !seenBeats['vault-face']) return 'The harbor vault is in the cliff.';
     if (locale === 'leaf-village' && !seenBeats['furrow-letter']) return 'A letter sits in the basket by the furrow. It is not the road. South is the isle.';
+    if (locale === 'leaf-village' && !seenBeats.patrol) return 'The letter is in the pack. South is the isle. The leaf-cup is south-west of the wake.';
     if (locale === 'field' && regionId === 'verdant-isle' && !seenBeats.village) return 'North-west is the leaf-village. A letter is in the basket inside. Walk to it. It is not the road.';
+    if (locale === 'field' && regionId === 'verdant-isle' && seenBeats.village && !seenBeats['furrow-letter']) {
+      const withNima = party.some((p) => p.id === 'nima');
+      return withNima
+        ? 'Nima walks with her. The letter is still in the leaf-village basket. Walk back in. It is not the road.'
+        : 'The letter is still in the leaf-village basket. Walk back in. It is not the road.';
+    }
+    if (locale === 'field' && regionId === 'verdant-isle' && seenBeats['furrow-letter'] && !seenBeats.patrol) return 'South-west of the wake, the leaf-cup. A licence is already there. Torren has not left the coat.';
     if (locale === 'root-cellar' && !seenBeats.kiln) return 'The kiln is north. It still has a tenant.';
     if (!seenBeats['waystone-wake']) return 'The kiln, then the scar. The waystone stays shut until both.';
     if (!seenBeats.marrowStep) return 'The inland road starts in the bottle-hall.';
@@ -6586,7 +6675,8 @@
     $('#hud-hp').textContent = 'Lira ' + lira.hp + '/' + cap;
     const hpBar = $('#hp-bar');
     if (hpBar) hpBar.style.width = Math.max(0, Math.min(100, Math.round((lira.hp / cap) * 100))) + '%';
-    $('#hud-path').textContent = 'Path ' + (spark.path ? PATH_LABEL[spark.path] : '—');
+    const company = party.filter((p) => p.id !== 'lira' && p.hp > 0).map((p) => p.name);
+    $('#hud-path').textContent = 'Path ' + (spark.path ? PATH_LABEL[spark.path] : '—') + (company.length ? ' · ' + company.join(', ') : '');
     $('#hud-rumor').textContent = rumor;
     const questEl = $('#hud-quest');
     if (questEl) questEl.textContent = questLine();
@@ -10513,6 +10603,8 @@
           ? 'The coast grew a thing with too many legs. It wets the stone. The splash is a nick, not a second full bite.'
       : enemies.some((e) => e.id === 'echo')
       ? 'Vesper is not on this field. Something that remembers her mouth is.'
+      : enemies.some((e) => e.id === 'warden') && party.some((p) => p.id === 'torren' && p.hp > 0)
+        ? 'Torren is in the line. The coat is still on him. The seal is not. Your people act, then theirs.'
       : enemies.some((e) => e.id === 'scribe')
         ? 'A Concord scribe reaches for a bottle. You are already inside the moment they meant to cork.'
         : combatInRot
@@ -12294,11 +12386,26 @@
   function knownPlaces() {
     const rows = [{
       name: 'Verdant Isle',
-      note: seenBeats.village
-        ? 'Where she woke.'
-        : 'Where she woke. North-west is the leaf-village. A letter is inside. It is not the road.',
+      note: !seenBeats.village
+        ? 'Where she woke. North-west is the leaf-village. A letter is inside. It is not the road.'
+        : !seenBeats['furrow-letter']
+          ? (party.some((p) => p.id === 'nima')
+            ? 'Where she woke. Nima walks with her. The letter is still in the basket.'
+            : 'Where she woke. The letter is still in the basket.')
+          : !seenBeats.patrol
+            ? 'Where she woke. South-west, the leaf-cup. A licence is already there.'
+            : 'Where she woke.',
     }];
-    if (seenBeats.village) rows.push({ name: 'Leaf-village', note: 'The argument about the seal.' });
+    if (seenBeats.village) {
+      rows.push({
+        name: 'Leaf-village',
+        note: !seenBeats['furrow-letter']
+          ? 'The argument about the seal. The letter is still in the basket.'
+          : !seenBeats.patrol
+            ? 'The letter is in the pack. The leaf-cup is south-west of the wake.'
+            : 'The argument about the seal.',
+      });
+    }
     if (seenBeats.cellar || seenBeats.kiln) rows.push({ name: 'Root-cellar', note: 'The kiln under the arch.' });
     if (seenBeats.coastRoute || seenBeats['vault-face'] || regionId === 'stormreach') rows.push({ name: 'Stormreach Coast', note: 'Shale, lightning, the harbor vault.' });
     if (seenBeats['vault-ledger'] || seenBeats['bottle-hall']) rows.push({ name: 'Harbor vault', note: 'The count and the bottle-hall.' });

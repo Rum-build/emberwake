@@ -379,6 +379,15 @@ Playable on the Verdant Isle field:
 - On a phone, scar debt reads as Debt and takes a warmer chip when a point is owed. Places and the stick stay clear.
 - The eight sounds stay the set in CREDITS.
 
+## Isle company, the cup, and the scar (this branch)
+
+- After the village, and before the letter, the quest and Places say Nima walks with her and the letter is still in the basket. They do not name the kiln.
+- After the letter, and before the patrol, the quest and Places say the leaf-cup is south-west of the wake and a licence is already there. They do not name the kiln.
+- The path line names who walks with her. Alone, it stays the path.
+- The leaf-cup has two licence stakes and a wax cloth off the mouth. Vesper’s scar has an ash pile and two short posts off the mouth.
+- A fight that has a warden, and Torren in the line, opens on the coat and the seal. The blow is unchanged.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

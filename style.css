@@ -496,6 +496,7 @@ body.still-motion .encounter-flash.active {
 
 .hud-path {
   color: #f0d59a;
+  overflow-wrap: anywhere;
 }
 
 .hud-row {
