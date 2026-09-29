@@ -212,7 +212,31 @@
       onDone: function () {
         if (Emberwake.recruit) Emberwake.recruit('torren');
         if (Emberwake.bottlePool) Emberwake.bottlePool('leaf-cup');
-        if (Emberwake.beginEncounter) Emberwake.beginEncounter(['warden', 'scribe']);
+        if (Emberwake.beginEncounter) Emberwake.beginEncounter(['warden', 'scribe'], 'leaf-patrol');
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('leaf-after', function () {
+    var won = Emberwake.leafWon && Emberwake.leafWon();
+    var lines = [
+      { where: 'The corked cup', speaker: 'Lira', text: 'The cork is in. They wrote host-body and spark in the same breath.' },
+      {
+        speaker: 'The spark',
+        text: won
+          ? 'The coats are down. The water is still theirs. The rot under the furrow did not get a door, and neither did the mouth.'
+          : 'The water is theirs. The rot under the furrow did not get a door, and neither did the mouth.',
+      },
+    ];
+    if (Emberwake.companyHas && Emberwake.companyHas('torren')) {
+      lines.push({ speaker: 'Torren', text: 'The coat stays. The seal does not. A refusal is still a name on their page.' });
+    }
+    lines.push({ speaker: 'Lira', text: 'Then we keep walking. The village did not uncork this. The well is still polite.' });
+    Emberwake.present({
+      lines: lines,
+      onDone: function () {
+        if (Emberwake.noteLeafAfter) Emberwake.noteLeafAfter();
       },
     });
     return true;
