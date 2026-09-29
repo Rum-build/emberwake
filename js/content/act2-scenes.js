@@ -225,10 +225,46 @@
     return true;
   });
 
-  Emberwake.registerScene('marrow-tender', function () {
+  Emberwake.registerScene('marrow-vesper', function () {
+    var coughing = Emberwake.scarCount && Emberwake.scarCount() >= 2;
     Emberwake.present({
       lines: [
-        { where: 'The engine', speaker: 'A tender', text: 'The leak is the harbor’s leftover. Feed the engine and the host pays. Bank it and I cork the mouth. I can ease one point of what is already in her. I cannot invent a debt to forgive.' },
+        { where: 'Ashen Marrow', speaker: 'Vesper', text: 'I am not here for the coat. I will not step into her. The scar in her teeth is already a door, and I only breathe across it.' },
+        { speaker: 'Lira', text: coughing
+          ? 'She is standing in the ash, not in me. The cough is mine. Her mouth is worse.'
+          : 'She is standing in the ash, not in me. Her mouth is still worse than the engine.' },
+        { speaker: 'The spark', text: 'She worsens rot. She does not take the host. Kestrel is still in the air. This ash is not a roost. Taste is a debt. Refusal still leaves a stain.' },
+        {
+          speaker: 'Lira',
+          text: coughing ? 'The cough answers before I do.' : 'The ash is quiet enough to hear her.',
+          choices: [
+            {
+              label: 'Let her taste the scar.',
+              pick: 'taste',
+              reply: { speaker: 'Vesper', text: 'A breath across the mouth. I do not enter. The rot in her teeth thickens, and the ash remembers the favor.' },
+            },
+            {
+              label: 'Refuse her mouth.',
+              pick: 'refuse',
+              reply: { speaker: 'Vesper', text: 'Refusal is not a cleaning. I leave the stain on the ash and walk. The rot still has my name on it.' },
+            },
+          ],
+        },
+      ],
+      onPick: function (id) {
+        if (Emberwake.noteVesperAsh) Emberwake.noteVesperAsh(id);
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('marrow-tender', function () {
+    var coughing = Emberwake.scarCount && Emberwake.scarCount() >= 2;
+    Emberwake.present({
+      lines: [
+        { where: 'The engine', speaker: 'A tender', text: coughing
+          ? 'You are coughing on my ash. The engine can smell the debt. The leak is the harbor’s leftover. Feed it and the host pays. Bank it and I cork the mouth. I can ease one point of what is already in her. I cannot invent a debt to forgive.'
+          : 'The leak is the harbor’s leftover. Feed the engine and the host pays. Bank it and I cork the mouth. I can ease one point of what is already in her. I cannot invent a debt to forgive.' },
         {
           speaker: 'Lira',
           text: 'The tender’s hands are clean. The engine’s mouth is not.',
