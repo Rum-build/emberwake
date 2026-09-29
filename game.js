@@ -93,11 +93,14 @@
   let nearDoor = null;
   let nearGate = null;
   let nearReturn = null;
+  let nearMarrow = null;
   let scarVerdict = null;
   let regionId = 'verdant-isle';
   let mergeWord = null;
+  let merges = {};
   let duelWord = null;
   let kestrelWord = null;
+  let hallWord = null;
   let runLive = false;
   const SAVE_KEY = 'emberwake.save.v1';
   let combatsFought = 0;
@@ -106,6 +109,9 @@
   let victoryTag = null;
   let crawlLatch = false;
   let kilnLatch = false;
+  let vaultLatch = false;
+  let marrowBusy = false;
+  let marrowGroup = null;
   let skyPass = null;
   let eagleGroup = null;
   let waystoneGroup = null;
@@ -179,7 +185,7 @@
   function defaultSpark() {
     return {
       level: 1, xp: 0, path: null, pathXp: 0, pathRank: 1,
-      fire: 0, water: 0, lightning: 0, strain: 0, capacity: 3,
+      fire: 0, water: 0, lightning: 0, earth: 0, strain: 0, capacity: 3,
     };
   }
 
@@ -207,7 +213,7 @@
   }
 
   function elementTotal() {
-    return spark.fire + spark.water + spark.lightning;
+    return spark.fire + spark.water + spark.lightning + (spark.earth || 0);
   }
 
   function maxHp(p) {
@@ -338,8 +344,10 @@
     scarVerdict = null;
     regionId = 'verdant-isle';
     mergeWord = null;
+    merges = {};
     duelWord = null;
     kestrelWord = null;
+    hallWord = null;
     locale = 'field';
     stepsSinceEncounter = 0;
     encounterLocked = false;
@@ -356,6 +364,8 @@
     victoryTag = null;
     crawlLatch = false;
     kilnLatch = false;
+    vaultLatch = false;
+    marrowBusy = false;
     skyPass = null;
     if (eagleGroup) {
       eagleGroup.visible = false;
@@ -365,6 +375,7 @@
       }
     }
     if (coastGroup) coastGroup.visible = false;
+    if (marrowGroup) marrowGroup.visible = false;
     if (stormreachGroup) stormreachGroup.visible = false;
     if (coastVesper) coastVesper.visible = false;
     if (vaultRoom) vaultRoom.visible = false;
@@ -424,6 +435,7 @@
     buildOverworld();
     buildInteriors();
     buildCoast();
+    buildMarrow();
     buildCombatArena();
     window.addEventListener('resize', onResize);
   }
@@ -687,6 +699,7 @@
       wall: 0x2c3138,
       light: 0xd4c08a,
       intensity: 0.72,
+      openNorth: true,
     });
     const desk = new THREE.Mesh(
       new THREE.BoxGeometry(1.8, 0.7, 0.7),
@@ -702,25 +715,141 @@
     guard.position.set(2.2, 0, -1.1);
     guard.rotation.y = Math.PI * 0.85;
     g.add(guard);
-    const grate = new THREE.Mesh(
-      new THREE.BoxGeometry(3.4, 1.7, 0.12),
-      new THREE.MeshLambertMaterial({ color: 0x14181e })
-    );
-    grate.position.set(0.3, 1.15, -3.35);
-    g.add(grate);
-    [-0.5, 0.35, 1.2].forEach((x) => {
-      const jar = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.16, 0.2, 0.58, 8),
-        new THREE.MeshLambertMaterial({ color: 0x9ec6ff, emissive: new THREE.Color(0x224466) })
+    [-1.35, 1.35].forEach((x) => {
+      const post = new THREE.Mesh(
+        new THREE.BoxGeometry(0.18, 2.2, 0.18),
+        new THREE.MeshLambertMaterial({ color: 0x14181e })
       );
-      jar.position.set(x, 0.42, -3.75);
-      g.add(jar);
+      post.position.set(x, 1.1, -4.2);
+      g.add(post);
     });
-    const bolt = new THREE.PointLight(0x99c4ff, 0.85, 9);
-    bolt.position.set(0.3, 1.5, -3.5);
-    g.add(bolt);
+
+    const throat = new THREE.Mesh(
+      new THREE.PlaneGeometry(2.6, 3.2),
+      new THREE.MeshLambertMaterial({ color: 0x2a3038 })
+    );
+    throat.rotation.x = -Math.PI / 2;
+    throat.position.set(0, 0.02, -5.6);
+    g.add(throat);
+    const wallMat = new THREE.MeshLambertMaterial({ color: 0x24282e });
+    [[-1.35, -5.6], [1.35, -5.6]].forEach((spot) => {
+      const wall = new THREE.Mesh(new THREE.BoxGeometry(0.28, 2.4, 3.2), wallMat);
+      wall.position.set(spot[0], 1.2, spot[1]);
+      g.add(wall);
+    });
+
+    const hallFloor = new THREE.Mesh(
+      new THREE.PlaneGeometry(7.4, 10.2),
+      new THREE.MeshLambertMaterial({ color: 0x1c2430 })
+    );
+    hallFloor.rotation.x = -Math.PI / 2;
+    hallFloor.position.set(0, 0.03, -11);
+    g.add(hallFloor);
+    [[-3.7, -11, 10.2, 0.3], [3.7, -11, 10.2, 0.3]].forEach((spec) => {
+      const wall = new THREE.Mesh(new THREE.BoxGeometry(spec[3], 2.6, spec[2]), wallMat);
+      wall.position.set(spec[0], 1.3, spec[1]);
+      g.add(wall);
+    });
+    const endWallL = new THREE.Mesh(new THREE.BoxGeometry(2.2, 2.6, 0.3), wallMat);
+    endWallL.position.set(-2.5, 1.3, -15.9);
+    const endWallR = new THREE.Mesh(new THREE.BoxGeometry(2.2, 2.6, 0.3), wallMat);
+    endWallR.position.set(2.5, 1.3, -15.9);
+    g.add(endWallL);
+    g.add(endWallR);
+
+    const bottleColors = [0xff6a1a, 0x3ec6ff, 0xd2b4ff, 0xff6a1a, 0x3ec6ff, 0xd2b4ff];
+    bottleColors.forEach((color, i) => {
+      const col = i < 3 ? -1.7 : 1.5;
+      const row = -8.2 - (i % 3) * 1.5;
+      const jar = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.22, 0.26, 0.9, 8),
+        new THREE.MeshLambertMaterial({ color: color, emissive: new THREE.Color(color).multiplyScalar(0.25) })
+      );
+      jar.position.set(col, 0.5, row);
+      g.add(jar);
+      const seal = new THREE.Mesh(
+        new THREE.OctahedronGeometry(0.12, 0),
+        new THREE.MeshLambertMaterial({ color: 0xe2c878, emissive: new THREE.Color(0x6a5010) })
+      );
+      seal.position.set(col, 1.05, row);
+      g.add(seal);
+    });
+    const earthJar = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.28, 0.34, 1.05, 8),
+      new THREE.MeshLambertMaterial({ color: 0x8a5a32, emissive: new THREE.Color(0x3a2410) })
+    );
+    earthJar.position.set(-0.2, 0.55, -9.4);
+    g.add(earthJar);
+    const earthSeal = new THREE.Mesh(
+      new THREE.OctahedronGeometry(0.16, 0),
+      new THREE.MeshLambertMaterial({ color: 0xe2c878, emissive: new THREE.Color(0x6a5010) })
+    );
+    earthSeal.position.set(-0.2, 1.2, -9.4);
+    g.add(earthSeal);
+    const marrowJar = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.34, 0.4, 1.3, 8),
+      new THREE.MeshLambertMaterial({ color: 0x4a1814, emissive: new THREE.Color(0x2a0808) })
+    );
+    marrowJar.position.set(0, 0.7, -14.4);
+    g.add(marrowJar);
+    const hallLight = new THREE.PointLight(0xd4c08a, 0.9, 16);
+    hallLight.position.set(0, 2.4, -10);
+    g.add(hallLight);
+    const marrowLight = new THREE.PointLight(0xff5530, 0.7, 10);
+    marrowLight.position.set(0, 1.8, -14.2);
+    g.add(marrowLight);
+    const hallClerk = makeCharacter(0x3a3532, 0.9);
+    hallClerk.position.set(1.8, 0, -8.6);
+    hallClerk.rotation.y = Math.PI * 0.5;
+    g.add(hallClerk);
     g.visible = false;
     return g;
+  }
+
+  function vaultFits(x, z) {
+    if (z > 3.45) return false;
+    if (z >= -3.2 && Math.abs(x) <= 3.45) return true;
+    if (!seenBeats['vault-ledger']) return false;
+    if (z <= -3.05 && z >= -6.4 && Math.abs(x) <= 1.15) return true;
+    if (z <= -6.15 && z >= -15.6 && Math.abs(x) <= 3.25) return true;
+    return false;
+  }
+
+  function buildMarrow() {
+    const g = new THREE.Group();
+    g.visible = false;
+    g.add(new THREE.AmbientLight(0x6a4030, 0.45));
+    g.add(new THREE.HemisphereLight(0x8a4030, 0x1a100c, 0.35));
+    const ash = new THREE.Mesh(
+      new THREE.PlaneGeometry(40, 40),
+      new THREE.MeshLambertMaterial({ color: 0x2a1814 })
+    );
+    ash.rotation.x = -Math.PI / 2;
+    g.add(ash);
+    const engine = new THREE.Mesh(
+      new THREE.BoxGeometry(3.2, 2.4, 2.2),
+      new THREE.MeshLambertMaterial({ color: 0x3a3532 })
+    );
+    engine.position.set(0, 1.2, -2);
+    g.add(engine);
+    const maw = new THREE.Mesh(
+      new THREE.BoxGeometry(1.2, 1.4, 0.3),
+      new THREE.MeshBasicMaterial({ color: 0x1a0808 })
+    );
+    maw.position.set(0, 1.1, -0.8);
+    g.add(maw);
+    const seal = new THREE.Mesh(
+      new THREE.OctahedronGeometry(0.28, 0),
+      new THREE.MeshLambertMaterial({ color: 0xe2c878, emissive: new THREE.Color(0x6a3010) })
+    );
+    seal.position.set(0, 2.5, -2);
+    g.add(seal);
+    const leak = new THREE.PointLight(0xff4420, 1.3, 18);
+    leak.position.set(0, 1.4, 1.2);
+    g.add(leak);
+    g.userData.leak = leak;
+    marrowGroup = g;
+    scene.add(g);
   }
 
   function cellarFits(x, z) {
@@ -787,7 +916,9 @@
     return {
       id: 'harbor-vault',
       title: 'Harbor vault',
-      hint: 'The counting room is uncorked. The bottles stay behind iron. Press E.',
+      hint: seenBeats['vault-ledger']
+        ? 'The count is behind you. The bottle-hall is through the north iron. Press E.'
+        : 'The counting room is uncorked. The bottles stay behind iron. Press E.',
     };
   }
 
@@ -819,7 +950,9 @@
     if (Math.hypot(pin.x - playerMesh.position.x, pin.z - playerMesh.position.z) > 2.5) return null;
     return {
       title: 'The roost',
-      hint: 'Press E to take the thermal back to the isle. The bottle-hall stays corked.',
+      hint: seenBeats['bottle-hall']
+        ? 'Press E to take the thermal back to the isle. The hall stays behind you. The inland road does not.'
+        : 'Press E to take the thermal back to the isle. The bottle-hall stays corked.',
     };
   }
 
@@ -1664,7 +1797,14 @@
     const wellDone = pools.some((p) => p.id === 'well' && p.absorbed);
     const left = pools.filter((p) => !p.absorbed && !p.bottled && !p.interior).length;
     const kilnQuiet = pools.some((p) => p.id === 'kiln' && p.absorbed);
-    if (seenBeats['kestrel-ask'] && !seenBeats['vesper-duel']) {
+    const mergeNames = earnedMergeNames();
+    if (seenBeats.marrowRoad) {
+      rumor = 'You looked down the corked road. Ashen Marrow is inland, where a bottle already leaked. Your feet stayed in the hall.';
+    } else if (seenBeats['bottle-hall']) {
+      rumor = hallWord === 'crack'
+        ? 'The earth cork cracked. The spectacle is poorer by a mouthful. The inland leak remains, and so does the marrow bottle.'
+        : 'You walked the bottle-hall and left the corks. The inland bottle still faces Ashen Marrow.';
+    } else if (seenBeats['kestrel-ask'] && !seenBeats['vesper-duel']) {
       rumor = kestrelWord === 'ask'
         ? 'You asked Kestrel to land. She refused. The thermal is still hers, and the pack is still without her.'
         : 'You left Kestrel the air. She did not join. The roost is still the way home.';
@@ -1672,10 +1812,10 @@
       rumor = duelWord === 'press'
         ? 'Vesper turned the blow on the shale. Nobody fell. The vault is still corked, and the wrist has a number.'
         : 'You held the blow on the shale. Vesper counted the hold and walked away alive. The vault is still corked.';
-    } else if (mergeWord === 'plasma') {
-      rumor = 'Plasma is on the magic list. It spends fire and lightning together, and then they are gone.';
-    } else if (mergeWord === 'steam') {
-      rumor = 'Steam is on the magic list. It spends fire and water together. It is weather you can aim.';
+    } else if (mergeNames.length === 1) {
+      rumor = mergeNames[0] + ' is on the magic list. It spends what it names, and then those elements are gone.';
+    } else if (mergeNames.length) {
+      rumor = mergeNames.join(', ') + ' sit on the magic list. They spend what they name, and then those elements are gone.';
     } else if (seenBeats['vault-ledger']) {
       const signed = seals.some((seal) => seal.name === 'Witness Line');
       rumor = signed
@@ -1731,6 +1871,8 @@
     $('#el-fire').textContent = String(spark.fire);
     $('#el-water').textContent = String(spark.water);
     $('#el-lightning').textContent = String(spark.lightning);
+    const earthEl = $('#el-earth');
+    if (earthEl) earthEl.textContent = String(spark.earth || 0);
     $('#strain-nums').textContent = spark.strain + '/100';
     const bar = $('#strain-bar');
     bar.style.width = spark.strain + '%';
@@ -1749,17 +1891,19 @@
     const showDoor = idle && locale === 'field' && nearDoor && !showAbsorb;
     const showGate = idle && locale === 'field' && nearGate && !showAbsorb && !showDoor;
     const showReturn = idle && locale === 'field' && nearReturn && !showAbsorb && !showDoor && !showGate;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn);
+    const showLook = idle && nearMarrow && !showAbsorb && !atExit;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
     else if (showGate) absorbBtn.textContent = 'Land';
+    else if (showLook) absorbBtn.textContent = 'Look';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
   }
 
   function updatePrompt() {
     const atExit = locale !== 'field' && playerMesh && playerMesh.position.z > 2.55;
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || (!nearPool && !nearDoor && !nearGate && !nearReturn && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -1779,7 +1923,9 @@
       $('#interact-detail').textContent = locale === 'root-cellar'
         ? 'Press E to step back onto the isle. The throat stays open behind you.'
         : locale === 'harbor-vault'
-          ? 'Press E to step back onto the coast. The iron stays shut.'
+          ? (seenBeats['bottle-hall']
+            ? 'Press E to step back onto the coast. The hall stays lit. The inland road does not come with you.'
+            : 'Press E to step back onto the coast. The iron stays shut.')
           : 'Press E to step back onto the isle.';
       return;
     }
@@ -1796,6 +1942,11 @@
     if (nearReturn && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
       $('#interact-title').textContent = nearReturn.title;
       $('#interact-detail').textContent = nearReturn.hint;
+      return;
+    }
+    if (nearMarrow) {
+      $('#interact-title').textContent = nearMarrow.title;
+      $('#interact-detail').textContent = nearMarrow.hint;
       return;
     }
     $('#interact-title').textContent = nearPool.name;
@@ -1841,14 +1992,19 @@
       } else {
         waiting.push('Kestrel is not on this road.');
       }
-      if (seenBeats['vault-ledger']) {
+      if (seenBeats['bottle-hall']) {
+        waiting.push(hallWord === 'crack'
+          ? 'The earth cork is cracked. The marrow bottle stayed. Kestrel still did not join.'
+          : 'You walked the bottle-hall and left the corks. Kestrel still did not join.');
+      } else if (seenBeats['vault-ledger']) {
         const signed = seals.some((seal) => seal.name === 'Witness Line');
         waiting.push(signed
           ? 'The harbor count has Lira’s name on the shortage. The bottles stayed behind iron.'
           : 'You refused the harbor’s shortage line. The bottles stayed behind iron.');
       }
-      if (mergeWord === 'plasma') waiting.push('Plasma is on the magic list. It spends fire and lightning together.');
-      else if (mergeWord === 'steam') waiting.push('Steam is on the magic list. It spends fire and water together.');
+      if (seenBeats.marrowRoad) waiting.push('You looked down Ashen Marrow from the hall. The digest-engine is inland. Your feet stayed.');
+      const heldMerges = earnedMergeNames();
+      if (heldMerges.length) waiting.push(heldMerges.join(', ') + (heldMerges.length === 1 ? ' is' : ' are') + ' on the magic list.');
       if (seenBeats['vesper-duel']) waiting.push('Vesper measured a blow on the coast and walked away alive.');
       roadNote.textContent = waiting.join(' ');
     }
@@ -1900,6 +2056,8 @@
     $('#inv-fire').textContent = String(spark.fire);
     $('#inv-water').textContent = String(spark.water);
     $('#inv-lightning').textContent = String(spark.lightning);
+    const earthInv = $('#inv-earth');
+    if (earthInv) earthInv.textContent = String(spark.earth || 0);
   }
 
   function setFieldControls(visible) {
@@ -2045,6 +2203,10 @@
     if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen) return;
     if (locale !== 'field') {
       const atMouth = playerMesh && playerMesh.position.z > 2.55;
+      if (nearMarrow && !atMouth) {
+        playMarrowLook();
+        return;
+      }
       if (nearPool && !atMouth) {
         tryAbsorb();
         return;
@@ -2109,11 +2271,13 @@
       });
     }
     const levels = grantSparkXp(pool.xp);
+    const gained = grantReadyMerges({ quiet: true });
     suppressEncountersUntil = performance.now() + 3400;
     let msg = pool.line + ' +' + pool.xp + ' XP. Strain ' + spark.strain + '/100.';
     if (over) msg += ' Beyond what she can hold — the excess scorches.';
     if (levels) msg += ' Spark level ' + spark.level + '. Capacity ' + spark.capacity + '.';
     msg += strainWarning(before) + bite;
+    if (gained.length) msg += ' ' + gained.join(', ') + (gained.length === 1 ? ' stays' : ' stay') + ' on the magic list.';
     showToast(msg);
     refreshRumor();
     updateHUD();
@@ -2143,6 +2307,29 @@
   function actReady() {
     const ember = pools.find((p) => p.id === 'ember');
     return !!(seenBeats.village && seenBeats.patrol && ember && ember.absorbed);
+  }
+
+  function nearestMarrow() {
+    if (!playerMesh || locale !== 'harbor-vault' || !seenBeats['bottle-hall'] || skyPass) return null;
+    if (playerMesh.position.z > -13.2 || Math.abs(playerMesh.position.x) > 2.4) return null;
+    return {
+      title: 'Ashen Marrow',
+      hint: 'The inland cork. Press E to look down the road. Your feet stay here.',
+    };
+  }
+
+  function updateVaultTriggers() {
+    if (locale !== 'harbor-vault' || !playerMesh || dialogueOpen) return;
+    const z = playerMesh.position.z;
+    if (z > -6) vaultLatch = false;
+    if (!seenBeats['bottle-hall'] && !vaultLatch && z < -8.2) {
+      vaultLatch = true;
+      const fn = EW.scenes['bottle-hall'];
+      if (typeof fn === 'function') {
+        const played = fn();
+        if (played !== false && dialogueOpen) pendingBeat = 'bottle-hall';
+      }
+    }
   }
 
   function updateCellarTriggers() {
@@ -2187,7 +2374,7 @@
 
   function updateOverworld(dt) {
     const camTarget = playerMesh.position;
-    const coasting = !!(skyPass && (skyPass.mode === 'coast' || skyPass.mode === 'land'));
+    const coasting = skyHoldsFeet();
     if (waystoneGroup && waystoneGroup.userData.awake && waystoneGroup.userData.beamMat) {
       waystoneGroup.userData.beamMat.opacity = 0.55 + Math.sin(performance.now() * 0.004) * 0.25;
     }
@@ -2201,6 +2388,7 @@
       nearDoor = null;
       nearGate = null;
       nearReturn = null;
+      nearMarrow = null;
       joy.active = false;
       joy.dx = 0;
       joy.dy = 0;
@@ -2226,9 +2414,12 @@
           const limit = WORLD_SIZE * 0.58;
           playerMesh.position.x = Math.max(-limit, Math.min(limit, nx));
           playerMesh.position.z = Math.max(-limit, Math.min(limit, nz));
-        } else if (locale === 'leaf-village' || locale === 'harbor-vault') {
+        } else if (locale === 'leaf-village') {
           playerMesh.position.x = Math.max(-3.45, Math.min(3.45, nx));
           playerMesh.position.z = Math.max(-3.45, Math.min(3.45, nz));
+        } else if (locale === 'harbor-vault') {
+          if (vaultFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
+          if (vaultFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
         } else {
           if (cellarFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
           if (cellarFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
@@ -2240,6 +2431,7 @@
         nearDoor = nearestDoor();
         nearGate = nearestGate();
         nearReturn = nearestReturn();
+        nearMarrow = nearestMarrow();
         const safe = nearPool && !nearPool.absorbed;
         const cooled = performance.now() < suppressEncountersUntil;
         if (locale === 'field' && (regionId === 'verdant-isle' || regionId === 'stormreach') && !safe && !cooled && stepsSinceEncounter > ENCOUNTER_STEPS) {
@@ -2253,9 +2445,11 @@
         nearDoor = nearestDoor();
         nearGate = nearestGate();
         nearReturn = nearestReturn();
+        nearMarrow = nearestMarrow();
       }
 
       updateCellarTriggers();
+      updateVaultTriggers();
       maybeResumeCoast();
 
       if (locale === 'field') regionBeats().forEach((b) => {
@@ -2272,6 +2466,7 @@
       nearDoor = nearestDoor();
       nearGate = nearestGate();
       nearReturn = nearestReturn();
+      nearMarrow = nearestMarrow();
       playerMesh.position.y = 0;
     }
 
@@ -2542,7 +2737,7 @@
     const actor = turn && turn.type === 'party' ? party[turn.index] : null;
     magicMenu.querySelectorAll('[data-magic]').forEach((btn) => {
       const sp = SPELLS[btn.dataset.magic];
-      const locked = !!(sp.merge && mergeWord !== sp.merge);
+      const locked = !!(sp.merge && !merges[sp.merge]);
       btn.classList.toggle('hidden', locked);
       if (locked) {
         btn.disabled = true;
@@ -2691,7 +2886,7 @@
     } else if (act.kind === 'magic') {
       const sp = SPELLS[act.magic];
       const alsoNeed = sp && sp.also ? (sp.alsoCost || 1) : 0;
-      if (!sp || (sp.merge && mergeWord !== sp.merge) || spark[sp.element] < sp.cost || (sp.also && spark[sp.also] < alsoNeed) || actor.mp < sp.mp) {
+      if (!sp || (sp.merge && !merges[sp.merge]) || spark[sp.element] < sp.cost || (sp.also && spark[sp.also] < alsoNeed) || actor.mp < sp.mp) {
         showLog('The spark has not digested enough, or the mind is dry.');
         combatBusy = false;
         inputEnabled = true;
@@ -2716,7 +2911,9 @@
       } else {
         const target = enemies[targetIdx];
         if (!target || !target.alive) { combatBusy = false; advanceTurn(); return; }
-        const dmg = Math.max(1, stats.mag + sp.power + mageBonus + rand(0, 6) - Math.floor(target.def / 3));
+        const usualCut = Math.floor(target.def / 3);
+        const defCut = act.magic === 'glass' ? Math.floor(target.def * 0.08) : usualCut;
+        const dmg = Math.max(1, stats.mag + sp.power + mageBonus + rand(0, 6) - defCut);
         target.hp = Math.max(0, target.hp - dmg);
         const lines = {
           fire: actor.name + ' spends a coal of fire. ' + target.name + ' takes ' + dmg + '.',
@@ -2724,6 +2921,9 @@
           lightning: 'Lightning the spark kept in the teeth. ' + target.name + ' takes ' + dmg + '.',
           plasma: 'Plasma. Fire and lightning spend together. ' + target.name + ' takes ' + dmg + '.',
           steam: 'Steam scalds the air between them. ' + target.name + ' takes ' + dmg + '.',
+          storm: 'Storm. Water and lightning spend together. ' + target.name + ' takes ' + dmg + '.',
+          magma: 'Magma. Fire and earth spend together. ' + target.name + ' takes ' + dmg + '.',
+          glass: 'Glass. The blow is bright and brittle. ' + target.name + ' takes ' + dmg + '.',
         };
         showLog(lines[act.magic] || (actor.name + ' spends a held word. ' + target.name + ' takes ' + dmg + '.'));
         flashMesh(combatEnemyMeshes[targetIdx], sp.flash);
@@ -2923,6 +3123,7 @@
     overworldGroup.visible = locale === 'field' && !onCoast;
     if (stormreachGroup) stormreachGroup.visible = onCoast;
     if (coastGroup) coastGroup.visible = false;
+    if (marrowGroup) marrowGroup.visible = false;
     if (interiorGroup) interiorGroup.visible = locale !== 'field';
     combatGroup.visible = false;
     scene.fog.near = 18;
@@ -3150,7 +3351,7 @@
     }
     if (locale === 'leaf-village') seenBeats.village = true;
     else if (locale === 'root-cellar') seenBeats.cellar = true;
-    if (gameState === State.OVERWORLD && !inventoryOpen && !encounterLocked && !(skyPass && (skyPass.mode === 'coast' || skyPass.mode === 'land'))) {
+    if (gameState === State.OVERWORLD && !inventoryOpen && !encounterLocked && !skyHoldsFeet()) {
       setFieldControls(true);
     }
     const done = dialogueOnDone;
@@ -3278,6 +3479,7 @@
     overworldGroup.visible = true;
     if (stormreachGroup) stormreachGroup.visible = false;
     if (coastGroup) coastGroup.visible = false;
+    if (marrowGroup) marrowGroup.visible = false;
     combatGroup.visible = false;
     const locLabel = $('#hud-location');
     if (locLabel) locLabel.textContent = 'Verdant Isle';
@@ -3414,6 +3616,8 @@
         locale: locale,
         region: regionId,
         mergeWord: mergeWord,
+        merges: Object.keys(merges).filter((key) => merges[key]),
+        hallWord: hallWord,
         duelWord: duelWord,
         kestrelWord: kestrelWord,
         pos: { x: playerMesh.position.x, z: playerMesh.position.z },
@@ -3444,7 +3648,15 @@
     introToastShown = !!data.introToastShown;
     combatsFought = data.combatsFought || 0;
     regionId = data.region === 'stormreach' ? 'stormreach' : 'verdant-isle';
-    mergeWord = data.mergeWord === 'plasma' || data.mergeWord === 'steam' ? data.mergeWord : null;
+    merges = {};
+    (data.merges || []).forEach((id) => {
+      if (MERGE_OK[id]) merges[id] = true;
+    });
+    if (data.mergeWord && MERGE_OK[data.mergeWord]) merges[data.mergeWord] = true;
+    const held = Object.keys(merges).filter((key) => merges[key]);
+    mergeWord = data.mergeWord && MERGE_OK[data.mergeWord] ? data.mergeWord : (held.length ? held[held.length - 1] : null);
+    hallWord = data.hallWord === 'crack' || data.hallWord === 'leave' ? data.hallWord : null;
+    if (typeof spark.earth !== 'number') spark.earth = 0;
     duelWord = data.duelWord === 'press' || data.duelWord === 'hold' ? data.duelWord : null;
     kestrelWord = data.kestrelWord === 'ask' || data.kestrelWord === 'leave' ? data.kestrelWord : null;
     shardSeq = shards.reduce((max, shard) => {
@@ -3471,6 +3683,7 @@
     syncSilhouette();
     syncCoastVesper();
     if (seenBeats['waystone-wake']) wakeWaystone();
+    grantReadyMerges({ quiet: true });
     refreshRumor();
   }
 
@@ -3537,7 +3750,7 @@
   }
 
   function playSkyPass() {
-    if (skyPass && (skyPass.mode === 'coast' || skyPass.mode === 'land')) return;
+    if (skyHoldsFeet()) return;
     if (!eagleGroup) eagleGroup = makeEagle();
     if (overworldGroup && eagleGroup.parent !== overworldGroup) {
       if (eagleGroup.parent) eagleGroup.parent.remove(eagleGroup);
@@ -3549,7 +3762,7 @@
 
   function playCoastCrossing() {
     if (locale !== 'field' || regionId !== 'verdant-isle' || dialogueOpen) return;
-    if (skyPass && (skyPass.mode === 'coast' || skyPass.mode === 'land')) return;
+    if (skyHoldsFeet()) return;
     beginCoastVisual();
     const fn = EW.scenes['stormreach-glimpse'];
     if (typeof fn === 'function') fn();
@@ -3570,6 +3783,7 @@
     coastGroup.add(eagleGroup);
     eagleGroup.visible = true;
     coastGroup.visible = true;
+    if (marrowGroup) marrowGroup.visible = false;
     overworldGroup.visible = false;
     if (stormreachGroup) stormreachGroup.visible = false;
     scene.fog.color.set(0x6e7e90);
@@ -3592,6 +3806,7 @@
       eagleGroup.visible = false;
     }
     if (coastGroup) coastGroup.visible = false;
+    if (marrowGroup) marrowGroup.visible = false;
     if (locale === 'field' && overworldGroup) {
       overworldGroup.visible = true;
       scene.fog.color.set(0x87b5d9);
@@ -3638,6 +3853,7 @@
     if (overworldGroup) overworldGroup.visible = regionId === 'verdant-isle';
     if (stormreachGroup) stormreachGroup.visible = regionId === 'stormreach';
     if (coastGroup) coastGroup.visible = false;
+    if (marrowGroup) marrowGroup.visible = false;
     if (interiorGroup) interiorGroup.visible = false;
     const sky = regionId === 'stormreach' ? 0x6e7e90 : 0x87b5d9;
     scene.fog.color.set(sky);
@@ -3704,6 +3920,7 @@
       eagleGroup.visible = false;
     }
     if (coastGroup) coastGroup.visible = false;
+    if (marrowGroup) marrowGroup.visible = false;
     skyPass = null;
     enterRegion('stormreach');
     if (gameState === State.OVERWORLD && !dialogueOpen && !inventoryOpen && !encounterLocked) {
@@ -3711,11 +3928,141 @@
     }
   }
 
-  function noteMerge(word) {
-    mergeWord = word === 'plasma' ? 'plasma' : 'steam';
-    seenBeats['merge-tease'] = true;
+  const MERGE_OK = { plasma: 1, steam: 1, storm: 1, magma: 1, glass: 1 };
+  const MERGE_NAMES = { plasma: 'Plasma', steam: 'Steam', storm: 'Storm', magma: 'Magma', glass: 'Glass' };
+  const MERGE_RULES = [
+    { id: 'plasma', need: { fire: 1, lightning: 1 } },
+    { id: 'steam', need: { fire: 1, water: 1 } },
+    { id: 'storm', need: { water: 1, lightning: 1 } },
+    { id: 'magma', need: { fire: 1, earth: 1 } },
+    { id: 'glass', need: { lightning: 1, earth: 1 } },
+  ];
+
+  function earnedMergeNames() {
+    return Object.keys(MERGE_NAMES).filter((id) => merges[id]).map((id) => MERGE_NAMES[id]);
+  }
+
+  function mergeReady(rule) {
+    const need = rule.need;
+    return Object.keys(need).every((el) => (spark[el] || 0) >= need[el]);
+  }
+
+  function grantReadyMerges(opts) {
+    const gained = [];
+    MERGE_RULES.forEach((rule) => {
+      if (merges[rule.id] || !mergeReady(rule)) return;
+      merges[rule.id] = true;
+      mergeWord = rule.id;
+      gained.push(MERGE_NAMES[rule.id]);
+    });
+    if (!gained.length) return gained;
+    if (!(opts && opts.quiet)) {
+      showToast(gained.join(', ') + (gained.length === 1 ? ' stays' : ' stay') + ' on the magic list.');
+    }
     refreshRumor();
     saveGame();
+    return gained;
+  }
+
+  function noteMerge() {
+    seenBeats['merge-tease'] = true;
+    grantReadyMerges({ quiet: true });
+  }
+
+  function noteHall(id) {
+    hallWord = id === 'crack' ? 'crack' : 'leave';
+    seenBeats['bottle-hall'] = true;
+    let gained = [];
+    if (hallWord === 'crack') {
+      spark.earth = (spark.earth || 0) + 1;
+      applyStrain(14);
+      if (!seals.some((seal) => seal.name === 'Cracked Earth Cork')) {
+        seals.push({
+          name: 'Cracked Earth Cork',
+          desc: 'Not a licence. A mouthful of sealed earth from the harbor spectacle. The marrow bottle did not move.',
+        });
+      }
+      gained = grantReadyMerges({ quiet: true });
+    }
+    if (hallWord === 'crack') {
+      const spellBit = gained.length
+        ? ' ' + gained.join(', ') + (gained.length === 1 ? ' stays' : ' stay') + ' on the magic list.'
+        : '';
+      showToast('The earth cork cracks. A mouthful stays in the teeth. Strain ' + spark.strain + '/100.' + spellBit);
+    }
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function skyHoldsFeet() {
+    return !!(skyPass && (skyPass.mode === 'coast' || skyPass.mode === 'land' || skyPass.mode === 'marrow'));
+  }
+
+  function playMarrowLook() {
+    if (skyPass || dialogueOpen || !seenBeats['bottle-hall']) return;
+    marrowBusy = false;
+    if (interiorGroup) interiorGroup.visible = false;
+    if (marrowGroup) marrowGroup.visible = true;
+    scene.fog.color.set(0x3a241c);
+    scene.fog.near = 12;
+    scene.fog.far = 40;
+    renderer.setClearColor(0x3a241c);
+    skyPass = { t: 0, dur: 8, mode: 'marrow' };
+    camera.position.set(8, 5.2, 8);
+    camera.lookAt(0, 1.2, -2);
+    const locLabel = $('#hud-location');
+    if (locLabel) locLabel.textContent = 'Ashen Marrow';
+    setFieldControls(false);
+    const fn = EW.scenes['marrow-road'];
+    if (typeof fn === 'function') fn();
+  }
+
+  function updateMarrowPass(dt) {
+    if (!skyPass || skyPass.mode !== 'marrow') return;
+    skyPass.t += dt;
+    if (marrowGroup && marrowGroup.userData.leak) {
+      marrowGroup.userData.leak.intensity = 1.1 + Math.abs(Math.sin(skyPass.t * 3)) * 0.8;
+    }
+    camera.position.lerp(new THREE.Vector3(4, 4.2, 6), 0.08);
+    camera.lookAt(0, 1.4, -2);
+    if (skyPass.t >= skyPass.dur && !dialogueOpen) finishMarrow();
+  }
+
+  function finishMarrow() {
+    if (marrowBusy) return;
+    marrowBusy = true;
+    skyPass = null;
+    if (marrowGroup) marrowGroup.visible = false;
+    if (interiorGroup) interiorGroup.visible = locale !== 'field';
+    if (vaultRoom) vaultRoom.visible = locale === 'harbor-vault';
+    if (villageRoom) villageRoom.visible = locale === 'leaf-village';
+    if (cellarRoom) cellarRoom.visible = locale === 'root-cellar';
+    scene.fog.color.set(0x1a222c);
+    scene.fog.near = 18;
+    scene.fog.far = 55;
+    renderer.setClearColor(0x1a222c);
+    const locLabel = $('#hud-location');
+    if (locLabel) locLabel.textContent = 'Harbor Vault';
+    if (playerMesh) {
+      camera.position.set(playerMesh.position.x, playerMesh.position.y + CAMERA_HEIGHT, playerMesh.position.z + CAMERA_DIST);
+      camera.lookAt(playerMesh.position.x, playerMesh.position.y + 1, playerMesh.position.z);
+    }
+    if (!seenBeats.marrowRoad) {
+      seenBeats.marrowRoad = true;
+      if (!seals.some((seal) => seal.name === 'Unwalked Marrow')) {
+        seals.push({
+          name: 'Unwalked Marrow',
+          desc: 'Not a road. A look from the bottle-hall at the inland leak and the digest-engine. The feet stayed.',
+        });
+      }
+    }
+    refreshRumor();
+    updateHUD();
+    saveGame();
+    if (gameState === State.OVERWORLD && !dialogueOpen && !inventoryOpen && !encounterLocked) {
+      setFieldControls(true);
+    }
   }
 
   function noteLedger(id) {
@@ -3760,7 +4107,8 @@
 
   function updateSkyPass(dt) {
     if (!skyPass) return;
-    if (skyPass.mode === 'coast') updateCoastPass(dt);
+    if (skyPass.mode === 'marrow') updateMarrowPass(dt);
+    else if (skyPass.mode === 'coast' || skyPass.mode === 'land') updateCoastPass(dt);
     else updateEagleCross(dt);
   }
 
@@ -3844,6 +4192,8 @@
   EW.noteLedger = noteLedger;
   EW.seenLedger = function () { return !!seenBeats['vault-ledger']; };
   EW.noteKestrelAsk = noteKestrelAsk;
+  EW.noteHall = noteHall;
+  EW.finishMarrow = finishMarrow;
   EW.revealCoastVesper = function () {
     if (coastVesper) coastVesper.visible = true;
   };

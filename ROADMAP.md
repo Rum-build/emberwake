@@ -64,19 +64,27 @@ Playable on the Verdant Isle field:
 - After a coast pool and the vault’s face, Vesper offers a measuring duel. Throw the blow (a little strain) or hold it. She walks away alive.
 - Continue stores the coast, the merge word, and the duel, along with the rest of the browser save. The mouse stick and Absorb/Pack stay.
 
-## Act II deepen (this branch)
+## Act II deepen (shipped)
 
-- After the clerk on the shale, **E** at the seam enters the counting room. Sign the shortage or refuse it. The bottles stay behind iron. Leaving puts her back on the coast, not the isle.
-- Once the merge tease has fired, **Plasma** or **Steam** is a Magic command. Plasma spends fire and lightning. Steam spends fire and water.
+- After the clerk on the shale, **E** at the seam enters the counting room. Sign the shortage or refuse it. Leaving puts her back on the coast, not the isle.
+- Once the elements are held, **Plasma** and **Steam** are Magic commands. Plasma spends fire and lightning. Steam spends fire and water.
 - Walking the shale can start a fight: charged wisps, licence clerks, scribes, and sometimes Vesper’s echo. The counting room stays quiet.
-- After the count, walk under the wing and ask Kestrel to land, or leave her the air. She does not join. Continue stores the vault, the spell, and the refusal.
+- After the count, walk under the wing and ask Kestrel to land, or leave her the air. She does not join. Continue stores the vault, the spells, and the refusal.
+
+## Act II bottle-hall (this branch)
+
+- After the count, the north iron is a door. The bottle-hall is the Concord’s sealed-magic show: gold corks, a short shelf, and a clerk who lets a signature or a refusal look.
+- Crack the earth cork or leave it. Cracking puts earth on the spark and on the HUD. The marrow bottle does not move. Neither choice is a licence.
+- **Storm** (water and lightning), **Magma** (fire and earth), and **Glass** (lightning and earth) join Plasma and Steam on the magic list once those elements are held. An older save that already learned one merge learns the others it can already pay for.
+- At the north arch, **Look** opens a short view of Ashen Marrow: ash, a digest-engine, a leak. The feet stay in the hall. Continue stores the hall choice, the earth, and the look.
+- The mouse stick, Absorb, Pack, and the browser save stay.
 
 ## Still ahead
 
-From DESIGN.md, after this deepening:
+From DESIGN.md, after the hall:
 
-1. The scar’s debt, counted and not paid. The witness line does not pay it.
-2. The rest of Act II: the bottle-hall itself, the rest of the merge tree, a longer coast, and a party slot for Kestrel if she ever takes one.
+1. The scar’s debt, counted and not paid. The witness line and the earth cork do not pay it.
+2. Walking Ashen Marrow, the wind merges (ice, thunder, tide, root), and a party slot for Kestrel if she ever takes one.
 
 Combat menus stay Fight / Magic / Item / Flee. New panels stay desktop-first.
 

@@ -73,6 +73,7 @@
         <span class="el fire" title="Fire digested">Fire <span id="el-fire">0</span></span>
         <span class="el water" title="Water digested">Water <span id="el-water">0</span></span>
         <span class="el lightning" title="Lightning digested">Bolt <span id="el-lightning">0</span></span>
+        <span class="el earth" title="Earth digested">Earth <span id="el-earth">0</span></span>
       </div>
       <div class="hud-strain">
         <span class="label">Host strain</span>
@@ -138,7 +139,7 @@
         <p>Level <span id="inv-level">1</span> · XP <span id="inv-xp">0</span>/<span id="inv-xp-next">44</span> · capacity <span id="inv-cap">3</span></p>
         <p>Path <span id="inv-path">—</span> · attunement <span id="inv-path-xp">0</span>/20</p>
         <p>Marks <span id="inv-gold">0</span> · Strain <span id="inv-strain">0/100</span></p>
-        <p class="el-line">Fire <span id="inv-fire">0</span> · Water <span id="inv-water">0</span> · Lightning <span id="inv-lightning">0</span></p>
+        <p class="el-line">Fire <span id="inv-fire">0</span> · Water <span id="inv-water">0</span> · Lightning <span id="inv-lightning">0</span> · Earth <span id="inv-earth">0</span></p>
       </section>
     </div>
   </div>
@@ -188,6 +189,9 @@
           <button class="btn btn-menu" type="button" data-magic="cure"><span class="cmd">Mend</span><span class="meta"><span class="cost">Water 1 · 5 MP</span><kbd class="pc-key">4</kbd></span></button>
           <button class="btn btn-menu hidden" type="button" data-magic="plasma"><span class="cmd">Plasma</span><span class="meta"><span class="cost">Fire 1 + Bolt 1 · 7 MP</span></span></button>
           <button class="btn btn-menu hidden" type="button" data-magic="steam"><span class="cmd">Steam</span><span class="meta"><span class="cost">Fire 1 + Water 1 · 6 MP</span></span></button>
+          <button class="btn btn-menu hidden" type="button" data-magic="storm"><span class="cmd">Storm</span><span class="meta"><span class="cost">Water 1 + Bolt 1 · 7 MP</span></span></button>
+          <button class="btn btn-menu hidden" type="button" data-magic="magma"><span class="cmd">Magma</span><span class="meta"><span class="cost">Fire 1 + Earth 1 · 7 MP</span></span></button>
+          <button class="btn btn-menu hidden" type="button" data-magic="glass"><span class="cmd">Glass</span><span class="meta"><span class="cost">Bolt 1 + Earth 1 · 6 MP</span></span></button>
           <button class="btn btn-menu btn-back span-2" type="button" data-action="back"><span class="cmd">Back</span><kbd class="pc-key">Esc</kbd></button>
         </div>
         <div id="item-menu" class="menu-grid hidden"></div>
