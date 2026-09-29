@@ -184,6 +184,7 @@
   let nearLetter = null;
   let nearMargin = null;
   let nearChalk = null;
+  let nearCamp = null;
   let runLive = false;
   const SAVE_KEY = 'emberwake.save.v1';
   let combatsFought = 0;
@@ -1638,6 +1639,37 @@
     if (markStone.userData.glow) markStone.userData.glow.intensity = 0.55;
     g.add(markStone);
     makeMotes(g, 36, 0xd8c49a, { x: 10, y: 1.6, z: 8 });
+    const rest = new THREE.Group();
+    const restRing = new THREE.Mesh(
+      new THREE.TorusGeometry(0.55, 0.08, 6, 14),
+      new THREE.MeshLambertMaterial({ color: 0x3a3028 })
+    );
+    restRing.rotation.x = Math.PI / 2;
+    restRing.position.y = 0.06;
+    rest.add(restRing);
+    for (let i = 0; i < 6; i++) {
+      const stone = new THREE.Mesh(
+        new THREE.DodecahedronGeometry(0.11, 0),
+        new THREE.MeshLambertMaterial({ color: 0x5c5248 })
+      );
+      const a = (i / 6) * Math.PI * 2;
+      stone.position.set(Math.cos(a) * 0.62, 0.1, Math.sin(a) * 0.62);
+      rest.add(stone);
+    }
+    const restEmber = new THREE.Mesh(
+      new THREE.ConeGeometry(0.11, 0.26, 5),
+      new THREE.MeshBasicMaterial({ color: 0xff7a3a })
+    );
+    restEmber.position.y = 0.2;
+    rest.add(restEmber);
+    const bedroll = new THREE.Mesh(
+      new THREE.BoxGeometry(0.72, 0.05, 0.36),
+      new THREE.MeshLambertMaterial({ color: 0x6a4030 })
+    );
+    bedroll.position.set(0.95, 0.04, 0.12);
+    rest.add(bedroll);
+    rest.position.set(-4.15, 0, 2.55);
+    g.add(rest);
     yardGroup = g;
     scene.add(g);
   }
@@ -2680,6 +2712,21 @@
     };
   }
 
+  function nearestCamp() {
+    if (!playerMesh || locale !== 'concord-yard' || skyPass) return null;
+    if (Math.hypot(-4.15 - playerMesh.position.x, 2.55 - playerMesh.position.z) > 1.0) return null;
+    if (seenBeats['yard-camp']) {
+      return {
+        title: 'A rest',
+        hint: 'They already sat. The slag is still the road. Press E to hear it again.',
+      };
+    }
+    return {
+      title: 'A rest',
+      hint: 'Stones and a bedroll, west of the south gate. Press E. It is not the slag and not the mark.',
+    };
+  }
+
   function nearestPorter() {
     if (!playerMesh || locale !== 'field' || regionId !== 'stormreach' || skyPass) return null;
     if (Math.hypot(2.45 - playerMesh.position.x, 2.55 - playerMesh.position.z) > 1.45) return null;
@@ -2760,8 +2807,9 @@
     locale = id;
     if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
     interiorGroup.add(playerMesh);
-    playerMesh.position.set(0, 0, silent && opts.pos ? opts.pos.z : 3.05);
-    if (silent && opts.pos) playerMesh.position.x = opts.pos.x;
+    const resumeX = silent && opts.pos && opts.pos.x != null ? opts.pos.x : 0;
+    const resumeZ = silent && opts.pos && opts.pos.z != null ? opts.pos.z : 3.05;
+    playerMesh.position.set(resumeX, 0, resumeZ);
     overworldGroup.visible = false;
     if (stormreachGroup) stormreachGroup.visible = false;
     if (marrowGroup) marrowGroup.visible = false;
@@ -3391,6 +3439,7 @@
     pool.absorbed = false;
     pool.healing = false;
     pool.heal = 0;
+    pool.burst = 0;
     if (def) {
       pool.strain = def.strain;
       pool.line = def.line;
@@ -3425,16 +3474,18 @@
     const t = performance.now() * 0.001;
     pools.forEach((pool) => {
       if (pool.healing && pool.heal < 1) pool.heal = Math.min(1, pool.heal + dt * 0.5);
+      if (pool.burst > 0) pool.burst = Math.max(0, pool.burst - dt * 0.85);
       const h = pool.absorbed ? pool.heal : 0;
+      const burst = pool.burst || 0;
       pool.rotMat.color.copy(pool.rotColor).lerp(pool.healColor, h);
       pool.lifeMat.opacity = h * 0.9;
       pool.coreMat.emissive.copy(pool.elColor).multiplyScalar(0.25 + h * 0.95);
       pool.core.position.y = 1.2 + Math.sin(t * 2 + pool.phase) * 0.12;
       pool.core.rotation.y += dt * 0.7;
-      pool.core.scale.setScalar(1 + Math.sin(t * 3 + pool.phase) * 0.08);
-      if (pool.rim) pool.rim.scale.setScalar(1 + Math.sin(t * 1.4 + pool.phase) * 0.035);
+      pool.core.scale.setScalar((1 + Math.sin(t * 3 + pool.phase) * 0.08) * (1 + burst * 0.9));
+      if (pool.rim) pool.rim.scale.setScalar((1 + Math.sin(t * 1.4 + pool.phase) * 0.035) * (1 + burst * 0.42));
       const pulse = 0.16 + Math.sin(t * 2.1 + pool.phase) * 0.06;
-      pool.beamMat.opacity = pulse * (1 - h) + 0.07 * h;
+      pool.beamMat.opacity = pulse * (1 - h) + 0.07 * h + burst * 0.72;
       if (pool.neck) pool.neck.material.opacity = (0.22 + Math.sin(t * 2.4 + pool.phase) * 0.08) * (1 - h * 0.85);
       pool.spikes.forEach((s) => {
         s.scale.y = Math.max(0.001, 1 - h);
@@ -3443,9 +3494,9 @@
       pool.flowers.forEach((f) => { f.scale.y = Math.max(0.001, h); });
       pool.motes.forEach((m, i) => {
         const a = t * (0.7 + h) + i * 1.25 + pool.phase;
-        const rad = 1.05 + (i % 3) * 0.5;
-        m.position.set(Math.cos(a) * rad, 0.7 + Math.sin(a * 1.6) * 0.45 + h * 0.3, Math.sin(a) * rad);
-        m.scale.setScalar(0.65 + Math.sin(a * 2.4) * 0.35);
+        const rad = 1.05 + (i % 3) * 0.5 + burst * (1.6 + (i % 3) * 0.45);
+        m.position.set(Math.cos(a) * rad, 0.7 + Math.sin(a * 1.6) * 0.45 + h * 0.3 + burst * 0.85, Math.sin(a) * rad);
+        m.scale.setScalar((0.65 + Math.sin(a * 2.4) * 0.35) * (1 + burst * 2.4));
       });
       if (pool.figure) {
         pool.figure.position.y = -2.3 * h;
@@ -3655,8 +3706,8 @@
     pts.userData.base = base;
     pts.userData.fall = !!(opts && opts.fall);
     if (pts.userData.fall) {
-      pts.material.size = 0.08;
-      pts.material.opacity = 0.58;
+      pts.material.size = 0.11;
+      pts.material.opacity = 0.62;
     }
     parent.add(pts);
     motes.push(pts);
@@ -3677,13 +3728,17 @@
       for (let i = 0; i < base.length; i += 3) {
         arr[i] = base[i] + Math.sin(t * 0.6 + i) * 0.06;
         if (pts.userData.fall) {
-          const span = 2.6;
-          arr[i + 1] = span - ((base[i + 1] + t * 0.55) % span);
-          pts.material.opacity = 0.4 + Math.sin(t * 1.6 + i) * 0.16;
+          const span = 3.4;
+          const speed = 0.32 + (i % 5) * 0.05;
+          arr[i] = base[i] + Math.sin(t * 0.28 + i * 0.17) * 0.24;
+          arr[i + 1] = span - ((base[i + 1] + t * speed) % span);
+          arr[i + 2] = base[i + 2] + Math.cos(t * 0.22 + i * 0.13) * 0.18;
+          pts.material.opacity = 0.42 + Math.sin(t * 1.15) * 0.16;
+          pts.material.size = 0.1 + Math.sin(t * 0.65) * 0.02;
         } else {
           arr[i + 1] = 0.2 + ((base[i + 1] + t * 0.18) % 1.5);
+          arr[i + 2] = base[i + 2] + Math.cos(t * 0.4 + i) * 0.05;
         }
-        arr[i + 2] = base[i + 2] + Math.cos(t * 0.4 + i) * 0.05;
       }
       pts.geometry.attributes.position.needsUpdate = true;
     });
@@ -3924,7 +3979,7 @@
     el.classList.remove('show', 'harm', 'heal');
     void el.offsetWidth;
     el.classList.add('show', kind === 'heal' ? 'heal' : 'harm');
-    if (kind !== 'heal') combatKick = 0.34;
+    if (kind !== 'heal') combatKick = 0.46;
   }
 
   function questLine() {
@@ -4113,6 +4168,7 @@
         : slag && slag.bottled
           ? 'The warden sealed the slag. The rot stayed in the yard. South is the ash.'
           : 'Concord yard. The slag is licensed and leaking. Vesper wants a mouth on it. Kestrel did not carry you.';
+      if (!seenBeats['yard-camp']) rumor += ' West of the south gate, a rest is not the road.';
     } else if (seenBeats.marrowStep && locale === 'engine-throat') {
       rumor = throatWord === 'name'
         ? 'The name is in her teeth. South is the ash. The next stone is not here.'
@@ -4278,7 +4334,8 @@
     const showLetter = idle && nearLetter && !atExit && !showAbsorb;
     const showMargin = idle && nearMargin && !atExit && !showStair;
     const showChalk = idle && nearChalk && !atExit && !showGallery && !showKestrel;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter && !showLetter && !showMargin && !showChalk);
+    const showCamp = idle && nearCamp && !showAbsorb && !atExit && !showTalk && !showMark;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
@@ -4292,13 +4349,13 @@
     else if (showPerch || showKestrel) absorbBtn.textContent = 'Speak';
     else if (showLook || showPipe || showThroat || showStone || showMark || showNave || showGallery) absorbBtn.textContent = 'Enter';
     else if (showTalk) absorbBtn.textContent = 'Speak';
-    else if (showLetter || showMargin || showChalk) absorbBtn.textContent = 'Look';
+    else if (showLetter || showMargin || showChalk || showCamp) absorbBtn.textContent = 'Look';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
   }
 
   function updatePrompt() {
     const atExit = atInteriorExit();
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !nearLetter && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !nearLetter && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -4421,6 +4478,11 @@
       $('#interact-detail').textContent = nearChalk.hint;
       return;
     }
+    if (nearCamp) {
+      $('#interact-title').textContent = nearCamp.title;
+      $('#interact-detail').textContent = nearCamp.hint;
+      return;
+    }
     if (nearCrack) {
       $('#interact-title').textContent = nearCrack.title;
       $('#interact-detail').textContent = nearCrack.hint;
@@ -4493,6 +4555,7 @@
           : 'The gallery filed the village seal as mercy. The furrow is not in the count.');
       }
       if (seenBeats['nave-pressure']) waiting.push('West chalk in the nave numbered the host. It did not open the bar.');
+      if (seenBeats['yard-camp']) waiting.push('They rested west of the yard’s south gate. The slag and the mark stayed where they were.');
       if (!findMember('nima')) waiting.push('Nima is still in the leaf-village.');
       if (!findMember('torren')) waiting.push('Torren has not refused the Concord yet.');
       if (seenBeats['kestrel-ask']) {
@@ -4569,8 +4632,8 @@
       } else if (cryptWord === 'digit') {
         waiting.push('Cracked Zero widened the crypt crack. North of it, the first breach is still a room.');
       }
-      if (scarDebt >= 2) waiting.push('Scar debt ' + scarDebt + ' has reached the walk. Lira coughs, and the feet go slower. Each point still cuts max HP by 6.');
-      else if (scarDebt > 0) waiting.push('Scar debt ' + scarDebt + '. Each point cuts Lira’s max HP by 6. The kiln, the earth cork, and a fed engine add a point. Banking the marrow leak eases one.');
+      if (scarDebt >= 2) waiting.push('Scar debt ' + scarDebt + ' has reached the walk. Lira coughs, and the feet go slower. Each point still cuts max HP by ' + SCAR_CUT + '.');
+      else if (scarDebt > 0) waiting.push('Scar debt ' + scarDebt + '. Each point cuts Lira’s max HP by ' + SCAR_CUT + '. The kiln, the earth cork, and a fed engine add a point. Banking the marrow leak eases one.');
       if (seenBeats['marrow-vesper']) {
         waiting.push(vesperAsh === 'taste'
           ? 'Vesper tasted the scar on the ash and did not step into the host.'
@@ -4835,6 +4898,10 @@
         cross(enterMark);
         return;
       }
+      if (nearCamp && locale === 'concord-yard' && !atMouth) {
+        talkCamp();
+        return;
+      }
       if (nearNave && locale === 'remnant-mark' && seenBeats.markFight && !atMouth) {
         cross(enterNave);
         return;
@@ -4944,6 +5011,7 @@
     pool.absorbed = true;
     pool.healing = true;
     pool.heal = 0;
+    pool.burst = 1;
     spark[pool.element] += 1;
     const over = elementTotal() > spark.capacity;
     let strain = pool.strain + (over ? 15 : 0);
@@ -5278,8 +5346,8 @@
     locale = 'concord-yard';
     if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
     yardGroup.add(playerMesh);
-    const px = silent && opts.pos ? (opts.pos.x || 0) : 0;
-    const pz = silent && opts.pos ? (opts.pos.z || 3.2) : 3.2;
+    const px = silent && opts.pos && opts.pos.x != null ? opts.pos.x : 0;
+    const pz = silent && opts.pos && opts.pos.z != null ? opts.pos.z : 3.2;
     playerMesh.position.set(px, 0, pz);
     if (interiorGroup) interiorGroup.visible = false;
     if (overworldGroup) overworldGroup.visible = false;
@@ -5359,8 +5427,8 @@
     locale = 'remnant-mark';
     if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
     markGroup.add(playerMesh);
-    const px = silent && opts.pos ? (opts.pos.x || 0) : 0;
-    const pz = silent && opts.pos ? (opts.pos.z || 3.15) : 3.15;
+    const px = silent && opts.pos && opts.pos.x != null ? opts.pos.x : 0;
+    const pz = silent && opts.pos && opts.pos.z != null ? opts.pos.z : 3.15;
     playerMesh.position.set(px, 0, pz);
     if (interiorGroup) interiorGroup.visible = false;
     if (overworldGroup) overworldGroup.visible = false;
@@ -6519,6 +6587,27 @@
     }
   }
 
+  function talkCamp() {
+    if (locale !== 'concord-yard' || dialogueOpen) return;
+    if (seenBeats['yard-camp']) {
+      showToast('The stones stay warm. The road did not move.');
+      return;
+    }
+    const fn = EW.scenes['yard-camp'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'yard-camp';
+    }
+  }
+
+  function noteCamp() {
+    seenBeats['yard-camp'] = true;
+    showToast('They sat. The slag, the warden, and the north stone stayed as they were.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
   function talkChalk() {
     if (locale !== 'ash-nave' || dialogueOpen) return;
     if (seenBeats['nave-pressure']) {
@@ -6781,6 +6870,7 @@
       nearLetter = null;
       nearMargin = null;
       nearChalk = null;
+      nearCamp = null;
       joy.active = false;
       joy.dx = 0;
       joy.dy = 0;
@@ -6877,6 +6967,7 @@
         nearLetter = nearestLetter();
         nearMargin = nearestMargin();
         nearChalk = nearestChalk();
+        nearCamp = nearestCamp();
         const safe = nearPool && !nearPool.absorbed;
         const cooled = performance.now() < suppressEncountersUntil;
         const onField = locale === 'field' && (regionId === 'verdant-isle' || regionId === 'stormreach');
@@ -6911,6 +7002,7 @@
         nearLetter = nearestLetter();
         nearMargin = nearestMargin();
         nearChalk = nearestChalk();
+        nearCamp = nearestCamp();
         poseHost('idle');
       }
 
@@ -6967,6 +7059,7 @@
       nearLetter = nearestLetter();
       nearMargin = nearestMargin();
       nearChalk = nearestChalk();
+      nearCamp = nearestCamp();
       poseHost('still');
     }
 
@@ -8003,7 +8096,7 @@
     });
     setTimeout(() => {
       touched.forEach(([mat, hex]) => { if (mat.emissive) mat.emissive.setHex(hex); });
-    }, 240);
+    }, 340);
   }
 
   function updateCombatCamera(dt) {
@@ -8927,6 +9020,7 @@
     if (beats['furrow-letter']) return 'The cousin’s letter is in the pack. One save in this browser.';
     if (beats['gallery-margin']) return 'The gallery’s filed copy was read. One save in this browser.';
     if (beats['nave-pressure']) return 'The nave chalk was read. One save in this browser.';
+    if (beats['yard-camp']) return 'They rested in the Concord yard. One save in this browser.';
     return 'One save in this browser. Wake throws it out.';
   }
 
@@ -9321,8 +9415,8 @@
     locale = 'ashen-marrow';
     if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
     marrowGroup.add(playerMesh);
-    const px = silent && opts.pos ? (opts.pos.x || 0) : 0;
-    const pz = silent && opts.pos ? (opts.pos.z || 3.1) : 3.1;
+    const px = silent && opts.pos && opts.pos.x != null ? opts.pos.x : 0;
+    const pz = silent && opts.pos && opts.pos.z != null ? opts.pos.z : 3.1;
     playerMesh.position.set(px, 0, pz);
     if (interiorGroup) interiorGroup.visible = false;
     if (overworldGroup) overworldGroup.visible = false;
@@ -9624,6 +9718,7 @@
   EW.noteLetter = noteLetter;
   EW.noteMargin = noteMargin;
   EW.notePressure = notePressure;
+  EW.noteCamp = noteCamp;
   EW.breachWord = function () { return breachWord; };
   EW.noteHall = noteHall;
   EW.finishMarrow = finishMarrow;

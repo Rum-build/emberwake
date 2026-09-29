@@ -595,25 +595,38 @@ button, .inventory-panel, .inv-body, .credits-content {
 .places-card li span { color: #e7d7c0; font-size: 0.8rem; }
 .hud-location { cursor: pointer; }
 @keyframes hitflash {
-  from { filter: brightness(1.35); }
-  to { filter: none; }
+  0% { filter: brightness(1.6) saturate(1.28); }
+  45% { filter: brightness(1.18) saturate(1.08); }
+  100% { filter: none; }
 }
-.combat-ui.hit:not(.juice-cleave):not(.juice-channel):not(.juice-aim) { animation: hitflash 0.16s linear; }
+@keyframes hitwash {
+  0% { opacity: 0.85; }
+  100% { opacity: 0; }
+}
+.combat-ui.hit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 42%, rgba(255, 150, 80, 0.34), transparent 58%);
+  animation: hitwash 0.36s ease-out;
+}
+.combat-ui.hit:not(.juice-cleave):not(.juice-channel):not(.juice-aim) { animation: hitflash 0.32s ease-out; }
 @keyframes juiceCleave {
-  0% { filter: saturate(1.45) brightness(1.28); }
+  0% { filter: saturate(1.7) brightness(1.42); }
   100% { filter: saturate(1.12); }
 }
 @keyframes juiceChannel {
-  0% { filter: hue-rotate(16deg) brightness(1.22); }
+  0% { filter: hue-rotate(22deg) brightness(1.36); }
   100% { filter: none; }
 }
 @keyframes juiceAim {
-  0% { filter: contrast(1.22) brightness(1.16); }
+  0% { filter: contrast(1.35) brightness(1.28); }
   100% { filter: none; }
 }
-.combat-ui.juice-cleave { animation: juiceCleave 0.28s ease-out; }
-.combat-ui.juice-channel { animation: juiceChannel 0.32s ease-out; }
-.combat-ui.juice-aim { animation: juiceAim 0.28s ease-out; }
+.combat-ui.juice-cleave { animation: juiceCleave 0.38s ease-out; }
+.combat-ui.juice-channel { animation: juiceChannel 0.42s ease-out; }
+.combat-ui.juice-aim { animation: juiceAim 0.38s ease-out; }
 
 .hud-rumor {
   font-size: 0.72rem;
@@ -944,8 +957,12 @@ button, .inventory-panel, .inv-body, .credits-content {
   color: #f0e6d2;
   background: rgba(8, 10, 16, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
+  border-radius: 12px;
   padding: 4px 12px;
+  max-width: min(92vw, 640px);
+  text-align: center;
+  line-height: 1.35;
+  white-space: normal;
 }
 
 .turn-order {
@@ -1334,6 +1351,9 @@ button, .inventory-panel, .inv-body, .credits-content {
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+  .hud-scar { max-width: 100%; white-space: normal; }
+  .hud-row, .hud-elements { max-width: 100%; }
+  .combat-held { max-width: calc(100vw - 24px); }
   #btn-continue { white-space: normal; line-height: 1.25; }
 
   .inventory-panel {
