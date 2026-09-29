@@ -339,4 +339,78 @@
     });
     return true;
   });
+
+  Emberwake.registerScene('throat-name', function () {
+    var torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    var nima = Emberwake.companyHas && Emberwake.companyHas('nima');
+    Emberwake.present({
+      lines: [
+        {
+          where: 'Sealed throat',
+          speaker: torren ? 'Torren' : 'Lira',
+          text: torren
+            ? 'I have seen this mark on a page I was not allowed to copy. It is not a province. It is the first death they are trying to own.'
+            : 'The seal is not a licence. It is a name the Concord could not drink.',
+        },
+        nima
+          ? { speaker: 'Nima', text: 'If she speaks it, I cannot pull the word back out. Cool the wound after. Do not ask me to call the name medicine.' }
+          : { speaker: 'The spark', text: 'Prime. The word is older than the bottle. Speaking it will scar. Corking it leaves the word in the glass.' },
+        {
+          speaker: 'Lira',
+          text: 'The stone beside it is dark. It is not a road yet.',
+          choices: [
+            {
+              label: 'Speak the name into the spark. It will scar.',
+              pick: 'name',
+              reply: { speaker: 'Lira', text: 'Then it is in her teeth. The next stone is not on this shelf. The scar is.' },
+            },
+            {
+              label: 'Cork it. Leave the word in the glass.',
+              pick: 'cork',
+              reply: { speaker: 'Lira', text: 'Then the bottle keeps it. The engine does not get a new mouth. Neither do we.' },
+            },
+          ],
+        },
+      ],
+      onPick: function (id) {
+        if (Emberwake.noteThroat) Emberwake.noteThroat(id);
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('kestrel-marrow', function () {
+    var named = Emberwake.throatNamed && Emberwake.throatNamed();
+    Emberwake.present({
+      lines: [
+        {
+          where: 'Above the ash',
+          speaker: 'Kestrel',
+          text: named
+            ? 'I heard the name leave the bottle. The next stone is not on this shelf. I can smell a thermal that does not exist yet.'
+            : 'You corked a word. The sky does not owe you a road for that. The next stone is still not here.',
+        },
+        {
+          speaker: 'Lira',
+          text: 'Come as far as that stone. Not the pack. The road.',
+          choices: [
+            {
+              label: 'Ask her to walk as far as the next stone.',
+              pick: 'ask',
+              reply: { speaker: 'Kestrel', text: 'No. If I fold the wing, they licence the bird. I will know the thermal when it is real. I will not be in the company when you open the pack.' },
+            },
+            {
+              label: 'Leave her the air.',
+              pick: 'air',
+              reply: { speaker: 'Kestrel', text: 'Good. Look up when the stone exists. Do not save a seat.' },
+            },
+          ],
+        },
+      ],
+      onPick: function (id) {
+        if (Emberwake.noteKestrelMarrow) Emberwake.noteKestrelMarrow(id);
+      },
+    });
+    return true;
+  });
 })(window.Emberwake);

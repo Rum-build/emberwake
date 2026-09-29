@@ -92,19 +92,27 @@ Playable on the Verdant Isle field:
 - When scar debt is 2 or more, Lira coughs and the walk slows. The tender can hear it. Banking back under 2 eases the cough and the pace. Continue stores the choice and the debt.
 - No music. Kestrel still does not join.
 
-## Engine pipe (this branch)
+## Engine pipe (shipped)
 
 - East of the digest-engine, **Enter** opens a short Concord pipe. At the valve, crack the feed or leave it corked. Cracking starts a fight with a Pipe Stoker whose coat shrugs off a plain knife. Magma stays on him. Glass looks for the seam. Leaving the cork puts a name in the pack and no fight. **Leave** at the south of the pipe returns to the ash. Continue stores the pipe and the choice.
 - If Torren is in the company he reads the quartermaster marks. If Nima is, she names the air, and the cough when the debt is already two. Kestrel is not in the pipe. She still does not join.
 - The coast can throw a Brine Skitter. The ash shelf can throw a Cinder Mite, and rarely another stoker. The pipe itself does not throw random fights.
 - The leaf-village floor and the bottle-hall floor have grain. The mouse stick, Absorb, and Pack stay.
 
+## Sealed throat (this branch)
+
+- North of the digest-engine, **Enter** opens a short sealed room. Speak the bottle’s name into the spark, which adds one scar debt, or cork it and leave the word. **Leave** at the south returns to the ash. Continue stores the choice.
+- After either choice, Kestrel is overhead. Ask her to walk as far as the next stone, or leave her the air. Both answers keep her out of the pack.
+- A quest line under the place name says the next step. Seals in the pack, including Named Feed and Unwritten Passage, keep their meaning on the card and in the tooltip. The first fight after a merge is on the list says Magic spends it.
+- People have hair, shoulders, and a cloak. Ash, the village, and the vault carry a few motes. The village has a hearth. The bottle-hall has a shaft of light. The field bed is a quiet original loop. Silent stops it.
+- The mouse stick, Absorb, and Pack stay.
+
 ## Still ahead
 
-From DESIGN.md, after this pipe:
+From DESIGN.md, after this throat:
 
-1. The rest of the scar’s debt. One banked leak does not pay the kiln, and Vesper’s taste is another point if you let her. Cracking the feed does not pay it either.
-2. The rest of Ashen Marrow, the wind merges (ice, thunder, tide, root), and a party slot for Kestrel if she ever takes one.
+1. The rest of the scar’s debt. One banked leak does not pay the kiln, Vesper’s taste is another point if you let her, and speaking the name is another. Cracking the feed does not pay any of them.
+2. The next waystone, the wind merges (ice, thunder, tide, root), and a party slot for Kestrel if she ever takes one. The stone she smelled is not on this shelf.
 
 Combat menus stay Fight / Magic / Item / Flee. New panels stay desktop-first.
 
@@ -116,4 +124,4 @@ The bible’s order, each act a production pull of its own (and as many follow-u
 - **Act III — The Rot That Speaks.** Ashen Marrow. Feeding heals and overfeeding scars the host as the moral weight. Concord digest-engine. Vesper’s method on the table.
 - **Act IV — Remnant Wake.** Waystone network. The race for the Prime Remnant. Endings from merges, who lived, and whether Lira is still the host.
 
-Audio stays open-licence and listed in `CREDITS.md` before a cue plays. Phase 1 is silent on purpose.
+Audio stays open-licence and listed in `CREDITS.md` before a cue plays. The field bed is the first cue. It is original and CC0.

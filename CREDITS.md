@@ -6,7 +6,7 @@ Every track and sound effect that ships is listed in this file and on the in-gam
 
 ## This slice
 
-The Verdant Isle prototype ships **no music and no sound effects**. Silence is intentional until each cue has a row in the table below.
+One cue plays: a quiet field bed. It is generated in the browser. No audio file is fetched.
 
 ## Cue log
 
@@ -14,7 +14,7 @@ Add a row before a file is referenced by the game. Leave the row in place if a c
 
 | Title | Author | Licence | Source | Used for |
 |-------|--------|---------|--------|----------|
-| — | — | — | — | No cues yet |
+| Field bed | Emberwake (original, this repository) | CC0 | Procedural. No recording. `game.js` loops filtered noise and two slow tones. | Quiet ambient after Wake or Continue, until Silent is pressed |
 
 ## Attribution rules
 
