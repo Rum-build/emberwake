@@ -5000,7 +5000,9 @@
       const cut = Math.min(8, Math.max(0, dmg - 1));
       dmg -= cut;
       coverReady = false;
-      if (cut) coverNote = ' Torren’s shoulder takes ' + cut + '.';
+      coverNote = cut
+        ? ' Torren’s shoulder takes ' + cut + '.'
+        : ' Torren’s shoulder meets a blow that was already thin.';
     }
     if (enemy.id === 'scribe' && Math.random() < 0.5) {
       const drain = Math.min(6, pick.p.mp);
