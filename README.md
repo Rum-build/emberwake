@@ -1,8 +1,10 @@
 # Emberwake
 
-A mobile-friendly 3D RPG slice. You are a spark inside Lira, a border scout on Verdant Isle. Power pools in the land; you grow by absorbing it, and the ground heals as a side effect. Final Fantasy turn structure, Witcher-grey consequences.
+A mobile-friendly 3D RPG. You are a spark inside Lira, a border scout. Power pools in the land; you grow by absorbing it, and the ground heals as a side effect. Final Fantasy turn structure, Witcher-grey consequences.
 
-Single self-contained page. No build step.
+[DESIGN.md](DESIGN.md) is the production bible (four acts, no reduced ending). [ROADMAP.md](ROADMAP.md) says what is playable now and what the next pull request builds. This page is **Phase 1**: the systems, played on the Verdant Isle field. Year 1’s vertical slice — full Act I, **Ember in the Leaf** — follows on the same shell.
+
+Single page. No build step.
 
 ## How to open
 
@@ -42,9 +44,13 @@ The Ashen Concord and the rival spark **Vesper** are present in the isle’s rum
 |------|------|
 | `index.html` | Shell, HUD, combat menus, inventory |
 | `style.css` | Portrait-first UI, desktop and landscape tweaks |
-| `game.js` | Overworld, pools, inventory, turn-based combat |
+| `js/emberwake.js` | Namespace: phase, regions, scenes, content registers |
+| `js/content/catalog.js` | Paths, gear, items, spells, bestiary, opening roster |
+| `js/content/verdant-isle.js` | Act I field: landmarks, pools, toast beats |
+| `game.js` | Overworld, absorb, inventory, turn-based combat |
 | `DESIGN.md` | Design bible (canon) |
 | `STORY.md` | Player-facing synopsis (canon) |
+| `ROADMAP.md` | Production map: Phase 1, then Act I, then the later acts |
 | `CREDITS.md` | Open-licence audio log |
 | `README.md` | This file |
 
@@ -54,10 +60,13 @@ The Ashen Concord and the rival spark **Vesper** are present in the isle’s rum
 - No bundler, no npm install
 - Portrait-first; landscape supported
 
-## Known limitations
+## Not in Phase 1 yet
 
-- One island. No village or cellar interior, no save, no element-merge crafting yet.
-- Kestrel is mentioned, not recruited. Waystones and eagles are not in this slice.
+These are the next production, listed in [ROADMAP.md](ROADMAP.md).
+
+- Village and root-cellar interiors, the Concord patrol scene, witnessed rot, and the act-end silhouette of Vesper.
+- Nima and Torren met in those scenes. Phase 1 still opens with them already on the road so the combat paths can be played. Kestrel stays a recruit until sky routes.
+- Save and continue. Element merges, waystones, and eagles (Acts II–IV in the bible).
 - No music or SFX. See `CREDITS.md`. The Credits button on the title repeats that policy.
 - Encounters are tuned so a short walk can start a fight after the first pool.
 - Low-poly placeholders. Three.js must load from the CDN once.

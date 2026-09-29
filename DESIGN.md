@@ -138,9 +138,9 @@ Merges are permanent spark knowledge; host must still equip or attune to express
 
 ---
 
-## Implementation snapshot (current slice)
+## Implementation snapshot
 
-Playable web slice under `/workspace/emberwake/`: Three.js overworld (**Verdant Isle**), turn-based combat, title **Emberwake**. See `README.md`, `STORY.md`. Expand toward this bible without breaking the no-build, mobile-friendly shell.
+This bible is the production target: four acts, the regions, and the systems above. Phase 1 has landed the foundation on the Verdant Isle field — inventory, element absorb, spark XP, host strain, and Final Fantasy combat paths — as a no-build page served from the repository root. The next build is Year 1 Act I in full (**Ember in the Leaf**). See `README.md` and `ROADMAP.md`. Story canon in this file and in `STORY.md` is unchanged.
 
 ---
 

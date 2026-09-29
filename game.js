@@ -1,10 +1,23 @@
 /**
- * Emberwake — Verdant Isle slice
+ * Emberwake — Phase 1 systems.
+ * Inventory, element absorb, spark XP, host strain, FF combat paths.
+ * Isle data and catalogs live on window.Emberwake (see ROADMAP.md).
  * Final Fantasy turn structure, Witcher-grey consequences.
  * Three.js r128 via CDN. No build step.
  */
 (function () {
   'use strict';
+
+  const EW = window.Emberwake;
+  const REGION = EW && EW.regions && EW.regions['verdant-isle'];
+  if (!EW || !REGION || !EW.content || !EW.content.gear) {
+    const fail = () => {
+      document.body.innerHTML = '<p style="color:#f0e6d2;background:#0c1018;padding:2rem;font-family:sans-serif">Emberwake content did not load. js/emberwake.js, js/content/catalog.js, and js/content/verdant-isle.js must run before game.js.</p>';
+    };
+    if (document.body) fail();
+    else document.addEventListener('DOMContentLoaded', fail);
+    return;
+  }
 
   const WORLD_SIZE = 40;
   const PLAYER_SPEED = 6.2;
@@ -23,94 +36,24 @@
     GAMEOVER: 'gameover',
   };
 
-  const ELEMENT_COLOR = { fire: 0xff6a1a, water: 0x3ec6ff, lightning: 0xd2b4ff };
-  const PATH_LABEL = { warrior: 'Warrior', mage: 'Mage', ranged: 'Ranged' };
-  const WHO_NAME = { lira: 'Lira', torren: 'Torren', nima: 'Nima' };
+  const ELEMENT_COLOR = EW.content.elementColor;
+  const PATH_LABEL = EW.content.pathLabel;
+  const WHO_NAME = EW.content.whoName;
+  const PATH_STATS = EW.content.pathStats;
+  const GEAR = EW.content.gear;
+  const ITEM_DEFS = EW.content.items;
+  const SHARD_NAME = EW.content.shardName;
+  const SPELLS = EW.content.spells;
+  const POOL_DEFS = REGION.pools;
+  const BEATS = REGION.beats;
+  const ENEMY_TYPES = EW.content.enemies;
 
-  const PATH_STATS = {
-    warrior: { maxHp: 118, maxMp: 24, atk: 16, def: 10, magAtk: 6 },
-    mage: { maxHp: 86, maxMp: 64, atk: 8, def: 6, magAtk: 18 },
-    ranged: { maxHp: 100, maxMp: 36, atk: 14, def: 7, magAtk: 10 },
-  };
-
-  const GEAR = {
-    'scout-knife': { name: 'Scout Knife', slot: 'weapon', who: 'lira', atk: 3, desc: 'Honest road iron. It does not pretend to be a relic.' },
-    'ashwood-blade': { name: 'Ashwood Blade', slot: 'weapon', who: 'lira', atk: 7, path: 'warrior', affinity: 'fire', desc: 'Fire in the grain. Hits harder once the spark has eaten ember.' },
-    'wellwood-staff': { name: 'Wellwood Staff', slot: 'weapon', who: 'lira', atk: 1, mag: 6, path: 'mage', affinity: 'water', desc: 'Cut from the well-copse. Water answers it.' },
-    'reed-bow': { name: 'Reed Bow', slot: 'weapon', who: 'lira', atk: 5, path: 'ranged', affinity: 'lightning', desc: 'A spare string from an eagle-rider. It hums before storms.' },
-    'quilt-jerkin': { name: 'Quilted Jerkin', slot: 'armor', who: 'lira', def: 3, desc: 'Village stitchwork. Stops a claw, not a verdict.' },
-    'ledger-cudgel': { name: 'Ledger Cudgel', slot: 'weapon', who: 'torren', atk: 5, desc: 'Torren kept the weight and burned the insignia.' },
-    'seal-coat': { name: 'Quartermaster Coat', slot: 'armor', who: 'torren', def: 5, desc: 'Concord cloth, insignia scorched off. It still remembers ranks.' },
-    'herb-rod': { name: 'Herb Rod', slot: 'weapon', who: 'nima', atk: 2, mag: 3, desc: 'A walking stick that happens to be medicine.' },
-    'herb-shawl': { name: 'Herb Shawl', slot: 'armor', who: 'nima', def: 2, mag: 2, desc: 'Wet leaves and mercy. Both cling.' },
-  };
-
-  const ITEM_DEFS = {
-    tonic: { name: 'Verdant Tonic', desc: 'Nima’s bitter green. Closes a wound. Does not answer a question.', heal: 42, field: true, combat: true },
-    phial: { name: 'Wellwater Phial', desc: 'A mouthful of the deep well. Steadies the reserve behind the eyes.', mp: 28, field: true, combat: true },
-    rotash: { name: 'Rot-ash', desc: 'A curdled pool, pocketed. Coast vendors trade it. This isle has no such stall.', field: false, combat: false },
-  };
-
-  const SHARD_NAME = { fire: 'Cinder Shard', water: 'Tide Shard', lightning: 'Storm Shard' };
-
-  const SPELLS = {
-    fire: { element: 'fire', cost: 1, mp: 4, kind: 'dmg', power: 10, flash: 0xff4d1a },
-    water: { element: 'water', cost: 1, mp: 4, kind: 'dmg', power: 9, flash: 0x2a9adf },
-    lightning: { element: 'lightning', cost: 1, mp: 5, kind: 'dmg', power: 14, flash: 0xd2b4ff },
-    cure: { element: 'water', cost: 1, mp: 5, kind: 'heal', flash: 0x9dffc8 },
-  };
-
-  const POOL_DEFS = [
-    {
-      id: 'ember', element: 'fire', name: 'Dying Ember Pool', short: 'Ember',
-      x: 5.4, z: 2.4, xp: 48, rot: 0.75, strain: 14,
-      hint: 'The pool that woke the spark. It is still dying, and still offering.',
-      line: 'You drink the dying ember. It hurts Lira, and the scar greens. That is the bargain.',
-    },
-    {
-      id: 'vesper', element: 'fire', name: 'Vesper’s Scar', short: 'Scar',
-      x: 14.2, z: -5.5, xp: 30, rot: 1, strain: 20, vesper: true,
-      hint: 'Someone drank without digesting. The ground blistered in their shape.',
-      line: 'You finish what Vesper left. The ground cools. Somewhere a rival spark goes briefly hungry.',
-    },
-    {
-      id: 'well', element: 'water', name: 'Sealed Wellspring', short: 'Well',
-      x: -14, z: -15.2, xp: 34, rot: 0.45, strain: 12, concord: true,
-      hint: 'A Concord seal keeps the water polite. Polite water still rots downstream.',
-      line: 'The sealed well gives up its water. The licence cracks into the pack. A harbor clerk will call this theft.',
-    },
-    {
-      id: 'tide', element: 'water', name: 'Tide Cup', short: 'Tide',
-      x: -15.5, z: 11, xp: 28, rot: 0.5, strain: 11,
-      hint: 'Sea-memory, left above the tide line to sour.',
-      line: 'You take the sea-memory. The cup in the grass fills with living green.',
-    },
-    {
-      id: 'storm', element: 'lightning', name: 'Storm Bone', short: 'Storm',
-      x: 1.2, z: -16.4, xp: 40, rot: 0.7, strain: 16,
-      hint: 'A shattered stone. Lightning still lives in the crack.',
-      line: 'Lightning nests in the spark. Lira tastes storms. The stone stops screaming.',
-    },
-  ];
-
-  const BEATS = [
-    {
-      id: 'village', x: -8, z: -10, r: 4.3,
-      toast: 'The leaf-village keeps its doors half shut. They have heard the Ashen Concord bottles wells and calls the quiet safety.',
-    },
-    {
-      id: 'cellar', x: 10, z: 8, r: 3.5,
-      toast: 'The root-cellar breathes old fire. Lira is not ready to go down. Pools still rot in the open air.',
-    },
-  ];
-
-  const ENEMY_TYPES = {
-    hare: { name: 'Hollow Hare', color: 0x6e5b48, maxHp: 40, atk: 9, def: 3, xp: 14, gold: 8, shape: 'beast' },
-    weevil: { name: 'Blight Weevil', color: 0x44502e, maxHp: 34, atk: 8, def: 2, xp: 12, gold: 6, shape: 'bug' },
-    whelp: { name: 'Ash Whelp', color: 0xc45c28, maxHp: 50, atk: 11, def: 4, xp: 18, gold: 11, shape: 'sphere' },
-    scribe: { name: 'Concord Scribe', color: 0x3e4550, maxHp: 54, atk: 10, def: 5, xp: 20, gold: 18, shape: 'human' },
-    echo: { name: "Vesper's Echo", color: 0x2a2030, maxHp: 80, atk: 14, def: 5, xp: 36, gold: 24, shape: 'echo' },
-  };
+  function landmark(id) {
+    for (let i = 0; i < REGION.landmarks.length; i++) {
+      if (REGION.landmarks[i].id === id) return REGION.landmarks[i];
+    }
+    return null;
+  }
 
   // ─── Mutable state ────────────────────────────────────────
   let gameState = State.TITLE;
@@ -196,11 +139,7 @@
   }
 
   function makeParty() {
-    return [
-      { id: 'lira', name: 'Lira', role: 'Host', maxHp: 100, hp: 100, maxMp: 30, mp: 30, atk: 10, def: 7, magAtk: 8, color: 0xc47a4a },
-      { id: 'torren', name: 'Torren', role: 'Anchor · ex-Concord', maxHp: 128, hp: 128, maxMp: 18, mp: 18, atk: 13, def: 11, magAtk: 4, color: 0x5c6b5a },
-      { id: 'nima', name: 'Nima', role: 'Heart · herbalist', maxHp: 82, hp: 82, maxMp: 64, mp: 64, atk: 7, def: 5, magAtk: 15, color: 0x6aa8a0 },
-    ];
+    return EW.content.openingParty.map((member) => Object.assign({}, member));
   }
 
   function findMember(id) {
@@ -388,9 +327,9 @@
   }
 
   function reservedSpot(x, z) {
-    const pins = [[0, 0, 3.2], [-8, -10, 4.2], [10, 8, 3.6], [-6.2, -11.5, 1.6]];
-    for (let i = 0; i < pins.length; i++) {
-      if (Math.hypot(x - pins[i][0], z - pins[i][1]) < pins[i][2]) return true;
+    for (let i = 0; i < REGION.landmarks.length; i++) {
+      const pin = REGION.landmarks[i];
+      if (Math.hypot(x - pin.x, z - pin.z) < pin.clear) return true;
     }
     for (let i = 0; i < POOL_DEFS.length; i++) {
       if (Math.hypot(x - POOL_DEFS[i].x, z - POOL_DEFS[i].z) < 4.6) return true;
@@ -452,8 +391,9 @@
       overworldGroup.add(makeRock(rx, rz));
     }
 
+    const villagePin = landmark('leaf-village');
     const village = new THREE.Group();
-    village.position.set(-8, 0, -10);
+    village.position.set(villagePin.x, 0, villagePin.z);
     for (let i = 0; i < 3; i++) {
       const house = makeHouse();
       house.position.set(i * 2.2 - 2.2, 0, (i % 2) * 1.5);
@@ -466,10 +406,12 @@
     crystal.position.set(0, 1.5, 2.4);
     village.add(crystal);
     overworldGroup.add(village);
-    overworldGroup.add(makeConcordBanner(-6.2, -11.6));
+    const bannerPin = landmark('concord-banner');
+    overworldGroup.add(makeConcordBanner(bannerPin.x, bannerPin.z));
 
+    const cellarPin = landmark('root-cellar');
     const dungeon = new THREE.Group();
-    dungeon.position.set(10, 0, 8);
+    dungeon.position.set(cellarPin.x, 0, cellarPin.z);
     const arch = new THREE.Mesh(
       new THREE.BoxGeometry(3, 2.5, 1.5),
       new THREE.MeshLambertMaterial({ color: 0x555560 })
@@ -510,8 +452,9 @@
     overworldGroup.add(sun);
     overworldGroup.add(new THREE.HemisphereLight(0x87b5d9, 0x3d6b3d, 0.35));
 
+    const spawnPin = landmark('spawn');
     playerMesh = makeCharacter(0xc47a4a, 0.95);
-    playerMesh.position.set(0, 0, 0);
+    playerMesh.position.set(spawnPin.x, 0, spawnPin.z);
     overworldGroup.add(playerMesh);
   }
 
@@ -1209,6 +1152,14 @@
     updatePrompt();
   }
 
+  function fireBeat(b) {
+    seenBeats[b.id] = true;
+    const sceneFn = b.scene && EW.scenes[b.scene];
+    if (typeof sceneFn === 'function') sceneFn(b);
+    else showToast(b.toast);
+    refreshRumor();
+  }
+
   function updateOverworld(dt) {
     const camTarget = playerMesh.position;
     if (!inventoryOpen && !encounterLocked) {
@@ -1245,11 +1196,7 @@
 
       BEATS.forEach((b) => {
         if (seenBeats[b.id]) return;
-        if (Math.hypot(b.x - playerMesh.position.x, b.z - playerMesh.position.z) < b.r) {
-          seenBeats[b.id] = true;
-          showToast(b.toast);
-          refreshRumor();
-        }
+        if (Math.hypot(b.x - playerMesh.position.x, b.z - playerMesh.position.z) < b.r) fireBeat(b);
       });
     } else {
       nearPool = nearestPool();
