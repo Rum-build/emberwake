@@ -71,20 +71,26 @@ Playable on the Verdant Isle field:
 - Walking the shale can start a fight: charged wisps, licence clerks, scribes, and sometimes Vesper’s echo. The counting room stays quiet.
 - After the count, walk under the wing and ask Kestrel to land, or leave her the air. She does not join. Continue stores the vault, the spells, and the refusal.
 
-## Act II bottle-hall (this branch)
+## Act II bottle-hall (shipped)
 
 - After the count, the north iron is a door. The bottle-hall is the Concord’s sealed-magic show: gold corks, a short shelf, and a clerk who lets a signature or a refusal look.
 - Crack the earth cork or leave it. Cracking puts earth on the spark and on the HUD. The marrow bottle does not move. Neither choice is a licence.
-- **Storm** (water and lightning), **Magma** (fire and earth), and **Glass** (lightning and earth) join Plasma and Steam on the magic list once those elements are held. An older save that already learned one merge learns the others it can already pay for.
-- At the north arch, **Look** opens a short view of Ashen Marrow: ash, a digest-engine, a leak. The feet stay in the hall. Continue stores the hall choice, the earth, and the look.
+- **Storm** (water and lightning), **Magma** (fire and earth), and **Glass** (lightning and earth) join Plasma and Steam on the magic list once those elements are held.
 - The mouse stick, Absorb, Pack, and the browser save stay.
+
+## Act III tease (this branch)
+
+- **Enter** at the north arch puts feet on a short ash shelf: digest-engine, a Concord tender, and one leak. **Leave** at the south gate returns to the bottle-hall. Continue restores the shelf.
+- In a fight, Plasma cooks armor, Steam softens the swing, Storm chains, Magma burns on the enemy’s turn, and Glass pierces and can find a seam. The combat UI shows what is held and what each spell spends. Mend returns less while scar debt is up.
+- Scar debt shows on the HUD and in the pack after the buried kiln, the earth cork, or feeding the engine leak. Each point cuts Lira’s max HP by 6. Banking the leak eases one point. Feeding the leak adds one.
+- Kestrel still does not join. The mouse stick, Absorb, and Pack stay.
 
 ## Still ahead
 
-From DESIGN.md, after the hall:
+From DESIGN.md, after this shelf:
 
-1. The scar’s debt, counted and not paid. The witness line and the earth cork do not pay it.
-2. Walking Ashen Marrow, the wind merges (ice, thunder, tide, root), and a party slot for Kestrel if she ever takes one.
+1. The rest of the scar’s debt. One banked leak does not pay the kiln.
+2. The rest of Ashen Marrow, the wind merges (ice, thunder, tide, root), and a party slot for Kestrel if she ever takes one.
 
 Combat menus stay Fight / Magic / Item / Flee. New panels stay desktop-first.
 

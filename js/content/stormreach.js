@@ -44,6 +44,21 @@
         hint: 'A rib of the cliff that still argues with the weather.',
         line: 'The spire gives up its lightning. The argument moves behind her eyes. The cliff keeps the scar.',
       },
+      {
+        id: 'marrow-leak',
+        element: 'water',
+        name: 'Engine Leak',
+        short: 'Leak',
+        interior: 'ashen-marrow',
+        region: 'stormreach',
+        x: 0.2,
+        z: -0.8,
+        xp: 24,
+        rot: 0.7,
+        strain: 12,
+        hint: 'What the harbor bottled and the ash would not keep. Feeding it heals nothing the scar will not charge.',
+        line: 'You feed the engine. The leak goes quiet. The scar in her takes the mouthful and does not give it back.',
+      },
     ],
     beats: [
       {
