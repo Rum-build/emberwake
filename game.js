@@ -808,7 +808,7 @@
     ground.receiveShadow = true;
     overworldGroup.add(ground);
     overworldGroup.add(makeWaysideChest(-2.2, 3.6));
-    overworldGroup.add(makeSaltCord(11.2, -2.6));
+    overworldGroup.add(makeSaltCord(3.2, -8));
     overworldGroup.add(makeSky(0x6ea0c8, 0xf3e2c0));
 
     const grassMat = new THREE.MeshLambertMaterial({ color: 0x3d8b3d });
@@ -2895,7 +2895,7 @@
 
   function nearestCord() {
     if (!playerMesh || locale !== 'field' || regionId !== 'verdant-isle' || skyPass) return null;
-    if (Math.hypot(11.2 - playerMesh.position.x, -2.6 - playerMesh.position.z) > 1.05) return null;
+    if (Math.hypot(3.2 - playerMesh.position.x, -8 - playerMesh.position.z) > 1.05) return null;
     if (seenBeats['salt-cord']) {
       return {
         title: 'Salt cord',
@@ -2904,7 +2904,7 @@
     }
     return {
       title: 'A waxed cord',
-      hint: 'In the grass, west of the scar. Press E. It is not the scar and not a licence.',
+      hint: 'In the grass, north of the ember. Press E. It is not a pool and not a licence.',
     };
   }
 

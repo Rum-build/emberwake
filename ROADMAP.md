@@ -225,7 +225,7 @@ Playable on the Verdant Isle field:
 ## Cast and notices (this branch)
 
 - Vesper’s silhouette is a hood and an ash ribbon, and it lifts a little when motion is on. In a fight the party does the same. Still holds them quiet. The command window and the dialogue frame take a gold inner line. The turn ribbon names who is Now, and party and foe chips sit in different colors.
-- A wayside chest on the isle gives one tonic and then stays empty. A waxed salt cord in the grass west of the scar goes in the pack and does not open a door. A posted notice on the shale says mouths are numbered. If Cousin’s Margin is already held, it names the furrow. It does not open the vault.
+- A wayside chest on the isle gives one tonic and then stays empty. A waxed salt cord in the grass north of the ember goes in the pack and does not open a door. A posted notice on the shale says mouths are numbered. If Cousin’s Margin is already held, it names the furrow. It does not open the vault.
 - Fights show chips for burn, stamp, air, licence, page, rite, knelt, ash in the teeth, and scar debt on Lira. Walking the ash nave, the first breach, or the remnant claim before the flag can meet an ash penitent. It kneels once. Ash coughs for 6 on that person’s next turn and does not add scar debt. After the flag, the claim stays quiet.
 - Still freezes the nave banners and the cough pulse. On a phone the ash motes update every other tick. Credits still return to the aftermath when motion is stilled and pace is slow. Continue stores both.
 - Phone controls, Absorb, Pack, and Continue stay.
