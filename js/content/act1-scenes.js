@@ -69,6 +69,23 @@
     return true;
   });
 
+  Emberwake.registerScene('furrow-letter', function () {
+    Emberwake.present({
+      lines: [
+        {
+          where: 'Leaf-village, the basket',
+          speaker: 'A cousin’s letter',
+          text: 'They did not find the well. A woman with ash in her teeth walked the clerk to it and called the cork mercy. The south furrow was the price she wanted paid where the licence does not look.',
+        },
+        { speaker: 'Lira', text: 'Vesper pointed them. The Concord wrote it down and kept the handwriting.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteLetter) Emberwake.noteLetter();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('cellar-threshold', function () {
     Emberwake.present({
       lines: [

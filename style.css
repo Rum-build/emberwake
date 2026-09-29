@@ -456,6 +456,23 @@ button, .inventory-panel, .inv-body, .credits-content {
   color: #f0d7a4;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
 }
+.continue-note {
+  margin: -6px auto 12px;
+  max-width: 28rem;
+  color: #e7d3b0;
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+.inv-quest {
+  grid-column: 1 / -1;
+  margin: 4px 0 8px;
+  padding: 8px 10px;
+  background: rgba(42, 28, 16, 0.55);
+  border: 1px solid rgba(224, 196, 138, 0.35);
+  color: #f0d7a4;
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
 .hp-wrap {
   display: inline-block;
   width: 72px;
@@ -1242,6 +1259,13 @@ button, .inventory-panel, .inv-body, .credits-content {
     overflow: hidden;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
   }
+  .hud-quest {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  #btn-continue { white-space: normal; line-height: 1.25; }
 
   .inventory-panel {
     top: 0;
