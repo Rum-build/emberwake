@@ -1028,18 +1028,20 @@ body.still-motion .encounter-flash.active {
 }
 
 .status-icon {
-  font-size: 0.62rem;
-  letter-spacing: 0.03em;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   border: 1px solid currentColor;
-  border-radius: 2px;
-  padding: 0 5px;
-  line-height: 1.35;
+  border-radius: 3px;
+  padding: 1px 7px;
+  line-height: 1.45;
+  background: rgba(8, 10, 16, 0.82);
 }
 
-.status-burn { color: #ffb060; }
-.status-stamp { color: #e0cc8a; }
-.status-ash { color: #d2c4b4; }
-.status-air { color: #d5e4ee; }
+.status-burn { color: #ffc080; background: rgba(92, 28, 8, 0.92); }
+.status-stamp { color: #ffe0a0; background: rgba(62, 46, 12, 0.92); }
+.status-ash { color: #f0e4d4; background: rgba(48, 36, 28, 0.94); }
+.status-air { color: #e4f2ff; background: rgba(18, 36, 52, 0.92); }
 
 .enemy-panel {
   display: flex;
@@ -1373,6 +1375,9 @@ body.still-motion .encounter-flash.active {
   .btn-menu { font-size: 1rem; min-height: 52px; }
   .dialogue-advance, .dialogue-choice { min-height: 52px; }
   .btn-pace, .btn-pack-motion, #btn-motion { min-height: 48px; min-width: 120px; }
+
+  .status-icon { font-size: 0.84rem; padding: 3px 9px; line-height: 1.5; }
+  .turn-chip { font-size: 0.84rem; padding: 4px 9px; }
 
   .path-choices { flex-direction: column; }
   .path-content { width: min(560px, 100%); }

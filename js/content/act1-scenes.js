@@ -87,10 +87,29 @@
     Emberwake.present({
       lines: [
         { where: 'Verdant Isle', speaker: 'Lira', text: 'A cord in the grass, waxed against the wet. It is not a licence.' },
-        { speaker: 'The spark', text: 'The coast ties rope like this. The vault does not count rope. Pocket it. The road stays.' },
+        { speaker: 'The spark', text: 'The coast ties rope like this. Bind it from the pack if you want the knot. The vault does not count rope. The road stays.' },
       ],
       onDone: function () {
         if (Emberwake.noteCord) Emberwake.noteCord();
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('cord-bind', function () {
+    const torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    const nima = Emberwake.companyHas && Emberwake.companyHas('nima');
+    const lines = [
+      { where: 'The pack', speaker: 'Lira', text: 'I tie the waxed cord around the jerkin. The vault does not count it. Ash in the teeth will cough for four, not six.' },
+    ];
+    if (torren) lines.push({ speaker: 'Torren', text: 'Rope is not a licence. A knot on the jerkin is still not a door.' });
+    if (nima) lines.push({ speaker: 'Nima', text: 'Wax is not a tonic. The cough will sit quieter. It does not pay the scar.' });
+    if (!torren && !nima) lines.push({ speaker: 'The spark', text: 'The knot is private. Nobody else is here to count it. The road stays.' });
+    else lines.push({ speaker: 'The spark', text: 'The knot is on the cloth. The road stays.' });
+    Emberwake.present({
+      lines: lines,
+      onDone: function () {
+        if (Emberwake.noteBind) Emberwake.noteBind();
       },
     });
     return true;
