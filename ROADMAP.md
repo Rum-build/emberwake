@@ -396,6 +396,14 @@ Playable on the Verdant Isle field:
 - A coast fight with a clerk and a warden opens on the licence. The blow’s numbers stay where they were. That line is not a cue.
 - Phone controls, Absorb, Pack, and Continue stay.
 
+## Hall of corks, the scrap, and Lira (this branch)
+
+- After the clerk, and before the bottle-hall, the quest and Places name the hall of corks. That is the bottled monopoly. They do not open a tutorial.
+- On the Remnant Mark, before the scrap is taken, the quest and Places name the numbered scrap east of the aisle. The count crypt names that scrap if it is still on the peg.
+- The mark wears more ash, a cooler rim, and a few stones off the scrap, the weep, the nave stone, the perched wing, and the south step.
+- Lira’s coat keeps a cooler scarf and a clearer face so she reads on the dusk boards. Concord coats and Vesper stay as they were.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
