@@ -252,12 +252,20 @@ Playable on the Verdant Isle field:
 - Short of the yard’s north stone, a bench is a private word. Torren speaks if he came. If he did not and Nima did, she speaks. If neither came, Lira says so. It does not open the mark or drink the slag.
 - Phone controls, Absorb, Pack, and Continue stay. Enter, Leave, and Continue still keep a claim flag.
 
-## Foam and Nima (this branch)
+## Foam and Nima (shipped)
 
 - The isle sea and the shale water carry a slow foam when motion is on. Still holds the foam. On a phone the foam skips every other tick. The leaf-village has a cart, crates, a fence, and a rack, all outside the door. The remnant shafts wear a stained pane. The fight ring has posts and an inner line. No new lights were added.
 - Drinking a pool whose rot is heavy puts one rot-ash in the pack. Brine, cinder mites, and the shelf gull can also drop it. The stall still trades one rot-ash for a ration and does not open the vault.
 - A Concord ration can close up to 22 HP or return 12 mind, in the pack and in a fight. If that wound or that mind is already full, it stays in the pack.
 - East of the Concord yard, a dry bundle is Nima’s private word. If Torren is there, they answer each other. On the bench short of the north stone, if both came, Nima answers Torren. Neither word opens the mark or drinks the slag. The new props do not sit on Enter.
+- Phone controls, Absorb, Pack, and Continue stay.
+
+## Cloth and patrol (this branch)
+
+- Figures separate cloth, leather, and metal. A Concord coat wears a seal plate. Vesper’s hood keeps a dull iron pin. The ash shelf and the Concord yard use a dusk sky. Drinking a pool washes the screen. When motion is on, the camera dips. Still holds the dip and keeps the wash as a flat flash.
+- West of the shale roost, two Concord coats look once. If a bound cord, Cousin’s Margin, or a ration is in the pack, they say so. None of those opens the vault. Torren answers if he came.
+- Places lists Enter, Absorb, Look, and Closer. A pool inside a wider ring says Closer and brightens its rim before Absorb appears. The village fence sits further outside the door.
+- The absorb sting adds a soft sine. A ration bite plays when the biscuit is traded or taken, if Sound is on. Both are original and listed in CREDITS.md.
 - Phone controls, Absorb, Pack, and Continue stay.
 
 ## Still ahead

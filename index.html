@@ -68,7 +68,8 @@
       <p><strong>Field bed.</strong> Original, this repository. CC0. A quiet loop of filtered noise and two slow tones, generated in the browser. No sample is loaded. Press Silent on the field to stop it.</p>
       <p><strong>Coast bed.</strong> Original, this repository. CC0. The same loop, retuned higher, while she stands on Stormreach. No sample is loaded. Silent stops it.</p>
       <p><strong>Claim bed.</strong> Original, this repository. CC0. The same loop, retuned lower, in the remnant claim and the aftermath. No sample is loaded. Silent stops it.</p>
-      <p><strong>Absorb sting.</strong> Original, this repository. CC0. Two short tones when a pool is drunk. No sample is loaded. Silent stops it with the bed.</p>
+      <p><strong>Absorb sting.</strong> Original, this repository. CC0. Two short triangle tones and a soft sine when a pool is drunk. No sample is loaded. Silent stops it with the bed.</p>
+      <p><strong>Ration bite.</strong> Original, this repository. CC0. Two short sine tones when a Concord ration is taken or traded. No sample is loaded. Silent stops it with the bed.</p>
       <p><strong>Merge sting.</strong> Original, this repository. CC0. Three short tones when a merge is spent in a fight. No sample is loaded. Silent stops it with the bed.</p>
       <p><strong>Door sting.</strong> Original, this repository. CC0. Two short low tones when she steps through a door. No sample is loaded. Silent stops it with the bed.</p>
       <p class="credits-note">Commercial libraries stay out. If a licence is doubtful, the moment stays quiet.</p>
@@ -114,6 +115,12 @@
     <div class="places-card">
       <h2 id="places-heading">Places</h2>
       <p class="places-note">Where the feet have been. This list does not carry you.</p>
+      <ul class="places-legend" aria-label="Map legend">
+        <li><span class="key key-enter">Enter</span> A door or a stone. It takes you through.</li>
+        <li><span class="key key-absorb">Absorb</span> Stand in the pool. The button names the mouth.</li>
+        <li><span class="key key-look">Look</span> A word. It does not open a door.</li>
+        <li><span class="key key-closer">Closer</span> The pool is near. Step in before Absorb appears.</li>
+      </ul>
       <ul id="places-list"></ul>
       <button id="btn-places-close" class="btn btn-primary" type="button">Close</button>
     </div>
@@ -254,6 +261,7 @@
   </div>
 
   <div id="toast" class="toast hidden"></div>
+  <div id="absorb-wash" class="absorb-wash" aria-hidden="true"></div>
 
   <div id="gameover-screen" class="screen hidden">
     <div class="title-content">

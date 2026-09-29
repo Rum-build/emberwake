@@ -84,6 +84,34 @@
     return true;
   });
 
+  Emberwake.registerScene('coast-patrol', function () {
+    const bound = Emberwake.hasBound && Emberwake.hasBound();
+    const margin = Emberwake.hasMargin && Emberwake.hasMargin();
+    const ration = Emberwake.itemCount && Emberwake.itemCount('ration') > 0;
+    const torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    let coat = 'Unlicensed feet. We are not the tally clerk. The vault stays shut.';
+    if (bound && margin && ration) coat = 'Rope, a filed furrow, and a stamped biscuit. None of them is a licence. The door stays the other board.';
+    else if (bound && margin) coat = 'The knot is not a number. The furrow is already a margin. We do not open the vault for either.';
+    else if (bound && ration) coat = 'Rope on a coat, and a biscuit with our stamp. Food is not a licence. The count does not move.';
+    else if (margin && ration) coat = 'The cousin’s letter is already weather. The biscuit is food. Neither opens the door.';
+    else if (bound) coat = 'That cord is salt, not a seal. Step aside. The vault is not yours.';
+    else if (margin) coat = 'A margin in the pack is a filed mercy. We do not add a line, and we do not open the door.';
+    else if (ration) coat = 'A stamped biscuit. You bought food, not a key. The door is the other board.';
+    const lines = [
+      { where: 'Stormreach shale, west of the roost', speaker: 'A Concord coat', text: coat },
+      { speaker: 'Lira', text: 'Then look. The door stays the other board.' },
+    ];
+    if (torren) lines.push({ speaker: 'Torren', text: 'I left that coat. Their count is not my rank, and it still does not open the vault.' });
+    lines.push({ speaker: 'The spark', text: 'A patrol word does not open the vault. The shale keeps the door.' });
+    Emberwake.present({
+      lines: lines,
+      onDone: function () {
+        if (Emberwake.notePatrol) Emberwake.notePatrol();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('ration-swap', function () {
     Emberwake.present({
       lines: [

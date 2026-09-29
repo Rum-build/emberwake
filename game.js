@@ -181,6 +181,9 @@
   let nearRation = null;
   let nearAside = null;
   let nearNima = null;
+  let nearPatrol = null;
+  let approachPool = null;
+  let absorbKick = 0;
   let bedWanted = true;
   let motionWanted = true;
   let combatPace = 'steady';
@@ -746,12 +749,17 @@
     geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
   }
 
-  function makeSky(hex, highHex) {
+  function makeSky(hex, highHex, mood) {
     const geo = new THREE.SphereGeometry(64, 22, 16);
     const low = new THREE.Color(hex);
     const high = highHex ? new THREE.Color(highHex) : low.clone().lerp(new THREE.Color(0xfff0d4), 0.55);
-    const zenith = high.clone().lerp(new THREE.Color(0xffffff), 0.18);
-    const horizon = low.clone().lerp(high, 0.35).lerp(new THREE.Color(0xffe6c4), 0.22);
+    const dusk = mood === 'dusk';
+    const zenith = dusk
+      ? new THREE.Color(0x241432).lerp(high, 0.22)
+      : high.clone().lerp(new THREE.Color(0xffffff), 0.18);
+    const horizon = dusk
+      ? new THREE.Color(0xff6a32).lerp(low, 0.28)
+      : low.clone().lerp(high, 0.35).lerp(new THREE.Color(0xffe6c4), 0.22);
     const pos = geo.attributes.position;
     const colors = new Float32Array(pos.count * 3);
     const c = new THREE.Color();
@@ -764,7 +772,8 @@
       c.lerp(horizon, band * 0.62);
       const x = pos.getX(i);
       const warm = Math.max(0, Math.sin(x * 0.04) * 0.5 + 0.15);
-      if (t < 0.5) c.lerp(new THREE.Color(0xffd2a8), warm * (0.5 - t) * 0.35);
+      if (dusk && t < 0.58) c.lerp(new THREE.Color(0xff5a28), (0.58 - t) * 0.9);
+      else if (t < 0.5) c.lerp(new THREE.Color(0xffd2a8), warm * (0.5 - t) * 0.35);
       colors[i * 3] = c.r;
       colors[i * 3 + 1] = c.g;
       colors[i * 3 + 2] = c.b;
@@ -1181,11 +1190,11 @@
     );
     ironBar.position.set(0, 0.62, -4.15);
     g.add(ironBar);
-    const clerk = makeCharacter(0x3a3532, 0.92);
+    const clerk = makeCharacter(0x3a3532, 0.92, 'concord');
     clerk.position.set(-1.2, 0, -1.5);
     clerk.rotation.y = Math.PI;
     g.add(clerk);
-    const guard = makeCharacter(0x2a3038, 0.95);
+    const guard = makeCharacter(0x2a3038, 0.95, 'concord');
     guard.position.set(2.2, 0, -1.1);
     guard.rotation.y = Math.PI * 0.85;
     g.add(guard);
@@ -1300,7 +1309,7 @@
     marrowLight.position.set(0, 1.8, -14.2);
     g.add(marrowLight);
     g.userData.marrowLight = marrowLight;
-    const hallClerk = makeCharacter(0x3a3532, 0.9);
+    const hallClerk = makeCharacter(0x3a3532, 0.9, 'concord');
     hallClerk.position.set(1.8, 0, -8.6);
     hallClerk.rotation.y = Math.PI * 0.5;
     g.add(hallClerk);
@@ -1475,7 +1484,7 @@
     }));
     ash.rotation.x = -Math.PI / 2;
     g.add(ash);
-    g.add(makeSky(0x4a2018, 0xd08048));
+    g.add(makeSky(0x4a2018, 0xd08048, 'dusk'));
     g.add(makeAshRib(3.4, 3.4));
     g.add(makeCinderCone(-5.2, 3.6));
     g.add(makeAshRib(2.4, -3.6));
@@ -1649,7 +1658,7 @@
     }));
     ground.rotation.x = -Math.PI / 2;
     g.add(ground);
-    g.add(makeSky(0x4a4034, 0xe4c48a));
+    g.add(makeSky(0x4a4034, 0xe4c48a, 'dusk'));
     const fenceMat = new THREE.MeshLambertMaterial({ color: 0x3a3530 });
     [[-6.2, 0, 0.28, 9], [6.2, 0, 0.28, 9]].forEach((spec) => {
       const wall = new THREE.Mesh(new THREE.BoxGeometry(spec[2], 1.4, spec[3]), fenceMat);
@@ -1668,7 +1677,7 @@
     );
     pole.position.set(4.8, 1.1, 2.4);
     g.add(pole);
-    const warden = makeCharacter(0x4a453c, 0.92);
+    const warden = makeCharacter(0x4a453c, 0.92, 'concord');
     warden.position.set(3.5, 0, 1.5);
     warden.rotation.y = Math.PI * 0.8;
     g.add(warden);
@@ -3022,6 +3031,21 @@
     };
   }
 
+  function nearestPatrol() {
+    if (!playerMesh || locale !== 'field' || regionId !== 'stormreach' || skyPass) return null;
+    if (Math.hypot(-8.8 - playerMesh.position.x, 9.6 - playerMesh.position.z) > 1.0) return null;
+    if (seenBeats['coast-patrol']) {
+      return {
+        title: 'A Concord patrol',
+        hint: 'They already looked at the pack. The vault door did not change. Press E to hear it again.',
+      };
+    }
+    return {
+      title: 'A Concord patrol',
+      hint: 'Two coats on the west shale. Press E. They are not the tally and not the door.',
+    };
+  }
+
   function nearestRation() {
     if (!playerMesh || locale !== 'field' || regionId !== 'stormreach' || skyPass) return null;
     if (Math.hypot(-8.6 - playerMesh.position.x, 3.2 - playerMesh.position.z) > 1.1) return null;
@@ -3456,6 +3480,7 @@
     porter.position.set(2.45, 0, 2.55);
     porter.rotation.y = -0.6;
     g.add(porter);
+    g.add(makeCoastPatrol(-8.8, 9.6));
     const puddle = new THREE.Mesh(
       new THREE.CircleGeometry(0.48, 10),
       new THREE.MeshBasicMaterial({ color: 0x2a4458, transparent: true, opacity: 0.78 })
@@ -3597,23 +3622,10 @@
 
   function makeSilhouette(x, z) {
     const g = new THREE.Group();
-    const fig = makeCharacter(0x100c10, 1.42);
-    fig.traverse((c) => {
-      if (!c.isMesh || !c.material) return;
-      if (c.userData && c.userData.rim) {
-        c.material = c.material.clone();
-        c.material.color.setHex(0x4a2018);
-        c.material.opacity = 0.5;
-        return;
-      }
-      c.material = c.material.clone();
-      c.material.transparent = true;
-      c.material.opacity = 0.94;
-      if (c.material.emissive) c.material.emissive.setHex(0x14080c);
-    });
+    const fig = makeCharacter(0x140c12, 1.42, 'vesper');
     const hood = new THREE.Mesh(
       new THREE.ConeGeometry(0.38, 0.5, 6),
-      new THREE.MeshLambertMaterial({ color: 0x0c080c })
+      new THREE.MeshPhongMaterial({ color: 0x0c080c, shininess: 4, specular: new THREE.Color(0x2a1814) })
     );
     hood.position.y = 1.62;
     fig.add(hood);
@@ -3781,7 +3793,7 @@
 
     if (def.patrol) {
       [[1.6, 0.4], [-1.3, 1.1], [0.2, -1.7]].forEach((spot, i) => {
-        const fig = makeCharacter(i === 0 ? 0x2a3038 : 0x3e4550, 0.9);
+        const fig = makeCharacter(i === 0 ? 0x2a3038 : 0x3e4550, 0.9, 'concord');
         fig.position.set(spot[0], 0, spot[1]);
         fig.rotation.y = Math.atan2(-spot[0], -spot[1]);
         g.add(fig);
@@ -3855,10 +3867,15 @@
       pool.core.position.y = 1.2 + Math.sin(t * 2 + pool.phase) * 0.12;
       pool.core.rotation.y += dt * 0.7;
       pool.core.scale.setScalar((1 + Math.sin(t * 3 + pool.phase) * 0.08) * (1 + burst * 0.9));
-      if (pool.rim) pool.rim.scale.setScalar((1 + Math.sin(t * 1.4 + pool.phase) * 0.035) * (1 + burst * 0.42));
+      const cued = (pool === nearPool || pool === approachPool) && !pool.absorbed && !pool.bottled && !pool.withheld;
+      const cue = cued ? (pool === nearPool ? 0.7 : 0.34) : 0;
+      if (pool.rim) {
+        const breathe = cued && motionWanted ? 1 + Math.sin(t * 3.2) * (pool === nearPool ? 0.05 : 0.025) : 1;
+        pool.rim.scale.setScalar((1 + Math.sin(t * 1.4 + pool.phase) * 0.035) * (1 + burst * 0.42) * breathe);
+      }
       if (pool.rimMat) {
         pool.rimMat.color.copy(pool.elColor).lerp(pool.healColor, h);
-        pool.rimMat.emissive.copy(pool.elColor).multiplyScalar(0.62 * (1 - h) + burst * 0.4);
+        pool.rimMat.emissive.copy(pool.elColor).multiplyScalar(0.62 * (1 - h) + burst * 0.4 + cue);
       }
       const pulse = 0.36 + Math.sin(t * 2.1 + pool.phase) * 0.1;
       pool.beamMat.opacity = pulse * (1 - h) + 0.07 * h + burst * 0.72;
@@ -3961,14 +3978,18 @@
     return g;
   }
 
-  function makeCharacter(color, scale) {
+  function makeCharacter(color, scale, kind) {
     const g = new THREE.Group();
+    const concord = kind === 'concord';
+    const vesper = kind === 'vesper';
     const clothMat = new THREE.MeshPhongMaterial({
       color,
-      emissive: new THREE.Color(0x1a100c),
-      shininess: 12,
-      specular: new THREE.Color(0x3a2a22),
+      emissive: new THREE.Color(vesper ? 0x12080c : concord ? 0x10141c : 0x1a100c),
+      shininess: vesper ? 3 : 5,
+      specular: new THREE.Color(vesper ? 0x2a1814 : 0x241c18),
     });
+    const foldMat = clothMat.clone();
+    foldMat.color = clothMat.color.clone().offsetHSL(0, concord ? 0.02 : -0.05, concord ? 0.1 : -0.08);
     const torso = new THREE.Mesh(
       new THREE.CylinderGeometry(0.26 * scale, 0.32 * scale, 0.62 * scale, 7),
       clothMat
@@ -3983,21 +4004,38 @@
     g.add(shoulder);
     const cloak = new THREE.Mesh(
       new THREE.BoxGeometry(0.46 * scale, 0.55 * scale, 0.08 * scale),
-      clothMat
+      foldMat
     );
     cloak.position.set(0, 0.62 * scale, -0.18 * scale);
     g.add(cloak);
+    const leather = new THREE.MeshPhongMaterial({
+      color: vesper ? 0x2a1814 : 0x3a2c22,
+      shininess: 22,
+      specular: new THREE.Color(0x6a4830),
+    });
+    const metal = new THREE.MeshPhongMaterial({
+      color: concord ? 0xd4b56a : vesper ? 0x8a4a32 : 0x9aa0a8,
+      emissive: new THREE.Color(concord ? 0x3a2c10 : vesper ? 0x2a1008 : 0x14181c),
+      shininess: concord ? 86 : vesper ? 40 : 70,
+      specular: new THREE.Color(concord ? 0xfff2c8 : 0xe4e8ee),
+    });
     const belt = new THREE.Mesh(
       new THREE.BoxGeometry(0.5 * scale, 0.08 * scale, 0.34 * scale),
-      new THREE.MeshLambertMaterial({ color: 0x2a2218 })
+      leather
     );
     belt.position.y = 0.42 * scale;
     g.add(belt);
+    const buckle = new THREE.Mesh(
+      new THREE.BoxGeometry(0.1 * scale, 0.1 * scale, 0.06 * scale),
+      metal
+    );
+    buckle.position.set(0, 0.42 * scale, 0.16 * scale);
+    g.add(buckle);
     const skin = new THREE.MeshPhongMaterial({
-      color: 0xffdbac,
-      emissive: new THREE.Color(0x1a0c08),
-      shininess: 16,
-      specular: new THREE.Color(0x4a3028),
+      color: vesper ? 0x6a4038 : 0xe8b090,
+      emissive: new THREE.Color(vesper ? 0x1a0c0c : 0x3a2018),
+      shininess: 9,
+      specular: new THREE.Color(vesper ? 0x3a2018 : 0x6a4030),
     });
     const head = new THREE.Mesh(new THREE.SphereGeometry(0.2 * scale, 8, 7), skin);
     head.position.y = 1.08 * scale;
@@ -4034,6 +4072,22 @@
     );
     sash.position.set(0, 0.74 * scale, 0.2 * scale);
     g.add(sash);
+    if (concord) {
+      const plate = new THREE.Mesh(
+        new THREE.BoxGeometry(0.22 * scale, 0.16 * scale, 0.05 * scale),
+        metal
+      );
+      plate.position.set(0, 0.7 * scale, 0.18 * scale);
+      g.add(plate);
+    }
+    if (vesper) {
+      const pin = new THREE.Mesh(
+        new THREE.BoxGeometry(0.08 * scale, 0.14 * scale, 0.04 * scale),
+        metal
+      );
+      pin.position.set(0.16 * scale, 0.78 * scale, 0.16 * scale);
+      g.add(pin);
+    }
     const ember = new THREE.Group();
     ember.position.set(0.1 * scale, 0.78 * scale, 0.22 * scale);
     ember.visible = false;
@@ -4400,15 +4454,29 @@
     const postMat = new THREE.MeshLambertMaterial({ color: 0x5c4634 });
     for (let i = 0; i < 5; i++) {
       const post = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.68, 0.1), postMat);
-      post.position.set(-2.2 + i * 1.1, 0.34, -3.4);
+      post.position.set(-2.2 + i * 1.1, 0.34, -3.9);
       g.add(post);
     }
     const rail = new THREE.Mesh(new THREE.BoxGeometry(4.5, 0.07, 0.07), postMat);
-    rail.position.set(0, 0.55, -3.4);
+    rail.position.set(0, 0.55, -3.9);
     g.add(rail);
     const rack = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.06, 0.08), postMat);
     rack.position.set(2.85, 1.12, 2.7);
     g.add(rack);
+  }
+
+  function makeCoastPatrol(x, z) {
+    const g = new THREE.Group();
+    const lead = makeCharacter(0x2a3038, 0.92, 'concord');
+    lead.position.set(-0.42, 0, 0);
+    lead.rotation.y = 0.5;
+    g.add(lead);
+    const second = makeCharacter(0x3e4550, 0.86, 'concord');
+    second.position.set(0.48, 0, 0.12);
+    second.rotation.y = -0.2;
+    g.add(second);
+    g.position.set(x, 0, z);
+    return g;
   }
 
   function makeNimaStop(x, z) {
@@ -5226,10 +5294,11 @@
     const showPost = idle && nearPost && !showAbsorb && !showDoor && !showChest && !showCord;
     const showRing = idle && nearRing && !showAbsorb && !showDoor && !showChest && !showCord && !showPost;
     const showClerk = idle && nearClerk && !showAbsorb && !showDoor && !showGate && !showReturn && !showPorter && !showNotice && !showChest;
+    const showPatrol = idle && nearPatrol && !showAbsorb && !showDoor && !showGate && !showReturn && !showPorter && !showNotice && !showChest && !showClerk;
     const showRation = idle && nearRation && !showAbsorb && !showDoor && !showGate && !showReturn && !showPorter && !showNotice && !showClerk && !showChest;
     const showAside = idle && nearAside && !showAbsorb && !atExit && !showTalk && !showMark && !showCamp;
     const showNima = idle && nearNima && !showAbsorb && !atExit && !showTalk && !showMark && !showCamp && !showAside;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showNotice && !showCord && !showPost && !showRing && !showClerk && !showRation && !showAside && !showNima);
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showNotice && !showCord && !showPost && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
@@ -5244,13 +5313,14 @@
     else if (showLook || showPipe || showThroat || showStone || showMark || showNave || showGallery) absorbBtn.textContent = 'Enter';
     else if (showTalk) absorbBtn.textContent = 'Speak';
     else if (showChest) absorbBtn.textContent = seenBeats['wayside-chest'] ? 'Look' : 'Open';
-    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showRing || showClerk || showRation || showAside || showNima) absorbBtn.textContent = 'Look';
+    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showRing || showClerk || showRation || showAside || showNima || showPatrol) absorbBtn.textContent = 'Look';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
+    absorbBtn.classList.toggle('is-ready', !!showAbsorb);
   }
 
   function updatePrompt() {
     const atExit = atInteriorExit();
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !nearLetter && !nearChest && !nearNotice && !nearCord && !nearPost && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !nearLetter && !nearChest && !nearNotice && !nearCord && !nearPost && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -5408,6 +5478,11 @@
       $('#interact-detail').textContent = nearClerk.hint;
       return;
     }
+    if (nearPatrol && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
+      $('#interact-title').textContent = nearPatrol.title;
+      $('#interact-detail').textContent = nearPatrol.hint;
+      return;
+    }
     if (nearRation && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
       $('#interact-title').textContent = nearRation.title;
       $('#interact-detail').textContent = nearRation.hint;
@@ -5458,6 +5533,11 @@
       $('#interact-detail').textContent = (nearWarden || nearWorker).hint;
       return;
     }
+    if (approachPool && !nearPool) {
+      $('#interact-title').textContent = 'Closer · ' + approachPool.short;
+      $('#interact-detail').textContent = approachPool.name + ' is near. Step into the mouth. Absorb appears when you are standing in it.';
+      return;
+    }
     $('#interact-title').textContent = nearPool.name;
     $('#interact-detail').textContent = nearPool.bottled
       ? 'A Concord seal sits on the mouth. They called this safety while you watched.'
@@ -5496,6 +5576,7 @@
       if (seenBeats['way-post']) waiting.push('A snapped mile post on the isle does not open the kiln.');
       if (seenBeats['cold-ring']) waiting.push('A cold ring in the grass is not a pool and not the scar.');
       if (seenBeats['clerk-tally']) waiting.push('A tally clerk on the shale counted weather. The vault door did not change.');
+      if (seenBeats['coast-patrol']) waiting.push('A Concord patrol on the west shale looked at the pack. The vault door did not change.');
       if (seenBeats['ration-swap']) waiting.push('A stall on the shale traded rot-ash for a Concord ration. It closes 22 HP or returns 12 mind. It does not open the vault.');
       if (seenBeats['yard-aside']) waiting.push('A private word was said short of the north stone. The mark and the slag stayed where they were.');
       if (seenBeats['yard-nima']) waiting.push('Nima’s herbs by the east fence were named once. The mark and the slag stayed where they were.');
@@ -5760,6 +5841,7 @@
       const before = t.hp;
       t.hp = Math.min(maxHp(t), t.hp + def.heal);
       showToast(t.name + ' drinks the ' + def.name + '. ' + (t.hp - before) + ' HP. Now ' + t.hp + '/' + maxHp(t) + '.');
+      if (id === 'ration') playRation();
     } else if ((mode === 'mp' || (!split && def.mp)) && def.mp) {
       const living = party.filter((p) => p.hp > 0).slice().sort((a, b) => (a.mp / a.maxMp) - (b.mp / b.maxMp));
       const t = living[0];
@@ -5771,6 +5853,7 @@
       const before = t.mp;
       t.mp = Math.min(t.maxMp, t.mp + def.mp);
       showToast(t.name + ' takes the ' + def.name + '. ' + (t.mp - before) + ' mind. Now ' + t.mp + '/' + t.maxMp + '.');
+      if (id === 'ration') playRation();
     }
     renderInventory();
     updateHUD();
@@ -5824,6 +5907,20 @@
       if (!poolInLocale(p)) return;
       const d = Math.hypot(p.x - playerMesh.position.x, p.z - playerMesh.position.z);
       if (d < bestD) { best = p; bestD = d; }
+    });
+    return best;
+  }
+
+  function nearestApproach() {
+    if (!playerMesh) return null;
+    let best = null;
+    let bestD = 4.6;
+    pools.forEach((p) => {
+      if (!poolInLocale(p) || p.absorbed || p.bottled || p.withheld) return;
+      const d = Math.hypot(p.x - playerMesh.position.x, p.z - playerMesh.position.z);
+      if (d < ABSORB_RADIUS || d >= bestD) return;
+      best = p;
+      bestD = d;
     });
     return best;
   }
@@ -5991,6 +6088,10 @@
       talkClerk();
       return;
     }
+    if (nearPatrol) {
+      talkPatrol();
+      return;
+    }
     if (nearRation) {
       talkRation();
       return;
@@ -6073,6 +6174,7 @@
       msg += ' Rot-ash in the pack. The stall on the shale trades it.';
     }
     playSting();
+    pulseAbsorb();
     showToast(msg, seenBeats.fedOnce && msg.indexOf('A scar is a separate cut') >= 0 ? 7200 : 4600);
     refreshRumor();
     updateHUD();
@@ -7868,6 +7970,27 @@
     saveGame();
   }
 
+  function talkPatrol() {
+    if (locale !== 'field' || regionId !== 'stormreach' || dialogueOpen) return;
+    if (seenBeats['coast-patrol']) {
+      showToast('The patrol already looked. The vault door did not change.');
+      return;
+    }
+    const fn = EW.scenes['coast-patrol'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'coast-patrol';
+    }
+  }
+
+  function notePatrol() {
+    seenBeats['coast-patrol'] = true;
+    showToast('The patrol looked at the pack. The vault door is still the other board.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
   function talkRation() {
     if (locale !== 'field' || regionId !== 'stormreach' || dialogueOpen) return;
     if (seenBeats['ration-swap']) {
@@ -7895,6 +8018,7 @@
       if (ration) ration.count += 1;
       else items.push({ id: 'ration', count: 1 });
       showToast('One rot-ash for a Concord ration. It closes up to 22 HP or returns 12 mind. The vault door did not change.');
+      playRation();
     } else showToast('The stall still wants rot-ash. Nothing was traded.');
     refreshRumor();
     updateHUD();
@@ -8127,6 +8251,8 @@
     }
     if (coasting) {
       nearPool = null;
+      approachPool = null;
+      nearPatrol = null;
       nearDoor = null;
       nearGate = null;
       nearReturn = null;
@@ -8233,6 +8359,8 @@
         poseHost('walk');
         stepsSinceEncounter += speed * 10;
         nearPool = nearestPool();
+        approachPool = nearestApproach();
+        nearPatrol = nearestPatrol();
         nearDoor = nearestDoor();
         nearGate = nearestGate();
         nearReturn = nearestReturn();
@@ -8280,6 +8408,8 @@
         }
       } else {
         nearPool = nearestPool();
+        approachPool = nearestApproach();
+        nearPatrol = nearestPatrol();
         nearDoor = nearestDoor();
         nearGate = nearestGate();
         nearReturn = nearestReturn();
@@ -8346,6 +8476,8 @@
       });
     } else if (!coasting) {
       nearPool = nearestPool();
+        approachPool = nearestApproach();
+        nearPatrol = nearestPatrol();
       nearDoor = nearestDoor();
       nearGate = nearestGate();
       nearReturn = nearestReturn();
@@ -8388,7 +8520,15 @@
     driftNave(dt);
     if (skyPass) updateSkyPass(dt);
     else {
-      const ideal = new THREE.Vector3(camTarget.x, camTarget.y + CAMERA_HEIGHT, camTarget.z + CAMERA_DIST);
+      let kick = 0;
+      if (absorbKick > 0) {
+        if (!motionWanted) absorbKick = 0;
+        else {
+          absorbKick = Math.max(0, absorbKick - (dt || 0) * 1.7);
+          kick = Math.sin((1 - absorbKick) * Math.PI) * 0.62;
+        }
+      }
+      const ideal = new THREE.Vector3(camTarget.x, camTarget.y + CAMERA_HEIGHT + kick, camTarget.z + CAMERA_DIST - kick * 0.35);
       camera.position.lerp(ideal, CAMERA_LAG * (dt * 60));
       camera.lookAt(camTarget.x, camTarget.y + 1, camTarget.z);
     }
@@ -9131,11 +9271,13 @@
         target.mp = Math.min(target.maxMp, target.mp + def.mp);
         showLog(actor.name + ' gives ' + target.name + ' the ' + def.name + '. ' + (target.mp - before) + ' mind. Now ' + target.mp + '/' + target.maxMp + '.');
         flashMesh(combatPartyMeshes[targetIdx], 0x9ec6e8);
+        if (act.item === 'ration') playRation();
       } else if (def.heal) {
         const before = target.hp;
         target.hp = Math.min(maxHp(target), target.hp + def.heal);
         showLog(actor.name + ' gives ' + target.name + ' the ' + def.name + '. ' + (target.hp - before) + ' HP. Now ' + target.hp + '/' + maxHp(target) + '.');
         flashMesh(combatPartyMeshes[targetIdx], 0x9dffc8);
+        if (act.item === 'ration') playRation();
       }
     }
 
@@ -9888,6 +10030,49 @@
       osc.start(start);
       osc.stop(start + 0.36);
     });
+    const gulp = audioCtx.createOscillator();
+    const gulpGain = audioCtx.createGain();
+    gulp.type = 'sine';
+    gulp.frequency.value = 220;
+    gulpGain.gain.setValueAtTime(0.0001, now);
+    gulpGain.gain.exponentialRampToValueAtTime(0.035, now + 0.02);
+    gulpGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+    gulp.connect(gulpGain);
+    gulpGain.connect(audioCtx.destination);
+    gulp.start(now);
+    gulp.stop(now + 0.22);
+  }
+
+  function playRation() {
+    if (!bedWanted) return;
+    ensureBed();
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    [520, 390].forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const start = now + i * 0.045;
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.04, start + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.11);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(start);
+      osc.stop(start + 0.13);
+    });
+  }
+
+  function pulseAbsorb() {
+    const wash = $('#absorb-wash');
+    if (wash) {
+      wash.classList.remove('is-on');
+      void wash.offsetWidth;
+      wash.classList.add('is-on');
+      if (!motionWanted) setTimeout(() => wash.classList.remove('is-on'), 180);
+    }
+    absorbKick = motionWanted ? 1 : 0;
   }
 
   function playDoorSting() {
@@ -11250,6 +11435,8 @@
   EW.noteLetter = noteLetter;
   EW.hasMargin = hasMargin;
   EW.hasBound = hasBound;
+  EW.itemCount = itemCount;
+  EW.notePatrol = notePatrol;
   EW.notePost = notePost;
   EW.noteRing = noteRing;
   EW.noteClerk = noteClerk;
