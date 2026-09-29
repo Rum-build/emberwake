@@ -512,7 +512,22 @@ button, .inventory-panel, .inv-body, .credits-content {
   from { filter: brightness(1.35); }
   to { filter: none; }
 }
-.combat-ui.hit { animation: hitflash 0.16s linear; }
+.combat-ui.hit:not(.juice-cleave):not(.juice-channel):not(.juice-aim) { animation: hitflash 0.16s linear; }
+@keyframes juiceCleave {
+  0% { filter: saturate(1.45) brightness(1.28); }
+  100% { filter: saturate(1.12); }
+}
+@keyframes juiceChannel {
+  0% { filter: hue-rotate(16deg) brightness(1.22); }
+  100% { filter: none; }
+}
+@keyframes juiceAim {
+  0% { filter: contrast(1.22) brightness(1.16); }
+  100% { filter: none; }
+}
+.combat-ui.juice-cleave { animation: juiceCleave 0.28s ease-out; }
+.combat-ui.juice-channel { animation: juiceChannel 0.32s ease-out; }
+.combat-ui.juice-aim { animation: juiceAim 0.28s ease-out; }
 
 .hud-rumor {
   font-size: 0.72rem;
@@ -1032,6 +1047,9 @@ button, .inventory-panel, .inv-body, .credits-content {
 }
 .hit-float.harm { color: #ffb089; }
 .hit-float.heal { color: #b7e6c2; }
+.hit-float.juice-cleave { color: #ff6a2a; text-shadow: 0 0 14px #ff6a2a, 0 2px 0 #2a100c; }
+.hit-float.juice-channel { color: #7ec8e8; text-shadow: 0 0 14px #7ec8e8, 0 2px 0 #102028; }
+.hit-float.juice-aim { color: #d8c8ff; text-shadow: 0 0 14px #d8c8ff, 0 2px 0 #1a1428; }
 .hit-float.show { animation: hitpop 0.55s ease-out; }
 @keyframes hitpop {
   0% { opacity: 0; transform: translate(-50%, 10px); }

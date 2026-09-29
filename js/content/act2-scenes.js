@@ -525,4 +525,69 @@
     });
     return true;
   });
+
+  Emberwake.registerScene('gallery-count', function () {
+    const hasFeed = Emberwake.packHas && Emberwake.packHas('Named Feed');
+    const hasPass = Emberwake.packHas && Emberwake.packHas('Unwritten Passage');
+    let readReply = 'Licence Zero. Every later bottle is a digit of that zero. The stair is the lock. It does not open.';
+    if (hasFeed) readReply += ' Named Feed is a digit of hunger, not a weapon.';
+    if (hasPass) readReply += ' The Unwritten Passage is the blank digit. It does not open the door.';
+    const nave = Emberwake.naveChoice ? Emberwake.naveChoice() : null;
+    let fileReply = 'The page stays hungry. The bar hinge is still a choice. The stair stays locked.';
+    if (nave === 'name') fileReply = 'The named hinge is written into Licence Zero. The cathedral bar stays shut. The stair stays locked.';
+    else if (nave === 'turn') fileReply = 'The refusal is a blank digit on Licence Zero. The bar stays theirs. The stair stays locked.';
+    Emberwake.present({
+      lines: [
+        {
+          where: 'Watch gallery',
+          speaker: 'Lira',
+          text: 'A ledger. They numbered the cathedral as Licence Zero. The stair under the grate is not a door.',
+          choices: [
+            {
+              label: 'Read the count.',
+              pick: 'read',
+              reply: { speaker: 'Lira', text: readReply },
+            },
+            {
+              label: 'File the hinge.',
+              pick: 'file',
+              reply: { speaker: 'Lira', text: fileReply },
+            },
+          ],
+        },
+      ],
+      onPick: function (id) {
+        if (Emberwake.noteGallery) Emberwake.noteGallery(id);
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('nave-kestrel', function () {
+    Emberwake.present({
+      lines: [
+        {
+          where: 'Ash nave',
+          speaker: 'Lira',
+          text: 'She crossed once. The roof is still Vesper’s. Asking will not put her in the pack.',
+          choices: [
+            {
+              label: 'Ask her to land.',
+              pick: 'ask',
+              reply: { speaker: 'The spark', text: 'She does not. The thermal was a look, not a company. She is not in the pack.' },
+            },
+            {
+              label: 'Leave her the air.',
+              pick: 'air',
+              reply: { speaker: 'The spark', text: 'The air stays hers. She does not join.' },
+            },
+          ],
+        },
+      ],
+      onPick: function (id) {
+        if (Emberwake.noteKestrelNave) Emberwake.noteKestrelNave(id);
+      },
+    });
+    return true;
+  });
 })(window.Emberwake);

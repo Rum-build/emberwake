@@ -131,6 +131,16 @@
   let naveLatch = false;
   let naveGroup = null;
   let nearNave = null;
+  let galleryWord = null;
+  let galleryLatch = false;
+  let galleryGroup = null;
+  let nearGallery = null;
+  let nearStair = null;
+  let nearKestrel = null;
+  let feedNoted = false;
+  let passageNoted = false;
+  let kestrelNave = null;
+  let kestrelFly = 0;
   let coverReady = false;
   let assistUsed = {};
   let motes = [];
@@ -415,11 +425,20 @@
     naveWord = null;
     naveLatch = false;
     nearNave = null;
+    galleryWord = null;
+    galleryLatch = false;
+    nearGallery = null;
+    nearStair = null;
+    nearKestrel = null;
+    feedNoted = false;
+    passageNoted = false;
+    kestrelNave = null;
+    kestrelFly = 0;
     coverReady = false;
     assistUsed = {};
     if (yardGroup) yardGroup.visible = false;
     if (markGroup) markGroup.visible = false;
-    if (naveGroup) naveGroup.visible = false;
+    tuckCathedral();
     if (yardStone && yardStone.userData.beamMat) yardStone.userData.beamMat.opacity = 0.12;
     if (throatRoom) throatRoom.visible = false;
     if (marrowStain) marrowStain.visible = false;
@@ -458,7 +477,7 @@
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
     if (markGroup) markGroup.visible = false;
-    if (naveGroup) naveGroup.visible = false;
+    tuckCathedral();
     if (stormreachGroup) stormreachGroup.visible = false;
     if (coastVesper) coastVesper.visible = false;
     if (vaultRoom) vaultRoom.visible = false;
@@ -517,6 +536,7 @@
     buildYard();
     buildMark();
     buildNave();
+    buildGallery();
     buildCombatArena();
     window.addEventListener('resize', onResize);
   }
@@ -578,9 +598,14 @@
       if (renderer) renderer.setClearColor(0x2c2430);
     } else if (place === 'nave') {
       scene.fog.color.set(0x1c1618);
-      scene.fog.near = 6;
-      scene.fog.far = 34;
+      scene.fog.near = 8;
+      scene.fog.far = 48;
       if (renderer) renderer.setClearColor(0x1c1618);
+    } else if (place === 'gallery') {
+      scene.fog.color.set(0x140e12);
+      scene.fog.near = 5;
+      scene.fog.far = 22;
+      if (renderer) renderer.setClearColor(0x140e12);
     } else if (place === 'cellar') {
       scene.fog.color.set(0x1a1410);
       scene.fog.near = 8;
@@ -1519,6 +1544,7 @@
       buttress.position.set(spot[0], 1.2, spot[1]);
       g.add(buttress);
     });
+    const banners = [];
     [-3.1, 3.1].forEach((x) => {
       const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 3.2, 5), stone);
       pole.position.set(x, 1.6, -1.4);
@@ -1526,7 +1552,9 @@
       const banner = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 1.5), bannerMat);
       banner.position.set(x > 0 ? x - 0.35 : x + 0.35, 2.1, -1.4);
       g.add(banner);
+      banners.push(banner);
     });
+    g.userData.banners = banners;
     const doorMat = new THREE.MeshPhongMaterial({ color: 0x241c1c, shininess: 10, specular: new THREE.Color(0x3a2820) });
     [-0.55, 0.55].forEach((x) => {
       const door = new THREE.Mesh(new THREE.BoxGeometry(0.95, 2.8, 0.22), doorMat);
@@ -1555,7 +1583,7 @@
       g.add(tower);
       const slit = new THREE.Mesh(
         new THREE.PlaneGeometry(0.18, 0.7),
-        new THREE.MeshBasicMaterial({ color: 0xffb060 })
+        new THREE.MeshBasicMaterial({ color: 0xffb060, fog: false })
       );
       slit.position.set(x, 4.2, -5.7);
       g.add(slit);
@@ -1568,20 +1596,154 @@
     watcher.visible = true;
     watcher.position.y = 3.4;
     watcher.scale.setScalar(1.15);
+    watcher.traverse((child) => {
+      if (child.material && child.material.isMeshBasicMaterial) child.material.fog = false;
+    });
     g.add(watcher);
+    const rimCard = new THREE.Mesh(
+      new THREE.PlaneGeometry(7.4, 5.6),
+      new THREE.MeshBasicMaterial({
+        color: 0xc4a070, transparent: true, opacity: 0.22, depthWrite: false, fog: false,
+      })
+    );
+    rimCard.position.set(0, 2.7, -4.85);
+    g.add(rimCard);
+    const stainPlane = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.35, 2.05),
+      new THREE.MeshBasicMaterial({
+        color: 0xc45a48, transparent: true, opacity: 0.7, depthWrite: false, fog: false,
+      })
+    );
+    stainPlane.position.set(0, 2.55, -5.02);
+    g.add(stainPlane);
+    const stainLight = new THREE.PointLight(0xc45a48, 1.05, 18);
+    stainLight.position.set(0, 2.3, -3.2);
+    g.add(stainLight);
+    g.userData.stain = stainLight;
+    g.userData.stainPlane = stainPlane;
+    const sideDoor = new THREE.Mesh(new THREE.BoxGeometry(0.16, 2.15, 0.95), doorMat);
+    sideDoor.position.set(3.85, 1.08, 0.15);
+    g.add(sideDoor);
+    const sideBar = new THREE.Mesh(
+      new THREE.BoxGeometry(0.08, 0.1, 0.72),
+      new THREE.MeshPhongMaterial({ color: 0xc4a46a, emissive: new THREE.Color(0x5a4010), shininess: 18 })
+    );
+    sideBar.position.set(3.74, 1.15, 0.15);
+    g.add(sideBar);
+    const bird = new THREE.Group();
+    const birdBody = new THREE.Mesh(
+      new THREE.SphereGeometry(0.16, 6, 5),
+      new THREE.MeshLambertMaterial({ color: 0x2c2418 })
+    );
+    birdBody.scale.set(2.1, 0.5, 0.65);
+    bird.add(birdBody);
+    const wingMat = new THREE.MeshLambertMaterial({ color: 0x3a3024, side: THREE.DoubleSide });
+    const wingL = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.18), wingMat);
+    wingL.position.set(0, 0.04, 0.22);
+    const wingR = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.18), wingMat);
+    wingR.position.set(0, 0.04, -0.22);
+    bird.add(wingL);
+    bird.add(wingR);
+    bird.visible = false;
+    bird.position.set(-8, 3.8, -0.6);
+    g.add(bird);
+    g.userData.bird = bird;
+    g.userData.wings = [wingL, wingR];
     [-1.1, 1.1].forEach((x) => {
       const post = new THREE.Mesh(new THREE.BoxGeometry(0.24, 1.5, 0.24), stone);
       post.position.set(x, 0.75, 4.05);
       g.add(post);
     });
-    makeMotes(g, 56, 0xc4b4a4, { x: 10, y: 2.4, z: 12 }, { fall: true });
+    makeMotes(g, 96, 0xc4b4a4, { x: 12, y: 3.4, z: 14 }, { fall: true });
     naveGroup = g;
+    scene.add(g);
+  }
+
+  function tuckCathedral() {
+    if (naveGroup) naveGroup.visible = false;
+    if (galleryGroup) galleryGroup.visible = false;
+    if (naveGroup && naveGroup.userData.bird && kestrelFly <= 0) naveGroup.userData.bird.visible = false;
+  }
+
+  function buildGallery() {
+    const g = new THREE.Group();
+    g.visible = false;
+    g.add(new THREE.AmbientLight(0x3a2824, 0.5));
+    g.add(new THREE.HemisphereLight(0x6a4030, 0x100c10, 0.42));
+    const lamp = new THREE.PointLight(0xffb070, 0.8, 12);
+    lamp.position.set(0.2, 2.3, 0.6);
+    g.add(lamp);
+    g.add(variedFloor(8, 8, 8, 8, 0x2a201c, 0x161210, 0.03));
+    const wall = new THREE.MeshLambertMaterial({ color: 0x3a2c28 });
+    function addWall(w, d, x, z) {
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, 2.8, d), wall);
+      mesh.position.set(x, 1.4, z);
+      g.add(mesh);
+    }
+    addWall(2.15, 0.28, -2.35, -3.2);
+    addWall(2.15, 0.28, 2.35, -3.2);
+    addWall(2.35, 0.28, -2.55, 3.2);
+    addWall(2.35, 0.28, 2.55, 3.2);
+    addWall(0.28, 6.5, -3.4, 0);
+    addWall(0.28, 6.5, 3.4, 0);
+    const desk = new THREE.Mesh(
+      new THREE.BoxGeometry(1.7, 0.72, 0.72),
+      new THREE.MeshPhongMaterial({ color: 0x4a3428, shininess: 8, specular: new THREE.Color(0x2a1810) })
+    );
+    desk.position.set(0, 0.36, -0.15);
+    g.add(desk);
+    const page = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.78, 0.48),
+      new THREE.MeshBasicMaterial({ color: 0xe8d8b0, fog: false })
+    );
+    page.rotation.x = -Math.PI / 2;
+    page.position.set(0, 0.74, -0.12);
+    g.add(page);
+    const ink = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.42, 0.06),
+      new THREE.MeshBasicMaterial({ color: 0x2a1810, fog: false })
+    );
+    ink.rotation.x = -Math.PI / 2;
+    ink.position.set(0, 0.75, -0.1);
+    g.add(ink);
+    const stepMat = new THREE.MeshLambertMaterial({ color: 0x241c1a });
+    for (let i = 0; i < 4; i++) {
+      const step = new THREE.Mesh(new THREE.BoxGeometry(1.45, 0.16, 0.38), stepMat);
+      step.position.set(0, 0.1 + i * 0.16, -1.85 - i * 0.26);
+      g.add(step);
+    }
+    const grate = new THREE.Mesh(
+      new THREE.BoxGeometry(1.55, 1.7, 0.08),
+      new THREE.MeshPhongMaterial({ color: 0xc4a46a, emissive: new THREE.Color(0x3a2810), shininess: 16 })
+    );
+    grate.position.set(0, 0.95, -2.62);
+    g.add(grate);
+    const stain = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.7, 1.35),
+      new THREE.MeshBasicMaterial({
+        color: 0xc45a48, transparent: true, opacity: 0.62, side: THREE.DoubleSide, depthWrite: false, fog: false,
+      })
+    );
+    stain.position.set(-3.24, 1.65, 0.4);
+    stain.rotation.y = Math.PI / 2;
+    g.add(stain);
+    const stainLight = new THREE.PointLight(0xc45a48, 0.65, 8);
+    stainLight.position.set(-2.2, 1.6, 0.4);
+    g.add(stainLight);
+    g.userData.stain = stainLight;
+    galleryGroup = g;
     scene.add(g);
   }
 
   function naveFits(x, z) {
     if (z > 4.15 || z < -3.15) return false;
     if (Math.abs(x) > 4.3) return false;
+    return true;
+  }
+
+  function galleryFits(x, z) {
+    if (z > 3.1 || z < -2.9) return false;
+    if (Math.abs(x) > 3.2) return false;
     return true;
   }
 
@@ -1726,7 +1888,7 @@
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
     if (markGroup) markGroup.visible = false;
-    if (naveGroup) naveGroup.visible = false;
+    tuckCathedral();
     interiorGroup.visible = true;
     villageRoom.visible = id === 'leaf-village';
     cellarRoom.visible = id === 'root-cellar';
@@ -2533,7 +2695,10 @@
     }));
     pts.userData.base = base;
     pts.userData.fall = !!(opts && opts.fall);
-    if (pts.userData.fall) pts.material.size = 0.07;
+    if (pts.userData.fall) {
+      pts.material.size = 0.08;
+      pts.material.opacity = 0.58;
+    }
     parent.add(pts);
     motes.push(pts);
     return pts;
@@ -2725,10 +2890,13 @@
     if (!spark || !spark.path) return 'Choose how she fights.';
     const slag = pools.find((p) => p.id === 'yard-slag');
     const weep = pools.find((p) => p.id === 'mark-weep');
+    if (locale === 'watch-gallery') {
+      if (!galleryWord) return 'The ledger numbers the cathedral. Read the count, or file the hinge. The stair stays locked.';
+      return 'Licence Zero is on the page. The stair stayed locked. South is the nave.';
+    }
     if (locale === 'ash-nave') {
-      if (!naveWord) return 'The cathedral is sealed. Name the hinge, or leave the bar.';
-      if (naveWord === 'name') return 'The hinge has your mouth on it. The door stayed shut. South is the mark.';
-      return 'The seal stayed. The cathedral is still ahead of you. South is the mark.';
+      if (!galleryWord) return 'East of the sealed door, the Concord keeps a watch gallery. The cathedral bar stays shut.';
+      return 'Licence Zero is on the page. The stair stayed locked. South is the mark.';
     }
     if (locale === 'remnant-mark') {
       if (!seenBeats.markFight) return 'A counter stands on the road to the pillar.';
@@ -2777,12 +2945,20 @@
     const left = pools.filter((p) => !p.absorbed && !p.bottled && !p.interior).length;
     const kilnQuiet = pools.some((p) => p.id === 'kiln' && p.absorbed);
     const mergeNames = earnedMergeNames();
-    if (seenBeats.naveStep && locale === 'ash-nave') {
-      rumor = naveWord === 'name'
-        ? 'You named the hinge. The cathedral door stayed shut. The Prime Remnant is behind the bar. South is the pillar.'
-        : naveWord === 'turn'
-          ? 'You left the seal. The ash cathedral is still there. The door did not open. South is the pillar.'
-          : 'Ash falls on a sealed cathedral. The Prime Remnant is the mass behind the bar. Vesper is on the roof. She will not enter the host. Kestrel is not the road.';
+    if (seenBeats.gallery && locale === 'watch-gallery') {
+      rumor = galleryWord === 'read'
+        ? 'Licence Zero. The Concord numbered the Prime Remnant. Named Feed and the Unwritten Passage, if they are in the pack, are digits. The stair stayed locked. South is the nave.'
+        : galleryWord === 'file'
+          ? 'The nave’s word is filed into Licence Zero. The cathedral bar stayed shut. The stair stayed locked. South is the nave.'
+          : 'A watch gallery. The ledger is still a choice. The count-stair is grated. Kestrel is not the road.';
+    } else if (seenBeats.naveStep && locale === 'ash-nave') {
+      rumor = galleryWord
+        ? 'Licence Zero is on the page. The stair stayed locked. The cathedral bar stayed shut. South is the pillar. East is the gallery.'
+        : naveWord === 'name'
+          ? 'You named the hinge. The cathedral door stayed shut. East, the Concord keeps a count. South is the pillar.'
+          : naveWord === 'turn'
+            ? 'You left the seal. The ash cathedral is still there. East, the Concord keeps a count. South is the pillar.'
+            : 'Ash falls on a sealed cathedral. East of the bar, a watch gallery keeps the count. Vesper is on the roof. She will not enter the host. Kestrel is not the road.';
     } else if (seenBeats.markStep && locale === 'remnant-mark') {
       const weep = pools.find((p) => p.id === 'mark-weep');
       rumor = !seenBeats.markFight
@@ -2952,19 +3128,24 @@
     const showTalk = idle && (nearWorker || nearWarden) && !showAbsorb && !atExit && !showLook && !showPipe && !showThroat && !showStone && !nearMark;
     const showMark = idle && nearMark && !showAbsorb && !atExit && !showLook && !showPipe && !showThroat && !showStone;
     const showNave = idle && nearNave && seenBeats.markFight && !showAbsorb && !atExit && !showLook && !showPipe && !showThroat && !showStone && !showMark;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave);
+    const showGallery = idle && nearGallery && !showAbsorb && !atExit && !showNave;
+    const showStair = idle && nearStair && !showAbsorb && !atExit;
+    const showKestrel = idle && nearKestrel && !showAbsorb && !atExit && !showGallery;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showKestrel);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
     else if (showGate) absorbBtn.textContent = 'Land';
-    else if (showLook || showPipe || showThroat || showStone || showMark || showNave) absorbBtn.textContent = 'Enter';
+    else if (showStair) absorbBtn.textContent = 'Look';
+    else if (showKestrel) absorbBtn.textContent = 'Speak';
+    else if (showLook || showPipe || showThroat || showStone || showMark || showNave || showGallery) absorbBtn.textContent = 'Enter';
     else if (showTalk) absorbBtn.textContent = 'Speak';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
   }
 
   function updatePrompt() {
     const atExit = atInteriorExit();
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearKestrel && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -2980,7 +3161,7 @@
       return;
     }
     if (atExit) {
-      $('#interact-title').textContent = locale === 'root-cellar' ? 'The mouth' : locale === 'ashen-marrow' ? 'The hall' : locale === 'concord-yard' ? 'The ash' : locale === 'remnant-mark' ? 'The yard' : locale === 'ash-nave' ? 'The mark' : locale === 'marrow-pipe' ? 'The ash' : locale === 'engine-throat' ? 'The ash' : locale === 'harbor-vault' ? 'The shale' : 'The door';
+      $('#interact-title').textContent = locale === 'root-cellar' ? 'The mouth' : locale === 'ashen-marrow' ? 'The hall' : locale === 'concord-yard' ? 'The ash' : locale === 'remnant-mark' ? 'The yard' : locale === 'ash-nave' ? 'The mark' : locale === 'watch-gallery' ? 'The nave' : locale === 'marrow-pipe' ? 'The ash' : locale === 'engine-throat' ? 'The ash' : locale === 'harbor-vault' ? 'The shale' : 'The door';
       $('#interact-detail').textContent = locale === 'root-cellar'
         ? 'Press E to step back onto the isle. The throat stays open behind you.'
         : locale === 'ashen-marrow'
@@ -2991,6 +3172,8 @@
             ? 'Press E to step back into the yard. The pillar stays numbered. Kestrel is not waiting.'
           : locale === 'ash-nave'
             ? 'Press E to step back to the pillar. The cathedral door stays shut.'
+          : locale === 'watch-gallery'
+            ? 'Press E to step back to the nave. The count-stair stays locked.'
           : locale === 'marrow-pipe'
             ? 'Press E to step back onto the ash. The feed stays where you left it.'
           : locale === 'engine-throat'
@@ -3047,6 +3230,21 @@
       $('#interact-detail').textContent = nearNave.hint;
       return;
     }
+    if (nearGallery) {
+      $('#interact-title').textContent = nearGallery.title;
+      $('#interact-detail').textContent = nearGallery.hint;
+      return;
+    }
+    if (nearStair) {
+      $('#interact-title').textContent = nearStair.title;
+      $('#interact-detail').textContent = nearStair.hint;
+      return;
+    }
+    if (nearKestrel) {
+      $('#interact-title').textContent = nearKestrel.title;
+      $('#interact-detail').textContent = nearKestrel.hint;
+      return;
+    }
     if (nearWorker || nearWarden) {
       $('#interact-title').textContent = (nearWarden || nearWorker).title;
       $('#interact-detail').textContent = (nearWarden || nearWorker).hint;
@@ -3086,6 +3284,12 @@
         waiting.push(kestrelWord === 'ask'
           ? 'You asked Kestrel to land. She refused. She is still the road, not the company.'
           : 'You left Kestrel the air. She did not join.');
+      } else if (kestrelNave) {
+        waiting.push(kestrelNave === 'ask'
+          ? 'You asked Kestrel to land over the nave. She refused. She is not in the pack.'
+          : 'A bird crossed the nave. You left her the air. She did not join.');
+      } else if (seenBeats['nave-fly']) {
+        waiting.push('A bird crossed the nave and did not land. She is not in the pack.');
       } else if (seenBeats['coast-landing']) {
         waiting.push('Kestrel set you on the Stormreach shale and stayed in the air. She did not join.');
       } else if (seenBeats.coastRoute) {
@@ -3112,6 +3316,7 @@
             ? 'You fed the digest-engine. The mouthful stayed in the scar.'
             : 'You stepped onto Ashen Marrow. The hall is the way back.');
       } else if (seenBeats.marrowRoad) waiting.push('You looked down Ashen Marrow from the hall. The digest-engine is inland. Your feet stayed.');
+      if (feedNoted || passageNoted) waiting.push('In the watch gallery those names read as digits of Licence Zero. They do not open the stair or the cathedral bar.');
       if (scarDebt >= 2) waiting.push('Scar debt ' + scarDebt + ' has reached the walk. Lira coughs, and the feet go slower. Each point still cuts max HP by 6.');
       else if (scarDebt > 0) waiting.push('Scar debt ' + scarDebt + '. Each point cuts Lira’s max HP by 6. The kiln, the earth cork, and a fed engine add a point. Banking the marrow leak eases one.');
       if (seenBeats['marrow-vesper']) {
@@ -3378,6 +3583,18 @@
         enterNave();
         return;
       }
+      if (nearGallery && locale === 'ash-nave' && !atMouth) {
+        enterGallery();
+        return;
+      }
+      if (nearStair && locale === 'watch-gallery' && !atMouth) {
+        lookStair();
+        return;
+      }
+      if (nearKestrel && locale === 'ash-nave' && !atMouth) {
+        talkKestrelNave();
+        return;
+      }
       if (nearWorker && !atMouth) {
         talkMarrow();
         return;
@@ -3387,6 +3604,7 @@
         else if (locale === 'concord-yard') exitYard();
         else if (locale === 'remnant-mark') exitMark();
         else if (locale === 'ash-nave') exitNave();
+        else if (locale === 'watch-gallery') exitGallery();
         else if (locale === 'marrow-pipe') exitPipe();
         else if (locale === 'engine-throat') exitThroat();
         else exitInterior();
@@ -3561,6 +3779,7 @@
     if (locale === 'concord-yard') return playerMesh.position.z > 4.05;
     if (locale === 'remnant-mark') return playerMesh.position.z > 3.85;
     if (locale === 'ash-nave') return playerMesh.position.z > 3.7;
+    if (locale === 'watch-gallery') return playerMesh.position.z > 2.65;
     return playerMesh.position.z > 2.55;
   }
 
@@ -3766,7 +3985,7 @@
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
     if (markGroup) markGroup.visible = false;
-    if (naveGroup) naveGroup.visible = false;
+    tuckCathedral();
     yardGroup.visible = true;
     placeFog('yard');
     const locLabel = $('#hud-location');
@@ -3847,7 +4066,7 @@
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
     if (markGroup) markGroup.visible = false;
-    if (naveGroup) naveGroup.visible = false;
+    tuckCathedral();
     markGroup.visible = true;
     placeFog('mark');
     const locLabel = $('#hud-location');
@@ -3970,7 +4189,7 @@
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
     if (markGroup) markGroup.visible = false;
-    if (naveGroup) naveGroup.visible = false;
+    tuckCathedral();
     naveGroup.visible = true;
     placeFog('nave');
     const locLabel = $('#hud-location');
@@ -3993,6 +4212,7 @@
     markGroup.add(playerMesh);
     playerMesh.position.set(0, 0, -2.15);
     naveGroup.visible = false;
+    if (galleryGroup) galleryGroup.visible = false;
     if (interiorGroup) interiorGroup.visible = false;
     if (overworldGroup) overworldGroup.visible = false;
     if (stormreachGroup) stormreachGroup.visible = false;
@@ -4051,6 +4271,223 @@
     refreshRumor();
     updateHUD();
     saveGame();
+  }
+
+  function nearestGallery() {
+    if (!playerMesh || locale !== 'ash-nave' || skyPass) return null;
+    if (Math.hypot(3.55 - playerMesh.position.x, 0.15 - playerMesh.position.z) > 1.2) return null;
+    return {
+      title: 'Watch gallery',
+      hint: galleryWord
+        ? 'The count is already on the page. Press E. The stair stays locked. Kestrel is not the road.'
+        : 'East of the bar, the Concord keeps a ledger. Press E. You will read a number. You will not pass the stair.',
+    };
+  }
+
+  function nearestStair() {
+    if (!playerMesh || locale !== 'watch-gallery' || skyPass) return null;
+    if (playerMesh.position.z > -1.7 || Math.abs(playerMesh.position.x) > 1.5) return null;
+    return {
+      title: 'Count-stair',
+      hint: 'A grate. The stair under Licence Zero does not open. Press E to look. It is not a door.',
+    };
+  }
+
+  function nearestKestrel() {
+    if (!playerMesh || locale !== 'ash-nave' || skyPass || kestrelNave || !seenBeats['nave-fly']) return null;
+    if (Math.hypot(0 - playerMesh.position.x, 1.8 - playerMesh.position.z) > 1.35) return null;
+    return {
+      title: 'The crossing',
+      hint: 'She crossed and did not land. Press E if you mean to ask. The answer is still no.',
+    };
+  }
+
+  function enterGallery(opts) {
+    const silent = opts && opts.silent;
+    if (!galleryGroup || !playerMesh || !naveGroup) return;
+    if (!silent && (locale !== 'ash-nave' || dialogueOpen || skyPass || encounterLocked)) return;
+    locale = 'watch-gallery';
+    if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
+    galleryGroup.add(playerMesh);
+    const px = silent && opts.pos ? (opts.pos.x || 0) : 0;
+    const pz = silent && opts.pos ? (opts.pos.z == null ? 2.2 : opts.pos.z) : 2.2;
+    playerMesh.position.set(px, 0, pz);
+    if (interiorGroup) interiorGroup.visible = false;
+    if (overworldGroup) overworldGroup.visible = false;
+    if (stormreachGroup) stormreachGroup.visible = false;
+    if (marrowGroup) marrowGroup.visible = false;
+    if (yardGroup) yardGroup.visible = false;
+    if (markGroup) markGroup.visible = false;
+    tuckCathedral();
+    galleryGroup.visible = true;
+    placeFog('gallery');
+    const locLabel = $('#hud-location');
+    if (locLabel) locLabel.textContent = 'Watch Gallery';
+    camera.position.set(px, CAMERA_HEIGHT, pz + CAMERA_DIST);
+    camera.lookAt(px, 1.2, pz);
+    if (!silent) {
+      seenBeats.gallery = true;
+      showToast('Watch gallery. The ledger is ahead. The stair is not a door.');
+    }
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function exitGallery() {
+    if (locale !== 'watch-gallery' || !playerMesh || !naveGroup) return;
+    locale = 'ash-nave';
+    if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
+    naveGroup.add(playerMesh);
+    playerMesh.position.set(2.2, 0, 0.15);
+    if (galleryGroup) galleryGroup.visible = false;
+    naveGroup.visible = true;
+    if (interiorGroup) interiorGroup.visible = false;
+    if (overworldGroup) overworldGroup.visible = false;
+    if (stormreachGroup) stormreachGroup.visible = false;
+    if (marrowGroup) marrowGroup.visible = false;
+    if (yardGroup) yardGroup.visible = false;
+    if (markGroup) markGroup.visible = false;
+    placeFog('nave');
+    const locLabel = $('#hud-location');
+    if (locLabel) locLabel.textContent = 'Ash Nave';
+    camera.position.set(2.2, CAMERA_HEIGHT, 0.15 + CAMERA_DIST);
+    camera.lookAt(2.2, 1.2, 0.15);
+    if (galleryWord && !seenBeats['nave-fly']) {
+      kestrelFly = 0.01;
+      seenBeats['nave-fly'] = true;
+      if (naveGroup.userData.bird) {
+        naveGroup.userData.bird.visible = true;
+        naveGroup.userData.bird.position.set(-8, 3.8, -0.6);
+      }
+      showToast('A bird crosses the nave and does not land. Kestrel is not the company.');
+    }
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function lookStair() {
+    showToast('The count-stair is grated and locked. Licence Zero is a number, not a key. The cathedral bar stays shut.');
+  }
+
+  function updateGalleryLedger() {
+    if (locale !== 'watch-gallery' || !playerMesh || dialogueOpen || encounterLocked || skyPass) return;
+    if (galleryWord || seenBeats['gallery-count']) return;
+    if (playerMesh.position.z > 0.2 || Math.abs(playerMesh.position.x) > 1.6) {
+      galleryLatch = false;
+      return;
+    }
+    if (galleryLatch) return;
+    galleryLatch = true;
+    const fn = EW.scenes['gallery-count'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'gallery-count';
+    }
+  }
+
+  function noteGallery(id) {
+    if (galleryWord) return;
+    seenBeats['gallery-count'] = true;
+    seenBeats.gallery = true;
+    const hasFeed = seals.some((seal) => seal.name === 'Named Feed');
+    const hasPass = seals.some((seal) => seal.name === 'Unwritten Passage');
+    if (id === 'read') {
+      galleryWord = 'read';
+      if (hasFeed) feedNoted = true;
+      if (hasPass) passageNoted = true;
+      seals.forEach((seal) => {
+        if (seal.name === 'Named Feed' && feedNoted && seal.desc.indexOf('digit of hunger') < 0) {
+          seal.desc += ' In the watch gallery it reads as a digit of hunger on Licence Zero. It is still not a weapon.';
+        }
+        if (seal.name === 'Unwritten Passage' && passageNoted && seal.desc.indexOf('blank digit') < 0) {
+          seal.desc += ' In the watch gallery it is the blank digit. It still does not open a door.';
+        }
+      });
+      if (!seals.some((seal) => seal.name === 'Licence Zero')) {
+        seals.push({
+          name: 'Licence Zero',
+          desc: 'The Concord numbers the Prime Remnant as Licence Zero. Every later bottle is a digit of that zero. The count-stair is the lock. It did not open.'
+            + (feedNoted ? ' Named Feed is a digit of hunger.' : '')
+            + (passageNoted ? ' The Unwritten Passage is the blank digit.' : ''),
+        });
+      }
+      let msg = 'Licence Zero. The Concord numbered the Prime Remnant. The stair stayed locked.';
+      if (feedNoted) msg += ' Named Feed is a digit of hunger, not a weapon.';
+      if (passageNoted) msg += ' The Unwritten Passage is the blank digit. It does not open the door.';
+      showToast(msg);
+    } else {
+      galleryWord = 'file';
+      let msg = 'The page stays hungry. The bar hinge is still a choice. The stair stays locked.';
+      if (naveWord === 'name') msg = 'The named hinge is written into Licence Zero. The cathedral bar stays shut. The stair stays locked.';
+      else if (naveWord === 'turn') msg = 'The refusal is a blank digit on Licence Zero. The bar stays theirs. The stair stays locked.';
+      if (!seals.some((seal) => seal.name === 'Filed Count')) {
+        seals.push({
+          name: 'Filed Count',
+          desc: msg + ' Neither door opened.',
+        });
+      }
+      showToast(msg);
+    }
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function talkKestrelNave() {
+    if (locale !== 'ash-nave' || dialogueOpen || kestrelNave || !seenBeats['nave-fly']) return;
+    const fn = EW.scenes['nave-kestrel'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'nave-kestrel';
+    }
+  }
+
+  function noteKestrelNave(id) {
+    if (kestrelNave) return;
+    kestrelNave = id === 'ask' ? 'ask' : 'air';
+    seenBeats['nave-kestrel'] = true;
+    showToast(kestrelNave === 'ask'
+      ? 'You ask her to land. She does not. She is not in the pack.'
+      : 'You leave her the air. She does not join.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function driftNave(dt) {
+    const t = performance.now() * 0.001;
+    if (naveGroup && naveGroup.userData.banners) {
+      naveGroup.userData.banners.forEach((banner, i) => {
+        banner.rotation.y = Math.sin(t * 1.35 + i * 1.7) * 0.22;
+      });
+    }
+    if (naveGroup && naveGroup.userData.stain) {
+      naveGroup.userData.stain.intensity = 0.75 + Math.sin(t * 1.6) * 0.35;
+    }
+    if (naveGroup && naveGroup.userData.stainPlane && naveGroup.userData.stainPlane.material) {
+      naveGroup.userData.stainPlane.material.opacity = 0.55 + Math.sin(t * 1.6) * 0.16;
+    }
+    if (galleryGroup && galleryGroup.userData.stain) {
+      galleryGroup.userData.stain.intensity = 0.4 + Math.sin(t * 1.2) * 0.22;
+    }
+    if (kestrelFly > 0 && naveGroup && naveGroup.userData.bird) {
+      kestrelFly += dt || 0;
+      const bird = naveGroup.userData.bird;
+      const u = Math.min(1, kestrelFly / 4);
+      bird.visible = u < 1 && naveGroup.visible;
+      bird.position.set(-8 + u * 16, 3.5 + Math.sin(u * 9) * 0.28, -0.5);
+      if (naveGroup.userData.wings) {
+        naveGroup.userData.wings.forEach((wing, i) => {
+          wing.rotation.x = Math.sin(t * 16) * 0.55 * (i ? -1 : 1);
+        });
+      }
+      if (u >= 1) {
+        kestrelFly = 0;
+        bird.visible = false;
+      }
+    }
   }
 
   function talkWarden() {
@@ -4201,6 +4638,9 @@
       nearWarden = null;
       nearMark = null;
       nearNave = null;
+      nearGallery = null;
+      nearStair = null;
+      nearKestrel = null;
       joy.active = false;
       joy.dx = 0;
       joy.dy = 0;
@@ -4245,6 +4685,9 @@
         } else if (locale === 'ash-nave') {
           if (naveFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
           if (naveFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
+        } else if (locale === 'watch-gallery') {
+          if (galleryFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
+          if (galleryFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
         } else if (locale === 'marrow-pipe') {
           if (pipeFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
           if (pipeFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
@@ -4270,6 +4713,9 @@
         nearWarden = nearestWarden();
         nearMark = nearestMark();
         nearNave = nearestNave();
+        nearGallery = nearestGallery();
+        nearStair = nearestStair();
+        nearKestrel = nearestKestrel();
         const safe = nearPool && !nearPool.absorbed;
         const cooled = performance.now() < suppressEncountersUntil;
         const onField = locale === 'field' && (regionId === 'verdant-isle' || regionId === 'stormreach');
@@ -4293,6 +4739,9 @@
         nearWarden = nearestWarden();
         nearMark = nearestMark();
         nearNave = nearestNave();
+        nearGallery = nearestGallery();
+        nearStair = nearestStair();
+        nearKestrel = nearestKestrel();
       }
 
       updateCellarTriggers();
@@ -4304,6 +4753,7 @@
       updateMarkFight();
       updateMarkVesper();
       updateNaveGate();
+      updateGalleryLedger();
       driftMotes();
       maybeResumeCoast();
 
@@ -4329,9 +4779,13 @@
       nearWarden = nearestWarden();
       nearMark = nearestMark();
       nearNave = nearestNave();
+      nearGallery = nearestGallery();
+      nearStair = nearestStair();
+      nearKestrel = nearestKestrel();
       playerMesh.position.y = 0;
     }
 
+    driftNave(dt);
     if (skyPass) updateSkyPass(dt);
     else {
       const ideal = new THREE.Vector3(camTarget.x, camTarget.y + CAMERA_HEIGHT, camTarget.z + CAMERA_DIST);
@@ -4461,14 +4915,14 @@
     hud.classList.add('hidden');
     setFieldControls(false);
     interactPrompt.classList.add('hidden');
-    combatUI.classList.remove('hidden');
+    combatUI.classList.remove('hidden', 'juice-cleave', 'juice-channel', 'juice-aim', 'hit');
     overworldGroup.visible = false;
     if (interiorGroup) interiorGroup.visible = false;
     if (stormreachGroup) stormreachGroup.visible = false;
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
     if (markGroup) markGroup.visible = false;
-    if (naveGroup) naveGroup.visible = false;
+    tuckCathedral();
     if (coastGroup) coastGroup.visible = false;
     combatGroup.visible = true;
     scene.fog.near = 28;
@@ -4830,6 +5284,7 @@
       }
       showLog(text);
       punchNumber(result.dmg, 'harm');
+      if (act.path) strikeJuice(act.path, combatPartyMeshes[turn.index], combatEnemyMeshes[targetIdx]);
       animateAttack(combatPartyMeshes[turn.index], combatEnemyMeshes[targetIdx]);
       if (target.hp <= 0) markDead(targetIdx);
     } else if (act.kind === 'magic') {
@@ -5135,6 +5590,7 @@
     const onYard = locale === 'concord-yard';
     const onMark = locale === 'remnant-mark';
     const onNave = locale === 'ash-nave';
+    const onGallery = locale === 'watch-gallery';
     overworldGroup.visible = locale === 'field' && !onCoast;
     if (stormreachGroup) stormreachGroup.visible = onCoast;
     if (coastGroup) coastGroup.visible = false;
@@ -5142,7 +5598,8 @@
     if (yardGroup) yardGroup.visible = onYard;
     if (markGroup) markGroup.visible = onMark;
     if (naveGroup) naveGroup.visible = onNave;
-    if (interiorGroup) interiorGroup.visible = locale !== 'field' && !onMarrow && !onYard && !onMark && !onNave;
+    if (galleryGroup) galleryGroup.visible = onGallery;
+    if (interiorGroup) interiorGroup.visible = locale !== 'field' && !onMarrow && !onYard && !onMark && !onNave && !onGallery;
     if (vaultRoom) vaultRoom.visible = locale === 'harbor-vault';
     if (villageRoom) villageRoom.visible = locale === 'leaf-village';
     if (cellarRoom) cellarRoom.visible = locale === 'root-cellar';
@@ -5153,6 +5610,7 @@
     else if (onYard) placeFog('yard');
     else if (onMark) placeFog('mark');
     else if (onNave) placeFog('nave');
+    else if (onGallery) placeFog('gallery');
     else if (locale === 'root-cellar') placeFog('cellar');
     else if (locale === 'harbor-vault') placeFog('vault');
     else if (locale === 'marrow-pipe') placeFog('pipe');
@@ -5209,6 +5667,19 @@
       held.textContent = 'Held · Fire ' + spark.fire + ' · Water ' + spark.water + ' · Bolt ' + spark.lightning + ' · Earth ' + (spark.earth || 0)
         + (scarDebt > 0 ? ' · Scar ' + scarDebt + ' (−' + (scarDebt * 6) + ' HP, Mend keeps ' + (scarDebt * 4) + ')' : '');
     }
+  }
+
+  function strikeJuice(path, fromMesh, toMesh) {
+    if (!path || !combatUI) return;
+    combatUI.classList.remove('juice-cleave', 'juice-channel', 'juice-aim');
+    const hit = $('#hit-float');
+    if (hit) hit.classList.remove('juice-cleave', 'juice-channel', 'juice-aim');
+    const cls = path === 'warrior' ? 'juice-cleave' : path === 'mage' ? 'juice-channel' : 'juice-aim';
+    combatUI.classList.add(cls);
+    if (hit) hit.classList.add(cls);
+    if (path === 'warrior') flashMesh(toMesh, 0xff6a2a);
+    else if (path === 'mage') flashMesh(fromMesh, 0x7ec8e8);
+    else flashMesh(toMesh, 0xd8c8ff);
   }
 
   function animateAttack(fromMesh, toMesh) {
@@ -5517,7 +5988,7 @@
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
     if (markGroup) markGroup.visible = false;
-    if (naveGroup) naveGroup.visible = false;
+    tuckCathedral();
     combatGroup.visible = false;
     const locLabel = $('#hud-location');
     if (locLabel) locLabel.textContent = 'Verdant Isle';
@@ -5682,6 +6153,16 @@
       rows.push({ name: 'Ash nave', note: note });
     } else if (seenBeats.markFight) {
       rows.push({ name: 'Ash nave', note: 'Not walked yet. North of the pillar. The list does not carry you.' });
+    }
+    if (seenBeats.gallery || galleryWord) {
+      const galleryNote = galleryWord === 'read'
+        ? 'Licence Zero is read. The stair stayed locked.'
+        : galleryWord === 'file'
+          ? 'The hinge is filed. The stair stayed locked.'
+          : 'Walked. The count is still a choice.';
+      rows.push({ name: 'Watch gallery', note: galleryNote });
+    } else if (seenBeats.naveStep) {
+      rows.push({ name: 'Watch gallery', note: 'Not walked yet. East of the sealed door. The list does not carry you.' });
     }
     return rows;
   }
@@ -5865,6 +6346,10 @@
         yardWord: yardWord,
         markWord: markWord,
         naveWord: naveWord,
+        galleryWord: galleryWord,
+        feedNoted: !!feedNoted,
+        passageNoted: !!passageNoted,
+        kestrelNave: kestrelNave,
         duelWord: duelWord,
         kestrelWord: kestrelWord,
         pos: { x: playerMesh.position.x, z: playerMesh.position.z },
@@ -5913,6 +6398,10 @@
     yardWord = data.yardWord === 'drink' || data.yardWord === 'seal' ? data.yardWord : null;
     markWord = data.markWord === 'drink' || data.markWord === 'seal' ? data.markWord : null;
     naveWord = data.naveWord === 'name' || data.naveWord === 'turn' ? data.naveWord : null;
+    galleryWord = data.galleryWord === 'read' || data.galleryWord === 'file' ? data.galleryWord : null;
+    feedNoted = !!data.feedNoted;
+    passageNoted = !!data.passageNoted;
+    kestrelNave = data.kestrelNave === 'ask' || data.kestrelNave === 'air' ? data.kestrelNave : null;
     if (marrowStain) marrowStain.visible = vesperAsh === 'refuse';
     if (typeof spark.earth !== 'number') spark.earth = 0;
     duelWord = data.duelWord === 'press' || data.duelWord === 'hold' ? data.duelWord : null;
@@ -5984,6 +6473,7 @@
     else if (data.locale === 'concord-yard') enterYard({ silent: true, pos: data.pos });
     else if (data.locale === 'remnant-mark') enterMark({ silent: true, pos: data.pos });
     else if (data.locale === 'ash-nave') enterNave({ silent: true, pos: data.pos });
+    else if (data.locale === 'watch-gallery') enterGallery({ silent: true, pos: data.pos });
     else if (resumeInterior) enterInterior(data.locale, { silent: true, pos: data.pos });
     else if (data.region === 'stormreach') enterRegion('stormreach', { silent: true, pos: data.pos });
   }
@@ -6065,7 +6555,7 @@
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
     if (markGroup) markGroup.visible = false;
-    if (naveGroup) naveGroup.visible = false;
+    tuckCathedral();
     overworldGroup.visible = false;
     if (stormreachGroup) stormreachGroup.visible = false;
     scene.fog.color.set(0x6e7e90);
@@ -6091,7 +6581,7 @@
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
     if (markGroup) markGroup.visible = false;
-    if (naveGroup) naveGroup.visible = false;
+    tuckCathedral();
     if (locale === 'field' && overworldGroup) {
       overworldGroup.visible = true;
       placeFog('verdant');
@@ -6138,7 +6628,7 @@
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
     if (markGroup) markGroup.visible = false;
-    if (naveGroup) naveGroup.visible = false;
+    tuckCathedral();
     if (interiorGroup) interiorGroup.visible = false;
     placeFog(regionId === 'stormreach' ? 'stormreach' : 'verdant');
     beatHold = {};
@@ -6204,7 +6694,7 @@
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
     if (markGroup) markGroup.visible = false;
-    if (naveGroup) naveGroup.visible = false;
+    tuckCathedral();
     skyPass = null;
     enterRegion('stormreach');
     if (gameState === State.OVERWORLD && !dialogueOpen && !inventoryOpen && !encounterLocked) {
@@ -6480,7 +6970,7 @@
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
     if (markGroup) markGroup.visible = false;
-    if (naveGroup) naveGroup.visible = false;
+    tuckCathedral();
     if (interiorGroup) interiorGroup.visible = locale !== 'field';
     if (vaultRoom) vaultRoom.visible = locale === 'harbor-vault';
     if (villageRoom) villageRoom.visible = locale === 'leaf-village';
@@ -6653,6 +7143,10 @@
   EW.noteYard = noteYard;
   EW.noteMark = noteMark;
   EW.noteNave = noteNave;
+  EW.noteGallery = noteGallery;
+  EW.noteKestrelNave = noteKestrelNave;
+  EW.packHas = function (name) { return !!(seals && seals.some((seal) => seal.name === name)); };
+  EW.naveChoice = function () { return naveWord; };
   EW.poolMark = function (id) {
     const pool = pools.find((p) => p.id === id);
     if (!pool) return 'gone';
