@@ -573,6 +573,31 @@
     return true;
   });
 
+  Emberwake.registerScene('yard-camp', function () {
+    const torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    const nima = Emberwake.companyHas && Emberwake.companyHas('nima');
+    const lines = [
+      { where: 'Concord yard', speaker: 'Lira', text: 'A ring of stones, and a bedroll that is not a licence. The slag is still the road. This is not.' },
+    ];
+    if (torren) {
+      lines.push({ speaker: 'Torren', text: 'I can sit. The shoulder stays in front of the next blow. Sitting does not put the slag in her, and it does not open the mark.' });
+    }
+    if (nima) {
+      lines.push({ speaker: 'Nima', text: 'The leaves are not here. If she is coughing, the rest does not pay the scar. It only lets the feet remember they have a stop.' });
+    }
+    if (!torren && !nima) {
+      lines.push({ speaker: 'Lira', text: 'Nobody is waiting to join at this fire. The village is behind. The mark is still north. I am still the one walking.' });
+    }
+    lines.push({ speaker: 'The spark', text: 'Vesper is in this yard and she does not step in. A rest is not a mouth.' });
+    Emberwake.present({
+      lines: lines,
+      onDone: function () {
+        if (Emberwake.noteCamp) Emberwake.noteCamp();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('nave-pressure', function () {
     const debt = Emberwake.scarCount ? Emberwake.scarCount() : 0;
     const word = Emberwake.breachWord ? Emberwake.breachWord() : null;

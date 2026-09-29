@@ -197,12 +197,20 @@ Playable on the Verdant Isle field:
 - Wake asks before it throws out a save that is already there. With no save, Wake still starts at once.
 - Phone controls, Absorb, Pack, and Continue stay.
 
-## Wake and pressure (this branch)
+## Wake and pressure (shipped)
 
 - The title lifts ash. The wake says the mouth stays hers. A pool’s core and rim breathe. Ash flickers as it falls. Standing still, she shifts her weight.
 - West chalk in the ash nave is one optional Look. It names scar debt, Held Threshold if the bar was held, and Cousin’s Margin if the letter is in the pack. Otherwise it still pressures the host. It does not open the bar, add a scar, or block Leave.
 - A scar cuts 5 max HP, and Mend keeps 3 of that instead of 4. The count auditor, the Concord captain, and the rite celebrant have a little more life. A merge still spends the two elements it names, and costs one mind less.
 - A door sting, original and CC0, plays when she steps through. CREDITS names it. Silent stops it.
+- Phone controls, Absorb, Pack, and Continue stay.
+
+## Spine and camp (this branch)
+
+- Continue keeps a saved step whose height is zero in the village, the cellar, the vault, the pipe, the throat, the ash, the yard, and the mark. The pack names the scar cut that the HUD already uses.
+- On a phone the held-elements line wraps, and the scar chip stays inside the quest column.
+- Drinking a pool throws the motes and the rim out for a moment. Ash falls a little wider. A blow flashes warmer and the number kicks a little harder.
+- West of the Concord yard’s south gate, a rest is one optional Look. Torren speaks if he came. Nima speaks if she came. If neither came, Lira says the road is still hers. It does not drink the slag, set the yard’s word, add a scar, or block Leave. Continue stores the beat.
 - Phone controls, Absorb, Pack, and Continue stay.
 
 ## Still ahead

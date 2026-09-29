@@ -36,6 +36,19 @@ This roadmap turns [`DESIGN.md`](./DESIGN.md) into an executable production sequ
 
 ---
 
+## What plays now
+
+This is the player map of the current browser build. It is not the Year 2–3 campaign. Wind merges, the wider waystone network, and a party slot for Kestrel are still ahead. One save lives in the browser. **Leave** walks south. **Continue** restores the room. **Wake** throws that save out.
+
+| Stretch | What the feet can do |
+|---|---|
+| **Act I — Verdant Isle** | Wake and choose Warrior, Mage, or Ranged. Enter the leaf-village (Nima can join; a cousin’s letter in the basket is optional and does not open a door). Enter the root-cellar kiln. Stand at the scar. Meet the patrol, where Torren can refuse the licence. The waystone opens after the kiln and a scar verdict. |
+| **Act II — Stormreach Coast** | Land on the shale. Drink lightning pools. Speak to a porter. Enter the harbor vault and the bottle-hall. Ask Kestrel to land. She refuses. |
+| **Act III — Ashen Marrow** | Walk the ash, the digest-engine, the tender, and the leak. Meet Vesper and do not let her into the host. Enter the pipe and the sealed throat. Enter the Concord yard and drink the slag or let the warden seal it. West of the south gate, an optional rest: Torren and Nima speak if they came, and Lira speaks if they did not. It does not open the mark. North of the yard is the Remnant Mark. |
+| **Act IV — remnant through aftermath** | Ash nave (west chalk is optional), watch gallery (a filed copy is optional), count crypt, first breach, remnant claim, and the aftermath. The claim is claim, refuse, share, or burn. Credits are north of that room. |
+
+Phone controls stay MOVE, Pack, and Absorb / Enter / Leave / Look / Speak. Open **https://rum-build.github.io/emberwake/**.
+
 ## Year 0 — Prototype systems
 
 ### Objective
