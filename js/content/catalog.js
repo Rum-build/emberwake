@@ -51,6 +51,8 @@
     scribe: { name: 'Concord Scribe', color: 0x3e4550, maxHp: 54, atk: 10, def: 5, xp: 20, gold: 18, shape: 'human' },
     warden: { name: 'Concord Warden', color: 0x2a3038, maxHp: 72, atk: 13, def: 6, xp: 26, gold: 20, shape: 'human' },
     echo: { name: "Vesper's Echo", color: 0x2a2030, maxHp: 80, atk: 14, def: 5, xp: 36, gold: 24, shape: 'echo' },
+    mite: { name: 'Jar Mite', color: 0x3a4030, maxHp: 38, atk: 9, def: 2, xp: 14, gold: 7, shape: 'bug' },
+    'kiln-heart': { name: 'Kiln Heart', color: 0x8a2410, maxHp: 98, atk: 15, def: 6, xp: 42, gold: 28, shape: 'kiln' },
   };
 
   content.roster = {
@@ -73,7 +75,7 @@
       name: 'Kestrel',
       role: 'Edge · eagle-rider',
       joins: 'sky-routes',
-      note: 'Wind and the ranged path. Unlocks eagle routes. Not on the Act I road.',
+      note: 'Crosses once, after the buried kiln. She does not land, and she does not join.',
     },
   ];
 })(window.Emberwake);

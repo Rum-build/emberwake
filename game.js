@@ -87,6 +87,11 @@
   let combatsFought = 0;
   let introToastShown = false;
   let pendingBeat = null;
+  let victoryTag = null;
+  let crawlLatch = false;
+  let kilnLatch = false;
+  let skyPass = null;
+  let eagleGroup = null;
   let combatInRot = false;
   let combatEpoch = 0;
   let enemies = [];
@@ -324,6 +329,11 @@
     combatsFought = 0;
     introToastShown = false;
     pendingBeat = null;
+    victoryTag = null;
+    crawlLatch = false;
+    kilnLatch = false;
+    skyPass = null;
+    if (eagleGroup) eagleGroup.visible = false;
     const dialoguePanel = $('#dialogue');
     if (dialoguePanel) dialoguePanel.classList.add('hidden');
     rumor = 'The leaf-villages pretend the Concord’s seals are mercy.';
@@ -384,6 +394,7 @@
       if (Math.hypot(x - pin.x, z - pin.z) < pin.clear) return true;
     }
     for (let i = 0; i < POOL_DEFS.length; i++) {
+      if (POOL_DEFS[i].interior) continue;
       if (Math.hypot(x - POOL_DEFS[i].x, z - POOL_DEFS[i].z) < 4.6) return true;
     }
     return false;
@@ -534,34 +545,98 @@
       fig.rotation.y = Math.PI;
       villageRoom.add(fig);
     });
-    cellarRoom = buildRoom({
+    cellarRoom = buildCellar();
+    cellarRoom.visible = false;
+    interiorGroup.add(villageRoom);
+    interiorGroup.add(cellarRoom);
+    pools.forEach((p) => {
+      if (p.interior === 'root-cellar' && p.group) cellarRoom.add(p.group);
+    });
+    scene.add(interiorGroup);
+  }
+
+  function buildCellar() {
+    const g = buildRoom({
       floor: 0x3a322c,
       wall: 0x4a4038,
       light: 0xff8844,
-      intensity: 0.45,
+      intensity: 0.55,
+      openNorth: true,
     });
-    const deepDoor = new THREE.Mesh(
-      new THREE.BoxGeometry(1.6, 2.2, 0.2),
-      new THREE.MeshLambertMaterial({ color: 0x1a1210 })
-    );
-    deepDoor.position.set(0, 1.1, -3.9);
-    cellarRoom.add(deepDoor);
-    const coal = new THREE.Mesh(
-      new THREE.SphereGeometry(0.22, 8, 8),
-      new THREE.MeshBasicMaterial({ color: 0xff5500 })
-    );
-    coal.position.set(0, 0.35, -3.2);
-    cellarRoom.add(coal);
     const shelf = new THREE.Mesh(
       new THREE.BoxGeometry(2.4, 1.4, 0.4),
       new THREE.MeshLambertMaterial({ color: 0x5a4030 })
     );
     shelf.position.set(-2.6, 0.7, -1.2);
-    cellarRoom.add(shelf);
-    cellarRoom.visible = false;
-    interiorGroup.add(villageRoom);
-    interiorGroup.add(cellarRoom);
-    scene.add(interiorGroup);
+    g.add(shelf);
+    const coal = new THREE.Mesh(
+      new THREE.SphereGeometry(0.22, 8, 8),
+      new THREE.MeshBasicMaterial({ color: 0xff5500 })
+    );
+    coal.position.set(0.4, 0.35, -2.4);
+    g.add(coal);
+    const wallMat = new THREE.MeshLambertMaterial({ color: 0x3a322c });
+    const floorMat = new THREE.MeshLambertMaterial({ color: 0x2a2420 });
+    function box(w, h, d, x, y, z, mat) {
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+      mesh.position.set(x, y, z);
+      g.add(mesh);
+    }
+    const throat = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 7.2), floorMat);
+    throat.rotation.x = -Math.PI / 2;
+    throat.position.set(0, 0.01, -7.6);
+    g.add(throat);
+    box(0.35, 2.4, 7.2, -1.55, 1.2, -7.6, wallMat);
+    box(0.35, 2.4, 7.2, 1.55, 1.2, -7.6, wallMat);
+    const throatLight = new THREE.PointLight(0xff6622, 0.4, 9);
+    throatLight.position.set(0, 2.1, -7.6);
+    g.add(throatLight);
+
+    const crawlFloor = new THREE.Mesh(new THREE.PlaneGeometry(6.4, 7.4), floorMat);
+    crawlFloor.rotation.x = -Math.PI / 2;
+    crawlFloor.position.set(0, 0.02, -13.6);
+    g.add(crawlFloor);
+    box(2.2, 2.5, 0.35, -2.1, 1.25, -10.15, wallMat);
+    box(2.2, 2.5, 0.35, 2.1, 1.25, -10.15, wallMat);
+    box(0.35, 2.5, 7.2, -3.2, 1.25, -13.6, wallMat);
+    box(0.35, 2.5, 7.2, 3.2, 1.25, -13.6, wallMat);
+    [[-1.8, -12.2], [1.7, -14.1], [-1.3, -15.6], [2.1, -12.8]].forEach((spot) => {
+      const jar = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.28, 0.36, 0.72, 8),
+        new THREE.MeshLambertMaterial({ color: 0x6a5344 })
+      );
+      jar.position.set(spot[0], 0.36, spot[1]);
+      g.add(jar);
+    });
+    const crawlLight = new THREE.PointLight(0xff7744, 0.55, 11);
+    crawlLight.position.set(0, 2.2, -13.6);
+    g.add(crawlLight);
+
+    const kilnFloor = new THREE.Mesh(
+      new THREE.PlaneGeometry(7.2, 7.2),
+      new THREE.MeshLambertMaterial({ color: 0x241816 })
+    );
+    kilnFloor.rotation.x = -Math.PI / 2;
+    kilnFloor.position.set(0, 0.03, -20.3);
+    g.add(kilnFloor);
+    box(2.3, 2.5, 0.35, -2.35, 1.25, -16.75, wallMat);
+    box(2.3, 2.5, 0.35, 2.35, 1.25, -16.75, wallMat);
+    box(0.35, 2.5, 7.2, -3.55, 1.25, -20.3, wallMat);
+    box(0.35, 2.5, 7.2, 3.55, 1.25, -20.3, wallMat);
+    box(7.2, 2.5, 0.35, 0, 1.25, -23.75, wallMat);
+    const kilnLight = new THREE.PointLight(0xff3300, 1.05, 14);
+    kilnLight.position.set(0, 2.1, -21);
+    g.add(kilnLight);
+    return g;
+  }
+
+  function cellarFits(x, z) {
+    if (z > 3.45 || z < -23.4) return false;
+    if (z >= -4.7 && Math.abs(x) <= 3.45) return true;
+    if (z <= -3.9 && z >= -11.0 && Math.abs(x) <= 1.25) return true;
+    if (z <= -10.0 && z >= -17.0 && Math.abs(x) <= 2.85) return true;
+    if (z <= -16.4 && Math.abs(x) <= 3.15) return true;
+    return false;
   }
 
   function buildRoom(opts) {
@@ -578,7 +653,12 @@
       mesh.position.set(x, 1.3, z);
       g.add(mesh);
     }
-    addWall(9, 0.35, 0, -4.45);
+    if (opts.openNorth) {
+      addWall(3.1, 0.35, -2.9, -4.45);
+      addWall(3.1, 0.35, 2.9, -4.45);
+    } else {
+      addWall(9, 0.35, 0, -4.45);
+    }
     addWall(3.1, 0.35, -2.9, 4.45);
     addWall(3.1, 0.35, 2.9, 4.45);
     addWall(0.35, 9, -4.45, 0);
@@ -601,7 +681,7 @@
         title: id === 'leaf-village' ? 'Leaf-village' : 'Root-cellar',
         hint: id === 'leaf-village'
           ? 'Half-shut doors. Smoke, and an argument that will not settle. Press E to go in.'
-          : 'The mouth breathes old fire. Press E to step under. The deep door stays shut.',
+          : 'The mouth breathes old fire. Press E to step under. The throat at the back is open.',
       });
     });
     return doors;
@@ -632,6 +712,7 @@
     const dusk = id === 'root-cellar' ? 0x1a1410 : 0x3a342c;
     scene.fog.color.set(dusk);
     renderer.setClearColor(dusk);
+    beatHold = {};
     const beatKey = id === 'leaf-village' ? 'village' : 'cellar';
     const sceneId = id === 'leaf-village' ? 'village-argument' : 'cellar-threshold';
     if (!seenBeats[beatKey]) {
@@ -840,11 +921,14 @@
       x: def.x, z: def.z, xp: def.xp, strain: def.strain,
       hint: def.hint, line: def.line, vesper: !!def.vesper, concord: !!def.concord, patrol: !!def.patrol,
       absorbed: false, bottled: false, withheld: false, healing: false, heal: 0,
+      interior: def.interior || null,
       rotMat, rotColor, healColor, elColor, lifeMat, coreMat, core, beamMat,
       spikes, flowers, motes, figure, seal, sealRing, phase: Math.random() * 6,
+      group: g,
     };
     pools.push(pool);
-    overworldGroup.add(g);
+    if (def.interior) g.scale.setScalar(0.42);
+    else overworldGroup.add(g);
     return pool;
   }
 
@@ -1064,6 +1148,22 @@
     }
     const g = new THREE.Group();
     const color = enemy.color;
+    if (enemy.shape === 'kiln') {
+      const core = new THREE.Mesh(
+        new THREE.SphereGeometry(0.78, 12, 12),
+        new THREE.MeshLambertMaterial({ color, emissive: new THREE.Color(0x6a1808) })
+      );
+      core.position.y = 0.9;
+      g.add(core);
+      const crack = new THREE.Mesh(
+        new THREE.TorusGeometry(0.46, 0.06, 6, 12),
+        new THREE.MeshLambertMaterial({ color: 0xff5500, emissive: new THREE.Color(0x441000) })
+      );
+      crack.rotation.x = Math.PI / 2;
+      crack.position.y = 0.9;
+      g.add(crack);
+      return g;
+    }
     if (enemy.shape === 'sphere') {
       const mesh = new THREE.Mesh(
         new THREE.SphereGeometry(0.52, 10, 10),
@@ -1138,11 +1238,16 @@
   function refreshRumor() {
     const vesperDone = pools.some((p) => p.id === 'vesper' && p.absorbed);
     const wellDone = pools.some((p) => p.id === 'well' && p.absorbed);
-    const left = pools.filter((p) => !p.absorbed && !p.bottled).length;
+    const left = pools.filter((p) => !p.absorbed && !p.bottled && !p.interior).length;
+    const kilnQuiet = pools.some((p) => p.id === 'kiln' && p.absorbed);
     if (scarVerdict === 'leave') {
       rumor = 'Ilan’s sister still coughs at the scar. You left Vesper’s wound in the ground, and took the ash they scraped off it.';
     } else if (scarVerdict === 'drink') {
       rumor = 'You drank the scar in front of Maud and Ilan. The ground may green. They will not thank you.';
+    } else if (seenBeats.kestrel) {
+      rumor = 'Kestrel crossed the arch and did not land. The waystone is still shut. She will be the road, not the company.';
+    } else if (kilnQuiet) {
+      rumor = 'The buried kiln is quiet. Something with a wingspan has the ridge.';
     } else if (seenBeats.silhouette) {
       rumor = 'Vesper stood on the ridge and did not offer a fight. She named the coast. The scar in the grass is a different wound.';
     } else if (pools.length && left === 0) {
@@ -1184,7 +1289,9 @@
     const absorbBtn = $('#btn-absorb');
     const idle = gameState === State.OVERWORLD && !inventoryOpen && !encounterLocked && !dialogueOpen;
     const atExit = idle && locale !== 'field' && playerMesh && playerMesh.position.z > 2.55;
-    const showAbsorb = idle && locale === 'field' && nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld;
+    const kilnGuarded = !!(nearPool && nearPool.id === 'kiln' && !seenBeats.kiln && !nearPool.absorbed);
+    const poolReady = !!(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld && !kilnGuarded);
+    const showAbsorb = idle && poolReady && (locale === 'field' ? !nearPool.interior : !atExit);
     const showDoor = idle && locale === 'field' && nearDoor && !showAbsorb;
     absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit);
     if (atExit) absorbBtn.textContent = 'Leave';
@@ -1199,9 +1306,21 @@
       return;
     }
     interactPrompt.classList.remove('hidden');
+    if (locale !== 'field' && nearPool && !(playerMesh && playerMesh.position.z > 2.55)) {
+      const guarded = nearPool.id === 'kiln' && !seenBeats.kiln && !nearPool.absorbed;
+      $('#interact-title').textContent = nearPool.name;
+      $('#interact-detail').textContent = guarded
+        ? 'Something in the kiln is still feeding. It will not share until it is beaten.'
+        : nearPool.absorbed
+          ? 'Quiet now. The ground kept what you did not need.'
+          : nearPool.hint + ' Tap Absorb (or E).';
+      return;
+    }
     if (atExit) {
       $('#interact-title').textContent = locale === 'root-cellar' ? 'The mouth' : 'The door';
-      $('#interact-detail').textContent = 'Press E to step back onto the isle.';
+      $('#interact-detail').textContent = locale === 'root-cellar'
+        ? 'Press E to step back onto the isle. The throat stays open behind you.'
+        : 'Press E to step back onto the isle.';
       return;
     }
     if (nearDoor && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
@@ -1239,7 +1358,9 @@
       const waiting = [];
       if (!findMember('nima')) waiting.push('Nima is still in the leaf-village.');
       if (!findMember('torren')) waiting.push('Torren has not refused the Concord yet.');
-      waiting.push('Kestrel is not on this road.');
+      waiting.push(seenBeats.kestrel
+        ? 'Kestrel crossed overhead. She did not join.'
+        : 'Kestrel is not on this road.');
       roadNote.textContent = waiting.join(' ');
     }
 
@@ -1401,11 +1522,17 @@
   }
 
   // ─── Overworld ────────────────────────────────────────────
+  function poolInLocale(pool) {
+    if (pool.interior) return locale === pool.interior;
+    return locale === 'field';
+  }
+
   function nearestPool() {
     if (!playerMesh) return null;
     let best = null;
     let bestD = ABSORB_RADIUS;
     pools.forEach((p) => {
+      if (!poolInLocale(p)) return;
       const d = Math.hypot(p.x - playerMesh.position.x, p.z - playerMesh.position.z);
       if (d < bestD) { best = p; bestD = d; }
     });
@@ -1413,10 +1540,10 @@
   }
 
   function rotPressure() {
-    if (!playerMesh) return 0;
+    if (!playerMesh || locale !== 'field') return 0;
     let pressure = 0;
     pools.forEach((pool) => {
-      if (pool.absorbed) return;
+      if (pool.absorbed || pool.interior) return;
       const d = Math.hypot(pool.x - playerMesh.position.x, pool.z - playerMesh.position.z);
       if (d < 8) pressure += (8 - d) / 8;
     });
@@ -1426,7 +1553,12 @@
   function tryInteract() {
     if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen) return;
     if (locale !== 'field') {
-      if (playerMesh && playerMesh.position.z > 2.55) exitInterior();
+      const atMouth = playerMesh && playerMesh.position.z > 2.55;
+      if (nearPool && !atMouth) {
+        tryAbsorb();
+        return;
+      }
+      if (atMouth) exitInterior();
       return;
     }
     const poolReady = nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld;
@@ -1450,6 +1582,10 @@
     }
     if (nearPool.absorbed) {
       showToast('This pool is quiet. The land already kept the scrap.');
+      return;
+    }
+    if (nearPool.id === 'kiln' && !seenBeats.kiln) {
+      showToast('The kiln still has a tenant. It eats before it offers.');
       return;
     }
     const pool = nearPool;
@@ -1510,6 +1646,36 @@
     return !!(seenBeats.village && seenBeats.patrol && ember && ember.absorbed);
   }
 
+  function updateCellarTriggers() {
+    if (locale !== 'root-cellar' || !playerMesh) return;
+    const z = playerMesh.position.z;
+    if (z > -9) crawlLatch = false;
+    if (z > -15.5) kilnLatch = false;
+    if (!seenBeats.cellarCrawl && !crawlLatch && z < -11.2) {
+      crawlLatch = true;
+      beginScriptedFight(['mite', 'mite'], 'cellar-crawl');
+      return;
+    }
+    if (seenBeats.cellarCrawl && !seenBeats.kiln && !kilnLatch && z < -18.2) {
+      kilnLatch = true;
+      beginScriptedFight(['kiln-heart'], 'kiln-heart');
+    }
+  }
+
+  function beginScriptedFight(ids, tag) {
+    scriptedEncounter = ids;
+    victoryTag = tag || null;
+    triggerEncounter();
+  }
+
+  function noteVictory() {
+    const tag = victoryTag;
+    victoryTag = null;
+    if (tag === 'cellar-crawl') seenBeats.cellarCrawl = true;
+    if (tag === 'kiln-heart') seenBeats.kiln = true;
+    return tag;
+  }
+
   function bottlePool(id) {
     const pool = pools.find((p) => p.id === id);
     if (!pool || pool.bottled) return;
@@ -1535,13 +1701,23 @@
         mx /= len;
         mz /= len;
         const speed = PLAYER_SPEED * dt;
-        const limit = locale === 'field' ? WORLD_SIZE * 0.58 : 3.45;
-        playerMesh.position.x = Math.max(-limit, Math.min(limit, playerMesh.position.x + mx * speed));
-        playerMesh.position.z = Math.max(-limit, Math.min(limit, playerMesh.position.z + mz * speed));
+        const nx = playerMesh.position.x + mx * speed;
+        const nz = playerMesh.position.z + mz * speed;
+        if (locale === 'field') {
+          const limit = WORLD_SIZE * 0.58;
+          playerMesh.position.x = Math.max(-limit, Math.min(limit, nx));
+          playerMesh.position.z = Math.max(-limit, Math.min(limit, nz));
+        } else if (locale === 'leaf-village') {
+          playerMesh.position.x = Math.max(-3.45, Math.min(3.45, nx));
+          playerMesh.position.z = Math.max(-3.45, Math.min(3.45, nz));
+        } else {
+          if (cellarFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
+          if (cellarFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
+        }
         playerMesh.rotation.y = Math.atan2(mx, mz);
         playerMesh.position.y = Math.abs(Math.sin(performance.now() * 0.012)) * 0.08;
         stepsSinceEncounter += speed * 10;
-        nearPool = locale === 'field' ? nearestPool() : null;
+        nearPool = nearestPool();
         nearDoor = nearestDoor();
         const safe = nearPool && !nearPool.absorbed;
         const cooled = performance.now() < suppressEncountersUntil;
@@ -1552,9 +1728,11 @@
         }
       } else {
         playerMesh.position.y = 0;
-        nearPool = locale === 'field' ? nearestPool() : null;
+        nearPool = nearestPool();
         nearDoor = nearestDoor();
       }
+
+      updateCellarTriggers();
 
       if (locale === 'field') BEATS.forEach((b) => {
         const inside = Math.hypot(b.x - playerMesh.position.x, b.z - playerMesh.position.z) < b.r;
@@ -1566,14 +1744,17 @@
         fireBeat(b);
       });
     } else {
-      nearPool = locale === 'field' ? nearestPool() : null;
+      nearPool = nearestPool();
       nearDoor = nearestDoor();
       playerMesh.position.y = 0;
     }
 
-    const ideal = new THREE.Vector3(camTarget.x, camTarget.y + CAMERA_HEIGHT, camTarget.z + CAMERA_DIST);
-    camera.position.lerp(ideal, CAMERA_LAG * (dt * 60));
-    camera.lookAt(camTarget.x, camTarget.y + 1, camTarget.z);
+    if (skyPass) updateSkyPass(dt);
+    else {
+      const ideal = new THREE.Vector3(camTarget.x, camTarget.y + CAMERA_HEIGHT, camTarget.z + CAMERA_DIST);
+      camera.position.lerp(ideal, CAMERA_LAG * (dt * 60));
+      camera.lookAt(camTarget.x, camTarget.y + 1, camTarget.z);
+    }
     tintHost();
     updateHUD();
     updatePrompt();
@@ -2086,7 +2267,10 @@
     if (enemies.some((e) => e.id === 'echo' && e.alive)) chance -= 0.34;
     chance = Math.max(0.08, chance);
     if (Math.random() < chance) {
-      showLog('You break contact. The field takes you back.');
+      victoryTag = null;
+      showLog(locale === 'root-cellar'
+        ? 'You break contact. The dark keeps your place.'
+        : 'You break contact. The field takes you back.');
       later(() => endCombatReturn(), 800);
     } else {
       const hard = enemies.some((e) => e.id === 'echo' && e.alive);
@@ -2107,6 +2291,8 @@
       else if (e.id === 'weevil' && Math.random() < 0.6) { addRotAsh(); names.push('Rot-ash'); }
       else if (e.id === 'scribe' && Math.random() < 0.55) names.push(makeShard('water').name);
       else if (e.id === 'echo') names.push(makeShard('lightning').name);
+      else if (e.id === 'kiln-heart') names.push(makeShard('fire').name);
+      else if (e.id === 'mite' && Math.random() < 0.55) { addRotAsh(); names.push('Rot-ash'); }
     });
     return names;
   }
@@ -2130,12 +2316,15 @@
       }
     });
     const loot = collectLoot();
+    const tag = noteVictory();
     let msg = 'The spark keeps ' + xp + ' XP and ' + g + ' marks.';
     if (levels) msg += ' Level ' + spark.level + '. Capacity ' + spark.capacity + '.';
     if (loot.length) msg += ' The pack gains ' + loot.join(', ') + '.';
     msg += hadEcho
       ? ' Somewhere Vesper looks up, as if named.'
-      : ' Lira keeps the bruises.';
+      : tag === 'kiln-heart'
+        ? ' The kiln is unguarded. What they buried is still offering.'
+        : ' Lira keeps the bruises.';
     victoryText.textContent = msg;
     victoryOverlay.classList.remove('hidden');
     turnIndicator.textContent = '';
@@ -2148,6 +2337,7 @@
 
   function loseCombat() {
     if (gameState === State.GAMEOVER) return;
+    victoryTag = null;
     combatEpoch++;
     gameState = State.GAMEOVER;
     combatUI.classList.add('hidden');
@@ -2247,51 +2437,43 @@
 
   // ─── Input & flow ─────────────────────────────────────────
   function setupJoystick() {
-    const onStart = (e) => {
+    const endDrag = () => {
+      joy.active = false;
+      joy.dx = 0;
+      joy.dy = 0;
+      joy.id = null;
+      joystickKnob.style.transform = 'translate(-50%, -50%)';
+    };
+    const onDown = (e) => {
       if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen) return;
-      const t = e.changedTouches ? e.changedTouches[0] : e;
-      if (!t) return;
+      if (e.isPrimary === false) return;
+      if (typeof e.button === 'number' && e.button !== 0) return;
       e.preventDefault();
       joy.active = true;
-      joy.id = t.identifier !== undefined ? t.identifier : 'mouse';
-      updateJoy(t.clientX, t.clientY);
+      joy.id = e.pointerId;
+      try { joystickZone.setPointerCapture(e.pointerId); } catch (err) { /* synthetic or already released */ }
+      updateJoy(e.clientX, e.clientY);
     };
     const onMove = (e) => {
-      if (!joy.active) return;
-      const touches = e.changedTouches || [e];
-      for (let i = 0; i < touches.length; i++) {
-        const t = touches[i];
-        const id = t.identifier !== undefined ? t.identifier : 'mouse';
-        if (id === joy.id) {
-          e.preventDefault();
-          updateJoy(t.clientX, t.clientY);
-          break;
-        }
+      if (!joy.active || e.pointerId !== joy.id) return;
+      if (e.pointerType === 'mouse' && e.buttons === 0) {
+        endDrag();
+        return;
       }
+      e.preventDefault();
+      updateJoy(e.clientX, e.clientY);
     };
-    const onEnd = (e) => {
-      if (!joy.active) return;
-      const touches = e.changedTouches || [e];
-      for (let i = 0; i < touches.length; i++) {
-        const t = touches[i];
-        const id = t.identifier !== undefined ? t.identifier : 'mouse';
-        if (id === joy.id) {
-          joy.active = false;
-          joy.dx = 0;
-          joy.dy = 0;
-          joy.id = null;
-          joystickKnob.style.transform = 'translate(-50%, -50%)';
-          break;
-        }
-      }
+    const onUp = (e) => {
+      if (!joy.active || e.pointerId !== joy.id) return;
+      endDrag();
     };
-    joystickZone.addEventListener('touchstart', onStart, { passive: false });
-    joystickZone.addEventListener('touchmove', onMove, { passive: false });
-    joystickZone.addEventListener('touchend', onEnd);
-    joystickZone.addEventListener('touchcancel', onEnd);
-    joystickZone.addEventListener('mousedown', onStart);
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onEnd);
+    joystickZone.addEventListener('pointerdown', onDown);
+    joystickZone.addEventListener('pointermove', onMove);
+    joystickZone.addEventListener('pointerup', onUp);
+    joystickZone.addEventListener('pointercancel', onUp);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
   }
 
   function updateJoy(cx, cy) {
@@ -2300,9 +2482,17 @@
     const cy0 = rect.top + rect.height / 2;
     let dx = cx - cx0;
     let dy = cy - cy0;
-    const maxR = rect.width / 2 - 8;
-    const len = Math.hypot(dx, dy) || 1;
-    if (len > maxR) { dx = (dx / len) * maxR; dy = (dy / len) * maxR; }
+    const maxR = Math.max(24, rect.width / 2 - 8);
+    const len = Math.hypot(dx, dy);
+    if (len < 14) {
+      joy.dx = 0;
+      joy.dy = 0;
+      joystickKnob.style.transform = 'translate(-50%, -50%)';
+      return;
+    }
+    const clamped = Math.min(len, maxR);
+    dx = (dx / len) * clamped;
+    dy = (dy / len) * clamped;
     joy.dx = dx / maxR;
     joy.dy = dy / maxR;
     joystickKnob.style.transform = 'translate(calc(-50% + ' + dx + 'px), calc(-50% + ' + dy + 'px))';
@@ -2735,12 +2925,73 @@
     saveGame();
   }
 
+  function makeEagle() {
+    const g = new THREE.Group();
+    const body = new THREE.Mesh(
+      new THREE.SphereGeometry(0.7, 8, 6),
+      new THREE.MeshLambertMaterial({ color: 0x2c2418 })
+    );
+    body.scale.set(2.2, 0.55, 0.7);
+    g.add(body);
+    const wingMat = new THREE.MeshLambertMaterial({ color: 0x4a3c2c });
+    const left = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.12, 1.05), wingMat);
+    left.position.set(0, 0.15, -1.7);
+    const right = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.12, 1.05), wingMat);
+    right.position.set(0, 0.15, 1.7);
+    g.add(left);
+    g.add(right);
+    g.userData.wings = [left, right];
+    const rider = makeCharacter(0x6a5348, 0.7);
+    rider.position.set(-0.15, 0.35, 0);
+    g.add(rider);
+    g.visible = false;
+    overworldGroup.add(g);
+    return g;
+  }
+
+  function playSkyPass() {
+    if (!eagleGroup) eagleGroup = makeEagle();
+    eagleGroup.visible = true;
+    skyPass = { t: 0, dur: 8.5 };
+  }
+
+  function updateSkyPass(dt) {
+    if (!skyPass || !eagleGroup || !playerMesh) return;
+    skyPass.t += dt;
+    const u = Math.min(1, skyPass.t / skyPass.dur);
+    const x = playerMesh.position.x - 14 + u * 28;
+    const y = 6.5 + Math.sin(u * Math.PI) * 1.6;
+    const z = playerMesh.position.z + 2;
+    eagleGroup.position.set(x, y, z);
+    eagleGroup.rotation.y = -Math.PI / 2;
+    eagleGroup.scale.setScalar(1.8);
+    const flap = Math.sin(skyPass.t * 8) * 0.7;
+    const wings = eagleGroup.userData.wings || [];
+    if (wings[0]) wings[0].rotation.x = flap;
+    if (wings[1]) wings[1].rotation.x = -flap;
+    const lift = Math.min(1, skyPass.t / 0.8);
+    camera.position.lerp(new THREE.Vector3(
+      playerMesh.position.x - 2,
+      4.2 + lift * 3.2,
+      playerMesh.position.z + 16
+    ), 0.14);
+    camera.lookAt(x, 2.2, playerMesh.position.z - 2);
+    if (skyPass.t >= skyPass.dur && !dialogueOpen) {
+      eagleGroup.visible = false;
+      skyPass = null;
+    }
+  }
+
   EW.present = function (script, done) { openDialogue(script, done); };
   EW.bottlePool = bottlePool;
-  EW.beginEncounter = function (ids) {
-    scriptedEncounter = ids;
-    triggerEncounter();
+  EW.beginEncounter = function (ids, tag) {
+    beginScriptedFight(ids, tag);
   };
+  EW.kilnQuiet = function () {
+    const pool = pools.find((p) => p.id === 'kiln');
+    return !!(pool && pool.absorbed);
+  };
+  EW.playSkyPass = playSkyPass;
   EW.actReady = actReady;
   EW.whisper = showToast;
   EW.revealSilhouette = function () {

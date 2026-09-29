@@ -140,7 +140,7 @@ Merges are permanent spark knowledge; host must still equip or attune to express
 
 ## Implementation snapshot
 
-This bible is the production target: four acts, the regions, and the systems above. Phase 1 landed inventory, element absorb, spark XP, host strain, and Final Fantasy combat paths. Act I on Verdant Isle now plays the wake, the village as an interior where Nima joins, the Concord patrol where Torren breaks ranks, the root-cellar threshold, witnesses at Vesper’s scar with a cost either way, further pools, a sleeping waystone, Vesper’s silhouette, and a browser save. The deeper cellar, Kestrel, and the later acts are still ahead. The shell is desktop-first. Touch keeps a joystick and large taps. See `README.md` and `ROADMAP.md`. Story canon in this file and in `STORY.md` is unchanged.
+This bible is the production target: four acts, the regions, and the systems above. Phase 1 landed inventory, element absorb, spark XP, host strain, and Final Fantasy combat paths. Act I on Verdant Isle now plays the wake, the village as an interior where Nima joins, the Concord patrol where Torren breaks ranks, the root-cellar as a short dungeon (jar mites, the Kiln Heart, the buried fire), Kestrel once in the sky after that fire — she does not join — witnesses at Vesper’s scar with a cost either way, further pools, a sleeping waystone, Vesper’s silhouette, and a browser save. Sky routes, waystone travel, and the later acts are still ahead. The shell is desktop-first, with a mouse stick and an Absorb/Pack pad. See `README.md` and `ROADMAP.md`. Story canon in this file and in `STORY.md` is unchanged.
 
 ---
 

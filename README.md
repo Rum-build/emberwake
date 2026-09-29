@@ -28,7 +28,7 @@ Three.js **r128** loads from the unpkg CDN, so the first launch needs a network.
    - **Continue** on the title restores this browser’s save: spark, strain, inventory, path, who has joined, which pools are quiet, and which scenes have played. **Wake** starts over.
    - **Enter** or click advances a scene. Number keys pick a line when someone asks you to answer.
 3. **Pools** (fire, water, lightning) are columns of light over sick ground. Absorbing one feeds the spark (**XP**, an element, **host strain**) and the scar visibly greens. Overfilling her capacity scorches harder. Strain cuts Lira’s max HP.
-4. **Pack** (host and party — the spark carries nothing): equipment, tonics and phials, pool-shards (digest cleanly, or dump them in a fight), Concord seals, the border badge. Lira starts alone. Nima joins inside the leaf-village. Torren joins when he refuses the patrol’s seal. Kestrel, the eagle-rider, is not here yet.
+4. **Pack** (host and party — the spark carries nothing): equipment, tonics and phials, pool-shards (digest cleanly, or dump them in a fight), Concord seals, the border badge. Lira starts alone. Nima joins inside the leaf-village. Torren joins when he refuses the patrol’s seal. Kestrel crosses once after the buried kiln. She does not join.
 5. **Encounters** happen after you walk the field. Rot near an undigested pool raises the rate. Standing in a pool to feed is quiet.
 6. **Combat** is turn-based. Order is your party, then the enemy, shown as chips.
    - **Fight** — Lira chooses **Cleave** (Warrior), **Channel** (Mage), or **Aim** (Ranged). The committed path hits true; the others land thin. Torren and Nima simply strike.
@@ -37,7 +37,7 @@ Three.js **r128** loads from the unpkg CDN, so the first launch needs a network.
    - **Flee** — harder in rot, and against Vesper’s echo.
 7. Victory pays spark XP and Concord **marks**. Defeat drops the body; **Drag her up** restores HP and MP, keeps what the spark already ate, and loses 12 marks.
 
-The Ashen Concord and the rival spark **Vesper** are on the isle, not only in rumors. After you wake, step into the leaf-village: the argument about the seal does not settle, and Nima walks out with Lira. The root-cellar under the arch is a mouth with a shut door, not a dungeon yet. A patrol bottles a lesser spring in sight; Torren refuses the licence and the fight starts with him in it. Ilan and Maud stand at Vesper’s scar. Drink it in front of them, or leave it and keep the rot. More pools burn, pool, and storm in the open. A waystone past the patrol is shut — Stormreach is named, not opened. When the village, the patrol, and the first ember are done, Vesper stands on the ridge and does not offer a duel.
+The Ashen Concord and the rival spark **Vesper** are on the isle, not only in rumors. After you wake, step into the leaf-village: the argument about the seal does not settle, and Nima walks out with Lira. The root-cellar under the arch opens into a throat: jar mites, then the Kiln Heart, then the buried fire. Drink it, and Kestrel crosses on an eagle without landing. A patrol bottles a lesser spring in sight; Torren refuses the licence and the fight starts with him in it. Ilan and Maud stand at Vesper’s scar. Drink it in front of them, or leave it and keep the rot. More pools burn, pool, and storm in the open. A waystone past the patrol is shut — Stormreach is named, not opened. When the village, the patrol, and the first ember are done, Vesper stands on the ridge and does not offer a duel.
 
 ## Files
 
@@ -66,8 +66,8 @@ The Ashen Concord and the rival spark **Vesper** are on the isle, not only in ru
 
 Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 
-- The root-cellar’s deeper door. The room under the arch is a threshold, not the dungeon.
-- Kestrel, element merges, waystone travel, and eagles (Acts II–IV).
+- Kestrel does not join. The eagle is a crossing, not a party slot. Sky routes and waystone travel wait for Act II.
+- Element merges and the later acts.
 - No music or SFX. See `CREDITS.md`. The Credits button on the title repeats that policy.
 - Encounters are tuned so a short walk can start a fight after the first pool. The patrol is a separate, scripted fight.
 - Low-poly placeholders. Three.js must load from the CDN once.

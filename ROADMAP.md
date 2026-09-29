@@ -44,18 +44,18 @@ Playable on the Verdant Isle field:
 ## Act I, continued (this same branch)
 
 - The leaf-village is a room. The argument happens inside. Nima joins there.
-- The root-cellar is a room with a shut door at the back. The dungeon under it is not open.
+- The root-cellar opens past the mouth: a throat, a jar-room fight, the Kiln Heart, then the buried fire.
+- Kestrel crosses once on an eagle after that fire is drunk. She does not land, and she does not join.
 - Torren is with the patrol until he refuses the seal, then he fights beside Lira.
 - Ilan and Maud stand at Vesper’s scar. Drinking it costs extra strain and their thanks. Leaving it locks the scar and puts rot-ash in the pack. The rot stays.
-- Continue on the title reads a browser save. Wake throws that save out.
+- Continue on the title reads a browser save. Wake throws that save out. The mouse stick keeps the drag until the button comes up.
 
 ## Still ahead on Act I
 
-From DESIGN.md, after these rooms:
+From DESIGN.md, after the kiln and the crossing:
 
-1. Kestrel, once, in the air. She does not join.
-2. The root-cellar’s deeper door, when the isle is ready to be a dungeon.
-3. Whatever the scar’s debt still owes the later acts.
+1. Whatever the scar’s debt still owes the later acts.
+2. Sky routes and a woken waystone. Those are Act II, not a door on this isle.
 
 Combat menus stay Fight / Magic / Item / Flee. New panels stay desktop-first.
 

@@ -68,6 +68,13 @@
         hint: 'The stone under the north ridge still argues with the weather.',
         line: 'You drink the argument. Lightning sits behind Lira’s eyes. The vein goes quiet.',
       },
+      {
+        id: 'kiln', element: 'fire', name: 'Buried Kiln', short: 'Kiln',
+        interior: 'root-cellar',
+        x: 0, z: -21, xp: 56, rot: 0.9, strain: 18,
+        hint: 'Old fire the village buried under the jars. It kept a tenant.',
+        line: 'You drink what they buried. The kiln cools. The jars stop ticking. Lira keeps the burn.',
+      },
     ],
     beats: [
       {
@@ -87,6 +94,12 @@
         scene: 'waystone-tease',
         x: 0, z: 18, r: 3.2,
         toast: 'A ring of stones. The road inside them is shut.',
+      },
+      {
+        id: 'kestrel',
+        scene: 'kestrel-pass',
+        x: 10, z: 10.4, r: 3.4,
+        toast: 'A wing crosses the arch. Someone is sitting on it.',
       },
       {
         id: 'silhouette',

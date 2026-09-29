@@ -69,9 +69,9 @@
     Emberwake.present({
       lines: [
         { where: 'Root-cellar', speaker: 'Lira', text: 'Old fire. Under the jars. It is not a hearth.' },
-        { speaker: 'The spark', text: 'This is a mouth, not a road. The door at the back is shut because the isle is not finished with you up here.' },
-        { speaker: 'Lira', text: 'Something is burning on the other side. I can smell it in my teeth.' },
-        { speaker: 'The spark', text: 'Remember the smell. When this cellar opens downward, it will not be a cellar anymore. Leave before you promise the dark a meal.' },
+        { speaker: 'The spark', text: 'The back of this room is a throat, not a locked door. Jars, then something that learned to keep the heat.' },
+        { speaker: 'Lira', text: 'If I go down, I am feeding it or I am killing it.' },
+        { speaker: 'The spark', text: 'Either way the isle writes your name on the jars. The field door is behind you. The meal is ahead.' },
       ],
     });
     return true;
@@ -153,6 +153,23 @@
       onDone: function () {
         if (Emberwake.dismissSilhouette) Emberwake.dismissSilhouette();
       },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('kestrel-pass', function () {
+    if (!Emberwake.kilnQuiet || !Emberwake.kilnQuiet()) {
+      return false;
+    }
+    if (Emberwake.playSkyPass) Emberwake.playSkyPass();
+    Emberwake.present({
+      lines: [
+        { where: 'Above the arch', speaker: 'Lira', text: 'A wing. Not a cloud. Someone is sitting on it.' },
+        { speaker: 'Kestrel', text: 'I am Kestrel. I do not land for cellars. I land for roads that remember the sky.' },
+        { speaker: 'The spark', text: 'She smells of wind and old lightning. She is not offering a hand.' },
+        { speaker: 'Kestrel', text: 'You drank what the village buried. The Concord will smell it on the thermals. When the waystone wakes, look up. I will not be in your pack. I will be the reason the pack is in the air.' },
+        { speaker: 'Lira', text: 'She laughed once, and the eagle took the sun with it.' },
+      ],
     });
     return true;
   });
