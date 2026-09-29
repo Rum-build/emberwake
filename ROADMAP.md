@@ -342,6 +342,18 @@ Playable on the Verdant Isle field:
 - Plasma, Steam, and Storm show their colour the way Magma and Glass do. That colour is not a cue. The eight sounds stay the set in CREDITS.
 - Phone controls, Absorb, Pack, and Continue stay.
 
+## Village, kiln, and the ash shelf (this branch)
+
+- The leaf-village has a table, cups, a bench, a shawl, and herbs off the letter basket and off the south step.
+- The buried kiln has a brick ring, an ash pan, a poker, and grate bars. They do not cover the mouth.
+- The ash shelf has a plank and three stakes off the tender, the pipe, the yard stone, the leak, and the south step.
+- A fight’s camera sits a little farther back and frames both ranks. Still holds that frame.
+- West of the roost, a Concord coat names the corked leaf-cup. The vault stays the other board.
+- In the aftermath, Torren and Nima speak for the claim flag if they are there. Vesper still does not enter.
+- In a fight, Use 1 names the stack. The log says what remains.
+- Places shows the quest in full, and the lines wrap on a phone.
+- Phone controls, Absorb, Pack, and Continue stay.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
