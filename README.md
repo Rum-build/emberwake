@@ -24,10 +24,11 @@ Three.js **r128** loads from the unpkg CDN, so the first launch needs a network.
 2. **Verdant Isle**
    - **PC:** WASD or arrow keys to walk. Mouse for menus, Pack, Absorb, and battle commands. In battle, **1–4** pick the open command and **Esc** steps back.
    - **Phone:** virtual joystick (bottom-left) and the large Pack and Absorb buttons. The same battle commands are full-width taps.
-   - **E** absorbs when you stand in a pool. **I** opens the pack. **Esc** closes it.
+   - **E** absorbs a pool, enters the leaf-village or the root-cellar, or leaves those rooms. **I** opens the pack. **Esc** closes it.
+   - **Continue** on the title restores this browser’s save: spark, strain, inventory, path, who has joined, which pools are quiet, and which scenes have played. **Wake** starts over.
    - **Enter** or click advances a scene. Number keys pick a line when someone asks you to answer.
 3. **Pools** (fire, water, lightning) are columns of light over sick ground. Absorbing one feeds the spark (**XP**, an element, **host strain**) and the scar visibly greens. Overfilling her capacity scorches harder. Strain cuts Lira’s max HP.
-4. **Pack** (host and party — the spark carries nothing): equipment, tonics and phials, pool-shards (digest cleanly, or dump them in a fight), Concord seals, the border badge. Torren and Nima walk with Lira. Kestrel, the eagle-rider, is not here yet.
+4. **Pack** (host and party — the spark carries nothing): equipment, tonics and phials, pool-shards (digest cleanly, or dump them in a fight), Concord seals, the border badge. Lira starts alone. Nima joins inside the leaf-village. Torren joins when he refuses the patrol’s seal. Kestrel, the eagle-rider, is not here yet.
 5. **Encounters** happen after you walk the field. Rot near an undigested pool raises the rate. Standing in a pool to feed is quiet.
 6. **Combat** is turn-based. Order is your party, then the enemy, shown as chips.
    - **Fight** — Lira chooses **Cleave** (Warrior), **Channel** (Mage), or **Aim** (Ranged). The committed path hits true; the others land thin. Torren and Nima simply strike.
@@ -36,7 +37,7 @@ Three.js **r128** loads from the unpkg CDN, so the first launch needs a network.
    - **Flee** — harder in rot, and against Vesper’s echo.
 7. Victory pays spark XP and Concord **marks**. Defeat drops the body; **Drag her up** restores HP and MP, keeps what the spark already ate, and loses 12 marks.
 
-The Ashen Concord and the rival spark **Vesper** are on the isle, not only in rumors. After you wake, the leaf-village argues about a seal and does not settle it. A patrol bottles a lesser spring in sight and then turns on you. More pools burn, pool, and storm in the open. A waystone on the north ridge is shut — Stormreach is named, not opened. When the village, the patrol, and the first ember are done, Vesper stands on the ridge and does not offer a duel.
+The Ashen Concord and the rival spark **Vesper** are on the isle, not only in rumors. After you wake, step into the leaf-village: the argument about the seal does not settle, and Nima walks out with Lira. The root-cellar under the arch is a mouth with a shut door, not a dungeon yet. A patrol bottles a lesser spring in sight; Torren refuses the licence and the fight starts with him in it. Ilan and Maud stand at Vesper’s scar. Drink it in front of them, or leave it and keep the rot. More pools burn, pool, and storm in the open. A waystone past the patrol is shut — Stormreach is named, not opened. When the village, the patrol, and the first ember are done, Vesper stands on the ridge and does not offer a duel.
 
 ## Files
 
@@ -47,7 +48,7 @@ The Ashen Concord and the rival spark **Vesper** are on the isle, not only in ru
 | `js/emberwake.js` | Namespace: phase, regions, scenes, content registers |
 | `js/content/catalog.js` | Paths, gear, items, spells, bestiary, opening roster |
 | `js/content/verdant-isle.js` | Act I field: landmarks, pools, beats |
-| `js/content/act1-scenes.js` | Wake, village argument, patrol, waystone, Vesper on the ridge |
+| `js/content/act1-scenes.js` | Wake, village argument, cellar threshold, scar witnesses, patrol, waystone, Vesper on the ridge |
 | `game.js` | Overworld, absorb, inventory, turn-based combat |
 | `DESIGN.md` | Design bible (canon) |
 | `STORY.md` | Player-facing synopsis (canon) |
@@ -65,9 +66,8 @@ The Ashen Concord and the rival spark **Vesper** are on the isle, not only in ru
 
 Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 
-- Village and root-cellar interiors. The argument and the cellar mouth are on the green.
-- Nima and Torren met in scenes. They still open already on the road, so the paths can be fought. Kestrel stays a recruit until sky routes.
-- Witnesses at Vesper’s scar. Save and continue. Element merges, waystone travel, and eagles (Acts II–IV).
+- The root-cellar’s deeper door. The room under the arch is a threshold, not the dungeon.
+- Kestrel, element merges, waystone travel, and eagles (Acts II–IV).
 - No music or SFX. See `CREDITS.md`. The Credits button on the title repeats that policy.
 - Encounters are tuned so a short walk can start a fight after the first pool. The patrol is a separate, scripted fight.
 - Low-poly placeholders. Three.js must load from the CDN once.

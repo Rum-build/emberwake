@@ -71,12 +71,22 @@
   let dialogueLines = [];
   let dialogueIndex = 0;
   let dialogueOnDone = null;
+  let dialogueOnPick = null;
   let dialogueWhere = '';
   let scriptedEncounter = null;
   let silhouetteGone = false;
   let vesperFigure = null;
+  let locale = 'field';
+  let interiorGroup = null;
+  let villageRoom = null;
+  let cellarRoom = null;
+  let nearDoor = null;
+  let scarVerdict = null;
+  let runLive = false;
+  const SAVE_KEY = 'emberwake.save.v1';
   let combatsFought = 0;
   let introToastShown = false;
+  let pendingBeat = null;
   let combatInRot = false;
   let combatEpoch = 0;
   let enemies = [];
@@ -149,6 +159,21 @@
 
   function makeParty() {
     return EW.content.openingParty.map((member) => Object.assign({}, member));
+  }
+
+  function joinMember(id) {
+    if (findMember(id)) return false;
+    const src = EW.content.roster && EW.content.roster[id];
+    if (!src) return false;
+    const member = Object.assign({}, src);
+    member.hp = member.maxHp;
+    member.mp = member.maxMp;
+    party.push(member);
+    const kit = (EW.content.joinKits && EW.content.joinKits[id]) || {};
+    equipped[id] = { weapon: kit.weapon || null, armor: kit.armor || null };
+    showToast(member.name + ' walks with Lira. The pack is heavier, and more honest.');
+    saveGame();
+    return true;
   }
 
   function findMember(id) {
@@ -283,9 +308,9 @@
     bag = ['ashwood-blade', 'wellwood-staff', 'reed-bow'];
     equipped = {
       lira: { weapon: 'scout-knife', armor: 'quilt-jerkin' },
-      torren: { weapon: 'ledger-cudgel', armor: 'seal-coat' },
-      nima: { weapon: 'herb-rod', armor: 'herb-shawl' },
     };
+    scarVerdict = null;
+    locale = 'field';
     stepsSinceEncounter = 0;
     encounterLocked = false;
     suppressEncountersUntil = 0;
@@ -297,6 +322,7 @@
     silhouetteGone = false;
     combatsFought = 0;
     introToastShown = false;
+    pendingBeat = null;
     const dialoguePanel = $('#dialogue');
     if (dialoguePanel) dialoguePanel.classList.add('hidden');
     rumor = 'The leaf-villages pretend the Concord’s seals are mercy.';
@@ -305,6 +331,14 @@
       playerMesh.rotation.set(0, 0, 0);
     }
     pools.forEach(resetPoolVisual);
+    if (interiorGroup) interiorGroup.visible = false;
+    if (overworldGroup) overworldGroup.visible = true;
+    if (playerMesh && overworldGroup && playerMesh.parent !== overworldGroup) {
+      if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
+      overworldGroup.add(playerMesh);
+    }
+    scene && scene.fog && scene.fog.color.set(0x87b5d9);
+    if (renderer) renderer.setClearColor(0x87b5d9);
     inventoryOpen = false;
     inventoryPanel.classList.add('hidden');
     tintHost();
@@ -332,6 +366,7 @@
     scene.add(combatGroup);
 
     buildOverworld();
+    buildInteriors();
     buildCombatArena();
     window.addEventListener('resize', onResize);
   }
@@ -479,6 +514,145 @@
     playerMesh = makeCharacter(0xc47a4a, 0.95);
     playerMesh.position.set(spawnPin.x, 0, spawnPin.z);
     overworldGroup.add(playerMesh);
+  }
+
+  function buildInteriors() {
+    interiorGroup = new THREE.Group();
+    interiorGroup.visible = false;
+    interiorGroup.add(new THREE.AmbientLight(0xc8bba8, 0.45));
+    interiorGroup.add(new THREE.HemisphereLight(0x8a7a68, 0x2a241c, 0.35));
+    villageRoom = buildRoom({
+      floor: 0x6a5344,
+      wall: 0x8a6a48,
+      light: 0xffc48a,
+      intensity: 0.85,
+    });
+    [[-1.4, -1.1, 0xc47a6a], [1.3, -0.8, 0x6a5a48], [0.1, 0.4, 0x6aa8a0]].forEach((spec) => {
+      const fig = makeCharacter(spec[2], 0.9);
+      fig.position.set(spec[0], 0, spec[1]);
+      fig.rotation.y = Math.PI;
+      villageRoom.add(fig);
+    });
+    cellarRoom = buildRoom({
+      floor: 0x3a322c,
+      wall: 0x4a4038,
+      light: 0xff8844,
+      intensity: 0.45,
+    });
+    const deepDoor = new THREE.Mesh(
+      new THREE.BoxGeometry(1.6, 2.2, 0.2),
+      new THREE.MeshLambertMaterial({ color: 0x1a1210 })
+    );
+    deepDoor.position.set(0, 1.1, -3.9);
+    cellarRoom.add(deepDoor);
+    const coal = new THREE.Mesh(
+      new THREE.SphereGeometry(0.22, 8, 8),
+      new THREE.MeshBasicMaterial({ color: 0xff5500 })
+    );
+    coal.position.set(0, 0.35, -3.2);
+    cellarRoom.add(coal);
+    const shelf = new THREE.Mesh(
+      new THREE.BoxGeometry(2.4, 1.4, 0.4),
+      new THREE.MeshLambertMaterial({ color: 0x5a4030 })
+    );
+    shelf.position.set(-2.6, 0.7, -1.2);
+    cellarRoom.add(shelf);
+    cellarRoom.visible = false;
+    interiorGroup.add(villageRoom);
+    interiorGroup.add(cellarRoom);
+    scene.add(interiorGroup);
+  }
+
+  function buildRoom(opts) {
+    const g = new THREE.Group();
+    const floor = new THREE.Mesh(
+      new THREE.PlaneGeometry(9, 9),
+      new THREE.MeshLambertMaterial({ color: opts.floor })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    g.add(floor);
+    const mat = new THREE.MeshLambertMaterial({ color: opts.wall });
+    function addWall(w, d, x, z) {
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, 2.6, d), mat);
+      mesh.position.set(x, 1.3, z);
+      g.add(mesh);
+    }
+    addWall(9, 0.35, 0, -4.45);
+    addWall(3.1, 0.35, -2.9, 4.45);
+    addWall(3.1, 0.35, 2.9, 4.45);
+    addWall(0.35, 9, -4.45, 0);
+    addWall(0.35, 9, 4.45, 0);
+    const lamp = new THREE.PointLight(opts.light, opts.intensity, 14);
+    lamp.position.set(0, 2.3, -0.4);
+    g.add(lamp);
+    return g;
+  }
+
+  function fieldDoors() {
+    const doors = [];
+    ['leaf-village', 'root-cellar'].forEach((id) => {
+      const pin = landmark(id);
+      if (!pin || !pin.interior) return;
+      doors.push({
+        id: pin.interior,
+        x: pin.x,
+        z: pin.z,
+        title: id === 'leaf-village' ? 'Leaf-village' : 'Root-cellar',
+        hint: id === 'leaf-village'
+          ? 'Half-shut doors. Smoke, and an argument that will not settle. Press E to go in.'
+          : 'The mouth breathes old fire. Press E to step under. The deep door stays shut.',
+      });
+    });
+    return doors;
+  }
+
+  function nearestDoor() {
+    if (!playerMesh || locale !== 'field') return null;
+    let best = null;
+    let bestD = 2.8;
+    fieldDoors().forEach((door) => {
+      const d = Math.hypot(door.x - playerMesh.position.x, door.z - playerMesh.position.z);
+      if (d < bestD) { best = door; bestD = d; }
+    });
+    return best;
+  }
+
+  function enterInterior(id, opts) {
+    const silent = opts && opts.silent;
+    locale = id;
+    if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
+    interiorGroup.add(playerMesh);
+    playerMesh.position.set(0, 0, silent && opts.pos ? opts.pos.z : 3.05);
+    if (silent && opts.pos) playerMesh.position.x = opts.pos.x;
+    overworldGroup.visible = false;
+    interiorGroup.visible = true;
+    villageRoom.visible = id === 'leaf-village';
+    cellarRoom.visible = id === 'root-cellar';
+    const dusk = id === 'root-cellar' ? 0x1a1410 : 0x3a342c;
+    scene.fog.color.set(dusk);
+    renderer.setClearColor(dusk);
+    const beatKey = id === 'leaf-village' ? 'village' : 'cellar';
+    const sceneId = id === 'leaf-village' ? 'village-argument' : 'cellar-threshold';
+    if (!seenBeats[beatKey]) {
+      const fn = EW.scenes[sceneId];
+      if (typeof fn === 'function') fn();
+    }
+    refreshRumor();
+    saveGame();
+  }
+
+  function exitInterior() {
+    const pinId = locale === 'root-cellar' ? 'root-cellar' : 'leaf-village';
+    const pin = landmark(pinId);
+    locale = 'field';
+    if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
+    overworldGroup.add(playerMesh);
+    playerMesh.position.set(pin.x, 0, pin.z + 2.4);
+    interiorGroup.visible = false;
+    overworldGroup.visible = true;
+    scene.fog.color.set(0x87b5d9);
+    renderer.setClearColor(0x87b5d9);
+    saveGame();
   }
 
   function makeConcordBanner(x, z) {
@@ -664,7 +838,7 @@
       id: def.id, element: def.element, name: def.name, short: def.short,
       x: def.x, z: def.z, xp: def.xp, strain: def.strain,
       hint: def.hint, line: def.line, vesper: !!def.vesper, concord: !!def.concord, patrol: !!def.patrol,
-      absorbed: false, bottled: false, healing: false, heal: 0,
+      absorbed: false, bottled: false, withheld: false, healing: false, heal: 0,
       rotMat, rotColor, healColor, elColor, lifeMat, coreMat, core, beamMat,
       spikes, flowers, motes, figure, seal, sealRing, phase: Math.random() * 6,
     };
@@ -674,9 +848,15 @@
   }
 
   function resetPoolVisual(pool) {
+    const def = POOL_DEFS.find((d) => d.id === pool.id);
     pool.absorbed = false;
     pool.healing = false;
     pool.heal = 0;
+    if (def) {
+      pool.strain = def.strain;
+      pool.line = def.line;
+      pool.hint = def.hint;
+    }
     pool.rotMat.color.copy(pool.rotColor);
     pool.rotMat.opacity = 0.94;
     pool.lifeMat.opacity = 0;
@@ -684,6 +864,7 @@
     pool.coreMat.emissive.copy(pool.elColor).multiplyScalar(0.35);
     pool.beamMat.opacity = 0.2;
     pool.bottled = false;
+    pool.withheld = false;
     pool.spikes.forEach((s) => { s.scale.y = 1; s.visible = true; });
     pool.flowers.forEach((f) => { f.scale.y = 0.001; });
     if (pool.figure) {
@@ -957,7 +1138,11 @@
     const vesperDone = pools.some((p) => p.id === 'vesper' && p.absorbed);
     const wellDone = pools.some((p) => p.id === 'well' && p.absorbed);
     const left = pools.filter((p) => !p.absorbed && !p.bottled).length;
-    if (seenBeats.silhouette) {
+    if (scarVerdict === 'leave') {
+      rumor = 'Ilan’s sister still coughs at the scar. You left Vesper’s wound in the ground, and took the ash they scraped off it.';
+    } else if (scarVerdict === 'drink') {
+      rumor = 'You drank the scar in front of Maud and Ilan. The ground may green. They will not thank you.';
+    } else if (seenBeats.silhouette) {
       rumor = 'Vesper stood on the ridge and did not offer a fight. She named the coast. The scar in the grass is a different wound.';
     } else if (pools.length && left === 0) {
       rumor = 'Verdant Isle is quieter. The Concord will call this unlicensed, not healed.';
@@ -970,7 +1155,7 @@
     } else if (seenBeats.waystone) {
       rumor = 'A waystone sleeps on the north ridge. The road to Stormreach is shut.';
     } else if (seenBeats.village) {
-      rumor = 'Hearth-smoke and worry. Sera wants the seal. Joss wants the furrow. Neither is lying.';
+      rumor = 'Inside the leaf-village the argument is still unfinished. Sera wants the seal. Joss wants the furrow.';
     }
     syncSilhouette();
     const el = $('#hud-rumor');
@@ -996,20 +1181,38 @@
     $('#hud-path').textContent = 'Path ' + (spark.path ? PATH_LABEL[spark.path] : '—');
     $('#hud-rumor').textContent = rumor;
     const absorbBtn = $('#btn-absorb');
-    const showAbsorb = nearPool && !nearPool.absorbed && !nearPool.bottled && gameState === State.OVERWORLD && !inventoryOpen && !encounterLocked && !dialogueOpen;
-    absorbBtn.classList.toggle('hidden', !showAbsorb);
-    if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
+    const idle = gameState === State.OVERWORLD && !inventoryOpen && !encounterLocked && !dialogueOpen;
+    const atExit = idle && locale !== 'field' && playerMesh && playerMesh.position.z > 2.55;
+    const showAbsorb = idle && locale === 'field' && nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld;
+    const showDoor = idle && locale === 'field' && nearDoor && !showAbsorb;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit);
+    if (atExit) absorbBtn.textContent = 'Leave';
+    else if (showDoor) absorbBtn.textContent = 'Enter';
+    else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
   }
 
   function updatePrompt() {
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || !nearPool) {
+    const atExit = locale !== 'field' && playerMesh && playerMesh.position.z > 2.55;
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || (!nearPool && !nearDoor && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
     interactPrompt.classList.remove('hidden');
+    if (atExit) {
+      $('#interact-title').textContent = locale === 'root-cellar' ? 'The mouth' : 'The door';
+      $('#interact-detail').textContent = 'Press E to step back onto the isle.';
+      return;
+    }
+    if (nearDoor && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
+      $('#interact-title').textContent = nearDoor.title;
+      $('#interact-detail').textContent = nearDoor.hint;
+      return;
+    }
     $('#interact-title').textContent = nearPool.name;
     $('#interact-detail').textContent = nearPool.bottled
       ? 'A Concord seal sits on the mouth. They called this safety while you watched.'
+      : nearPool.withheld
+      ? 'You told Ilan this scar would stay. The rot stays with it.'
       : nearPool.absorbed
       ? 'Quiet now. The ground kept what you did not need.'
       : nearPool.hint + ' Press E, or Absorb.';
@@ -1030,8 +1233,17 @@
       btn.classList.toggle('is-on', btn.dataset.respec === spark.path);
     });
 
-    $('#equip-slots').innerHTML = ['lira', 'torren', 'nima'].map((id) => {
-      const eq = equipped[id];
+    const roadNote = $('#inv-road-note');
+    if (roadNote) {
+      const waiting = [];
+      if (!findMember('nima')) waiting.push('Nima is still in the leaf-village.');
+      if (!findMember('torren')) waiting.push('Torren has not refused the Concord yet.');
+      waiting.push('Kestrel is not on this road.');
+      roadNote.textContent = waiting.join(' ');
+    }
+
+    $('#equip-slots').innerHTML = party.map((p) => p.id).map((id) => {
+      const eq = equipped[id] || { weapon: null, armor: null };
       const weapon = eq.weapon ? GEAR[eq.weapon] : null;
       const armor = eq.armor ? GEAR[eq.armor] : null;
       return `<div class="equip-card">
@@ -1198,9 +1410,27 @@
     return pressure;
   }
 
+  function tryInteract() {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen) return;
+    if (locale !== 'field') {
+      if (playerMesh && playerMesh.position.z > 2.55) exitInterior();
+      return;
+    }
+    const poolReady = nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld;
+    if (poolReady || (nearPool && !nearDoor)) {
+      tryAbsorb();
+      return;
+    }
+    if (nearDoor) enterInterior(nearDoor.id);
+  }
+
   function tryAbsorb() {
     if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen) return;
     if (!nearPool) return;
+    if (nearPool.withheld) {
+      showToast('You told Ilan the scar would stay. Breaking that in front of the isle is a smaller, uglier theft.');
+      return;
+    }
     if (nearPool.bottled) {
       showToast('The seal is already on. Cracking it in the open is how rot learns your name. The well in the south is a different theft.');
       return;
@@ -1240,6 +1470,7 @@
     refreshRumor();
     updateHUD();
     updatePrompt();
+    saveGame();
   }
 
   function fireBeat(b) {
@@ -1251,7 +1482,8 @@
         return;
       }
     } else showToast(b.toast);
-    seenBeats[b.id] = true;
+    if (dialogueOpen) pendingBeat = b.id;
+    else seenBeats[b.id] = true;
     refreshRumor();
   }
 
@@ -1290,26 +1522,28 @@
         mx /= len;
         mz /= len;
         const speed = PLAYER_SPEED * dt;
-        const limit = WORLD_SIZE * 0.58;
+        const limit = locale === 'field' ? WORLD_SIZE * 0.58 : 3.45;
         playerMesh.position.x = Math.max(-limit, Math.min(limit, playerMesh.position.x + mx * speed));
         playerMesh.position.z = Math.max(-limit, Math.min(limit, playerMesh.position.z + mz * speed));
         playerMesh.rotation.y = Math.atan2(mx, mz);
         playerMesh.position.y = Math.abs(Math.sin(performance.now() * 0.012)) * 0.08;
         stepsSinceEncounter += speed * 10;
-        nearPool = nearestPool();
+        nearPool = locale === 'field' ? nearestPool() : null;
+        nearDoor = nearestDoor();
         const safe = nearPool && !nearPool.absorbed;
         const cooled = performance.now() < suppressEncountersUntil;
-        if (!safe && !cooled && stepsSinceEncounter > ENCOUNTER_STEPS) {
+        if (locale === 'field' && !safe && !cooled && stepsSinceEncounter > ENCOUNTER_STEPS) {
           const pressure = rotPressure();
           const chancePerSec = 0.32 + pressure * 0.7;
           if (Math.random() < chancePerSec * dt) triggerEncounter();
         }
       } else {
         playerMesh.position.y = 0;
-        nearPool = nearestPool();
+        nearPool = locale === 'field' ? nearestPool() : null;
+        nearDoor = nearestDoor();
       }
 
-      BEATS.forEach((b) => {
+      if (locale === 'field') BEATS.forEach((b) => {
         const inside = Math.hypot(b.x - playerMesh.position.x, b.z - playerMesh.position.z) < b.r;
         if (!inside) {
           beatHold[b.id] = false;
@@ -1319,7 +1553,8 @@
         fireBeat(b);
       });
     } else {
-      nearPool = nearestPool();
+      nearPool = locale === 'field' ? nearestPool() : null;
+      nearDoor = nearestDoor();
       playerMesh.position.y = 0;
     }
 
@@ -1912,12 +2147,14 @@
     combatUI.classList.add('hidden');
     victoryOverlay.classList.add('hidden');
     gameoverScreen.classList.add('hidden');
-    overworldGroup.visible = true;
+    overworldGroup.visible = locale === 'field';
+    if (interiorGroup) interiorGroup.visible = locale !== 'field';
     combatGroup.visible = false;
     scene.fog.near = 18;
     scene.fog.far = 55;
-    scene.fog.color.set(0x87b5d9);
-    renderer.setClearColor(0x87b5d9);
+    const sky = locale === 'root-cellar' ? 0x1a1410 : locale !== 'field' ? 0x3a342c : 0x87b5d9;
+    scene.fog.color.set(sky);
+    renderer.setClearColor(sky);
     combatEnemyMeshes.forEach((m) => combatGroup.remove(m));
     combatPartyMeshes.forEach((m) => combatGroup.remove(m));
     combatEnemyMeshes = [];
@@ -1927,6 +2164,7 @@
     joystickZone.classList.remove('hidden');
     encounterLocked = false;
     stepsSinceEncounter = 0;
+    saveGame();
     suppressEncountersUntil = performance.now() + 2200;
     camera.position.set(playerMesh.position.x, playerMesh.position.y + CAMERA_HEIGHT, playerMesh.position.z + CAMERA_DIST);
     updateHUD();
@@ -2062,6 +2300,7 @@
     dialogueIndex = 0;
     dialogueWhere = '';
     dialogueOnDone = (script && script.onDone) || done || null;
+    dialogueOnPick = (script && script.onPick) || null;
     dialogueOpen = true;
     if (inventoryOpen) setInventory(false);
     const panel = $('#dialogue');
@@ -2116,7 +2355,9 @@
     if (!dialogueOpen) return;
     const line = dialogueLines[dialogueIndex];
     if (!line || !line.choices || !line.choices[i]) return;
-    const reply = line.choices[i].reply;
+    const choice = line.choices[i];
+    const reply = choice.reply;
+    if (typeof dialogueOnPick === 'function' && choice.pick) dialogueOnPick(choice.pick);
     dialogueLines[dialogueIndex] = { where: line.where, speaker: line.speaker, text: line.text };
     if (reply) dialogueLines.splice(dialogueIndex + 1, 0, reply);
     advanceDialogue();
@@ -2127,8 +2368,16 @@
     dialogueOpen = false;
     const panel = $('#dialogue');
     if (panel) panel.classList.add('hidden');
+    if (pendingBeat) {
+      seenBeats[pendingBeat] = true;
+      pendingBeat = null;
+    }
+    if (locale === 'leaf-village') seenBeats.village = true;
+    else if (locale === 'root-cellar') seenBeats.cellar = true;
     const done = dialogueOnDone;
     dialogueOnDone = null;
+    dialogueOnPick = null;
+    saveGame();
     if (typeof done === 'function') done();
   }
 
@@ -2151,7 +2400,7 @@
         return;
       }
       if (e.code === 'KeyI' && gameState === State.OVERWORLD && !encounterLocked) setInventory(!inventoryOpen);
-      if (e.code === 'KeyE' && gameState === State.OVERWORLD) tryAbsorb();
+      if (e.code === 'KeyE' && gameState === State.OVERWORLD) tryInteract();
       if (e.code === 'Escape' && inventoryOpen) setInventory(false);
       if (gameState === State.COMBAT && inputEnabled && !combatBusy) {
         if (e.code === 'Escape' || e.code === 'Backspace') {
@@ -2238,7 +2487,7 @@
     });
   }
 
-  function beginField() {
+  function beginField(opts) {
     gameState = State.OVERWORLD;
     titleScreen.classList.add('hidden');
     pathScreen.classList.add('hidden');
@@ -2250,7 +2499,9 @@
     overworldGroup.visible = true;
     combatGroup.visible = false;
     camera.position.set(playerMesh.position.x, CAMERA_HEIGHT, playerMesh.position.z + CAMERA_DIST);
+    runLive = true;
     updateHUD();
+    if (!(opts && opts.skipSave)) saveGame();
     if (!introToastShown) {
       introToastShown = true;
       const gearHint = spark.path === 'mage'
@@ -2266,12 +2517,16 @@
 
   function setupUI() {
     $('#btn-start').addEventListener('click', () => {
+      try { localStorage.removeItem(SAVE_KEY); } catch (err) { /* ignore */ }
+      runLive = false;
       resetRun();
       titleScreen.classList.add('hidden');
       creditsScreen.classList.add('hidden');
       pathScreen.classList.remove('hidden');
       gameState = State.PATH;
     });
+    const continueBtn = $('#btn-continue');
+    if (continueBtn) continueBtn.addEventListener('click', continueRun);
     $('#btn-credits').addEventListener('click', () => {
       titleScreen.classList.add('hidden');
       creditsScreen.classList.remove('hidden');
@@ -2292,7 +2547,7 @@
     $('#btn-inv-close').addEventListener('click', () => setInventory(false));
     $('#btn-absorb').addEventListener('click', (e) => {
       e.preventDefault();
-      tryAbsorb();
+      tryInteract();
     });
     inventoryPanel.addEventListener('click', (e) => {
       const respec = e.target.closest('[data-respec]');
@@ -2333,6 +2588,126 @@
     renderer.render(scene, camera);
   }
 
+  function readSave() {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) return null;
+      const data = JSON.parse(raw);
+      if (!data || data.v !== 1 || !data.spark || !Array.isArray(data.party)) return null;
+      return data;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function saveGame() {
+    if (!runLive || !spark || !playerMesh) return;
+    try {
+      localStorage.setItem(SAVE_KEY, JSON.stringify({
+        v: 1,
+        spark: spark,
+        party: party,
+        marks: marks,
+        items: items,
+        shards: shards,
+        seals: seals,
+        bag: bag,
+        equipped: equipped,
+        seenBeats: seenBeats,
+        silhouetteGone: silhouetteGone,
+        scarVerdict: scarVerdict,
+        introToastShown: introToastShown,
+        combatsFought: combatsFought,
+        locale: locale,
+        pos: { x: playerMesh.position.x, z: playerMesh.position.z },
+        pools: pools.map((p) => ({
+          id: p.id,
+          absorbed: !!p.absorbed,
+          bottled: !!p.bottled,
+          withheld: !!p.withheld,
+          strain: p.strain,
+          line: p.line,
+        })),
+      }));
+    } catch (err) { /* quota or private mode */ }
+  }
+
+  function applySave(data) {
+    spark = data.spark;
+    party = data.party;
+    marks = data.marks;
+    items = data.items;
+    shards = data.shards || [];
+    seals = data.seals || [];
+    bag = data.bag || [];
+    equipped = data.equipped || { lira: { weapon: 'scout-knife', armor: 'quilt-jerkin' } };
+    seenBeats = data.seenBeats || {};
+    silhouetteGone = !!data.silhouetteGone;
+    scarVerdict = data.scarVerdict || null;
+    introToastShown = !!data.introToastShown;
+    combatsFought = data.combatsFought || 0;
+    shardSeq = shards.reduce((max, shard) => {
+      const n = parseInt(String(shard.uid || '').replace(/\D/g, ''), 10) || 0;
+      return Math.max(max, n);
+    }, 1) + 1;
+    (data.pools || []).forEach((saved) => {
+      const pool = pools.find((p) => p.id === saved.id);
+      if (!pool) return;
+      pool.absorbed = !!saved.absorbed;
+      pool.bottled = !!saved.bottled;
+      pool.withheld = !!saved.withheld;
+      if (typeof saved.strain === 'number') pool.strain = saved.strain;
+      if (saved.line) pool.line = saved.line;
+      if (pool.absorbed) { pool.healing = true; pool.heal = 1; }
+      if (pool.bottled) {
+        if (pool.seal) pool.seal.visible = true;
+        if (pool.sealRing) pool.sealRing.visible = true;
+      }
+    });
+    if (playerMesh && data.pos && (!data.locale || data.locale === 'field')) {
+      playerMesh.position.set(data.pos.x || 0, 0, data.pos.z || 0);
+    }
+    syncSilhouette();
+    refreshRumor();
+  }
+
+  function refreshTitle() {
+    const btn = $('#btn-continue');
+    if (btn) btn.classList.toggle('hidden', !readSave());
+  }
+
+  function continueRun() {
+    const data = readSave();
+    if (!data) return;
+    applySave(data);
+    runLive = true;
+    const resumeInterior = data.locale && data.locale !== 'field';
+    if (spark.path) beginField({ skipSave: resumeInterior });
+    else {
+      titleScreen.classList.add('hidden');
+      creditsScreen.classList.add('hidden');
+      pathScreen.classList.remove('hidden');
+      gameState = State.PATH;
+    }
+    if (resumeInterior) enterInterior(data.locale, { silent: true, pos: data.pos });
+  }
+
+  function setScarVerdict(id) {
+    if (scarVerdict) return;
+    scarVerdict = id === 'leave' ? 'leave' : 'drink';
+    const pool = pools.find((p) => p.id === 'vesper');
+    if (pool && scarVerdict === 'drink') {
+      pool.strain = (pool.strain || 20) + 12;
+      pool.line = 'You finish Vesper’s scar while they watch. The ground cools. Ilan’s sister does not. That debt stays in the teeth.';
+    } else if (pool && scarVerdict === 'leave') {
+      pool.withheld = true;
+      addRotAsh();
+      addRotAsh();
+    }
+    refreshRumor();
+    saveGame();
+  }
+
   EW.present = function (script, done) { openDialogue(script, done); };
   EW.bottlePool = bottlePool;
   EW.beginEncounter = function (ids) {
@@ -2349,6 +2724,10 @@
     silhouetteGone = true;
     syncSilhouette();
   };
+  EW.recruit = joinMember;
+  EW.setScarVerdict = setScarVerdict;
+
+  window.addEventListener('beforeunload', saveGame);
 
   function boot() {
     if (typeof THREE === 'undefined') {
@@ -2361,6 +2740,7 @@
       setupJoystick();
       setupKeyboard();
       setupUI();
+      refreshTitle();
       animate();
     } catch (err) {
       console.error(err);

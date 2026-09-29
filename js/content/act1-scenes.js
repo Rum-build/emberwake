@@ -23,7 +23,7 @@
     Emberwake.present({
       lines: [
         {
-          where: 'Leaf-village',
+          where: 'Leaf-village, inside',
           speaker: 'Sera',
           text: 'The Concord sealed the well and the babies stopped coughing. Say what you like about licences. Coughing is not a theory.',
         },
@@ -32,12 +32,12 @@
           text: 'They sealed the well and the south furrow went grey. My cousin’s barley died polite. Polite is how they like a famine.',
         },
         {
-          speaker: 'Torren',
-          text: 'I signed papers like that. The seal is real. The quiet is a debt. Don’t ask me which of them is lying. Both kept their hands clean.',
+          speaker: 'Nima',
+          text: 'I have been packing leaves for both of them. The cough and the furrow. Neither bundle makes the other one a liar.',
         },
         {
           speaker: 'Lira',
-          text: 'They are looking at you. Not at him. At the thing behind your eyes.',
+          text: 'They are looking at you. At the thing behind your eyes.',
           choices: [
             {
               label: 'The seal is a theft.',
@@ -49,15 +49,60 @@
             },
             {
               label: 'I didn’t come to judge a village.',
-              reply: { speaker: 'Torren', text: 'You will. The spark eats, and a clerk writes it down. Judgment is just the slower paperwork.' },
+              reply: { speaker: 'Nima', text: 'You will. Hunger judges. It just doesn’t write the verdict in ink.' },
             },
           ],
         },
         {
           speaker: 'Nima',
-          text: 'Both of them are telling the truth. That is the part that rots. Leave them the argument. The pools are still in the open.',
+          text: 'I’m done counting leaves in a room that will not decide. I’ll walk with her. If the spark eats something foul, I want to see the bill.',
         },
       ],
+      onDone: function () {
+        if (Emberwake.recruit) Emberwake.recruit('nima');
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('cellar-threshold', function () {
+    Emberwake.present({
+      lines: [
+        { where: 'Root-cellar', speaker: 'Lira', text: 'Old fire. Under the jars. It is not a hearth.' },
+        { speaker: 'The spark', text: 'This is a mouth, not a road. The door at the back is shut because the isle is not finished with you up here.' },
+        { speaker: 'Lira', text: 'Something is burning on the other side. I can smell it in my teeth.' },
+        { speaker: 'The spark', text: 'Remember the smell. When this cellar opens downward, it will not be a cellar anymore. Leave before you promise the dark a meal.' },
+      ],
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('scar-witnesses', function () {
+    Emberwake.present({
+      lines: [
+        { where: 'Vesper’s scar', speaker: 'Ilan', text: 'She stood where you are standing. Drank until the grass blistered in her shape. Said the land would thank her.' },
+        { speaker: 'Maud', text: 'My sister coughed black for three days. The Concord called it a side effect of mercy. Vesper called it cleansing. I call it her name, so someone writes it down.' },
+        { speaker: 'Ilan', text: 'If you finish the scar, the ground may green. My sister does not green. If you leave it, the rot stays and walks.' },
+        {
+          speaker: 'Lira',
+          text: 'They will not let this be a private meal.',
+          choices: [
+            {
+              label: 'Drink it. The ground is already screaming.',
+              pick: 'drink',
+              reply: { speaker: 'Maud', text: 'Then drink in front of us. And do not come to the village afterward asking to be thanked.' },
+            },
+            {
+              label: 'Leave the scar. The rot stays.',
+              pick: 'leave',
+              reply: { speaker: 'Ilan', text: 'Then take the ash we scraped off her footprint. Sell it, bury it, I don’t care. Don’t you drink it while we are watching.' },
+            },
+          ],
+        },
+      ],
+      onPick: function (id) {
+        if (Emberwake.setScarVerdict) Emberwake.setScarVerdict(id);
+      },
     });
     return true;
   });
@@ -67,11 +112,12 @@
       lines: [
         { where: 'The leaf-cup', speaker: 'Concord Warden', text: 'Unlicensed water. Cork it before the rot learns the path down to the furrow.' },
         { speaker: 'Concord Scribe', text: 'The licence is mercy. Say it once for the ledger. Mercy.' },
-        { speaker: 'Concord Warden', text: 'Witness on the road. Host-body. Spark behind the eyes. Note the face. Note the hunger.' },
-        { speaker: 'The spark', text: 'They are not digesting it. They are moving the wound and calling the pus elsewhere.' },
-        { speaker: 'Lira', text: 'They see us.' },
+        { speaker: 'Torren', text: 'I wrote these licences. I will not write this one. The coat can stay on my back. The seal does not.' },
+        { speaker: 'Concord Warden', text: 'Quartermaster Torren, refusing a cork. Note the witness too. Host-body. Spark behind the eyes.' },
+        { speaker: 'Lira', text: 'They see both of you now.' },
       ],
       onDone: function () {
+        if (Emberwake.recruit) Emberwake.recruit('torren');
         if (Emberwake.bottlePool) Emberwake.bottlePool('leaf-cup');
         if (Emberwake.beginEncounter) Emberwake.beginEncounter(['warden', 'scribe']);
       },
