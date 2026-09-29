@@ -268,7 +268,7 @@ Playable on the Verdant Isle field:
 - The absorb sting adds a soft sine. A ration bite plays when the biscuit is traded or taken, if Sound is on. Both are original and listed in CREDITS.md.
 - Phone controls, Absorb, Pack, and Continue stay.
 
-## Dusk claim (this branch)
+## Dusk claim (shipped)
 
 - The remnant claim and the aftermath retint the lights already in the room. Claim is gold and fed. Refusal is a cold licence. Share splits warm and violet. Burn drops the room and heats the scar. The door does not move.
 - Ash is Thin, Steady, or Thick from the title and the pack. Still holds the motes. The count follows the setting. On a phone the motes still skip every other tick.
@@ -277,6 +277,19 @@ Playable on the Verdant Isle field:
 - A gull’s cry stays through that person’s turn. Mind from a ration breaks it. The wound side does not. If the mind was already thin and not steadied, the cry costs 4 HP when the turn ends. A ration still closes 22 HP or returns 12 mind. A steadied mind holds the next cry to 2.
 - The first dusk on the ash is one inner line from Lira and the spark. It does not scar, and it does not open the engine.
 - Places leaves the stick, Absorb, and Enter live. Closer still means step in. The village door still says Enter.
+- Phone controls, Absorb, Pack, and Continue stay.
+
+## Face and weather (this branch)
+
+- Hair reads as a cap, a fringe, and a fall. Concord hair stays cropped. Vesper’s falls past the shoulder. A brow and a mouth sit on the face that already had eyes and a nose. No new light was added.
+- The harbor vault and the Concord yard carry licence piers and a gold beam. They sit off the walk. They are not doors.
+- Light rain falls on the isle and the shale when Motion is on. An ash gust falls on the marrow, the yard, the claim, and the aftermath, unless Ash fall is Thin. Still hides both. On a phone the fall skips every other tick.
+- East dust in the count crypt holds a folded notice. It calls the crack weather. It does not open the crack or the bar.
+- A spare green off the west path of the isle is a second verdant tonic. The wayside chest is still the first. Neither opens the kiln.
+- The fight order is a ribbon: Now, then the names, with a mark between them.
+- Ash fall names Thin, Steady, or Thick, and says whether that is fewer motes, the usual fall, or more.
+- On a phone the place list starts under the HUD. The stick, Absorb, and Enter stay live.
+- If she has named the dusk, or provoked the shale patrol, Vesper says so when she meets Lira on the ash. She still does not enter the host.
 - Phone controls, Absorb, Pack, and Continue stay.
 
 ## Still ahead
