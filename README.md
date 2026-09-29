@@ -77,6 +77,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The isle, the coast, the ash, the remnant claim, and the fight have a stronger light: figures read at a distance, Lira carries a spark ember, and the claim mass sits in a darker room. The village, the counting room, the ash, and the claim read more as rooms than as boxes. People and the engine are still simple meshes. Three.js must load from the CDN once.
 - A missable letter in the leaf-village says Vesper walked the Concord to the well. It goes in the pack and does not change the road. Continue names the saved place. After the aftermath credits, Wake still throws that save out. Wake asks first if a save is already there.
 - The pipe, the gallery, the crypt, and the breach read as rooms. A filed copy in the gallery uses Cousin’s Margin if it is held, and a different line if it is not. The stair stays a separate choice. A clerk stamps the next blow thin.
+- West chalk in the ash nave is optional. It speaks to scar debt, Held Threshold, and Cousin’s Margin, and it does not open the bar. A scar cuts 5 max HP. Mend keeps 3 of that. Merges still spend two elements and cost one mind less. A door sting plays when she steps through. See `CREDITS.md`. Silent stops it.
 
 ## Play on your phone
 

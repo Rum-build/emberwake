@@ -13,6 +13,7 @@
         { where: 'Inside Lira', speaker: 'Lira', text: 'I touched it. I should be ash. I am not ash.' },
         { speaker: 'The spark', text: 'You are the one awake in her teeth. She is the body. The ember is still dying, and it is still offering.' },
         { speaker: 'Lira', text: 'Get out of my mouth.' },
+        { speaker: 'Lira', text: 'Then I walk. The mouth stays mine.' },
         { speaker: 'The spark', text: 'Walk to the orange column. Drink. The ground heals because you were hungry. That is not kindness.' + gear },
       ],
     });

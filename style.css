@@ -59,6 +59,28 @@ button, .inventory-panel, .inv-body, .credits-content {
     radial-gradient(ellipse at 80% 80%, rgba(40, 90, 80, 0.18), transparent 50%),
     radial-gradient(ellipse at 20% 70%, rgba(70, 50, 120, 0.16), transparent 46%);
   pointer-events: none;
+  overflow: hidden;
+}
+.title-bg::after {
+  content: "";
+  position: absolute;
+  inset: -20% 0 0;
+  background-image:
+    radial-gradient(circle, rgba(255, 186, 96, 0.95) 0 1.4px, transparent 2.2px),
+    radial-gradient(circle, rgba(255, 120, 48, 0.8) 0 1px, transparent 2px),
+    radial-gradient(circle, rgba(255, 214, 150, 0.7) 0 1.2px, transparent 2.1px);
+  background-size: 160px 220px, 220px 180px, 130px 240px;
+  background-repeat: repeat;
+  animation: ash-lift 16s linear infinite;
+  opacity: 0.72;
+  pointer-events: none;
+}
+@keyframes ash-lift {
+  from { transform: translateY(8%); }
+  to { transform: translateY(-18%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .title-bg::after { animation: none; }
 }
 
 .title-content {

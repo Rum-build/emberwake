@@ -189,12 +189,20 @@ Playable on the Verdant Isle field:
 - After Aftermath credits, one toast says the rite remembers and a second walk is not this save. Wake still starts a new host.
 - Phone controls, Absorb, Pack, and Continue stay.
 
-## Deeper rooms (this branch)
+## Deeper rooms (shipped)
 
 - The pipe walk, the watch gallery, the count crypt, and the first breach read as places: a feed plaque and a drip cup, a shelf of ledgers, dust and a rib, ash piles and a crack in the aisle. No new lights.
 - A filed copy on the gallery’s east wall is optional. If Cousin’s Margin is in the pack, the handwriting matches. If it is not, the village seal is filed as mercy and the furrow is not in the count. Look once. It does not open the stair, spend a seal, or block Leave.
 - The quest under the place name is labeled. On a phone it still stays to three lines. A licence clerk spends a turn stamping the page. The next blow lands thin.
 - Wake asks before it throws out a save that is already there. With no save, Wake still starts at once.
+- Phone controls, Absorb, Pack, and Continue stay.
+
+## Wake and pressure (this branch)
+
+- The title lifts ash. The wake says the mouth stays hers. A pool’s core and rim breathe. Ash flickers as it falls. Standing still, she shifts her weight.
+- West chalk in the ash nave is one optional Look. It names scar debt, Held Threshold if the bar was held, and Cousin’s Margin if the letter is in the pack. Otherwise it still pressures the host. It does not open the bar, add a scar, or block Leave.
+- A scar cuts 5 max HP, and Mend keeps 3 of that instead of 4. The count auditor, the Concord captain, and the rite celebrant have a little more life. A merge still spends the two elements it names, and costs one mind less.
+- A door sting, original and CC0, plays when she steps through. CREDITS names it. Silent stops it.
 - Phone controls, Absorb, Pack, and Continue stay.
 
 ## Still ahead

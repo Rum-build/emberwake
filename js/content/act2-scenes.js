@@ -573,6 +573,30 @@
     return true;
   });
 
+  Emberwake.registerScene('nave-pressure', function () {
+    const debt = Emberwake.scarCount ? Emberwake.scarCount() : 0;
+    const word = Emberwake.breachWord ? Emberwake.breachWord() : null;
+    const letter = Emberwake.packHas && Emberwake.packHas('Cousin’s Margin');
+    let line = 'Chalk on the west wall. The Concord numbered the host before they numbered the door.';
+    if (debt >= 2) line += ' Scar debt is ' + debt + '. She is already coughing. They like a host that pays before she runs.';
+    else if (debt === 1) line += ' One scar is already on her. The chalk counts it as a start.';
+    else line += ' No scar yet. The chalk still expects one.';
+    if (word === 'hold') line += ' Held Threshold is written here as a delay, not a gift. The bar stayed shut.';
+    else if (word) line += ' The threshold was walked and not held. The chalk calls that a delay too.';
+    if (letter) line += ' The cousin’s letter matches this hand. Vesper walked them, and the Concord kept the writing.';
+    else line += ' No cousin’s letter is in the pack. The chalk does not wait for one.';
+    Emberwake.present({
+      lines: [
+        { where: 'Ash nave', speaker: 'Vesper', text: line },
+        { speaker: 'Lira', text: 'She is on the roof. This line does not open the bar, and she does not step into me.' },
+      ],
+      onDone: function () {
+        if (Emberwake.notePressure) Emberwake.notePressure();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('gallery-margin', function () {
     const held = Emberwake.packHas && Emberwake.packHas('Cousin’s Margin');
     const line = held
