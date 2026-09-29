@@ -214,6 +214,7 @@
   let victoryTag = null;
   let crawlLatch = false;
   let kilnLatch = false;
+  let leafAfterLatch = false;
   let vaultLatch = false;
   let marrowBusy = false;
   let marrowGroup = null;
@@ -3827,13 +3828,46 @@
       g.add(seal);
     }
 
+    let watchers = null;
+    let cork = null;
     if (def.patrol) {
+      watchers = [];
       [[1.6, 0.4], [-1.3, 1.1], [0.2, -1.7]].forEach((spot, i) => {
         const fig = makeCharacter(i === 0 ? 0x2a3038 : 0x3e4550, 0.9, 'concord');
         fig.position.set(spot[0], 0, spot[1]);
         fig.rotation.y = Math.atan2(-spot[0], -spot[1]);
         g.add(fig);
+        watchers.push(fig);
       });
+      cork = new THREE.Group();
+      const post = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.08, 0.12, 1.45, 6),
+        new THREE.MeshLambertMaterial({ color: 0x6b4226 })
+      );
+      post.position.y = 0.72;
+      cork.add(post);
+      const wax = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.22, 0.28, 0.32, 8),
+        new THREE.MeshLambertMaterial({ color: 0x8a3030, emissive: new THREE.Color(0x3a1010) })
+      );
+      wax.position.y = 1.52;
+      cork.add(wax);
+      const plate = new THREE.Mesh(
+        new THREE.BoxGeometry(0.36, 0.24, 0.05),
+        new THREE.MeshLambertMaterial({ color: 0xc4a15a, emissive: new THREE.Color(0x3a2a10) })
+      );
+      plate.position.set(0, 0.96, 0.12);
+      cork.add(plate);
+      const drip = new THREE.Mesh(
+        new THREE.CircleGeometry(0.34, 8),
+        new THREE.MeshLambertMaterial({ color: 0x4a1818 })
+      );
+      drip.rotation.x = -Math.PI / 2;
+      drip.position.y = 0.04;
+      cork.add(drip);
+      cork.position.set(0.85, 0, -2.2);
+      cork.visible = false;
+      g.add(cork);
     }
 
     const pool = {
@@ -3844,7 +3878,7 @@
       interior: def.interior || null,
       region: def.region || 'verdant-isle',
       rotMat, rotColor, healColor, elColor, lifeMat, coreMat, core, beamMat, neck,
-      spikes, flowers, motes, figure, seal, sealRing, rim, rimMat, phase: Math.random() * 6,
+      spikes, flowers, motes, figure, seal, sealRing, rim, rimMat, watchers, cork, phase: Math.random() * 6,
       group: g,
     };
     pools.push(pool);
@@ -3888,6 +3922,20 @@
       pool.seal.position.y = 1.7;
     }
     if (pool.sealRing) pool.sealRing.visible = !pool.patrol;
+    if (pool.cork) pool.cork.visible = false;
+    if (pool.watchers) pool.watchers.forEach((fig) => { fig.visible = true; });
+  }
+
+  function showBottle(pool) {
+    if (!pool) return;
+    if (pool.seal) pool.seal.visible = true;
+    if (pool.sealRing) pool.sealRing.visible = true;
+    if (pool.beamMat) pool.beamMat.opacity = 0.04;
+    if (pool.cork) pool.cork.visible = true;
+    if (pool.watchers) pool.watchers.forEach((fig) => { fig.visible = false; });
+    if (pool.id === 'leaf-cup') {
+      pool.hint = 'The leaf-cup is corked. The licence is on the stake. The furrow did not open.';
+    }
   }
 
   function updatePools(dt) {
@@ -3942,6 +3990,9 @@
         pool.beamMat.opacity = 0.04;
         pool.coreMat.emissive.copy(pool.elColor).multiplyScalar(0.04);
         if (pool.rimMat) pool.rimMat.emissive.copy(pool.elColor).multiplyScalar(0.05);
+        pool.rotMat.color.set(0x1a2428);
+        pool.rotMat.opacity = 0.72;
+        if (pool.cork && motionWanted) pool.cork.rotation.y = Math.sin(t * 0.35 + pool.phase) * 0.05;
       }
     });
   }
@@ -5726,6 +5777,7 @@
       if (seenBeats['clerk-tally']) waiting.push('A tally clerk on the shale counted weather. The vault door did not change.');
       if (seenBeats['coast-brawl']) waiting.push('The west-shale patrol was provoked. They fought. The vault door did not change.');
       else if (seenBeats['coast-patrol']) waiting.push('A Concord patrol on the west shale looked at the pack. They can still be provoked. The vault door did not change.');
+      if (seenBeats['leaf-after']) waiting.push('The leaf-cup was corked in sight. They named the spark. The furrow did not open.');
       if (seenBeats['ash-dusk']) waiting.push('Dusk on the ash was named. The mouth stayed hers. The engine did not open for it.');
       if (seenBeats['ration-swap']) waiting.push('A stall on the shale traded rot-ash for a Concord ration. It closes 22 HP or returns 12 mind. It does not open the vault.');
       if (seenBeats['yard-aside']) waiting.push('A private word was said short of the north stone. The mark and the slag stayed where they were.');
@@ -8471,6 +8523,7 @@
         ? ' The merge spent the rite.'
         : ' The rite frayed under the knife.';
     }
+    if (tag === 'leaf-patrol') seenBeats['leaf-patrol'] = true;
     if (tag === 'coast-brawl') {
       seenBeats['coast-brawl'] = true;
       seenBeats['coast-patrol'] = true;
@@ -8499,10 +8552,44 @@
     const pool = pools.find((p) => p.id === id);
     if (!pool || pool.bottled) return;
     pool.bottled = true;
-    if (pool.seal) pool.seal.visible = true;
-    if (pool.sealRing) pool.sealRing.visible = true;
-    if (pool.beamMat) pool.beamMat.opacity = 0.04;
+    showBottle(pool);
     refreshRumor();
+  }
+
+  function noteLeafAfter() {
+    seenBeats['leaf-after'] = true;
+    if (!seals.some((seal) => seal.name === 'Corked Cup')) {
+      seals.push({
+        name: 'Corked Cup',
+        desc: 'The leaf-cup was corked in sight. They named the spark. The furrow did not open, and the well stayed polite.',
+      });
+    }
+    saveGame();
+    updateHUD();
+  }
+
+  function openLeafAfter() {
+    if (seenBeats['leaf-after'] || dialogueOpen || inventoryOpen) return false;
+    const fn = EW.scenes['leaf-after'];
+    if (typeof fn !== 'function') return false;
+    const played = fn();
+    if (played !== false && dialogueOpen) pendingBeat = 'leaf-after';
+    return played !== false;
+  }
+
+  function updateLeafAfter() {
+    if (encounterLocked || dialogueOpen || inventoryOpen || skyPass) return;
+    if (locale !== 'field' || regionId !== 'verdant-isle' || !playerMesh) return;
+    if (seenBeats['leaf-after'] || !seenBeats.patrol) return;
+    const pool = pools.find((p) => p.id === 'leaf-cup');
+    if (!pool || !pool.bottled) return;
+    const dist = Math.hypot(pool.x - playerMesh.position.x, pool.z - playerMesh.position.z);
+    if (dist > 3.5) {
+      leafAfterLatch = false;
+      return;
+    }
+    if (leafAfterLatch) return;
+    if (openLeafAfter()) leafAfterLatch = true;
   }
 
   function updateOverworld(dt) {
@@ -8814,6 +8901,7 @@
     applyAshDensity();
     pulseClaim();
     syncPatrolPose();
+    updateLeafAfter();
     updateHUD();
     updatePrompt();
   }
@@ -8960,6 +9048,7 @@
   function startCombat() {
     combatEpoch++;
     combatsFought += 1;
+    playDraw();
     clearAsh();
     clearCry();
     coverReady = false;
@@ -9686,6 +9775,22 @@
       later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
       return;
     }
+    if (enemy.id === 'warden' && !enemy.raised) {
+      enemy.raised = true;
+      enemy.licence = true;
+      showLog('The warden lifts the seal. The next blow is the licence. It costs more life.');
+      updateCombatUI();
+      later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
+      return;
+    }
+    if (enemy.id === 'scribe' && !enemy.inked) {
+      enemy.inked = true;
+      enemy.ink = true;
+      showLog('The scribe wets the pen. The next line takes mind, and it still cuts.');
+      updateCombatUI();
+      later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
+      return;
+    }
     let pick = living[rand(0, living.length - 1)];
     if (enemy.id === 'echo') {
       const lira = living.find((x) => x.p.id === 'lira');
@@ -9709,11 +9814,12 @@
         ? ' Torren’s shoulder takes ' + cut + '.'
         : ' Torren’s shoulder meets a blow that was already thin.';
     }
-    if (enemy.id === 'scribe' && Math.random() < 0.5) {
+    if (enemy.id === 'scribe' && (enemy.ink || Math.random() < 0.5)) {
+      enemy.ink = false;
       const drain = Math.min(6, pick.p.mp);
       pick.p.mp -= drain;
       pick.p.hp = Math.max(0, pick.p.hp - dmg);
-      showLog(enemy.name + ' tries to cork ' + pick.p.name + '. ' + dmg + ' harm, and ' + drain + ' of the mind sealed away.' + coverNote);
+      showLog(enemy.name + ' corks ' + pick.p.name + '. ' + dmg + ' HP, and ' + drain + ' mind sealed away.' + coverNote);
     } else if (enemy.id === 'echo') {
       const before = spark.strain;
       applyStrain(4);
@@ -9831,6 +9937,8 @@
           ? ' The last stand breaks. Remnant ash stays in the teeth.' + lastMergeNote + ' The light is still ahead. The bar stays shut.'
           : tag === 'claim-rite'
           ? ' The last rite is down.' + lastMergeNote + ' The remnant is ahead. This is not the ending.'
+          : tag === 'leaf-patrol'
+          ? ' The coats fall back. The cup stays corked.'
           : tag === 'coast-brawl'
           ? ' The coats fall back. The vault door did not change.'
           : ' Lira keeps the bruises.';
@@ -9841,6 +9949,7 @@
     later(() => {
       victoryOverlay.classList.add('hidden');
       endCombatReturn();
+      if (tag === 'leaf-patrol') openLeafAfter();
     }, 2600);
   }
 
@@ -9938,6 +10047,7 @@
       if (e.stamp) bits.push({ kind: 'stamp', label: 'Stamp' });
       if (e.air) bits.push({ kind: 'air', label: 'Air' });
       if (e.licence) bits.push({ kind: 'stamp', label: 'Licence' });
+      if (e.ink) bits.push({ kind: 'stamp', label: 'Ink' });
       if (e.page) bits.push({ kind: 'stamp', label: 'Page' });
       if (e.rite) bits.push({ kind: 'burn', label: 'Rite' });
       if (e.knelt) bits.push({ kind: 'ash', label: 'Knelt' });
@@ -10348,6 +10458,27 @@
       if (typeof wake === 'function') wake({ gearHint: gearHint });
       else showToast('Follow the orange column. Stand in the sick grass and absorb — E, or Absorb. Feeding heals the ground. That is a side effect.' + gearHint);
     }
+  }
+
+  function playDraw() {
+    if (!bedWanted) return;
+    ensureBed();
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    [196, 146].forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      const start = now + i * 0.06;
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.04, start + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.18);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(start);
+      osc.stop(start + 0.2);
+    });
   }
 
   function playSting() {
@@ -11037,10 +11168,7 @@
       if (typeof saved.strain === 'number') pool.strain = saved.strain;
       if (saved.line) pool.line = saved.line;
       if (pool.absorbed) { pool.healing = true; pool.heal = 1; }
-      if (pool.bottled) {
-        if (pool.seal) pool.seal.visible = true;
-        if (pool.sealRing) pool.sealRing.visible = true;
-      }
+      if (pool.bottled) showBottle(pool);
     });
     if (playerMesh && data.pos && (!data.locale || data.locale === 'field')) {
       playerMesh.position.set(data.pos.x || 0, 0, data.pos.z || 0);
@@ -11838,6 +11966,8 @@
   EW.armPatrol = armPatrol;
   EW.finishPatrol = finishPatrol;
   EW.noteDusk = noteDusk;
+  EW.leafWon = function () { return !!seenBeats['leaf-patrol']; };
+  EW.noteLeafAfter = noteLeafAfter;
   EW.notePost = notePost;
   EW.noteRing = noteRing;
   EW.noteClerk = noteClerk;

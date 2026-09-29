@@ -268,7 +268,7 @@ Playable on the Verdant Isle field:
 - The absorb sting adds a soft sine. A ration bite plays when the biscuit is traded or taken, if Sound is on. Both are original and listed in CREDITS.md.
 - Phone controls, Absorb, Pack, and Continue stay.
 
-## Dusk claim (this branch)
+## Dusk claim (shipped)
 
 - The remnant claim and the aftermath retint the lights already in the room. Claim is gold and fed. Refusal is a cold licence. Share splits warm and violet. Burn drops the room and heats the scar. The door does not move.
 - Ash is Thin, Steady, or Thick from the title and the pack. Still holds the motes. The count follows the setting. On a phone the motes still skip every other tick.
@@ -277,6 +277,14 @@ Playable on the Verdant Isle field:
 - A gull’s cry stays through that person’s turn. Mind from a ration breaks it. The wound side does not. If the mind was already thin and not steadied, the cry costs 4 HP when the turn ends. A ration still closes 22 HP or returns 12 mind. A steadied mind holds the next cry to 2.
 - The first dusk on the ash is one inner line from Lira and the spark. It does not scar, and it does not open the engine.
 - Places leaves the stick, Absorb, and Enter live. Closer still means step in. The village door still says Enter.
+- Phone controls, Absorb, Pack, and Continue stay.
+
+## Leaf-cup after (this branch)
+
+- After the leaf-cup patrol, one inner beat: Lira, the spark, and Torren if he refused the seal. The cork is in. They named the spark. The furrow does not open, and the well stays polite. Winning the fight says the coats are down. Leaving the fight does not.
+- The bottled cup keeps a waxed stake and a brass plate. The coats leave the grass. It is not a door, and it is not Absorb.
+- In a fight, a Concord warden lifts the seal before the licence lands. It costs more life unless a shoulder is already in front. A scribe wets the pen before the next line takes mind, and the cut is still HP. The chips say Licence and Ink.
+- A fight starts with a short draw, if Sound is on. It is original and listed in CREDITS.md.
 - Phone controls, Absorb, Pack, and Continue stay.
 
 ## Still ahead

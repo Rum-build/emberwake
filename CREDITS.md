@@ -21,6 +21,7 @@ Add a row before a file is referenced by the game. Leave the row in place if a c
 | Ration bite | Emberwake (original, this repository) | CC0 | Procedural. No recording. Two short sine tones in `game.js`. | Plays when a Concord ration is taken or traded, if Sound is on |
 | Merge sting | Emberwake (original, this repository) | CC0 | Procedural. No recording. Three short triangle tones in `game.js`. | Plays when a merge is spent in a fight, if Sound is on |
 | Door sting | Emberwake (original, this repository) | CC0 | Procedural. No recording. Two short low sine tones in `game.js`. | Plays when she steps through a door, if Sound is on |
+| Combat draw | Emberwake (original, this repository) | CC0 | Procedural. No recording. Two short low triangle tones in `game.js`. | Plays when a fight starts, if Sound is on |
 
 ## Attribution rules
 
