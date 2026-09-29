@@ -825,6 +825,47 @@
     return true;
   });
 
+  Emberwake.registerScene('mark-scrap', function () {
+    Emberwake.present({
+      lines: [
+        { where: 'Remnant Mark', speaker: 'Lira', text: 'A scrap on a peg. They numbered this stone and left the count in the dust.' },
+        { speaker: 'The spark', text: 'A page. It is not the Prime Remnant, and it does not open the nave.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteScrap) Emberwake.noteScrap();
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('mark-company', function () {
+    Emberwake.present({
+      lines: [
+        { where: 'Remnant Mark', speaker: 'Kestrel', text: 'I am sitting on their pier. That is not a seat in the pack.' },
+        {
+          speaker: 'Lira',
+          text: 'The wing is folded. The road is still hers.',
+          choices: [
+            {
+              label: 'Leave her the air.',
+              pick: 'air',
+              reply: { speaker: 'Kestrel', text: 'Good. Do not save a seat. I will not be in the company when you open the pack.' },
+            },
+            {
+              label: 'Ask her to keep company.',
+              pick: 'ask',
+              reply: { speaker: 'Kestrel', text: 'No. If I sit with you, they licence the bird. I refuse. I am not in the pack.' },
+            },
+          ],
+        },
+      ],
+      onPick: function (id) {
+        if (Emberwake.noteCompany) Emberwake.noteCompany(id);
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('nave-kestrel', function () {
     Emberwake.present({
       lines: [

@@ -1128,6 +1128,16 @@ body:not(.still-motion) .btn-absorb.is-ready {
 .status-stamp { color: #ffe0a0; background: rgba(62, 46, 12, 0.92); }
 .status-ash { color: #f0e4d4; background: rgba(48, 36, 28, 0.94); }
 .status-air { color: #e4f2ff; background: rgba(18, 36, 52, 0.92); }
+.status-licence { color: #ffe7b0; background: rgba(72, 52, 12, 0.96); }
+.status-ink { color: #d7e4ff; background: rgba(18, 28, 52, 0.96); }
+.status-heat { color: #ffb060; background: rgba(92, 28, 8, 0.96); }
+.status-jaw { color: #e4f0c8; background: rgba(28, 40, 18, 0.96); }
+.status-wet { color: #c8e4f4; background: rgba(12, 36, 52, 0.96); }
+.status-page { color: #f0e6c8; background: rgba(48, 40, 22, 0.96); }
+.status-rite { color: #ffc0a0; background: rgba(72, 24, 16, 0.96); }
+.status-cry { color: #e4f2ff; background: rgba(18, 36, 52, 0.96); }
+.status-steady { color: #d8ffe4; background: rgba(16, 42, 28, 0.96); }
+.status-scar { color: #ffd0c0; background: rgba(62, 22, 18, 0.96); }
 
 .enemy-panel {
   display: flex;
@@ -1462,7 +1472,8 @@ body:not(.still-motion) .btn-absorb.is-ready {
   .dialogue-advance, .dialogue-choice { min-height: 52px; }
   .btn-pace, .btn-pack-motion, #btn-motion, #btn-ash, #btn-pack-ash { min-height: 48px; min-width: 120px; }
 
-  .status-icon { font-size: 0.84rem; padding: 3px 9px; line-height: 1.5; }
+  .status-icon { font-size: 0.92rem; padding: 5px 10px; line-height: 1.45; letter-spacing: 0.01em; border-width: 2px; }
+  .status-row { gap: 6px; }
   .turn-chip { font-size: 0.84rem; padding: 4px 9px; }
 
   .path-choices { flex-direction: column; }

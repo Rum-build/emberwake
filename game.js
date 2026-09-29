@@ -138,6 +138,9 @@
   let nearGallery = null;
   let nearStair = null;
   let nearKestrel = null;
+  let nearScrap = null;
+  let nearCompany = null;
+  let markCompany = null;
   let feedNoted = false;
   let passageNoted = false;
   let feedSpent = false;
@@ -494,6 +497,9 @@
     nearGallery = null;
     nearStair = null;
     nearKestrel = null;
+    nearScrap = null;
+    nearCompany = null;
+    markCompany = null;
     feedNoted = false;
     passageNoted = false;
     feedSpent = false;
@@ -765,12 +771,17 @@
     const low = new THREE.Color(hex);
     const high = highHex ? new THREE.Color(highHex) : low.clone().lerp(new THREE.Color(0xfff0d4), 0.55);
     const dusk = mood === 'dusk';
-    const zenith = dusk
-      ? new THREE.Color(0x241432).lerp(high, 0.22)
-      : high.clone().lerp(new THREE.Color(0xffffff), 0.18);
-    const horizon = dusk
-      ? new THREE.Color(0xff6a32).lerp(low, 0.28)
-      : low.clone().lerp(high, 0.35).lerp(new THREE.Color(0xffe6c4), 0.22);
+    const night = mood === 'night';
+    const zenith = night
+      ? new THREE.Color(0x070814)
+      : dusk
+        ? new THREE.Color(0x241432).lerp(high, 0.22)
+        : high.clone().lerp(new THREE.Color(0xffffff), 0.18);
+    const horizon = night
+      ? new THREE.Color(0xc45a28).lerp(low, 0.35)
+      : dusk
+        ? new THREE.Color(0xff6a32).lerp(low, 0.28)
+        : low.clone().lerp(high, 0.35).lerp(new THREE.Color(0xffe6c4), 0.22);
     const pos = geo.attributes.position;
     const colors = new Float32Array(pos.count * 3);
     const c = new THREE.Color();
@@ -783,7 +794,8 @@
       c.lerp(horizon, band * 0.62);
       const x = pos.getX(i);
       const warm = Math.max(0, Math.sin(x * 0.04) * 0.5 + 0.15);
-      if (dusk && t < 0.58) c.lerp(new THREE.Color(0xff5a28), (0.58 - t) * 0.9);
+      if (night && t < 0.46) c.lerp(new THREE.Color(0xff6a2a), (0.46 - t) * 0.7);
+      else if (dusk && t < 0.58) c.lerp(new THREE.Color(0xff5a28), (0.58 - t) * 0.9);
       else if (t < 0.5) c.lerp(new THREE.Color(0xffd2a8), warm * (0.5 - t) * 0.35);
       colors[i * 3] = c.r;
       colors[i * 3 + 1] = c.g;
@@ -843,6 +855,13 @@
     overworldGroup.add(makeLog(-2.8, -3.4));
     overworldGroup.add(makeCairn(6.8, 5.5));
     overworldGroup.add(makeSky(0x6ea0c8, 0xf3e2c0));
+    const stepMat = new THREE.MeshLambertMaterial({ color: 0x8a7a62 });
+    [[1.5, 0.75], [2.9, 1.35], [4.3, 1.95]].forEach((spot, i) => {
+      const step = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.06, 0.34), stepMat);
+      step.position.set(spot[0], 0.04, spot[1]);
+      step.rotation.y = 0.35 + i * 0.08;
+      overworldGroup.add(step);
+    });
 
     const grassMat = new THREE.MeshLambertMaterial({ color: 0x3d8b3d });
     for (let i = 0; i < 26; i++) {
@@ -1810,7 +1829,7 @@
     }));
     ground.rotation.x = -Math.PI / 2;
     g.add(ground);
-    g.add(makeSky(0x241c28, 0xc4a07a));
+    g.add(makeSky(0x120c18, 0x3a2848, 'night'));
     const stone = new THREE.MeshPhongMaterial({
       color: 0x2a2428, shininess: 8, specular: new THREE.Color(0x3a3030),
     });
@@ -1852,6 +1871,56 @@
     if (naveRoad.userData.glow) naveRoad.userData.glow.intensity = 0.35;
     g.add(naveRoad);
     makeMotes(g, 28, 0xd2b48a, { x: 9, y: 1.8, z: 8 });
+    const arcade = new THREE.MeshPhongMaterial({ color: 0x3a302c, shininess: 10, specular: new THREE.Color(0x6a5848) });
+    const brass = new THREE.MeshPhongMaterial({ color: 0xd4b56a, emissive: new THREE.Color(0x3a2c10), shininess: 42 });
+    [[-3.15, -0.55], [3.15, -0.55], [-2.35, -3.15], [2.35, -3.15]].forEach((spot, i) => {
+      const pier = new THREE.Mesh(new THREE.BoxGeometry(0.32, 1.7 + (i % 2) * 0.45, 0.32), arcade);
+      pier.position.set(spot[0], 0.85, spot[1]);
+      g.add(pier);
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.1, 0.48), brass);
+      cap.position.set(spot[0], 1.75 + (i % 2) * 0.4, spot[1]);
+      g.add(cap);
+    });
+    [[-3.15, 3.15, -0.55], [-2.35, 2.35, -3.15]].forEach((span) => {
+      const beam = new THREE.Mesh(new THREE.BoxGeometry(Math.abs(span[1] - span[0]) + 0.2, 0.14, 0.22), brass);
+      beam.position.set((span[0] + span[1]) / 2, span[2] < -2 ? 2.15 : 1.9, span[2]);
+      g.add(beam);
+    });
+    [-1.6, 1.6].forEach((x) => {
+      const voussoir = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.16, 0.28), arcade);
+      voussoir.position.set(x, 0.1, 1.35);
+      voussoir.rotation.y = x > 0 ? 0.4 : -0.4;
+      g.add(voussoir);
+    });
+    const tally = new THREE.Group();
+    const peg = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, 0.55, 5), arcade);
+    peg.position.y = 0.28;
+    tally.add(peg);
+    const page = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.38, 0.28),
+      new THREE.MeshBasicMaterial({ color: 0xe6d4b0, fog: false, side: THREE.DoubleSide })
+    );
+    page.position.set(0, 0.58, 0);
+    page.rotation.y = -0.4;
+    tally.add(page);
+    tally.position.set(3.15, 0, 1.55);
+    g.add(tally);
+    const perch = new THREE.Group();
+    const perchBody = new THREE.Mesh(
+      new THREE.SphereGeometry(0.14, 6, 5),
+      new THREE.MeshLambertMaterial({ color: 0x2c2418 })
+    );
+    perchBody.scale.set(1.8, 0.45, 0.6);
+    perch.add(perchBody);
+    const perchWing = new THREE.MeshLambertMaterial({ color: 0x3a3024, side: THREE.DoubleSide });
+    [-0.18, 0.18].forEach((z) => {
+      const wing = new THREE.Mesh(new THREE.PlaneGeometry(0.48, 0.14), perchWing);
+      wing.position.set(0, 0.05, z);
+      perch.add(wing);
+    });
+    perch.position.set(-2.9, 1.95, -0.55);
+    perch.rotation.y = 0.6;
+    g.add(perch);
     markGroup = g;
     scene.add(g);
   }
@@ -1888,7 +1957,7 @@
     }));
     ground.rotation.x = -Math.PI / 2;
     g.add(ground);
-    g.add(makeSky(0x1a1216, 0x8a6040));
+    g.add(makeSky(0x100c14, 0x2a1828, 'night'));
     const stone = new THREE.MeshPhongMaterial({ color: 0x3a302c, shininess: 6, specular: new THREE.Color(0x2a2018) });
     const bannerMat = new THREE.MeshLambertMaterial({ color: 0x6a3030, side: THREE.DoubleSide });
     [[-2.4, 1.2], [-2.4, -0.6], [2.4, 1.2], [2.4, -0.6]].forEach((spot) => {
@@ -3458,7 +3527,7 @@
     sun.position.set(8, 22, 14);
     g.add(sun);
 
-    g.add(makeSky(0x5e7c90, 0xe4d2b8));
+    g.add(makeSky(0x3a4a62, 0xe7b48a, 'dusk'));
     const water = new THREE.Mesh(
       new THREE.PlaneGeometry(80, 80, 24, 24),
       seaMaterial(0x14344e, 0.12)
@@ -3626,7 +3695,7 @@
   function buildCoast() {
     const g = new THREE.Group();
     g.visible = false;
-    g.add(makeSky(0x5e7c90, 0xe8dcc4));
+    g.add(makeSky(0x3a4a62, 0xe8c49a, 'dusk'));
     g.add(new THREE.AmbientLight(0xb7c4d4, 0.62));
     g.add(new THREE.HemisphereLight(0x8aa4c0, 0x2a2418, 0.42));
     const sun = new THREE.DirectionalLight(0xfff0d8, 0.7);
@@ -3846,14 +3915,38 @@
     }
 
     const motes = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 8; i++) {
       const mote = new THREE.Mesh(
         new THREE.SphereGeometry(0.08, 6, 6),
-        new THREE.MeshBasicMaterial({ color: elColor.clone() })
+        new THREE.MeshBasicMaterial({ color: elColor.clone(), transparent: true, opacity: 0.9 })
       );
       g.add(mote);
       motes.push(mote);
     }
+    const rippleMat = new THREE.MeshBasicMaterial({
+      color: elColor.clone(),
+      transparent: true,
+      opacity: 0.28,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
+    const ripple = new THREE.Mesh(new THREE.RingGeometry(0.8, 1.05, 24), rippleMat);
+    ripple.rotation.x = -Math.PI / 2;
+    ripple.position.y = 0.12;
+    g.add(ripple);
+    const sheen = new THREE.Mesh(
+      new THREE.RingGeometry(1.7, 1.92, 28),
+      new THREE.MeshBasicMaterial({
+        color: elColor.clone(),
+        transparent: true,
+        opacity: 0.18,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+      })
+    );
+    sheen.rotation.x = -Math.PI / 2;
+    sheen.position.y = 0.1;
+    g.add(sheen);
 
     let figure = null;
     if (def.vesper) {
@@ -3938,7 +4031,7 @@
       interior: def.interior || null,
       region: def.region || 'verdant-isle',
       rotMat, rotColor, healColor, elColor, lifeMat, coreMat, core, beamMat, neck,
-      spikes, flowers, motes, figure, seal, sealRing, rim, rimMat, watchers, cork, phase: Math.random() * 6,
+      spikes, flowers, motes, ripple, rippleMat, sheen, figure, seal, sealRing, rim, rimMat, watchers, cork, phase: Math.random() * 6,
       group: g,
     };
     pools.push(pool);
@@ -4035,6 +4128,15 @@
         m.position.set(Math.cos(a) * rad, 0.7 + Math.sin(a * 1.6) * 0.45 + h * 0.3 + burst * 0.85, Math.sin(a) * rad);
         m.scale.setScalar((0.65 + Math.sin(a * 2.4) * 0.35) * (1 + burst * 2.4));
       });
+      if (pool.ripple) {
+        const spread = 1 + Math.sin(t * 1.6 + pool.phase) * 0.18 + burst * 1.4;
+        pool.ripple.scale.setScalar(spread);
+        if (pool.rippleMat) pool.rippleMat.opacity = (0.22 + burst * 0.45) * (1 - h * 0.8);
+      }
+      if (pool.sheen) {
+        pool.sheen.rotation.z = t * 0.35 + pool.phase;
+        pool.sheen.material.opacity = (0.16 + Math.sin(t * 2.2 + pool.phase) * 0.06 + cue * 0.2) * (1 - h);
+      }
       if (pool.figure) {
         pool.figure.position.y = -2.3 * h;
         pool.figure.traverse((c) => {
@@ -4048,6 +4150,8 @@
       }
       if (pool.bottled) {
         pool.beamMat.opacity = 0.04;
+        if (pool.rippleMat) pool.rippleMat.opacity = 0.04;
+        if (pool.sheen) pool.sheen.material.opacity = 0.03;
         pool.coreMat.emissive.copy(pool.elColor).multiplyScalar(0.04);
         if (pool.rimMat) pool.rimMat.emissive.copy(pool.elColor).multiplyScalar(0.05);
         pool.rotMat.color.set(0x1a2428);
@@ -5705,6 +5809,8 @@
     const showCredits = idle && nearCredits && !showAbsorb && !atExit;
     const showPerch = idle && nearPerch && !showAbsorb && !atExit && !showBar && !showEnd;
     const showKestrel = idle && nearKestrel && !showAbsorb && !atExit && !showGallery;
+    const showScrap = idle && nearScrap && !showAbsorb && !atExit;
+    const showCompany = idle && nearCompany && !showAbsorb && !atExit && !showScrap;
     const showPorter = idle && locale === 'field' && nearPorter && !showAbsorb && !showDoor && !showGate && !showReturn;
     const showLetter = idle && nearLetter && !atExit && !showAbsorb;
     const showMargin = idle && nearMargin && !atExit && !showStair;
@@ -5722,7 +5828,7 @@
     const showRation = idle && nearRation && !showAbsorb && !showDoor && !showGate && !showReturn && !showPorter && !showNotice && !showClerk && !showChest;
     const showAside = idle && nearAside && !showAbsorb && !atExit && !showTalk && !showMark && !showCamp;
     const showNima = idle && nearNima && !showAbsorb && !atExit && !showTalk && !showMark && !showCamp && !showAside;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showSpare && !showJournal && !showNotice && !showCord && !showPost && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol);
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showScrap && !showCompany && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showSpare && !showJournal && !showNotice && !showCord && !showPost && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
@@ -5733,7 +5839,8 @@
     else if (showCredits) absorbBtn.textContent = 'Credits';
     else if (showEnd) absorbBtn.textContent = 'Enter';
     else if (showPorter) absorbBtn.textContent = 'Speak';
-    else if (showPerch || showKestrel) absorbBtn.textContent = 'Speak';
+    else if (showPerch || showKestrel || showCompany) absorbBtn.textContent = 'Speak';
+    else if (showScrap) absorbBtn.textContent = 'Look';
     else if (showLook || showPipe || showThroat || showStone || showMark || showNave || showGallery) absorbBtn.textContent = 'Enter';
     else if (showTalk) absorbBtn.textContent = 'Speak';
     else if (showChest) absorbBtn.textContent = seenBeats['wayside-chest'] ? 'Look' : 'Open';
@@ -5746,7 +5853,7 @@
 
   function updatePrompt() {
     const atExit = atInteriorExit();
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !nearLetter && !nearChest && !nearSpare && !nearJournal && !nearNotice && !nearCord && !nearPost && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearScrap && !nearCompany && !nearPorter && !nearLetter && !nearChest && !nearSpare && !nearJournal && !nearNotice && !nearCord && !nearPost && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -5964,6 +6071,16 @@
       $('#interact-detail').textContent = nearKestrel.hint;
       return;
     }
+    if (nearCompany) {
+      $('#interact-title').textContent = nearCompany.title;
+      $('#interact-detail').textContent = nearCompany.hint;
+      return;
+    }
+    if (nearScrap) {
+      $('#interact-title').textContent = nearScrap.title;
+      $('#interact-detail').textContent = nearScrap.hint;
+      return;
+    }
     if (nearWorker || nearWarden) {
       $('#interact-title').textContent = (nearWarden || nearWorker).title;
       $('#interact-detail').textContent = (nearWarden || nearWorker).hint;
@@ -6027,6 +6144,10 @@
           : 'The gallery filed the village seal as mercy. The furrow is not in the count.');
       }
       if (seenBeats['nave-pressure']) waiting.push('West chalk in the nave numbered the host. It did not open the bar.');
+      if (seenBeats['mark-scrap']) waiting.push('A numbered scrap from the Remnant Mark is in the pack. The pillar stayed a number. The nave did not open.');
+      if (seenBeats['mark-company']) waiting.push(markCompany === 'ask'
+        ? 'You asked the bird on the mark to keep company. She refused. She is not in the pack.'
+        : 'You left the bird on the mark the air. She did not join.');
       if (seenBeats['yard-camp']) waiting.push('They rested west of the yard’s south gate. The slag and the mark stayed where they were.');
       if (!findMember('nima')) waiting.push('Nima is still in the leaf-village.');
       if (!findMember('torren')) waiting.push('Torren has not refused the Concord yet.');
@@ -6478,6 +6599,14 @@
       }
       if (nearKestrel && locale === 'ash-nave' && !atMouth) {
         talkKestrelNave();
+        return;
+      }
+      if (nearCompany && locale === 'remnant-mark' && !atMouth) {
+        talkCompany();
+        return;
+      }
+      if (nearScrap && locale === 'remnant-mark' && !atMouth) {
+        talkScrap();
         return;
       }
       if (nearChalk && locale === 'ash-nave' && !atMouth) {
@@ -7257,6 +7386,30 @@
         : cryptWord === 'mouth'
           ? 'The scar breathes. Cracked Zero was the digit that widens this. Press E to look.'
           : 'You left the light. A pressed digit would widen it. Press E to look.',
+    };
+  }
+
+  function nearestScrap() {
+    if (!playerMesh || locale !== 'remnant-mark' || skyPass) return null;
+    if (Math.hypot(3.15 - playerMesh.position.x, 1.55 - playerMesh.position.z) > 0.85) return null;
+    if (seenBeats['mark-scrap']) {
+      return {
+        title: 'A numbered scrap',
+        hint: 'It is already in the pack. The pillar did not open. Press E to hear it again.',
+      };
+    }
+    return {
+      title: 'A numbered scrap',
+      hint: 'East of the aisle. Not the weep and not the nave. Press E.',
+    };
+  }
+
+  function nearestCompany() {
+    if (!playerMesh || locale !== 'remnant-mark' || skyPass || seenBeats['mark-company']) return null;
+    if (Math.hypot(-2.55 - playerMesh.position.x, 0.35 - playerMesh.position.z) > 1.05) return null;
+    return {
+      title: 'A perched wing',
+      hint: 'She is on the west pier. Press E. The first answer is still no.',
     };
   }
 
@@ -8177,6 +8330,54 @@
     }
   }
 
+  function talkScrap() {
+    if (locale !== 'remnant-mark' || dialogueOpen) return;
+    if (seenBeats['mark-scrap']) {
+      showToast('The scrap is in the pack. The pillar stayed numbered. The nave did not open.');
+      return;
+    }
+    const fn = EW.scenes['mark-scrap'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'mark-scrap';
+    }
+  }
+
+  function noteScrap() {
+    seenBeats['mark-scrap'] = true;
+    if (!seals.some((seal) => seal.name === 'Numbered Scrap')) {
+      seals.push({
+        name: 'Numbered Scrap',
+        desc: 'A tally from the Remnant Mark. They numbered the pillar and left the count in the dust. It is not the Prime Remnant, and it does not open the nave.',
+      });
+    }
+    showToast('The scrap is in the pack. The pillar stayed a number. The nave did not open.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function talkCompany() {
+    if (locale !== 'remnant-mark' || dialogueOpen || seenBeats['mark-company']) return;
+    const fn = EW.scenes['mark-company'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'mark-company';
+    }
+  }
+
+  function noteCompany(id) {
+    if (seenBeats['mark-company']) return;
+    seenBeats['mark-company'] = true;
+    markCompany = id === 'ask' ? 'ask' : 'air';
+    showToast(id === 'ask'
+      ? 'You ask her to keep company. She refuses. She is not in the pack.'
+      : 'You leave her the air. She does not join.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
   function noteKestrelNave(id) {
     if (kestrelNave) return;
     kestrelNave = id === 'ask' ? 'ask' : 'air';
@@ -8927,6 +9128,8 @@
       nearCredits = null;
       nearPerch = null;
       nearKestrel = null;
+      nearScrap = null;
+      nearCompany = null;
       nearPorter = null;
       nearLetter = null;
       nearMargin = null;
@@ -9037,6 +9240,8 @@
         nearCredits = nearestCredits();
         nearPerch = nearestPerch();
         nearKestrel = nearestKestrel();
+        nearScrap = nearestScrap();
+        nearCompany = nearestCompany();
         nearPorter = nearestPorter();
         nearLetter = nearestLetter();
         nearMargin = nearestMargin();
@@ -9088,6 +9293,8 @@
         nearCredits = nearestCredits();
         nearPerch = nearestPerch();
         nearKestrel = nearestKestrel();
+        nearScrap = nearestScrap();
+        nearCompany = nearestCompany();
         nearPorter = nearestPorter();
         nearLetter = nearestLetter();
         nearMargin = nearestMargin();
@@ -9160,6 +9367,8 @@
       nearCredits = nearestCredits();
       nearPerch = nearestPerch();
       nearKestrel = nearestKestrel();
+      nearScrap = nearestScrap();
+      nearCompany = nearestCompany();
       nearPorter = nearestPorter();
       nearLetter = nearestLetter();
       nearMargin = nearestMargin();
@@ -10092,6 +10301,30 @@
       later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
       return;
     }
+    if (enemy.id === 'brine' && !enemy.wet && !enemy.soaked) {
+      enemy.wet = true;
+      enemy.soaked = true;
+      showLog('The skitter wets the stone. The next bite hits two.');
+      updateCombatUI();
+      later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
+      return;
+    }
+    if (enemy.id === 'stoker' && !enemy.heated) {
+      enemy.heated = true;
+      enemy.heat = true;
+      showLog('The stoker opens the plate. The next blow is heat. It costs more life.');
+      updateCombatUI();
+      later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
+      return;
+    }
+    if (enemy.id === 'mite' && !enemy.jawed) {
+      enemy.jawed = true;
+      enemy.jaw = true;
+      showLog('The mite lifts a jaw. The next bite finds a second body.');
+      updateCombatUI();
+      later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
+      return;
+    }
     let pick = living[rand(0, living.length - 1)];
     if (enemy.id === 'echo') {
       const lira = living.find((x) => x.p.id === 'lira');
@@ -10105,6 +10338,14 @@
       else {
         dmg += 5;
         coverNote = ' The licence comes down hard. A shoulder in front would have torn it.';
+      }
+    }
+    if (enemy.heat) {
+      enemy.heat = false;
+      if (coverReady) coverNote += ' Torren’s shoulder takes the heat.';
+      else {
+        dmg += 4;
+        coverNote += ' The heat comes off the plate. A shoulder in front would have taken it.';
       }
     }
     if (coverReady) {
@@ -10129,7 +10370,8 @@
     } else {
       pick.p.hp = Math.max(0, pick.p.hp - dmg);
       let splashNote = '';
-      if (enemy.id === 'brine') {
+      if (enemy.id === 'brine' && enemy.wet) {
+        enemy.wet = false;
         const other = living.find((x) => x.p !== pick.p && x.p.hp > 0);
         if (other) {
           const splash = Math.max(1, Math.floor(dmg / 2));
@@ -10141,7 +10383,20 @@
           }
         }
       }
-      showLog(enemy.name + ' hits ' + pick.p.name + ' for ' + dmg + '.' + coverNote + splashNote);
+      let jawNote = '';
+      if (enemy.jaw) {
+        enemy.jaw = false;
+        const other = living.find((x) => x.p !== pick.p && x.p.hp > 0);
+        if (other) {
+          other.p.hp = Math.max(0, other.p.hp - 2);
+          jawNote = ' The jaw finds ' + other.p.name + ' for 2.';
+          if (other.p.hp <= 0) {
+            const mesh = combatPartyMeshes[other.i];
+            if (mesh) mesh.rotation.z = 1.15;
+          }
+        }
+      }
+      showLog(enemy.name + ' hits ' + pick.p.name + ' for ' + dmg + '.' + coverNote + splashNote + jawNote);
     }
     punchNumber(dmg, 'harm');
     animateAttack(combatEnemyMeshes[idx], combatPartyMeshes[pick.i]);
@@ -10339,19 +10594,22 @@
     const active = turn && turn.type === 'party' ? turn.index : -1;
     function statusMarkup(bits) {
       if (!bits.length) return '';
-      return '<div class="status-row">' + bits.map((bit) => `<span class="status-icon status-${bit.kind}">${esc(bit.label)}</span>`).join('') + '</div>';
+      return '<div class="status-row">' + bits.map((bit) => `<span class="status-icon status-${bit.kind}" title="${esc(bit.title || bit.label)}">${esc(bit.label)}</span>`).join('') + '</div>';
     }
     enemyPanel.innerHTML = enemies.map((e) => {
       const pct = Math.max(0, Math.min(100, (e.hp / e.maxHp) * 100));
       const bits = [];
-      if (e.burn) bits.push({ kind: 'burn', label: 'Burn ' + e.burn });
-      if (e.stamp) bits.push({ kind: 'stamp', label: 'Stamp' });
-      if (e.air) bits.push({ kind: 'air', label: 'Air' });
-      if (e.licence) bits.push({ kind: 'stamp', label: 'Licence' });
-      if (e.ink) bits.push({ kind: 'stamp', label: 'Ink' });
-      if (e.page) bits.push({ kind: 'stamp', label: 'Page' });
-      if (e.rite) bits.push({ kind: 'burn', label: 'Rite' });
-      if (e.knelt) bits.push({ kind: 'ash', label: 'Knelt' });
+      if (e.burn) bits.push({ kind: 'burn', label: 'Burn ' + e.burn, title: 'Magma still biting' });
+      if (e.stamp) bits.push({ kind: 'stamp', label: 'Stamp', title: 'The next blow lands thin' });
+      if (e.air) bits.push({ kind: 'air', label: 'Air', title: 'The next blow finds almost nothing' });
+      if (e.licence) bits.push({ kind: 'licence', label: 'Licence', title: 'The next blow costs more life' });
+      if (e.ink) bits.push({ kind: 'ink', label: 'Ink', title: 'The next line takes mind and still cuts' });
+      if (e.heat) bits.push({ kind: 'heat', label: 'Heat', title: 'The next blow costs more life' });
+      if (e.jaw) bits.push({ kind: 'jaw', label: 'Jaw', title: 'The next bite finds a second body' });
+      if (e.wet) bits.push({ kind: 'wet', label: 'Wet', title: 'The next bite hits two' });
+      if (e.page) bits.push({ kind: 'page', label: 'Page', title: 'A page is open' });
+      if (e.rite) bits.push({ kind: 'rite', label: 'Rite', title: 'The rite is up' });
+      if (e.knelt) bits.push({ kind: 'ash', label: 'Knelt', title: 'Ash is in the teeth' });
       return `<div class="enemy-card ${e.alive ? '' : 'dead'}"><div class="name">${esc(e.name)}</div>${statusMarkup(bits)}<div class="bar-wrap"><div class="bar-hp" style="width:${pct}%"></div></div></div>`;
     }).join('');
     partyPanel.innerHTML = party.map((p, i) => {
@@ -10359,10 +10617,10 @@
       const hpPct = Math.max(0, Math.min(100, (p.hp / cap) * 100));
       const mpPct = p.maxMp ? Math.max(0, Math.min(100, (p.mp / p.maxMp) * 100)) : 0;
       const bits = [];
-      if (p.ash) bits.push({ kind: 'ash', label: 'Ash' });
-      if (p.cry) bits.push({ kind: 'air', label: 'Cry' });
-      if (p.steadied) bits.push({ kind: 'air', label: 'Steady' });
-      if (p.id === 'lira' && scarDebt > 0) bits.push({ kind: 'stamp', label: 'Scar ' + scarDebt });
+      if (p.ash) bits.push({ kind: 'ash', label: 'Ash', title: 'Ash sits in the teeth' });
+      if (p.cry) bits.push({ kind: 'cry', label: 'Cry', title: 'A gull’s cry is still on this turn' });
+      if (p.steadied) bits.push({ kind: 'steady', label: 'Steady', title: 'The next cry costs less mind' });
+      if (p.id === 'lira' && scarDebt > 0) bits.push({ kind: 'scar', label: 'Scar ' + scarDebt, title: 'Scar debt cuts max life' });
       return `<div class="party-card ${p.hp <= 0 ? 'dead' : ''} ${i === active ? 'active' : ''}">
         <div class="name">${esc(p.name)}</div>
         <div class="role">${esc(p.role)}</div>
@@ -11401,6 +11659,7 @@
         claimWord: claimWord,
         kestrelClaim: kestrelClaim,
         kestrelNave: kestrelNave,
+        markCompany: markCompany,
         duelWord: duelWord,
         kestrelWord: kestrelWord,
         motion: motionWanted,
@@ -11463,6 +11722,7 @@
     claimWord = data.claimWord === 'claim' || data.claimWord === 'refuse' || data.claimWord === 'share' || data.claimWord === 'burn' ? data.claimWord : null;
     kestrelClaim = data.kestrelClaim === 'land' || data.kestrelClaim === 'air' ? data.kestrelClaim : null;
     kestrelNave = data.kestrelNave === 'ask' || data.kestrelNave === 'air' ? data.kestrelNave : null;
+    markCompany = data.markCompany === 'ask' || data.markCompany === 'air' ? data.markCompany : null;
     if (marrowStain) marrowStain.visible = vesperAsh === 'refuse';
     if (typeof spark.earth !== 'number') spark.earth = 0;
     duelWord = data.duelWord === 'press' || data.duelWord === 'hold' ? data.duelWord : null;
@@ -12324,6 +12584,8 @@
   EW.feedThin = function () { return !!feedSpent; };
   EW.passageLaid = function () { return !!passageLaid; };
   EW.noteKestrelNave = noteKestrelNave;
+  EW.noteScrap = noteScrap;
+  EW.noteCompany = noteCompany;
   EW.packHas = function (name) { return !!(seals && seals.some((seal) => seal.name === name)); };
   EW.naveChoice = function () { return naveWord; };
   EW.poolMark = function (id) {

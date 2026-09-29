@@ -287,7 +287,7 @@ Playable on the Verdant Isle field:
 - A fight starts with a short draw, if Sound is on. It is original and listed in CREDITS.md.
 - Phone controls, Absorb, Pack, and Continue stay.
 
-## Face and weather (this branch)
+## Face and weather (shipped)
 
 - Hair reads as a cap, a fringe, and a fall. Concord hair stays cropped. Vesper’s falls past the shoulder. A brow and a mouth sit on the face that already had eyes and a nose. No new light was added.
 - The harbor vault and the Concord yard carry licence piers and a gold beam. They sit off the walk. They are not doors.
@@ -298,6 +298,16 @@ Playable on the Verdant Isle field:
 - Ash fall names Thin, Steady, or Thick, and says whether that is fewer motes, the usual fall, or more.
 - On a phone the place list starts under the HUD. The stick, Absorb, and Enter stay live.
 - If she has named the dusk, corked the leaf-cup, or provoked the shale patrol, Vesper says so when she meets Lira on the ash. She still does not enter the host.
+
+## Remnant night (this branch)
+
+- The Remnant Mark carries broken piers, brass beams, and a night sky with an ember horizon. The nave uses the same night. The coast skies use dusk. Day on the isle stays day.
+- A pool shows a ripple and a sheen while it is still a mouth. A bottled cup stays quiet.
+- East of the mark aisle, a numbered scrap goes in the pack. It does not open the nave or the weep.
+- A bird sits on the west pier. Leave her the air, or ask her to keep company. Both end in a refusal. She is not in the pack.
+- A brine wets the stone before the splash. A stoker opens the plate before the heat. A mite lifts a jaw before the second bite. The chips say Wet, Heat, and Jaw, and on a phone they are large enough to read.
+- Wake says the first pool is behind her. Flat stones lead to it. Absorb is named. Credits lists the eight cues that ship and says telegraphs stay silent.
+- Phone controls, Absorb, Pack, and Continue stay.
 
 ## Still ahead
 
