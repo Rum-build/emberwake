@@ -105,6 +105,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The leaf-village and the buried kiln are denser off the walk. The ash shelf has a plank and stakes. A fight frames both ranks. A Concord coat names the corked cup and does not open the vault. In the aftermath, Torren and Nima speak for the claim flag if they came. A fight’s Use 1 takes one from the stack. Places shows the quest, and the lines wrap.
 - The harbor board has crates, rope, lanterns, a gull perch, and wet cobble off the door, the clerk, and the roost. The bottle-hall has a side shelf of bottles and a slate. The crypt has a tally slate and a grate shadow. A telegraph draws a ring at the feet. Magma and Glass already wash. The eight cues stay the full set.
 - The ash nave, the first breach, and the remnant claim carry more fallen wood, ash, and iron off the south steps. Before the village, the quest names the leaf-village and the letter inside. Drinking a pool throws a ring and a short burst of embers. That burst is not a cue.
+- The ash shelf, the sealed throat, and the yard sit in a closer dusk, with a few more pieces off the mouths and the south steps. Torren’s shoulder and Nima’s steady show as a chip in a fight. A hit flashes hotter. On a phone, owed scar debt reads as Debt. The eight cues stay the full set.
 
 ## Play on your phone
 
