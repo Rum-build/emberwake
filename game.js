@@ -3865,7 +3865,7 @@
       drip.rotation.x = -Math.PI / 2;
       drip.position.y = 0.04;
       cork.add(drip);
-      cork.position.set(1.15, 0, 2.05);
+      cork.position.set(0.85, 0, -2.2);
       cork.visible = false;
       g.add(cork);
     }
