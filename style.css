@@ -82,6 +82,16 @@ button, .inventory-panel, .inv-body, .credits-content {
 @media (prefers-reduced-motion: reduce) {
   .title-bg::after { animation: none; }
 }
+body.still-motion .title-bg::after,
+body.still-motion .hit-float.show,
+body.still-motion .combat-ui.hit,
+body.still-motion .combat-ui.hit::after,
+body.still-motion .combat-ui.juice-cleave,
+body.still-motion .combat-ui.juice-channel,
+body.still-motion .combat-ui.juice-aim,
+body.still-motion .encounter-flash.active {
+  animation: none;
+}
 
 .title-content {
   position: relative;
@@ -950,6 +960,13 @@ button, .inventory-panel, .inv-body, .credits-content {
   gap: 8px;
 }
 
+.btn-pace {
+  pointer-events: auto;
+  min-height: 44px;
+  min-width: 148px;
+}
+.btn-pack-motion { justify-self: start; min-height: 44px; }
+
 .combat-held {
   pointer-events: none;
   font-size: 0.78rem;
@@ -1314,7 +1331,9 @@ button, .inventory-panel, .inv-body, .credits-content {
   .btn-xl { min-height: 56px; font-size: 1.15rem; padding: 14px 28px; }
   .btn-small { min-height: 44px; font-size: 0.95rem; }
   .btn-hud { min-height: 48px; min-width: 92px; font-size: 0.95rem; letter-spacing: 0; text-transform: none; }
-  .btn-menu { font-size: 1rem; }
+  .btn-menu { font-size: 1rem; min-height: 52px; }
+  .dialogue-advance, .dialogue-choice { min-height: 52px; }
+  .btn-pace, .btn-pack-motion, #btn-motion { min-height: 48px; min-width: 120px; }
 
   .path-choices { flex-direction: column; }
   .path-content { width: min(560px, 100%); }
@@ -1407,8 +1426,8 @@ button, .inventory-panel, .inv-body, .credits-content {
 }
 
 @media (max-width: 520px) {
-  .joystick-base { width: 116px; height: 116px; }
-  .joystick-knob { width: 50px; height: 50px; }
+  .joystick-base { width: 132px; height: 132px; }
+  .joystick-knob { width: 56px; height: 56px; }
 }
 
 @media (orientation: landscape) and (max-height: 500px) {

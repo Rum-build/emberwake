@@ -205,12 +205,21 @@ Playable on the Verdant Isle field:
 - A door sting, original and CC0, plays when she steps through. CREDITS names it. Silent stops it.
 - Phone controls, Absorb, Pack, and Continue stay.
 
-## Spine and camp (this branch)
+## Spine and camp (shipped)
 
 - Continue keeps a saved step whose height is zero in the village, the cellar, the vault, the pipe, the throat, the ash, the yard, and the mark. The pack names the scar cut that the HUD already uses.
 - On a phone the held-elements line wraps, and the scar chip stays inside the quest column.
 - Drinking a pool throws the motes and the rim out for a moment. Ash falls a little wider. A blow flashes warmer and the number kicks a little harder.
 - West of the Concord yard’s south gate, a rest is one optional Look. Torren speaks if he came. Nima speaks if she came. If neither came, Lira says the road is still hers. It does not drink the slag, set the yard’s word, add a scar, or block Leave. Continue stores the beat.
+- Phone controls, Absorb, Pack, and Continue stay.
+
+## Sky and aftermath (this branch)
+
+- Skies carry a horizon band. Isle grass, coast shale, and ash take a finer grain. Fog sits closer on the mark and opens up on the isle, the coast, and the ash. The remnant mass is a column of stone around a fire, readable without another light.
+- Each aftermath shows one object with the plaque: an empty ring and a living sprig, a sealed number over dead ground, a page split in two colors, or a red scar and a heap of ash. The burn line uses the same scar cut as the HUD.
+- If Torren or Nima is in the party, they speak after a claim flag. If they are not, the choice is still Vesper’s. It does not change the flag.
+- Motion can be stilled from the title or the pack. A fight’s Pace button runs slow, steady, or brisk. On a phone the command taps and the stick are larger, and the picture skips shadows and a full-resolution buffer.
+- Credits still return to the aftermath. Leave still returns to the claim, short of the door. Continue stores motion and pace.
 - Phone controls, Absorb, Pack, and Continue stay.
 
 ## Still ahead

@@ -750,6 +750,32 @@
   });
 
   Emberwake.registerScene('claim-approach', function () {
+    const torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    const nima = Emberwake.companyHas && Emberwake.companyHas('nima');
+    const aside = {
+      claim: {
+        torren: 'The shoulder stays in front. A name on the mass is not a number I have to sign.',
+        nima: 'She is still breathing. The hunger got quieter. It is not paid.',
+      },
+      refuse: {
+        torren: 'Then the book keeps its digit. I do not sign it.',
+        nima: 'The leaves will not come back because we left the mass.',
+      },
+      share: {
+        torren: 'Two names on one light. I cannot cover both.',
+        nima: 'She stands beside it. She is not in Lira.',
+      },
+      burn: {
+        torren: 'The ash is in the scar. I can still stand in front of the next blow.',
+        nima: 'That cut does not mend by sitting. The cough will know.',
+      },
+    };
+    function reply(id, text) {
+      const lines = [{ speaker: 'Vesper', text: text }];
+      if (torren) lines.push({ speaker: 'Torren', text: aside[id].torren });
+      if (nima) lines.push({ speaker: 'Nima', text: aside[id].nima });
+      return lines;
+    }
     Emberwake.present({
       lines: [
         {
@@ -760,22 +786,22 @@
             {
               label: 'Claim the remnant.',
               pick: 'claim',
-              reply: { speaker: 'Vesper', text: 'Then the spark names it. Lira is still the host. I do not enter. North is the aftermath.' },
+              reply: reply('claim', 'Then the spark names it. Lira is still the host. I do not enter. North is the aftermath.'),
             },
             {
               label: 'Refuse it.',
               pick: 'refuse',
-              reply: { speaker: 'Vesper', text: 'Then it stays unclaimed. The room remains. I do not enter the host. North is the aftermath.' },
+              reply: reply('refuse', 'Then it stays unclaimed. The room remains. I do not enter the host. North is the aftermath.'),
             },
             {
               label: 'Share the light.',
               pick: 'share',
-              reply: { speaker: 'Vesper', text: 'Then both sparks are named on it. I still do not step into her. North is the aftermath.' },
+              reply: reply('share', 'Then both sparks are named on it. I still do not step into her. North is the aftermath.'),
             },
             {
               label: 'Burn the claim.',
               pick: 'burn',
-              reply: { speaker: 'Vesper', text: 'Then the scar takes the ash. The mass chars and is not gone. I do not enter the host. North is the aftermath.' },
+              reply: reply('burn', 'Then the scar takes the ash. The mass chars and is not gone. I do not enter the host. North is the aftermath.'),
             },
           ],
         },
@@ -824,7 +850,7 @@
     if (Emberwake.companyHas && Emberwake.companyHas('torren')) company.push('Torren is the shoulder.');
     if (Emberwake.companyHas && Emberwake.companyHas('nima')) company.push('Nima is the steady.');
     const debt = Emberwake.scarCount ? Emberwake.scarCount() : 0;
-    const cut = debt * 6;
+    const cut = debt * (Emberwake.scarCut ? Emberwake.scarCut() : 5);
     let vesper = 'You named it. Licence Zero cannot follow a thing with no number. I stay outside the host. The rot slows where she walks. It does not die. The spark is fed, and it still wants the next mouth.';
     let lira = 'I am still the one wearing it. ' + (company.length ? company.join(' ') + ' ' : '') + bird + ' The hunger is quieter. It is not gone.';
     if (word === 'refuse') {
