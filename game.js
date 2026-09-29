@@ -158,6 +158,10 @@
   let claimGroup = null;
   let nearPerch = null;
   let kestrelClaim = null;
+  let aftermathGroup = null;
+  let nearEnd = null;
+  let nearCredits = null;
+  let creditsFromRun = false;
   let riteTorn = false;
   let lastMergeNote = '';
   let kestrelNave = null;
@@ -469,6 +473,9 @@
     claimTalk = false;
     nearPerch = null;
     kestrelClaim = null;
+    nearEnd = null;
+    nearCredits = null;
+    creditsFromRun = false;
     riteTorn = false;
     kestrelNave = null;
     kestrelFly = 0;
@@ -578,6 +585,7 @@
     buildCrypt();
     buildBreach();
     buildClaim();
+    buildAftermath();
     buildCombatArena();
     window.addEventListener('resize', onResize);
   }
@@ -662,6 +670,8 @@
       scene.fog.near = 10;
       scene.fog.far = 42;
       if (renderer) renderer.setClearColor(0x14080e);
+    } else if (place === 'aftermath') {
+      syncAftermath();
     } else if (place === 'cellar') {
       scene.fog.color.set(0x1a1410);
       scene.fog.near = 8;
@@ -1721,6 +1731,7 @@
     if (cryptGroup) cryptGroup.visible = false;
     if (breachGroup) breachGroup.visible = false;
     if (claimGroup) claimGroup.visible = false;
+    if (aftermathGroup) aftermathGroup.visible = false;
     if (naveGroup && naveGroup.userData.bird && kestrelFly <= 0) naveGroup.userData.bird.visible = false;
   }
 
@@ -1795,11 +1806,7 @@
     scene.add(g);
   }
 
-  function makeCountPage(title, lines) {
-    const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 320;
-    const ctx = canvas.getContext('2d');
+  function paintCountPage(ctx, tex, title, lines) {
     ctx.fillStyle = '#f0e2c4';
     ctx.fillRect(0, 0, 512, 320);
     ctx.strokeStyle = '#2a140c';
@@ -1810,12 +1817,23 @@
     ctx.fillText(title, 36, 88);
     ctx.font = '32px Georgia, serif';
     lines.forEach((line, i) => ctx.fillText(line, 36, 150 + i * 46));
-    const tex = new THREE.CanvasTexture(canvas);
     tex.needsUpdate = true;
+  }
+
+  function makeCountPage(title, lines) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 320;
+    const ctx = canvas.getContext('2d');
+    const tex = new THREE.CanvasTexture(canvas);
+    paintCountPage(ctx, tex, title, lines);
     const page = new THREE.Mesh(
       new THREE.PlaneGeometry(1.85, 1.16),
       new THREE.MeshBasicMaterial({ map: tex, fog: false })
     );
+    page.userData.retitle = function (nextTitle, nextLines) {
+      paintCountPage(ctx, tex, nextTitle, nextLines);
+    };
     return page;
   }
 
@@ -2105,6 +2123,147 @@
     scene.add(g);
   }
 
+  function buildAftermath() {
+    const g = new THREE.Group();
+    g.visible = false;
+    const amb = new THREE.AmbientLight(0x3a2414, 0.42);
+    g.add(amb);
+    const hemi = new THREE.HemisphereLight(0xc08040, 0x100806, 0.38);
+    g.add(hemi);
+    const geo = new THREE.PlaneGeometry(14, 12, 8, 8);
+    const ash = new THREE.Color(0x14100e);
+    const ember = new THREE.Color(0x6a3018);
+    tintPlane(geo, (c, x, y) => {
+      c.copy(ash);
+      if (Math.hypot(x, y + 2.4) < 2.2) c.lerp(ember, 0.45);
+    });
+    const floor = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
+      vertexColors: true, shininess: 5, specular: new THREE.Color(0x2a1810),
+    }));
+    floor.rotation.x = -Math.PI / 2;
+    g.add(floor);
+    const wallMat = new THREE.MeshLambertMaterial({ color: 0x1a1214 });
+    function addWall(w, d, x, z, h) {
+      const height = h || 5.6;
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, height, d), wallMat);
+      mesh.position.set(x, height / 2, z);
+      g.add(mesh);
+    }
+    addWall(4.2, 0.4, -3.6, -3.85);
+    addWall(4.2, 0.4, 3.6, -3.85);
+    addWall(3.4, 0.4, -4.2, 5.15);
+    addWall(3.4, 0.4, 4.2, 5.15);
+    addWall(0.4, 9.2, -5.5, 0.6);
+    addWall(0.4, 9.2, 5.5, 0.6);
+    const ribMat = new THREE.MeshLambertMaterial({ color: 0x322420 });
+    [-2.2, 0.4, 2.8].forEach((z, i) => {
+      [-3.6, 3.6].forEach((x) => {
+        const h = 2.8 + i * 0.45;
+        const rib = new THREE.Mesh(new THREE.BoxGeometry(0.38, h, 0.38), ribMat);
+        rib.position.set(x, h / 2, z);
+        g.add(rib);
+      });
+    });
+    const shafts = [];
+    const shaftPlanes = [];
+    [[-1.5, -1.6], [1.6, -2.4], [0.1, 1.2]].forEach((spot, i) => {
+      const shaft = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.05, 6.2),
+        new THREE.MeshBasicMaterial({
+          color: 0xffe0a0,
+          transparent: true,
+          opacity: 0.2,
+          depthWrite: false,
+          fog: false,
+          side: THREE.DoubleSide,
+        })
+      );
+      shaft.position.set(spot[0], 3.1, spot[1]);
+      g.add(shaft);
+      shaftPlanes.push(shaft);
+      const light = new THREE.PointLight(0xffe0a0, 1.1, 14);
+      light.position.set(spot[0], 4.4, spot[1]);
+      g.add(light);
+      shafts.push(light);
+    });
+    const core = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(1.15, 1),
+      new THREE.MeshBasicMaterial({ color: 0xffc080, fog: false })
+    );
+    core.position.set(0, 2.05, -2.65);
+    g.add(core);
+    const twin = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(0.72, 1),
+      new THREE.MeshBasicMaterial({ color: 0xc080ff, fog: false })
+    );
+    twin.position.set(1.15, 1.65, -2.35);
+    twin.visible = false;
+    g.add(twin);
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(1.7, 0.08, 8, 28),
+      new THREE.MeshBasicMaterial({ color: 0xffe2b0, fog: false })
+    );
+    ring.position.set(0, 2.05, -2.65);
+    g.add(ring);
+    const rot = new THREE.Mesh(
+      new THREE.CircleGeometry(2.1, 24),
+      new THREE.MeshBasicMaterial({ color: 0x3a5a32, transparent: true, opacity: 0.4, fog: false })
+    );
+    rot.rotation.x = -Math.PI / 2;
+    rot.position.set(0, 0.04, -1.5);
+    g.add(rot);
+    const plaques = {
+      claim: makeCountPage('CLAIM', ['No number', 'Rot slows', 'Still hungry']),
+      refuse: makeCountPage('REFUSAL', ['Licence Zero', 'Rot continues', 'Name kept']),
+      share: makeCountPage('SHARED', ['Two sparks', 'No page', 'Both hungry']),
+      burn: makeCountPage('THE BURN', ['Scar echo', 'They rewrite', 'Debt in the host']),
+    };
+    Object.keys(plaques).forEach((key) => {
+      const page = plaques[key];
+      page.position.set(0, 3.55, -1.45);
+      page.scale.set(1.25, 1.25, 1);
+      page.visible = key === 'claim';
+      g.add(page);
+    });
+    const vesper = makeSilhouette(-3.1, -1.15);
+    vesper.visible = true;
+    vesper.position.y = 0.1;
+    vesper.scale.setScalar(2.15);
+    vesper.traverse((child) => {
+      if (child.material && child.material.isMeshBasicMaterial) child.material.fog = false;
+    });
+    g.add(vesper);
+    const clerk = makeCharacter(0x6a2420, 0.95);
+    clerk.position.set(2.55, 0, 0.35);
+    g.add(clerk);
+    const banner = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.7, 1.55),
+      new THREE.MeshBasicMaterial({ color: 0x3a2418, side: THREE.DoubleSide, fog: false })
+    );
+    banner.position.set(2.55, 1.85, 0.15);
+    g.add(banner);
+    const landed = makeCharacter(0x6a5348, 0.92);
+    landed.position.set(1.4, 0, 2.15);
+    landed.visible = false;
+    g.add(landed);
+    makeMotes(g, 72, 0xd0b8a4, { x: 10, y: 4.2, z: 10 }, { fall: true });
+    g.userData.amb = amb;
+    g.userData.hemi = hemi;
+    g.userData.shafts = shafts;
+    g.userData.shaftPlanes = shaftPlanes;
+    g.userData.core = core;
+    g.userData.twin = twin;
+    g.userData.ring = ring;
+    g.userData.rot = rot;
+    g.userData.plaques = plaques;
+    g.userData.vesper = vesper;
+    g.userData.clerk = clerk;
+    g.userData.banner = banner;
+    g.userData.landed = landed;
+    aftermathGroup = g;
+    scene.add(g);
+  }
+
   function naveFits(x, z) {
     if (z > 4.15 || z < -3.15) return false;
     if (Math.abs(x) > 4.3) return false;
@@ -2132,6 +2291,12 @@
   function claimFits(x, z) {
     if (z > 7.55 || z < -8.15) return false;
     if (Math.abs(x) > 7.5) return false;
+    return true;
+  }
+
+  function aftermathFits(x, z) {
+    if (z > 5.05 || z < -3.55) return false;
+    if (Math.abs(x) > 5.2) return false;
     return true;
   }
 
@@ -3309,20 +3474,34 @@
     if (!spark || !spark.path) return 'Choose how she fights.';
     const slag = pools.find((p) => p.id === 'yard-slag');
     const weep = pools.find((p) => p.id === 'mark-weep');
+    if (locale === 'aftermath') {
+      if (!seenBeats.aftermath) return 'Hear the ending. Then the room stays.';
+      if (claimWord === 'burn') return 'The ending is written. The scar is the echo. Scar debt ' + scarDebt + '. Credits are north. South is the claim.';
+      if (claimWord === 'refuse') return 'The ending is written. Licence Zero kept its number. Credits are north. South is the claim.';
+      if (claimWord === 'share') return 'The ending is written. Two hungers remain. Credits are north. South is the claim.';
+      return 'The ending is written. Lira still wears it. Credits are north. South is the claim.';
+    }
     if (locale === 'remnant-claim') {
       if (!seenBeats.claimFight) return 'Past the bar. A Concord last rite stands before the claim.';
-      if (!claimWord) return 'Vesper is at the remnant. Claim, refuse, share, or burn. The ending is not written.';
-      if (claimWord === 'claim') return 'The spark claimed the remnant. Lira is still the host. South is the breach.';
-      if (claimWord === 'refuse') return 'The remnant was refused. The room stays. South is the breach.';
-      if (claimWord === 'share') return 'The claim is shared and unfinished. She did not enter. South is the breach.';
-      return 'The claim was burned. The scar took it. South is the breach.';
+      if (!claimWord) return 'Vesper is at the remnant. Claim, refuse, share, or burn. North writes it after.';
+      if (!seenBeats.aftermath) {
+        if (claimWord === 'claim') return 'The spark claimed the remnant. North is the aftermath.';
+        if (claimWord === 'refuse') return 'The remnant was refused. North is the aftermath.';
+        if (claimWord === 'share') return 'The claim is shared. North is the aftermath.';
+        return 'The claim was burned. North is the aftermath.';
+      }
+      if (claimWord === 'claim') return 'The ending is written. Lira still wears it. South is the breach.';
+      if (claimWord === 'refuse') return 'The ending is written. The licence kept its number. South is the breach.';
+      if (claimWord === 'share') return 'The ending is written. Two hungers remain. South is the breach.';
+      return 'The ending is written. The scar is the echo. South is the breach.';
     }
     if (locale === 'first-breach') {
       if (!seenBeats.breachFight) return 'Licence Zero opened a breach. A Concord last stand holds the threshold.';
       if (!breachWord) return 'Vesper is in the light. Hold the threshold, take the scar, or step back. The bar stays shut.';
       if (breachWord === 'mouth') return 'The scar is not Held Threshold. The bar stays shut. South is the crypt.';
       if (breachWord === 'hold' && !claimWord) return 'Held Threshold. North, past the bar, is the remnant claim.';
-      if (breachWord === 'hold') return 'The claim was set. The ending is not written. South is the crypt.';
+      if (breachWord === 'hold' && seenBeats.aftermath) return 'The ending is written. South is the crypt.';
+      if (breachWord === 'hold') return 'The claim was set. North of the mass is the aftermath. South is the crypt.';
       return 'You stepped back. Holding the threshold opens the bar. South is the crypt.';
     }
     if (locale === 'count-crypt') {
@@ -3392,25 +3571,38 @@
     const left = pools.filter((p) => !p.absorbed && !p.bottled && !p.interior).length;
     const kilnQuiet = pools.some((p) => p.id === 'kiln' && p.absorbed);
     const mergeNames = earnedMergeNames();
-    if (locale === 'remnant-claim') {
+    if (locale === 'aftermath') {
+      const bird = kestrelClaim === 'land'
+        ? ' Kestrel landed and did not join.'
+        : ' Kestrel stayed in the air.';
+      rumor = !seenBeats.aftermath
+        ? 'The room is the ending. Hear it. Credits are north. South is the claim.' + bird
+        : claimWord === 'burn'
+          ? 'The claim burned. The licence will be rewritten. The scar is the echo. Scar debt ' + scarDebt + '. Credits are north.' + bird
+          : claimWord === 'refuse'
+            ? 'She kept her name. Licence Zero kept its number. The rot goes on. Credits are north.' + bird
+            : claimWord === 'share'
+              ? 'Two sparks. The page cannot hold both. The rot hesitates. Credits are north.' + bird
+              : 'She still wears it. The licence has no number. The hunger is quieter. Credits are north.' + bird;
+    } else if (locale === 'remnant-claim') {
       rumor = !seenBeats.claimFight
         ? 'A last rite stands under the remnant. A merge tears the ward. A knife spends itself. Kestrel is on a rib, not in the pack.'
-        : claimWord === 'claim'
-          ? 'The spark claimed the mass. Lira is still the host. This is not the ending. South is the breach.'
-          : claimWord === 'refuse'
-            ? 'You refused the remnant. The room stays open. The ending is not written. South is the breach.'
-            : claimWord === 'share'
-              ? 'The claim is shared. Vesper did not step into the host. South is the breach.'
-              : claimWord === 'burn'
-                ? 'The claim was burned. The scar took the ash. She did not enter. South is the breach.'
-                : 'The rite is down. Vesper is at the mass. Claim, refuse, share, or burn. None of them is the ending.';
+        : !claimWord
+          ? 'The rite is down. Vesper is at the mass. Claim, refuse, share, or burn. North writes the ending after.'
+          : !seenBeats.aftermath
+            ? 'The flag is set. North is the aftermath. She did not enter the host. South is the breach.'
+            : claimWord === 'burn'
+              ? 'The ending is written. The scar is the echo. South is the breach.'
+              : 'The ending is written. South is the breach.';
     } else if (locale === 'first-breach') {
       rumor = !seenBeats.breachFight
         ? 'A Concord captain holds the threshold under Licence Zero. The light ahead is not a door. Kestrel is not in it.'
         : breachWord === 'hold'
           ? (claimWord
-            ? 'The claim was set past the bar. The ending is not written. South is the crypt.'
-            : 'Held Threshold. North, past the bar, is the remnant claim. It is not the ending. South is the crypt.')
+            ? (seenBeats.aftermath
+              ? 'The ending is written past the bar. South is the crypt.'
+              : 'The claim was set past the bar. North of the mass is the aftermath. South is the crypt.')
+            : 'Held Threshold. North, past the bar, is the remnant claim. The ending is written after the flag. South is the crypt.')
           : breachWord === 'mouth'
             ? 'You set a mouth on the light. The scar took the step. Vesper did not enter the host. South is the crypt.'
             : breachWord === 'back'
@@ -3617,9 +3809,11 @@
     const showStair = idle && nearStair && !showAbsorb && !atExit;
     const showCrack = idle && nearCrack && !showAbsorb && !atExit;
     const showBar = idle && nearBar && !showAbsorb && !atExit;
-    const showPerch = idle && nearPerch && !showAbsorb && !atExit && !showBar;
+    const showEnd = idle && nearEnd && !showAbsorb && !atExit && !showBar;
+    const showCredits = idle && nearCredits && !showAbsorb && !atExit;
+    const showPerch = idle && nearPerch && !showAbsorb && !atExit && !showBar && !showEnd;
     const showKestrel = idle && nearKestrel && !showAbsorb && !atExit && !showGallery;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showPerch && !showKestrel);
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
@@ -3627,6 +3821,8 @@
     else if (showStair) absorbBtn.textContent = galleryWord ? 'Enter' : 'Look';
     else if (showCrack) absorbBtn.textContent = nearCrack.open ? 'Enter' : 'Look';
     else if (showBar) absorbBtn.textContent = nearBar.open ? 'Enter' : 'Look';
+    else if (showCredits) absorbBtn.textContent = 'Credits';
+    else if (showEnd) absorbBtn.textContent = 'Enter';
     else if (showPerch || showKestrel) absorbBtn.textContent = 'Speak';
     else if (showLook || showPipe || showThroat || showStone || showMark || showNave || showGallery) absorbBtn.textContent = 'Enter';
     else if (showTalk) absorbBtn.textContent = 'Speak';
@@ -3635,7 +3831,7 @@
 
   function updatePrompt() {
     const atExit = atInteriorExit();
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearCrack && !nearBar && !nearPerch && !nearKestrel && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -3651,7 +3847,7 @@
       return;
     }
     if (atExit) {
-      $('#interact-title').textContent = locale === 'remnant-claim' ? 'The breach' : locale === 'first-breach' ? 'The crypt' : locale === 'root-cellar' ? 'The mouth' : locale === 'ashen-marrow' ? 'The hall' : locale === 'concord-yard' ? 'The ash' : locale === 'remnant-mark' ? 'The yard' : locale === 'ash-nave' ? 'The mark' : locale === 'watch-gallery' ? 'The nave' : locale === 'count-crypt' ? 'The gallery' : locale === 'marrow-pipe' ? 'The ash' : locale === 'engine-throat' ? 'The ash' : locale === 'harbor-vault' ? 'The shale' : 'The door';
+      $('#interact-title').textContent = locale === 'aftermath' ? 'The claim' : locale === 'remnant-claim' ? 'The breach' : locale === 'first-breach' ? 'The crypt' : locale === 'root-cellar' ? 'The mouth' : locale === 'ashen-marrow' ? 'The hall' : locale === 'concord-yard' ? 'The ash' : locale === 'remnant-mark' ? 'The yard' : locale === 'ash-nave' ? 'The mark' : locale === 'watch-gallery' ? 'The nave' : locale === 'count-crypt' ? 'The gallery' : locale === 'marrow-pipe' ? 'The ash' : locale === 'engine-throat' ? 'The ash' : locale === 'harbor-vault' ? 'The shale' : 'The door';
       $('#interact-detail').textContent = locale === 'root-cellar'
         ? 'Press E to step back onto the isle. The throat stays open behind you.'
         : locale === 'ashen-marrow'
@@ -3664,8 +3860,10 @@
             ? 'Press E to step back to the pillar. The cathedral door stays shut.'
           : locale === 'watch-gallery'
             ? 'Press E to step back to the nave. The count-stair stays where you left it.'
+          : locale === 'aftermath'
+            ? 'Press E to step back into the claim. The ending stays written. Credits are north.'
           : locale === 'remnant-claim'
-            ? 'Press E to step back into the breach. The claim stays. This is not the ending.'
+            ? 'Press E to step back into the breach. The claim stays. North of the mass is the aftermath, once a flag is set.'
           : locale === 'first-breach'
             ? 'Press E to step back into the crypt. The threshold stays. The bar, if you held it, is still north.'
           : locale === 'count-crypt'
@@ -3744,6 +3942,16 @@
     if (nearBar) {
       $('#interact-title').textContent = nearBar.title;
       $('#interact-detail').textContent = nearBar.hint;
+      return;
+    }
+    if (nearEnd) {
+      $('#interact-title').textContent = nearEnd.title;
+      $('#interact-detail').textContent = nearEnd.hint;
+      return;
+    }
+    if (nearCredits) {
+      $('#interact-title').textContent = nearCredits.title;
+      $('#interact-detail').textContent = nearCredits.hint;
       return;
     }
     if (nearPerch) {
@@ -3833,13 +4041,21 @@
           : 'In the watch gallery those names read as digits of Licence Zero. They do not open the cathedral bar.');
       }
       if (claimWord) {
-        waiting.push(claimWord === 'claim'
-          ? 'The spark claimed the remnant. Lira is still the host. This is not the ending.'
-          : claimWord === 'refuse'
-            ? 'The remnant was refused. The ending is not written.'
-            : claimWord === 'share'
-              ? 'The claim is shared. Vesper did not enter the host.'
-              : 'The claim was burned. The scar took the ash.');
+        waiting.push(seenBeats.aftermath
+          ? (claimWord === 'burn'
+            ? 'The ending is written. The scar is the echo. Scar debt ' + scarDebt + '. Lira’s max HP is cut by ' + (scarDebt * 6) + '.'
+            : claimWord === 'refuse'
+              ? 'The ending is written. She kept her name. Licence Zero kept its number.'
+              : claimWord === 'share'
+                ? 'The ending is written. Two sparks. Vesper did not enter the host.'
+                : 'The ending is written. Lira still wears the remnant. The hunger is quieter.')
+          : (claimWord === 'claim'
+            ? 'The spark claimed the remnant. Lira is still the host. North is the aftermath.'
+            : claimWord === 'refuse'
+              ? 'The remnant was refused. North is the aftermath.'
+              : claimWord === 'share'
+                ? 'The claim is shared. Vesper did not enter the host. North is the aftermath.'
+                : 'The claim was burned. The scar took the ash. North is the aftermath.'));
       } else if (breachWord === 'hold') {
         waiting.push('Held Threshold. North, past the bar, is the remnant claim.');
       }
@@ -4142,6 +4358,14 @@
         else lookBar();
         return;
       }
+      if (nearEnd && locale === 'remnant-claim' && !atMouth) {
+        enterAftermath();
+        return;
+      }
+      if (nearCredits && locale === 'aftermath' && !atMouth) {
+        openRunCredits();
+        return;
+      }
       if (nearPerch && locale === 'remnant-claim' && !atMouth) {
         talkKestrelClaim();
         return;
@@ -4163,6 +4387,7 @@
         else if (locale === 'count-crypt') exitCrypt();
         else if (locale === 'first-breach') exitBreach();
         else if (locale === 'remnant-claim') exitClaim();
+        else if (locale === 'aftermath') exitAftermath();
         else if (locale === 'marrow-pipe') exitPipe();
         else if (locale === 'engine-throat') exitThroat();
         else exitInterior();
@@ -4341,6 +4566,7 @@
     if (locale === 'count-crypt') return playerMesh.position.z > 2.45;
     if (locale === 'first-breach') return playerMesh.position.z > 4.85;
     if (locale === 'remnant-claim') return playerMesh.position.z > 7.15;
+    if (locale === 'aftermath') return playerMesh.position.z > 4.65;
     return playerMesh.position.z > 2.55;
   }
 
@@ -5301,38 +5527,38 @@
       if (!seals.some((seal) => seal.name === 'Refused Remnant')) {
         seals.push({
           name: 'Refused Remnant',
-          desc: 'You refused the Prime Remnant past the bar. The room stays. The ending is not written. Vesper did not enter the host.',
+          desc: 'You refused the Prime Remnant past the bar. The room stays. North is the aftermath. Vesper did not enter the host.',
         });
       }
-      showToast('You refuse the remnant. The room stays. This is not the ending.');
+      showToast('You refuse the remnant. North is the aftermath.');
     } else if (id === 'share') {
       claimWord = 'share';
       if (!seals.some((seal) => seal.name === 'Shared Remnant')) {
         seals.push({
           name: 'Shared Remnant',
-          desc: 'You offered the remnant to both sparks. Vesper did not step into Lira. The claim is split and unfinished.',
+          desc: 'You offered the remnant to both sparks. Vesper did not step into Lira. North is the aftermath.',
         });
       }
-      showToast('You offer the light to both sparks. She does not enter the host. The claim is unfinished.');
+      showToast('You offer the light to both sparks. She does not enter the host. North is the aftermath.');
     } else if (id === 'burn') {
       claimWord = 'burn';
       addScar('claim', { quiet: true });
       if (!seals.some((seal) => seal.name === 'Burned Claim')) {
         seals.push({
           name: 'Burned Claim',
-          desc: 'You set the rite’s ash against the remnant. The scar took it. The mass charred and is not gone. Vesper did not enter the host.',
+          desc: 'You set the rite’s ash against the remnant. The scar took it. North is the aftermath. Vesper did not enter the host.',
         });
       }
-      showToast('You burn the claim. The scar takes the ash. The remnant is not gone.' + scarDebtLine());
+      showToast('You burn the claim. The scar takes the ash.' + scarDebtLine() + ' North is the aftermath.');
     } else {
       claimWord = 'claim';
       if (!seals.some((seal) => seal.name === 'Remnant Claim')) {
         seals.push({
           name: 'Remnant Claim',
-          desc: 'The spark named the Prime Remnant hers. Lira is still the host. This is a flag, not the ending. Vesper did not enter.',
+          desc: 'The spark named the Prime Remnant hers. Lira is still the host. North is the aftermath. Vesper did not enter.',
         });
       }
-      showToast('The spark claims the remnant. Lira is still the host. This is not the ending.');
+      showToast('The spark claims the remnant. Lira is still the host. North is the aftermath.');
     }
     syncClaimLight();
     refreshRumor();
@@ -5359,6 +5585,187 @@
       : 'You leave her the rib. She does not join.');
     refreshRumor();
     updateHUD();
+    saveGame();
+  }
+
+  function creditsCovering() {
+    return !!(creditsFromRun && creditsScreen && !creditsScreen.classList.contains('hidden'));
+  }
+
+  function nearestEnd() {
+    if (!playerMesh || locale !== 'remnant-claim' || !claimWord || skyPass) return null;
+    if (playerMesh.position.z > -4.6 || Math.abs(playerMesh.position.x) > 2.8) return null;
+    return {
+      title: 'The aftermath',
+      hint: 'The flag is set. Press E. North writes the ending.',
+    };
+  }
+
+  function nearestCredits() {
+    if (!playerMesh || locale !== 'aftermath' || skyPass) return null;
+    if (playerMesh.position.z > -2.15 || Math.abs(playerMesh.position.x) > 2.4) return null;
+    return {
+      title: 'Credits',
+      hint: 'The ending is written. Press E. Return brings you back to this room.',
+    };
+  }
+
+  function syncAftermath() {
+    if (!scene || !scene.fog) return;
+    const word = claimWord === 'refuse' || claimWord === 'share' || claimWord === 'burn' ? claimWord : 'claim';
+    const table = {
+      claim: { fog: 0x1a1008, near: 8, far: 28, amb: 0x3a2414, ambI: 0.5, hemi: 0xc08040, core: 0xffc080, twin: 0xffe0a0, ring: 0x2a140c, shaft: 0xffe0a0, shaftI: 1.35, rot: 0x3a5a32, rotOp: 0.38, banner: 0x3a2418 },
+      refuse: { fog: 0x0c1014, near: 7, far: 24, amb: 0x141820, ambI: 0.2, hemi: 0x304058, core: 0x3a3028, twin: 0x304058, ring: 0xffe2b0, shaft: 0x8aa4c0, shaftI: 0.42, rot: 0x3a2438, rotOp: 0.55, banner: 0xc4a060 },
+      share: { fog: 0x180e14, near: 8, far: 26, amb: 0x2a1828, ambI: 0.36, hemi: 0x8060a0, core: 0xffb060, twin: 0xc080ff, ring: 0xd0a0ff, shaft: 0xffc0e0, shaftI: 1.05, rot: 0x5a4060, rotOp: 0.32, banner: 0x8060a0 },
+      burn: { fog: 0x100604, near: 6, far: 22, amb: 0x1a0806, ambI: 0.16, hemi: 0x401008, core: 0xff2a10, twin: 0x3a1008, ring: 0x140806, shaft: 0xff3018, shaftI: 1.65, rot: 0x1a0806, rotOp: 0.72, banner: 0x1a0808 },
+    };
+    const look = table[word];
+    scene.fog.color.setHex(look.fog);
+    scene.fog.near = look.near;
+    scene.fog.far = look.far;
+    if (renderer) renderer.setClearColor(look.fog);
+    if (!aftermathGroup) return;
+    const data = aftermathGroup.userData;
+    if (data.amb) {
+      data.amb.color.setHex(look.amb);
+      data.amb.intensity = look.ambI;
+    }
+    if (data.hemi) data.hemi.color.setHex(look.hemi);
+    if (data.core) {
+      data.core.material.color.setHex(look.core);
+      data.core.position.set(word === 'share' ? -0.45 : 0, word === 'burn' ? 1.55 : 2.05, -2.65);
+      data.core.scale.setScalar(word === 'burn' ? 0.72 : 1);
+    }
+    if (data.twin) {
+      data.twin.visible = word === 'share';
+      data.twin.material.color.setHex(look.twin);
+    }
+    if (data.ring) {
+      data.ring.material.color.setHex(look.ring);
+      data.ring.material.opacity = 1;
+      data.ring.rotation.z = word === 'claim' ? 0.55 : word === 'burn' ? 0.2 : 0;
+      data.ring.scale.setScalar(word === 'claim' ? 1.2 : word === 'burn' ? 0.85 : 1);
+      data.ring.position.y = word === 'burn' ? 1.55 : 2.05;
+    }
+    if (data.rot && data.rot.material) {
+      data.rot.material.color.setHex(look.rot);
+      data.rot.material.opacity = look.rotOp;
+    }
+    if (data.shafts) {
+      data.shafts.forEach((light, i) => {
+        light.color.setHex(word === 'share' && i === 1 ? 0xc080ff : look.shaft);
+        light.intensity = look.shaftI * (i === 2 ? 0.7 : 1);
+      });
+    }
+    if (data.shaftPlanes) {
+      data.shaftPlanes.forEach((plane, i) => {
+        plane.material.color.setHex(word === 'share' && i === 1 ? 0xc080ff : look.shaft);
+        plane.material.opacity = word === 'refuse' ? 0.08 : 0.22;
+      });
+    }
+    if (data.plaques) {
+      Object.keys(data.plaques).forEach((key) => {
+        data.plaques[key].visible = key === word;
+      });
+      if (word === 'burn' && data.plaques.burn && data.plaques.burn.userData.retitle) {
+        data.plaques.burn.userData.retitle('THE BURN', ['Scar echo', 'Debt ' + scarDebt, '−' + (scarDebt * 6) + ' HP']);
+      }
+    }
+    if (data.vesper) {
+      const spot = word === 'share' ? [2.15, -2.15] : word === 'refuse' ? [-3.35, -2.05] : word === 'burn' ? [-3.15, -0.35] : [-3.05, -1.1];
+      data.vesper.position.x = spot[0];
+      data.vesper.position.z = spot[1];
+    }
+    if (data.banner) {
+      data.banner.material.color.setHex(look.banner);
+      data.banner.rotation.z = word === 'claim' || word === 'burn' ? 1.05 : 0.04;
+      data.banner.position.y = word === 'burn' ? 0.55 : 1.85;
+    }
+    if (data.clerk) {
+      data.clerk.rotation.z = word === 'burn' ? 1.3 : 0;
+      data.clerk.position.y = word === 'burn' ? 0.2 : 0;
+    }
+    if (data.landed) data.landed.visible = kestrelClaim === 'land';
+  }
+
+  function playAftermathScene() {
+    if (seenBeats.aftermath || dialogueOpen) return;
+    const fn = EW.scenes.aftermath;
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'aftermath';
+      else seenBeats.aftermath = true;
+    } else seenBeats.aftermath = true;
+  }
+
+  function enterAftermath(opts) {
+    const silent = opts && opts.silent;
+    if (!aftermathGroup || !claimGroup || !playerMesh) return;
+    if (!silent && (locale !== 'remnant-claim' || !claimWord || dialogueOpen || skyPass || encounterLocked)) return;
+    locale = 'aftermath';
+    if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
+    aftermathGroup.add(playerMesh);
+    const px = silent && opts.pos ? (opts.pos.x || 0) : 0;
+    const pz = silent && opts.pos ? (opts.pos.z == null ? 3.35 : opts.pos.z) : 3.35;
+    playerMesh.position.set(px, 0, pz);
+    if (interiorGroup) interiorGroup.visible = false;
+    if (overworldGroup) overworldGroup.visible = false;
+    if (stormreachGroup) stormreachGroup.visible = false;
+    if (marrowGroup) marrowGroup.visible = false;
+    if (yardGroup) yardGroup.visible = false;
+    if (markGroup) markGroup.visible = false;
+    tuckCathedral();
+    aftermathGroup.visible = true;
+    placeFog('aftermath');
+    const locLabel = $('#hud-location');
+    if (locLabel) locLabel.textContent = 'Aftermath';
+    camera.position.set(px, CAMERA_HEIGHT, pz + CAMERA_DIST);
+    camera.lookAt(px, 1.8, pz);
+    seenBeats.endStep = true;
+    if (!silent) {
+      showToast(claimWord === 'burn'
+        ? 'Aftermath. The scar is the echo.' + scarDebtLine()
+        : claimWord === 'refuse'
+          ? 'Aftermath. Her name stayed. Licence Zero stayed.'
+          : claimWord === 'share'
+            ? 'Aftermath. Two sparks. The page cannot hold both.'
+            : 'Aftermath. She still wears it. The licence has no number for this.');
+    }
+    if (!seenBeats.aftermath) playAftermathScene();
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function exitAftermath() {
+    if (locale !== 'aftermath' || !playerMesh || !claimGroup) return;
+    locale = 'remnant-claim';
+    if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
+    claimGroup.add(playerMesh);
+    playerMesh.position.set(0, 0, -2.4);
+    if (aftermathGroup) aftermathGroup.visible = false;
+    claimGroup.visible = true;
+    if (interiorGroup) interiorGroup.visible = false;
+    if (naveGroup) naveGroup.visible = false;
+    if (breachGroup) breachGroup.visible = false;
+    if (cryptGroup) cryptGroup.visible = false;
+    if (galleryGroup) galleryGroup.visible = false;
+    placeFog('claim');
+    syncClaimLight();
+    const locLabel = $('#hud-location');
+    if (locLabel) locLabel.textContent = 'Remnant Claim';
+    camera.position.set(0, CAMERA_HEIGHT, -2.4 + CAMERA_DIST);
+    camera.lookAt(0, 1.8, -2.4);
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function openRunCredits() {
+    if (locale !== 'aftermath' || dialogueOpen || encounterLocked) return;
+    creditsFromRun = true;
+    if (titleScreen) titleScreen.classList.add('hidden');
+    creditsScreen.classList.remove('hidden');
     saveGame();
   }
 
@@ -5567,6 +5974,15 @@
         light.intensity = (i === 2 ? 1.4 : 0.7) + Math.abs(Math.sin(t * 1.3 + i)) * 0.35;
       });
     }
+    if (aftermathGroup && aftermathGroup.visible && aftermathGroup.userData.core) {
+      const core = aftermathGroup.userData.core;
+      core.rotation.y = t * (claimWord === 'burn' ? 0.15 : 0.4);
+      const base = claimWord === 'burn' ? 0.72 : 1;
+      core.scale.setScalar(base * (1 + Math.sin(t * (claimWord === 'burn' ? 6 : 1.4)) * (claimWord === 'burn' ? 0.08 : 0.05)));
+      if (aftermathGroup.userData.twin && aftermathGroup.userData.twin.visible) {
+        aftermathGroup.userData.twin.rotation.y = -t * 0.55;
+      }
+    }
     if (kestrelFly > 0 && naveGroup && naveGroup.userData.bird) {
       kestrelFly += dt || 0;
       const bird = naveGroup.userData.bird;
@@ -5757,12 +6173,14 @@
       nearStair = null;
       nearCrack = null;
       nearBar = null;
+      nearEnd = null;
+      nearCredits = null;
       nearPerch = null;
       nearKestrel = null;
       joy.active = false;
       joy.dx = 0;
       joy.dy = 0;
-    } else if (!inventoryOpen && !encounterLocked && !dialogueOpen) {
+    } else if (!inventoryOpen && !encounterLocked && !dialogueOpen && !creditsCovering()) {
       let mx = 0;
       let mz = 0;
       if (keys.KeyW || keys.ArrowUp) mz -= 1;
@@ -5815,6 +6233,9 @@
         } else if (locale === 'remnant-claim') {
           if (claimFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
           if (claimFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
+        } else if (locale === 'aftermath') {
+          if (aftermathFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
+          if (aftermathFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
         } else if (locale === 'marrow-pipe') {
           if (pipeFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
           if (pipeFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
@@ -5844,6 +6265,8 @@
         nearStair = nearestStair();
         nearCrack = nearestCrack();
         nearBar = nearestBar();
+        nearEnd = nearestEnd();
+        nearCredits = nearestCredits();
         nearPerch = nearestPerch();
         nearKestrel = nearestKestrel();
         const safe = nearPool && !nearPool.absorbed;
@@ -5873,6 +6296,8 @@
         nearStair = nearestStair();
         nearCrack = nearestCrack();
         nearBar = nearestBar();
+        nearEnd = nearestEnd();
+        nearCredits = nearestCredits();
         nearPerch = nearestPerch();
         nearKestrel = nearestKestrel();
       }
@@ -5922,6 +6347,8 @@
       nearStair = nearestStair();
       nearCrack = nearestCrack();
       nearBar = nearestBar();
+      nearEnd = nearestEnd();
+      nearCredits = nearestCredits();
       nearPerch = nearestPerch();
       nearKestrel = nearestKestrel();
       playerMesh.position.y = 0;
@@ -6776,6 +7203,7 @@
     const onCrypt = locale === 'count-crypt';
     const onBreach = locale === 'first-breach';
     const onClaim = locale === 'remnant-claim';
+    const onAftermath = locale === 'aftermath';
     overworldGroup.visible = locale === 'field' && !onCoast;
     if (stormreachGroup) stormreachGroup.visible = onCoast;
     if (coastGroup) coastGroup.visible = false;
@@ -6787,7 +7215,8 @@
     if (cryptGroup) cryptGroup.visible = onCrypt;
     if (breachGroup) breachGroup.visible = onBreach;
     if (claimGroup) claimGroup.visible = onClaim;
-    if (interiorGroup) interiorGroup.visible = locale !== 'field' && !onMarrow && !onYard && !onMark && !onNave && !onGallery && !onCrypt && !onBreach && !onClaim;
+    if (aftermathGroup) aftermathGroup.visible = onAftermath;
+    if (interiorGroup) interiorGroup.visible = locale !== 'field' && !onMarrow && !onYard && !onMark && !onNave && !onGallery && !onCrypt && !onBreach && !onClaim && !onAftermath;
     if (vaultRoom) vaultRoom.visible = locale === 'harbor-vault';
     if (villageRoom) villageRoom.visible = locale === 'leaf-village';
     if (cellarRoom) cellarRoom.visible = locale === 'root-cellar';
@@ -6802,6 +7231,7 @@
     else if (onCrypt) placeFog('crypt');
     else if (onBreach) placeFog('breach');
     else if (onClaim) placeFog('claim');
+    else if (onAftermath) placeFog('aftermath');
     else if (locale === 'root-cellar') placeFog('cellar');
     else if (locale === 'harbor-vault') placeFog('vault');
     else if (locale === 'marrow-pipe') placeFog('pipe');
@@ -7055,6 +7485,7 @@
     dialogueOnDone = null;
     dialogueOnPick = null;
     saveGame();
+    updateHUD();
     if (typeof done === 'function') done();
   }
 
@@ -7166,6 +7597,7 @@
 
   function beginField(opts) {
     gameState = State.OVERWORLD;
+    creditsFromRun = false;
     titleScreen.classList.add('hidden');
     pathScreen.classList.add('hidden');
     creditsScreen.classList.add('hidden');
@@ -7380,18 +7812,34 @@
       rows.push({ name: 'First breach', note: 'Not walked yet. North of the widened crack. The list does not carry you.' });
     }
     if (seenBeats.claimStep || claimWord) {
-      const claimNote = claimWord === 'claim'
-        ? 'The spark claimed it. The ending is not written.'
-        : claimWord === 'refuse'
-          ? 'Refused. The room stays.'
-          : claimWord === 'share'
-            ? 'Shared. She did not enter.'
-            : claimWord === 'burn'
-              ? 'Burned. The scar took the ash.'
-              : 'Walked. The rite or the claim is still ahead.';
+      const claimNote = seenBeats.aftermath
+        ? 'The flag was set. The ending is written north of it.'
+        : claimWord === 'claim'
+          ? 'The spark claimed it. North is the aftermath.'
+          : claimWord === 'refuse'
+            ? 'Refused. North is the aftermath.'
+            : claimWord === 'share'
+              ? 'Shared. She did not enter. North is the aftermath.'
+              : claimWord === 'burn'
+                ? 'Burned. The scar took the ash. North is the aftermath.'
+                : 'Walked. The rite or the claim is still ahead.';
       rows.push({ name: 'Remnant claim', note: claimNote });
     } else if (breachWord === 'hold') {
       rows.push({ name: 'Remnant claim', note: 'Not walked yet. North, past the bar. The list does not carry you.' });
+    }
+    if (seenBeats.endStep || seenBeats.aftermath) {
+      const endNote = !seenBeats.aftermath
+        ? 'Walked. The ending is still being heard.'
+        : claimWord === 'burn'
+          ? 'Written. The scar is the echo. Scar debt ' + scarDebt + '.'
+          : claimWord === 'refuse'
+            ? 'Written. The licence kept its number.'
+            : claimWord === 'share'
+              ? 'Written. Two hungers remain.'
+              : 'Written. Lira still wears it.';
+      rows.push({ name: 'Aftermath', note: endNote });
+    } else if (claimWord) {
+      rows.push({ name: 'Aftermath', note: 'Not walked yet. North of the mass, after the flag. The list does not carry you.' });
     }
     return rows;
   }
@@ -7460,11 +7908,17 @@
       });
     }
     $('#btn-credits').addEventListener('click', () => {
+      creditsFromRun = false;
       titleScreen.classList.add('hidden');
       creditsScreen.classList.remove('hidden');
     });
     $('#btn-credits-close').addEventListener('click', () => {
       creditsScreen.classList.add('hidden');
+      if (creditsFromRun) {
+        creditsFromRun = false;
+        titleScreen.classList.add('hidden');
+        return;
+      }
       titleScreen.classList.remove('hidden');
     });
     pathScreen.querySelectorAll('[data-path]').forEach((btn) => {
@@ -7720,6 +8174,7 @@
     else if (data.locale === 'count-crypt') enterCrypt({ silent: true, pos: data.pos });
     else if (data.locale === 'first-breach') enterBreach({ silent: true, pos: data.pos });
     else if (data.locale === 'remnant-claim') enterClaim({ silent: true, pos: data.pos });
+    else if (data.locale === 'aftermath') enterAftermath({ silent: true, pos: data.pos });
     else if (resumeInterior) enterInterior(data.locale, { silent: true, pos: data.pos });
     else if (data.region === 'stormreach') enterRegion('stormreach', { silent: true, pos: data.pos });
   }
@@ -8394,6 +8849,8 @@
   EW.noteBreach = noteBreach;
   EW.noteClaim = noteClaim;
   EW.noteKestrelClaim = noteKestrelClaim;
+  EW.claimWord = function () { return claimWord; };
+  EW.kestrelClaimWord = function () { return kestrelClaim; };
   EW.feedThin = function () { return !!feedSpent; };
   EW.passageLaid = function () { return !!passageLaid; };
   EW.noteKestrelNave = noteKestrelNave;
