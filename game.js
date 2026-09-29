@@ -2230,7 +2230,7 @@
     }
     cryptPile(-1.55, 1.2, 0.36);
     cryptPile(1.35, 0.7, 0.26);
-    g.add(makeCryptNotice(1.75, 1.65));
+    g.add(makeCryptNotice(0.85, 1.62));
     const floorCrack = new THREE.Mesh(
       new THREE.PlaneGeometry(0.07, 1.7),
       new THREE.MeshBasicMaterial({ color: 0x0a0604, fog: false })
@@ -2956,7 +2956,7 @@
 
   function nearestJournal() {
     if (!playerMesh || locale !== 'count-crypt' || skyPass) return null;
-    if (Math.hypot(1.75 - playerMesh.position.x, 1.65 - playerMesh.position.z) > 0.7) return null;
+    if (Math.hypot(0.85 - playerMesh.position.x, 1.62 - playerMesh.position.z) > 0.7) return null;
     if (seenBeats['crypt-notice']) {
       return {
         title: 'A filed notice',
@@ -4415,19 +4415,25 @@
 
   function makeCryptNotice(x, z) {
     const g = new THREE.Group();
-    const page = new THREE.Mesh(
-      new THREE.BoxGeometry(0.28, 0.02, 0.2),
-      new THREE.MeshBasicMaterial({ color: 0xe6d4b0, fog: false })
+    const peg = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.035, 0.045, 0.78, 5),
+      new THREE.MeshLambertMaterial({ color: 0x3a3028 })
     );
-    page.position.y = 0.04;
-    page.rotation.y = 0.4;
+    peg.position.y = 0.39;
+    g.add(peg);
+    const page = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.46, 0.34),
+      new THREE.MeshBasicMaterial({ color: 0xe6d4b0, fog: false, side: THREE.DoubleSide })
+    );
+    page.position.set(0, 0.78, 0);
+    page.rotation.y = 0.55;
     g.add(page);
     const ink = new THREE.Mesh(
-      new THREE.BoxGeometry(0.16, 0.012, 0.03),
-      new THREE.MeshBasicMaterial({ color: 0x2a1810, fog: false })
+      new THREE.PlaneGeometry(0.28, 0.04),
+      new THREE.MeshBasicMaterial({ color: 0x2a1810, fog: false, side: THREE.DoubleSide })
     );
-    ink.position.set(0.02, 0.055, 0.02);
-    ink.rotation.y = 0.4;
+    ink.position.set(0.02, 0.8, 0.01);
+    ink.rotation.y = 0.55;
     g.add(ink);
     g.position.set(x, 0, z);
     return g;
@@ -4920,7 +4926,7 @@
         color: color,
         size: size,
         transparent: true,
-        opacity: 0.55,
+        opacity: 0.72,
         depthWrite: false,
         sizeAttenuation: true,
       }));
@@ -4931,8 +4937,8 @@
       return pts;
     }
     weather = {
-      rain: makeFall(160, 0xb7c6d4, 0.04),
-      gust: makeFall(120, 0xd2c2a4, 0.07),
+      rain: makeFall(160, 0xb7c6d4, 0.12),
+      gust: makeFall(120, 0xd2c2a4, 0.18),
     };
   }
 
