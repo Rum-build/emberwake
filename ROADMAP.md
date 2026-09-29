@@ -139,17 +139,25 @@ Playable on the Verdant Isle field:
 - Press Named Feed and the Unwritten Passage into the crack and they stay in the pack, thinner. Put a mouth on the crack and take one scar. Leave the crack and take nothing. The cathedral bar stays shut. **Leave** at the south returns to the gallery, short of the stair. Continue stores the crypt, the choice, and whether the names were pressed.
 - Kestrel is not in the crypt and does not join. The mouse stick, Absorb, and Pack stay.
 
-## First breach (this branch)
+## First breach (shipped)
 
 - If the crypt choice is Cracked Zero, **Enter** on the widened crack opens one threshold room. A mouth on the crack, or leaving the light, does not widen it; Look says so, and **Leave** / Continue stay safe. A Concord captain and a scribe hold the room. The captain’s licence hits once, harder, unless Torren’s shoulder is already in front. Nima’s first action still steadies the line. Victory puts remnant ash in the teeth and grants any merge those elements already name.
 - After the stand, Vesper is in the light and will not duel. Hold the threshold, set a mouth on the light (one scar), or step back. None of the three opens the cathedral bar. **Leave** at the south returns to the crypt, short of the crack. Continue stores the breach, the choice, and the ash. Kestrel is not in the light and does not join.
 - The room is taller than the crypt: ribs, light shafts, falling ash, a readable threshold plaque, and the remnant mass beside the light. The mouse stick, Absorb, and Pack stay.
 
+## Remnant claim (this branch)
+
+- If the breach choice is Held Threshold, **Enter** on the north light opens the nave interior past the bar. A mouth on that light, or stepping back, does not; Look and the quest line say Held Threshold is the gate. **Leave** and Continue stay safe.
+- A Rite Celebrant holds the chamber. Physical blows land thin while the ward is up. A merge spell tears it. Torren’s shoulder and Nima’s steady still happen on their first actions. After the rite, Vesper is at the mass. Claim, refuse, share, or burn. Those flags are not the ending. She does not enter the host. Burn costs one scar. The other three do not.
+- Kestrel can be spoken to on a rib after the rite. Ask her to land, or leave her the rib. Landing puts her on the stone. She does not join.
+- **Leave** at the south returns to the breach, short of the bar. Continue stores the claim, the flag, and whether she landed. The chamber is larger than the breach: a bar you have passed, ribs, light shafts, ash, a readable claim plaque, and Vesper’s silhouette beside the mass.
+- The mouse stick, Absorb, and Pack stay.
+
 ## Still ahead
 
-From DESIGN.md, after this breach:
+From DESIGN.md, after this claim:
 
-1. The rest of the scar’s debt. The kiln, the earth cork, a fed leak, Vesper’s taste, the spoken name, a drunk yard slag, a drunk remnant weep, a named cathedral hinge, a mouth on the crypt crack, and a mouth on the breach light each add a point. Banking the marrow leak eases one. Pressing a digit, and holding the threshold, do not. The rest stays.
+1. The rest of the scar’s debt. The kiln, the earth cork, a fed leak, Vesper’s taste, the spoken name, a drunk yard slag, a drunk remnant weep, a named cathedral hinge, a mouth on the crypt crack, a mouth on the breach light, and a burned claim each add a point. Banking the marrow leak eases one. Pressing a digit, holding the threshold, and claiming, refusing, or sharing the remnant do not. The rest stays. The four claim flags are not endings yet.
 2. The wider waystone network, the wind merges (ice, thunder, tide, root), and a party slot for Kestrel if she ever takes one.
 
 Combat menus stay Fight / Magic / Item / Flee. New panels stay desktop-first.
