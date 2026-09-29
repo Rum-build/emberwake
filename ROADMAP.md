@@ -260,12 +260,23 @@ Playable on the Verdant Isle field:
 - East of the Concord yard, a dry bundle is Nima’s private word. If Torren is there, they answer each other. On the bench short of the north stone, if both came, Nima answers Torren. Neither word opens the mark or drinks the slag. The new props do not sit on Enter.
 - Phone controls, Absorb, Pack, and Continue stay.
 
-## Cloth and patrol (this branch)
+## Cloth and patrol (shipped)
 
 - Figures separate cloth, leather, and metal. A Concord coat wears a seal plate. Vesper’s hood keeps a dull iron pin. The ash shelf and the Concord yard use a dusk sky. Drinking a pool washes the screen. When motion is on, the camera dips. Still holds the dip and keeps the wash as a flat flash.
 - West of the shale roost, two Concord coats look once. If a bound cord, Cousin’s Margin, or a ration is in the pack, they say so. None of those opens the vault. Torren answers if he came.
 - Places lists Enter, Absorb, Look, and Closer. A pool inside a wider ring says Closer and brightens its rim before Absorb appears. The village fence sits further outside the door.
 - The absorb sting adds a soft sine. A ration bite plays when the biscuit is traded or taken, if Sound is on. Both are original and listed in CREDITS.md.
+- Phone controls, Absorb, Pack, and Continue stay.
+
+## Dusk claim (this branch)
+
+- The remnant claim and the aftermath retint the lights already in the room. Claim is gold and fed. Refusal is a cold licence. Share splits warm and violet. Burn drops the room and heats the scar. The door does not move.
+- Ash is Thin, Steady, or Thick from the title and the pack. Still holds the motes. The count follows the setting. On a phone the motes still skip every other tick.
+- A fight draws a Concord coat with the same cloth, leather, and seal plate as the field. A beast, a mite, a wisp, the kiln, and the gull take a rim and the same metal.
+- West of the roost, the patrol can be provoked. The coats fight. Leaving them does not. The vault door does not open either way.
+- A gull’s cry stays through that person’s turn. Mind from a ration breaks it. The wound side does not. If the mind was already thin and not steadied, the cry costs 4 HP when the turn ends. A ration still closes 22 HP or returns 12 mind. A steadied mind holds the next cry to 2.
+- The first dusk on the ash is one inner line from Lira and the spark. It does not scar, and it does not open the engine.
+- Places leaves the stick, Absorb, and Enter live. Closer still means step in. The village door still says Enter.
 - Phone controls, Absorb, Pack, and Continue stay.
 
 ## Still ahead

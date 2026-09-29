@@ -187,6 +187,10 @@
   let bedWanted = true;
   let motionWanted = true;
   let combatPace = 'steady';
+  let ashDensity = 'steady';
+  let coastPatrol = null;
+  let patrolIntent = 'leave';
+  let ashDuskLatch = false;
   let audioCtx = null;
   let bedGain = null;
   let bedFilter = null;
@@ -459,6 +463,8 @@
     scarMarks = {};
     vesperAsh = null;
     vesperAshLatch = false;
+    ashDuskLatch = false;
+    patrolIntent = 'leave';
     pipeWord = null;
     pipeFight = false;
     pipeLatch = false;
@@ -2346,9 +2352,11 @@
   function buildClaim() {
     const g = new THREE.Group();
     g.visible = false;
-    g.add(new THREE.AmbientLight(0x140c10, 0.1));
-    g.add(new THREE.HemisphereLight(0x8a4030, 0x060408, 0.16));
-    const claimFill = new THREE.PointLight(0xffd0a8, 0.7, 18);
+    const claimAmb = new THREE.AmbientLight(0x1a100c, 0.18);
+    const claimHemi = new THREE.HemisphereLight(0xa05038, 0x060408, 0.24);
+    g.add(claimAmb);
+    g.add(claimHemi);
+    const claimFill = new THREE.PointLight(0xffd0a8, 0.95, 20);
     claimFill.position.set(0, 2.6, 4.4);
     g.add(claimFill);
     const geo = new THREE.PlaneGeometry(22, 24, 16, 14);
@@ -2364,9 +2372,10 @@
       else c.lerp(stone, 0.45);
       if (groundGrain(x, y) > 0.35) c.lerp(stone, 0.25);
     });
-    const floor = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
-      vertexColors: true, shininess: 22, specular: new THREE.Color(0xc45a28),
-    }));
+    const floorMat = new THREE.MeshPhongMaterial({
+      vertexColors: true, shininess: 28, specular: new THREE.Color(0xc45a28),
+    });
+    const floor = new THREE.Mesh(geo, floorMat);
     floor.rotation.x = -Math.PI / 2;
     g.add(floor);
     const crack = new THREE.Mesh(
@@ -2428,6 +2437,7 @@
       g.add(post);
     });
     const shafts = [];
+    const shaftPlanes = [];
     const stains = [];
     const stainHue = [0xc45a78, 0xe8c56a, 0xff5a28, 0x6a94c8];
     [[-2.4, -2.2], [2.2, -5.4], [0, -6.4], [-0.6, 2.4]].forEach((spot, i) => {
@@ -2444,6 +2454,7 @@
       );
       shaft.position.set(spot[0], 4.2, spot[1]);
       g.add(shaft);
+      shaftPlanes.push(shaft);
       const pane = new THREE.Mesh(
         new THREE.PlaneGeometry(0.42, 6.6),
         new THREE.MeshBasicMaterial({
@@ -2465,7 +2476,13 @@
       shafts.push(light);
     });
     g.userData.shafts = shafts;
+    g.userData.shaftPlanes = shaftPlanes;
     g.userData.stains = stains;
+    g.userData.amb = claimAmb;
+    g.userData.hemi = claimHemi;
+    g.userData.fill = claimFill;
+    g.userData.floorMat = floorMat;
+    g.userData.wallMat = wallMat;
     const core = new THREE.Mesh(
       new THREE.IcosahedronGeometry(1.85, 1),
       new THREE.MeshBasicMaterial({ color: 0xff6a2a, fog: false })
@@ -2550,6 +2567,11 @@
     landed.visible = false;
     g.add(landed);
     g.userData.landed = landed;
+    g.userData.heart = heart;
+    g.userData.wash = massWash;
+    g.userData.stage = stage;
+    g.userData.halo = halo;
+    g.userData.coreBase = 1.15;
     makeMotes(g, 120, 0xd0b8a4, { x: 16, y: 5.5, z: 18 }, { fall: true });
     claimGroup = g;
     scene.add(g);
@@ -2562,6 +2584,9 @@
     g.add(amb);
     const hemi = new THREE.HemisphereLight(0xc08040, 0x100806, 0.38);
     g.add(hemi);
+    const endFill = new THREE.PointLight(0xffe0a0, 0.9, 14);
+    endFill.position.set(0, 2.4, 0.6);
+    g.add(endFill);
     const geo = new THREE.PlaneGeometry(14, 12, 8, 8);
     const ash = new THREE.Color(0x14100e);
     const ember = new THREE.Color(0x6a3018);
@@ -2569,9 +2594,10 @@
       c.copy(ash);
       if (Math.hypot(x, y + 2.4) < 2.2) c.lerp(ember, 0.45);
     });
-    const floor = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
-      vertexColors: true, shininess: 5, specular: new THREE.Color(0x2a1810),
-    }));
+    const floorMat = new THREE.MeshPhongMaterial({
+      vertexColors: true, shininess: 12, specular: new THREE.Color(0x2a1810),
+    });
+    const floor = new THREE.Mesh(geo, floorMat);
     floor.rotation.x = -Math.PI / 2;
     g.add(floor);
     const wallMat = new THREE.MeshLambertMaterial({ color: 0x1a1214 });
@@ -2754,6 +2780,9 @@
     };
     g.userData.amb = amb;
     g.userData.hemi = hemi;
+    g.userData.fill = endFill;
+    g.userData.floorMat = floorMat;
+    g.userData.wallMat = wallMat;
     g.userData.shafts = shafts;
     g.userData.shaftPlanes = shaftPlanes;
     g.userData.core = core;
@@ -3034,15 +3063,21 @@
   function nearestPatrol() {
     if (!playerMesh || locale !== 'field' || regionId !== 'stormreach' || skyPass) return null;
     if (Math.hypot(-8.8 - playerMesh.position.x, 9.6 - playerMesh.position.z) > 1.0) return null;
+    if (seenBeats['coast-brawl']) {
+      return {
+        title: 'A Concord patrol',
+        hint: 'They already answered. The vault door did not change. Press E. It is still not the door.',
+      };
+    }
     if (seenBeats['coast-patrol']) {
       return {
         title: 'A Concord patrol',
-        hint: 'They already looked at the pack. The vault door did not change. Press E to hear it again.',
+        hint: 'They already looked. Press E to leave them, or to provoke them. The vault stays shut.',
       };
     }
     return {
       title: 'A Concord patrol',
-      hint: 'Two coats on the west shale. Press E. They are not the tally and not the door.',
+      hint: 'Two coats on the west shale. Press E. They are not the tally and not the door. A provocation is a fight.',
     };
   }
 
@@ -3480,7 +3515,8 @@
     porter.position.set(2.45, 0, 2.55);
     porter.rotation.y = -0.6;
     g.add(porter);
-    g.add(makeCoastPatrol(-8.8, 9.6));
+    coastPatrol = makeCoastPatrol(-8.8, 9.6);
+    g.add(coastPatrol);
     const puddle = new THREE.Mesh(
       new THREE.CircleGeometry(0.48, 10),
       new THREE.MeshBasicMaterial({ color: 0x2a4458, transparent: true, opacity: 0.78 })
@@ -4157,6 +4193,7 @@
       sizeAttenuation: true,
     }));
     pts.userData.base = base;
+    pts.userData.count = count;
     pts.userData.fall = !!(opts && opts.fall);
     if (pts.userData.fall) {
       pts.material.size = 0.11;
@@ -4590,6 +4627,75 @@
     });
   }
 
+  function ashShowCount(count, biome) {
+    const thin = ashDensity === 'thin';
+    let show = thin ? Math.max(8, Math.floor(count * 0.38)) : count;
+    if (biome === 'burn' && !thin) show = count;
+    else if (biome === 'refuse') show = Math.max(6, Math.floor(show * 0.7));
+    else if (biome === 'claim' || biome === 'dusk') show = thin ? show : count;
+    return Math.max(1, Math.min(count, show));
+  }
+
+  function moteBiome(pts) {
+    let node = pts.parent;
+    while (node) {
+      if (node === claimGroup) return 'claim';
+      if (node === aftermathGroup) {
+        if (claimWord === 'burn' || claimWord === 'refuse' || claimWord === 'share') return claimWord;
+        return 'claim';
+      }
+      if (node === marrowGroup || node === naveGroup || node === yardGroup) return 'dusk';
+      node = node.parent;
+    }
+    return 'field';
+  }
+
+  function applyAshDensity() {
+    if (!motes.length) return;
+    motes.forEach((pts) => {
+      const count = pts.userData.count || 0;
+      if (!count || !pts.geometry) return;
+      const fall = !!pts.userData.fall;
+      const biome = moteBiome(pts);
+      const show = ashShowCount(count, biome);
+      let op = fall
+        ? (ashDensity === 'thin' ? 0.28 : ashDensity === 'thick' ? 0.86 : 0.58)
+        : (ashDensity === 'thin' ? 0.2 : ashDensity === 'thick' ? 0.58 : 0.42);
+      let size = fall
+        ? (ashDensity === 'thin' ? 0.08 : ashDensity === 'thick' ? 0.16 : 0.11)
+        : (ashDensity === 'thick' ? 0.08 : 0.055);
+      if (biome === 'burn') { op *= 1.2; size *= 1.1; }
+      else if (biome === 'refuse') op *= 0.65;
+      else if (biome === 'share') op *= 0.9;
+      else if (biome === 'claim' || biome === 'dusk') op *= 1.08;
+      pts.userData.ashOpacity = Math.max(0.1, Math.min(0.95, op));
+      pts.userData.ashSize = size;
+      pts.geometry.setDrawRange(0, show);
+      if (!motionWanted) {
+        pts.material.opacity = pts.userData.ashOpacity;
+        pts.material.size = size;
+      }
+    });
+  }
+
+  function pulseClaim() {
+    if (!claimGroup || !claimGroup.visible || !claimGroup.userData.core) return;
+    const core = claimGroup.userData.core;
+    const base = claimGroup.userData.coreBase || 1.15;
+    if (!motionWanted) {
+      core.scale.setScalar(base);
+      return;
+    }
+    core.scale.setScalar(base * (1 + Math.sin(performance.now() * 0.0022) * 0.06));
+  }
+
+  function syncPatrolPose() {
+    if (!coastPatrol) return;
+    const down = !!seenBeats['coast-brawl'];
+    coastPatrol.rotation.z = down ? 1.05 : 0;
+    coastPatrol.position.y = down ? 0.12 : 0;
+  }
+
   function driftMotes() {
     if (!motes.length || !motionWanted) return;
     if (phoneMode && ((Math.floor(performance.now() / 40) % 2) === 0)) return;
@@ -4610,8 +4716,10 @@
           arr[i] = base[i] + Math.sin(t * 0.28 + i * 0.17) * 0.24;
           arr[i + 1] = span - ((base[i + 1] + t * speed) % span);
           arr[i + 2] = base[i + 2] + Math.cos(t * 0.22 + i * 0.13) * 0.18;
-          pts.material.opacity = 0.42 + Math.sin(t * 1.15) * 0.16;
-          pts.material.size = 0.1 + Math.sin(t * 0.65) * 0.02;
+          const baseOp = pts.userData.ashOpacity || 0.58;
+          const baseSize = pts.userData.ashSize || 0.11;
+          pts.material.opacity = Math.max(0.08, baseOp + Math.sin(t * 1.15) * 0.1);
+          pts.material.size = baseSize + Math.sin(t * 0.65) * 0.015;
         } else {
           arr[i + 1] = 0.2 + ((base[i + 1] + t * 0.18) % 1.5);
           arr[i + 2] = base[i + 2] + Math.cos(t * 0.4 + i) * 0.05;
@@ -4756,10 +4864,48 @@
     combatGroup.add(cold);
   }
 
+  function combatMats(color, concord) {
+    const cloth = new THREE.MeshPhongMaterial({
+      color,
+      emissive: new THREE.Color(concord ? 0x10141c : 0x1a100c),
+      shininess: 6,
+      specular: new THREE.Color(0x241c18),
+    });
+    const leather = new THREE.MeshPhongMaterial({
+      color: 0x3a2c22,
+      shininess: 22,
+      specular: new THREE.Color(0x6a4830),
+    });
+    const metal = new THREE.MeshPhongMaterial({
+      color: concord ? 0xd4b56a : 0x9aa0a8,
+      emissive: new THREE.Color(concord ? 0x3a2c10 : 0x14181c),
+      shininess: concord ? 86 : 70,
+      specular: new THREE.Color(concord ? 0xfff2c8 : 0xe4e8ee),
+    });
+    return { cloth, leather, metal };
+  }
+
+  function combatSilhouette(parent, color, w, h, y) {
+    const rimColor = new THREE.Color(color).lerp(new THREE.Color(0xffe6c8), 0.62);
+    const rim = new THREE.Mesh(
+      new THREE.PlaneGeometry(w, h),
+      new THREE.MeshBasicMaterial({
+        color: rimColor, transparent: true, opacity: 0.38, depthWrite: false, side: THREE.DoubleSide, fog: false,
+      })
+    );
+    rim.position.set(0, y, -0.32);
+    parent.add(rim);
+  }
+
+  function enemyConcord(enemy) {
+    return enemy.id === 'scribe' || enemy.id === 'warden' || enemy.id === 'clerk' || enemy.id === 'stoker' || enemy.id === 'counter' || enemy.id === 'captain' || enemy.id === 'auditor' || enemy.id === 'celebrant';
+  }
+
   function makeEnemyMesh(enemy) {
-    if (enemy.shape === 'human') return makeCharacter(enemy.color, 0.9);
+    const concord = enemyConcord(enemy);
+    if (enemy.shape === 'human') return makeCharacter(enemy.color, 0.9, concord ? 'concord' : undefined);
     if (enemy.shape === 'rite') {
-      const figure = makeCharacter(enemy.color, 1.12);
+      const figure = makeCharacter(enemy.color, 1.12, concord ? 'concord' : undefined);
       const ring = new THREE.Mesh(
         new THREE.TorusGeometry(0.72, 0.08, 6, 16),
         new THREE.MeshBasicMaterial({ color: 0xffb060, fog: false })
@@ -4770,7 +4916,7 @@
       return figure;
     }
     if (enemy.shape === 'banner') {
-      const figure = makeCharacter(enemy.color, 1.05);
+      const figure = makeCharacter(enemy.color, 1.05, concord ? 'concord' : undefined);
       const cloth = new THREE.Mesh(
         new THREE.PlaneGeometry(0.85, 1.15),
         new THREE.MeshBasicMaterial({ color: 0x8a3028, side: THREE.DoubleSide, fog: false })
@@ -4780,7 +4926,7 @@
       return figure;
     }
     if (enemy.shape === 'ledger') {
-      const figure = makeCharacter(enemy.color, 0.92);
+      const figure = makeCharacter(enemy.color, 0.92, concord ? 'concord' : undefined);
       const board = new THREE.Mesh(
         new THREE.PlaneGeometry(0.78, 0.95),
         new THREE.MeshBasicMaterial({ color: 0xf0e2c4, fog: false })
@@ -4806,19 +4952,22 @@
       return figure;
     }
     if (enemy.shape === 'wing') {
+      const mats = combatMats(enemy.color, false);
       const bird = new THREE.Group();
-      const body = new THREE.Mesh(
-        new THREE.SphereGeometry(0.28, 8, 6),
-        new THREE.MeshLambertMaterial({ color: enemy.color })
-      );
+      const body = new THREE.Mesh(new THREE.SphereGeometry(0.28, 8, 6), mats.leather);
       body.position.y = 0.85;
       bird.add(body);
       const wing = new THREE.Mesh(
         new THREE.PlaneGeometry(0.9, 0.28),
-        new THREE.MeshBasicMaterial({ color: 0xe8eef4, fog: false, side: THREE.DoubleSide, transparent: true, opacity: 0.9 })
+        mats.cloth
       );
       wing.position.set(0, 0.92, 0);
       bird.add(wing);
+      const beak = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.18, 5), mats.metal);
+      beak.rotation.z = -Math.PI / 2;
+      beak.position.set(0.28, 0.86, 0.08);
+      bird.add(beak);
+      combatSilhouette(bird, enemy.color, 1.15, 0.7, 0.9);
       return bird;
     }
     if (enemy.shape === 'echo') {
@@ -4835,74 +4984,73 @@
     }
     const g = new THREE.Group();
     const color = enemy.color;
+    const mats = combatMats(color, false);
     if (enemy.shape === 'kiln') {
       const core = new THREE.Mesh(
         new THREE.SphereGeometry(0.78, 12, 12),
-        new THREE.MeshLambertMaterial({ color, emissive: new THREE.Color(0x6a1808) })
+        mats.cloth
       );
+      core.material.emissive = new THREE.Color(0x6a1808);
       core.position.y = 0.9;
       g.add(core);
-      const crack = new THREE.Mesh(
-        new THREE.TorusGeometry(0.46, 0.06, 6, 12),
-        new THREE.MeshLambertMaterial({ color: 0xff5500, emissive: new THREE.Color(0x441000) })
-      );
+      const crack = new THREE.Mesh(new THREE.TorusGeometry(0.46, 0.06, 6, 12), mats.metal);
       crack.rotation.x = Math.PI / 2;
       crack.position.y = 0.9;
       g.add(crack);
+      combatSilhouette(g, color, 1.7, 1.7, 0.9);
       return g;
     }
     if (enemy.shape === 'sphere') {
-      const mesh = new THREE.Mesh(
-        new THREE.SphereGeometry(0.52, 10, 10),
-        new THREE.MeshLambertMaterial({ color, emissive: new THREE.Color(0x4a1808) })
-      );
+      const shell = mats.cloth.clone();
+      shell.shininess = 64;
+      shell.specular = new THREE.Color(0xe4e8ee);
+      shell.emissive = new THREE.Color(color).multiplyScalar(0.28);
+      const mesh = new THREE.Mesh(new THREE.SphereGeometry(0.52, 10, 10), shell);
       mesh.position.y = 0.55;
       g.add(mesh);
-      const horn = new THREE.Mesh(
-        new THREE.ConeGeometry(0.1, 0.35, 5),
-        new THREE.MeshLambertMaterial({ color: 0x2a120c })
-      );
+      const horn = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.35, 5), mats.leather);
       horn.position.set(0.2, 1.0, 0.1);
       horn.rotation.z = -0.5;
       g.add(horn);
+      combatSilhouette(g, color, 1.15, 1.25, 0.62);
     } else if (enemy.shape === 'bug') {
-      const body = new THREE.Mesh(
-        new THREE.SphereGeometry(0.36, 8, 6),
-        new THREE.MeshLambertMaterial({ color, emissive: new THREE.Color(0x000000) })
-      );
+      const shell = mats.cloth.clone();
+      shell.shininess = 48;
+      shell.specular = new THREE.Color(0xc8c0b0);
+      const body = new THREE.Mesh(new THREE.SphereGeometry(0.36, 8, 6), shell);
       body.scale.set(1.35, 0.7, 0.95);
       body.position.y = 0.32;
       g.add(body);
+      const belly = new THREE.Mesh(new THREE.SphereGeometry(0.22, 6, 5), mats.leather);
+      belly.position.y = 0.22;
+      g.add(belly);
+      const plate = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.06, 0.08), mats.metal);
+      plate.position.set(0.28, 0.4, 0.1);
+      g.add(plate);
       for (let i = 0; i < 6; i++) {
-        const leg = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.03, 0.03, 0.4, 4),
-          new THREE.MeshLambertMaterial({ color: 0x1c1a14 })
-        );
+        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.4, 4), mats.leather);
         leg.position.set((i % 2 ? 0.28 : -0.28), 0.2, -0.2 + Math.floor(i / 2) * 0.2);
         leg.rotation.z = i % 2 ? -0.8 : 0.8;
         g.add(leg);
       }
+      combatSilhouette(g, color, 1.2, 0.7, 0.36);
     } else {
-      const body = new THREE.Mesh(
-        new THREE.BoxGeometry(0.95, 0.42, 0.4),
-        new THREE.MeshLambertMaterial({ color, emissive: new THREE.Color(0x000000) })
-      );
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.42, 0.4), mats.cloth);
       body.position.set(0, 0.42, 0);
       g.add(body);
-      const head = new THREE.Mesh(
-        new THREE.BoxGeometry(0.32, 0.28, 0.3),
-        new THREE.MeshLambertMaterial({ color })
-      );
+      const head = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.28, 0.3), mats.cloth);
       head.position.set(0.5, 0.58, 0);
       g.add(head);
+      const spike = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.22, 5), mats.metal);
+      spike.position.set(0.62, 0.72, 0);
+      spike.rotation.z = -1.1;
+      g.add(spike);
       [[-0.28, 0.16], [-0.28, -0.16], [0.22, 0.16], [0.22, -0.16]].forEach((pair) => {
-        const leg = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.05, 0.06, 0.32, 5),
-          new THREE.MeshLambertMaterial({ color: 0x3a3028 })
-        );
+        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 0.32, 5), mats.leather);
         leg.position.set(pair[0], 0.16, pair[1]);
         g.add(leg);
       });
+      combatSilhouette(g, color, 1.35, 0.85, 0.42);
     }
     return g;
   }
@@ -5576,7 +5724,9 @@
       if (seenBeats['way-post']) waiting.push('A snapped mile post on the isle does not open the kiln.');
       if (seenBeats['cold-ring']) waiting.push('A cold ring in the grass is not a pool and not the scar.');
       if (seenBeats['clerk-tally']) waiting.push('A tally clerk on the shale counted weather. The vault door did not change.');
-      if (seenBeats['coast-patrol']) waiting.push('A Concord patrol on the west shale looked at the pack. The vault door did not change.');
+      if (seenBeats['coast-brawl']) waiting.push('The west-shale patrol was provoked. They fought. The vault door did not change.');
+      else if (seenBeats['coast-patrol']) waiting.push('A Concord patrol on the west shale looked at the pack. They can still be provoked. The vault door did not change.');
+      if (seenBeats['ash-dusk']) waiting.push('Dusk on the ash was named. The mouth stayed hers. The engine did not open for it.');
       if (seenBeats['ration-swap']) waiting.push('A stall on the shale traded rot-ash for a Concord ration. It closes 22 HP or returns 12 mind. It does not open the vault.');
       if (seenBeats['yard-aside']) waiting.push('A private word was said short of the north stone. The mark and the slag stayed where they were.');
       if (seenBeats['yard-nima']) waiting.push('Nima’s herbs by the east fence were named once. The mark and the slag stayed where they were.');
@@ -5840,7 +5990,9 @@
       stack.count -= 1;
       const before = t.hp;
       t.hp = Math.min(maxHp(t), t.hp + def.heal);
-      showToast(t.name + ' drinks the ' + def.name + '. ' + (t.hp - before) + ' HP. Now ' + t.hp + '/' + maxHp(t) + '.');
+      let cryNote = '';
+      if (id === 'ration' && t.cry) cryNote = ' The cry stays.';
+      showToast(t.name + ' drinks the ' + def.name + '. ' + (t.hp - before) + ' HP. Now ' + t.hp + '/' + maxHp(t) + '.' + cryNote);
       if (id === 'ration') playRation();
     } else if ((mode === 'mp' || (!split && def.mp)) && def.mp) {
       const living = party.filter((p) => p.hp > 0).slice().sort((a, b) => (a.mp / a.maxMp) - (b.mp / b.maxMp));
@@ -5852,7 +6004,15 @@
       stack.count -= 1;
       const before = t.mp;
       t.mp = Math.min(t.maxMp, t.mp + def.mp);
-      showToast(t.name + ' takes the ' + def.name + '. ' + (t.mp - before) + ' mind. Now ' + t.mp + '/' + t.maxMp + '.');
+      let cryNote = '';
+      if (id === 'ration') {
+        t.steadied = true;
+        if (t.cry) {
+          t.cry = 0;
+          cryNote = ' The cry breaks.';
+        }
+      }
+      showToast(t.name + ' takes the ' + def.name + '. ' + (t.mp - before) + ' mind. Now ' + t.mp + '/' + t.maxMp + '.' + cryNote);
       if (id === 'ration') playRation();
     }
     renderInventory();
@@ -6175,6 +6335,7 @@
     }
     playSting();
     pulseAbsorb();
+    closePlaces();
     showToast(msg, seenBeats.fedOnce && msg.indexOf('A scar is a separate cut') >= 0 ? 7200 : 4600);
     refreshRumor();
     updateHUD();
@@ -7127,14 +7288,86 @@
       : 'You stepped back from the light. Holding the threshold is what opens the bar.');
   }
 
+  function claimLook() {
+    const word = claimWord === 'claim' || claimWord === 'refuse' || claimWord === 'share' || claimWord === 'burn' ? claimWord : 'open';
+    const table = {
+      open: { fog: 0x14080e, amb: 0x1a100c, ambI: 0.18, hemi: 0xa05038, hemiI: 0.24, fill: 0xffd0a8, fillI: 0.95, core: 0xff6a2a, heart: 0xffe2b0, stage: 0xff5a28, stageOp: 0.46, halo: 0xffe2b0, wash: 0xff6a2a, washOp: 0.42, shaft: 0xff5a28, shaftI: 1.25, spec: 0xc45a28, floor: 0xffd0b0, wall: 0x3a2424, coreBase: 1.15 },
+      claim: { fog: 0x1c1008, amb: 0x3a2010, ambI: 0.34, hemi: 0xe0a050, hemiI: 0.42, fill: 0xffe6b0, fillI: 1.4, core: 0xffc060, heart: 0xfff6d0, stage: 0xffb050, stageOp: 0.6, halo: 0xfff0c0, wash: 0xffc060, washOp: 0.54, shaft: 0xffc060, shaftI: 1.9, spec: 0xffc070, floor: 0xffe0b8, wall: 0x4a3020, coreBase: 1.32 },
+      refuse: { fog: 0x0c1016, amb: 0x10141c, ambI: 0.12, hemi: 0x385068, hemiI: 0.16, fill: 0x9ab0c8, fillI: 0.4, core: 0x3a342c, heart: 0x8a7050, stage: 0x141820, stageOp: 0.2, halo: 0xd4b56a, wash: 0x304058, washOp: 0.14, shaft: 0x7a94b0, shaftI: 0.38, spec: 0x6a5840, floor: 0xb0b8c4, wall: 0x242830, coreBase: 0.72 },
+      share: { fog: 0x160e16, amb: 0x281420, ambI: 0.28, hemi: 0x9068b0, hemiI: 0.34, fill: 0xffc0e0, fillI: 1.1, core: 0xffb060, heart: 0xffe0c8, stage: 0xc080ff, stageOp: 0.46, halo: 0xd0a0ff, wash: 0xffb0d0, washOp: 0.4, shaft: 0xffb070, shaftI: 1.4, spec: 0xc080ff, floor: 0xf0c0d8, wall: 0x3a2838, coreBase: 1.05 },
+      burn: { fog: 0x100402, amb: 0x180604, ambI: 0.1, hemi: 0x501008, hemiI: 0.16, fill: 0xff3818, fillI: 1.6, core: 0xff220c, heart: 0xff7040, stage: 0xff1a08, stageOp: 0.68, halo: 0x3a1008, wash: 0xff2a10, washOp: 0.62, shaft: 0xff3010, shaftI: 2.2, spec: 0xff3818, floor: 0xff8060, wall: 0x2a1210, coreBase: 0.84 },
+    };
+    return { word, look: table[word] };
+  }
+
   function syncClaimLight() {
-    if (!claimGroup || !claimGroup.userData.shafts) return;
-    const hot = claimWord === 'claim' || claimWord === 'share';
-    claimGroup.userData.shafts.forEach((light, i) => {
-      light.intensity = claimWord === 'burn' ? 1.9 : hot ? 1.55 : claimWord === 'refuse' ? 0.55 : 1.05;
-      if (i === 2) light.color.setHex(claimWord === 'burn' ? 0xff2a10 : 0xff5a28);
-    });
-    if (claimGroup.userData.landed) claimGroup.userData.landed.visible = kestrelClaim === 'land';
+    if (!claimGroup) return;
+    const packed = claimLook();
+    const word = packed.word;
+    const look = packed.look;
+    const data = claimGroup.userData;
+    if (data.amb) {
+      data.amb.color.setHex(look.amb);
+      data.amb.intensity = look.ambI;
+    }
+    if (data.hemi) {
+      data.hemi.color.setHex(look.hemi);
+      data.hemi.intensity = look.hemiI;
+    }
+    if (data.fill) {
+      data.fill.color.setHex(look.fill);
+      data.fill.intensity = look.fillI;
+    }
+    if (data.core && data.core.material) {
+      data.core.material.color.setHex(look.core);
+      data.coreBase = look.coreBase;
+    }
+    if (data.heart && data.heart.material) data.heart.material.color.setHex(look.heart);
+    if (data.stage && data.stage.material) {
+      data.stage.material.color.setHex(look.stage);
+      data.stage.material.opacity = look.stageOp;
+    }
+    if (data.halo && data.halo.material) data.halo.material.color.setHex(look.halo);
+    if (data.wash && data.wash.material) {
+      data.wash.material.color.setHex(look.wash);
+      data.wash.material.opacity = look.washOp;
+    }
+    if (data.floorMat) {
+      data.floorMat.color.setHex(look.floor);
+      if (data.floorMat.specular) data.floorMat.specular.setHex(look.spec);
+    }
+    if (data.wallMat) {
+      data.wallMat.color.setHex(look.wall);
+      if (data.wallMat.specular) data.wallMat.specular.setHex(look.spec);
+    }
+    if (data.shafts) {
+      data.shafts.forEach((light, i) => {
+        const violet = word === 'share' && i % 2 === 1;
+        light.color.setHex(violet ? 0xc080ff : look.shaft);
+        light.intensity = look.shaftI * (i === 2 ? 1.15 : 0.82);
+      });
+    }
+    if (data.shaftPlanes) {
+      data.shaftPlanes.forEach((plane, i) => {
+        const violet = word === 'share' && i % 2 === 1;
+        plane.material.color.setHex(violet ? 0xc080ff : look.shaft);
+        plane.material.opacity = word === 'refuse' ? 0.12 : word === 'burn' ? 0.58 : word === 'claim' ? 0.5 : 0.36;
+      });
+    }
+    if (data.stains) {
+      data.stains.forEach((pane, i) => {
+        const violet = word === 'share' && i % 2 === 1;
+        pane.material.color.setHex(violet ? 0xc080ff : look.shaft);
+        pane.material.opacity = word === 'refuse' ? 0.1 : word === 'burn' ? 0.4 : 0.3;
+      });
+    }
+    if (data.landed) data.landed.visible = kestrelClaim === 'land';
+    if (locale === 'remnant-claim' && scene && scene.fog) {
+      scene.fog.color.setHex(look.fog);
+      scene.fog.near = word === 'burn' ? 8 : word === 'refuse' ? 9 : 10;
+      scene.fog.far = word === 'burn' ? 28 : word === 'refuse' ? 32 : 42;
+      if (renderer) renderer.setClearColor(look.fog);
+    }
   }
 
   function enterClaim(opts) {
@@ -7317,10 +7550,10 @@
     if (!scene || !scene.fog) return;
     const word = claimWord === 'refuse' || claimWord === 'share' || claimWord === 'burn' ? claimWord : 'claim';
     const table = {
-      claim: { fog: 0x1a1008, near: 8, far: 28, amb: 0x3a2414, ambI: 0.5, hemi: 0xc08040, core: 0xffc080, twin: 0xffe0a0, ring: 0x2a140c, shaft: 0xffe0a0, shaftI: 1.35, rot: 0x3a5a32, rotOp: 0.38, banner: 0x3a2418 },
-      refuse: { fog: 0x0c1014, near: 7, far: 24, amb: 0x141820, ambI: 0.2, hemi: 0x304058, core: 0x3a3028, twin: 0x304058, ring: 0xffe2b0, shaft: 0x8aa4c0, shaftI: 0.42, rot: 0x3a2438, rotOp: 0.55, banner: 0xc4a060 },
-      share: { fog: 0x180e14, near: 8, far: 26, amb: 0x2a1828, ambI: 0.36, hemi: 0x8060a0, core: 0xffb060, twin: 0xc080ff, ring: 0xd0a0ff, shaft: 0xffc0e0, shaftI: 1.05, rot: 0x5a4060, rotOp: 0.32, banner: 0x8060a0 },
-      burn: { fog: 0x100604, near: 6, far: 22, amb: 0x1a0806, ambI: 0.16, hemi: 0x401008, core: 0xff2a10, twin: 0x3a1008, ring: 0x140806, shaft: 0xff3018, shaftI: 1.65, rot: 0x1a0806, rotOp: 0.72, banner: 0x1a0808 },
+      claim: { fog: 0x1c1208, near: 9, far: 32, amb: 0x4a2c16, ambI: 0.62, hemi: 0xe09048, hemiI: 0.5, fill: 0xffe0a0, fillI: 1.25, core: 0xffc060, twin: 0xffe0a0, ring: 0xffe2b0, shaft: 0xffe0a0, shaftI: 1.7, rot: 0x3a8a40, rotOp: 0.5, banner: 0x3a2418, floor: 0xffe0b0, wall: 0x3a2820, spec: 0xffc070, plane: 0.34 },
+      refuse: { fog: 0x0a1016, near: 6, far: 20, amb: 0x101820, ambI: 0.14, hemi: 0x304868, hemiI: 0.16, fill: 0x8aa4c8, fillI: 0.32, core: 0x2a3038, twin: 0x304058, ring: 0xd4b56a, shaft: 0x7a94b0, shaftI: 0.28, rot: 0x2a1828, rotOp: 0.7, banner: 0xc4a060, floor: 0xa8b4c4, wall: 0x1c222c, spec: 0x8a7040, plane: 0.08 },
+      share: { fog: 0x1a1018, near: 8, far: 28, amb: 0x321828, ambI: 0.4, hemi: 0x9068b8, hemiI: 0.4, fill: 0xffc0e8, fillI: 1.05, core: 0xffb060, twin: 0xc080ff, ring: 0xd0a0ff, shaft: 0xffc0e0, shaftI: 1.25, rot: 0x6a4878, rotOp: 0.4, banner: 0x8060a0, floor: 0xf0c0e0, wall: 0x342434, spec: 0xc080ff, plane: 0.3 },
+      burn: { fog: 0x140402, near: 5, far: 16, amb: 0x1a0604, ambI: 0.1, hemi: 0x501008, hemiI: 0.12, fill: 0xff3010, fillI: 1.7, core: 0xff220c, twin: 0x3a1008, ring: 0x140806, shaft: 0xff280e, shaftI: 2.15, rot: 0x140604, rotOp: 0.82, banner: 0x1a0808, floor: 0xff6840, wall: 0x24100c, spec: 0xff3010, plane: 0.62 },
     };
     const look = table[word];
     scene.fog.color.setHex(look.fog);
@@ -7333,7 +7566,19 @@
       data.amb.color.setHex(look.amb);
       data.amb.intensity = look.ambI;
     }
-    if (data.hemi) data.hemi.color.setHex(look.hemi);
+    if (data.hemi) {
+      data.hemi.color.setHex(look.hemi);
+      if (look.hemiI != null) data.hemi.intensity = look.hemiI;
+    }
+    if (data.fill) {
+      data.fill.color.setHex(look.fill || look.shaft);
+      data.fill.intensity = look.fillI != null ? look.fillI : 0.8;
+    }
+    if (data.floorMat) {
+      data.floorMat.color.setHex(look.floor || 0xffffff);
+      if (data.floorMat.specular && look.spec) data.floorMat.specular.setHex(look.spec);
+    }
+    if (data.wallMat && look.wall) data.wallMat.color.setHex(look.wall);
     if (data.core) {
       data.core.material.color.setHex(look.core);
       data.core.position.set(word === 'share' ? -0.45 : 0, word === 'burn' ? 1.55 : 2.05, -2.65);
@@ -7363,7 +7608,7 @@
     if (data.shaftPlanes) {
       data.shaftPlanes.forEach((plane, i) => {
         plane.material.color.setHex(word === 'share' && i === 1 ? 0xc080ff : look.shaft);
-        plane.material.opacity = word === 'refuse' ? 0.08 : 0.22;
+        plane.material.opacity = look.plane != null ? look.plane : (word === 'refuse' ? 0.08 : 0.22);
       });
     }
     if (data.plaques) {
@@ -7972,23 +8217,44 @@
 
   function talkPatrol() {
     if (locale !== 'field' || regionId !== 'stormreach' || dialogueOpen) return;
-    if (seenBeats['coast-patrol']) {
-      showToast('The patrol already looked. The vault door did not change.');
+    if (seenBeats['coast-brawl']) {
+      showToast('The coats already answered. The vault door did not change.');
       return;
     }
+    patrolIntent = 'leave';
     const fn = EW.scenes['coast-patrol'];
-    if (typeof fn === 'function') {
-      const played = fn();
-      if (played !== false && dialogueOpen) pendingBeat = 'coast-patrol';
-    }
+    if (typeof fn === 'function') fn();
   }
 
   function notePatrol() {
+    const again = !!seenBeats['coast-patrol'];
     seenBeats['coast-patrol'] = true;
-    showToast('The patrol looked at the pack. The vault door is still the other board.');
+    showToast(again
+      ? 'They stay on the shale. The vault door did not change.'
+      : 'The patrol looked at the pack. The vault door is still the other board.');
     refreshRumor();
     updateHUD();
     saveGame();
+  }
+
+  function armPatrol(id) {
+    patrolIntent = id === 'provoke' ? 'provoke' : 'leave';
+  }
+
+  function finishPatrol() {
+    if (patrolIntent === 'provoke') notePatrolFight();
+    else notePatrol();
+    patrolIntent = 'leave';
+  }
+
+  function notePatrolFight() {
+    seenBeats['coast-patrol'] = true;
+    if (seenBeats['coast-brawl']) {
+      showToast('The coats already answered. The vault door did not change.');
+      return;
+    }
+    showToast('The coats answer the provocation. The vault door is still the other board.');
+    beginScriptedFight(['clerk', 'warden'], 'coast-brawl');
   }
 
   function talkRation() {
@@ -8204,6 +8470,16 @@
       lastMergeNote = riteTorn
         ? ' The merge spent the rite.'
         : ' The rite frayed under the knife.';
+    }
+    if (tag === 'coast-brawl') {
+      seenBeats['coast-brawl'] = true;
+      seenBeats['coast-patrol'] = true;
+      if (!seals.some((seal) => seal.name === 'Provoked Patrol')) {
+        seals.push({
+          name: 'Provoked Patrol',
+          desc: 'The west-shale coats answered a provocation. The fight did not open the vault.',
+        });
+      }
     }
     if (tag === 'pipe-stoker') {
       pipeWord = 'crack';
@@ -8449,6 +8725,7 @@
       updateCellarTriggers();
       updateVaultTriggers();
       updateMarrowVesper();
+      updateAshDusk();
       updatePipeTrigger();
       updateThroatTrigger();
       updateYardVesper();
@@ -8534,6 +8811,9 @@
     }
     tintHost();
     syncCough();
+    applyAshDensity();
+    pulseClaim();
+    syncPatrolPose();
     updateHUD();
     updatePrompt();
   }
@@ -8561,6 +8841,7 @@
     stepsSinceEncounter = 0;
     combatInRot = rotPressure() > 0.45;
     if (inventoryOpen) setInventory(false);
+    closePlaces();
     joy.active = false;
     joy.dx = 0;
     joy.dy = 0;
@@ -8669,6 +8950,11 @@
   function clearCry() {
     if (!party) return;
     party.forEach((member) => { if (member) member.cry = 0; });
+  }
+
+  function clearSteadied() {
+    if (!party) return;
+    party.forEach((member) => { if (member) member.steadied = false; });
   }
 
   function startCombat() {
@@ -8808,8 +9094,7 @@
         }
       }
       if (coughing && coughing.cry) {
-        coughing.cry = 0;
-        showLog('The cry fades. ' + coughing.name + ' keeps the mind that is left.');
+        showLog('The cry is on ' + coughing.name + '. Mind breaks it. A wound does not.');
         updateCombatUI();
       }
       if (partyAssist(t.index)) return;
@@ -8854,7 +9139,37 @@
     return true;
   }
 
+  function resolveCry(member) {
+    if (!member || !member.cry) return false;
+    member.cry = 0;
+    if (member.steadied) {
+      showLog('The cry fades. The ration already steadied ' + member.name + '.');
+      return false;
+    }
+    if (member.maxMp > 0 && member.mp * 4 < member.maxMp) {
+      member.hp = Math.max(0, member.hp - 4);
+      showLog('The cry reaches the body. ' + member.name + ' loses 4. A ration’s mind would have held it.');
+      return member.hp <= 0;
+    }
+    showLog('The cry fades. ' + member.name + ' keeps the mind that is left.');
+    return false;
+  }
+
   function advanceTurn() {
+    const turn = currentTurn();
+    if (turn && turn.type === 'party') {
+      const dropped = resolveCry(party[turn.index]);
+      if (dropped) {
+        updateCombatUI();
+        later(() => {
+          if (!checkCombatEnd()) {
+            combatTurnIndex++;
+            beginNextTurn();
+          }
+        }, 420);
+        return;
+      }
+    }
     combatTurnIndex++;
     later(() => beginNextTurn(), 260);
   }
@@ -9269,13 +9584,22 @@
       if (asMind) {
         const before = target.mp;
         target.mp = Math.min(target.maxMp, target.mp + def.mp);
-        showLog(actor.name + ' gives ' + target.name + ' the ' + def.name + '. ' + (target.mp - before) + ' mind. Now ' + target.mp + '/' + target.maxMp + '.');
+        let cryNote = '';
+        if (act.item === 'ration') {
+          target.steadied = true;
+          if (target.cry) {
+            target.cry = 0;
+            cryNote = ' The cry breaks.';
+          }
+        }
+        showLog(actor.name + ' gives ' + target.name + ' the ' + def.name + '. ' + (target.mp - before) + ' mind. Now ' + target.mp + '/' + target.maxMp + '.' + cryNote);
         flashMesh(combatPartyMeshes[targetIdx], 0x9ec6e8);
         if (act.item === 'ration') playRation();
       } else if (def.heal) {
         const before = target.hp;
         target.hp = Math.min(maxHp(target), target.hp + def.heal);
-        showLog(actor.name + ' gives ' + target.name + ' the ' + def.name + '. ' + (target.hp - before) + ' HP. Now ' + target.hp + '/' + maxHp(target) + '.');
+        const cryNote = act.item === 'ration' && target.cry ? ' The cry stays.' : '';
+        showLog(actor.name + ' gives ' + target.name + ' the ' + def.name + '. ' + (target.hp - before) + ' HP. Now ' + target.hp + '/' + maxHp(target) + '.' + cryNote);
         flashMesh(combatPartyMeshes[targetIdx], 0x9dffc8);
         if (act.item === 'ration') playRation();
       }
@@ -9333,10 +9657,12 @@
       if (!host || host.p.mp <= 0) {
         showLog('The gull cries. No mind is left.');
       } else {
-        const spent = Math.min(4, host.p.mp);
+        const spent = Math.min(host.p.steadied ? 2 : 4, host.p.mp);
         host.p.mp -= spent;
         host.p.cry = true;
-        showLog('The gull cries. ' + host.p.name + ' loses ' + spent + ' mind.');
+        showLog(host.p.steadied
+          ? 'The gull cries. The ration holds it to ' + spent + ' mind.'
+          : 'The gull cries. ' + host.p.name + ' loses ' + spent + ' mind.');
       }
       updateCombatUI();
       later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
@@ -9505,6 +9831,8 @@
           ? ' The last stand breaks. Remnant ash stays in the teeth.' + lastMergeNote + ' The light is still ahead. The bar stays shut.'
           : tag === 'claim-rite'
           ? ' The last rite is down.' + lastMergeNote + ' The remnant is ahead. This is not the ending.'
+          : tag === 'coast-brawl'
+          ? ' The coats fall back. The vault door did not change.'
           : ' Lira keeps the bruises.';
     victoryText.textContent = msg;
     victoryOverlay.classList.remove('hidden');
@@ -9518,6 +9846,7 @@
 
   function loseCombat() {
     if (gameState === State.GAMEOVER) return;
+    clearSteadied();
     victoryTag = null;
     combatEpoch++;
     gameState = State.GAMEOVER;
@@ -9530,6 +9859,7 @@
     combatEpoch++;
     clearAsh();
     clearCry();
+    clearSteadied();
     combatUI.classList.add('hidden');
     victoryOverlay.classList.add('hidden');
     gameoverScreen.classList.add('hidden');
@@ -9620,6 +9950,7 @@
       const bits = [];
       if (p.ash) bits.push({ kind: 'ash', label: 'Ash' });
       if (p.cry) bits.push({ kind: 'air', label: 'Cry' });
+      if (p.steadied) bits.push({ kind: 'air', label: 'Steady' });
       if (p.id === 'lira' && scarDebt > 0) bits.push({ kind: 'stamp', label: 'Scar ' + scarDebt });
       return `<div class="party-card ${p.hp <= 0 ? 'dead' : ''} ${i === active ? 'active' : ''}">
         <div class="name">${esc(p.name)}</div>
@@ -9780,6 +10111,7 @@
     dialogueOnDone = (script && script.onDone) || done || null;
     dialogueOnPick = (script && script.onPick) || null;
     dialogueOpen = true;
+    closePlaces();
     if (inventoryOpen) setInventory(false);
     setFieldControls(false);
     const panel = $('#dialogue');
@@ -9887,7 +10219,14 @@
       }
       if (e.code === 'KeyI' && gameState === State.OVERWORLD && !encounterLocked) setInventory(!inventoryOpen);
       if (e.code === 'KeyE' && gameState === State.OVERWORLD) tryInteract();
-      if (e.code === 'Escape' && inventoryOpen) setInventory(false);
+      if (e.code === 'Escape') {
+        const places = $('#places-panel');
+        if (places && !places.classList.contains('hidden')) {
+          closePlaces();
+          return;
+        }
+        if (inventoryOpen) setInventory(false);
+      }
       if (gameState === State.COMBAT && inputEnabled && !combatBusy) {
         if (e.code === 'Escape' || e.code === 'Backspace') {
           pressCombatBack();
@@ -10098,6 +10437,7 @@
 
   function cross(fn) {
     const before = locale;
+    closePlaces();
     fn();
     if (locale !== before) playDoorSting();
   }
@@ -10208,19 +10548,39 @@
     if (btn) btn.textContent = 'Pace · ' + word;
   }
 
+  function syncAsh() {
+    const word = ashDensity === 'thin' ? 'Thin' : ashDensity === 'thick' ? 'Thick' : 'Steady';
+    ['#btn-ash', '#btn-pack-ash'].forEach((sel) => {
+      const btn = $(sel);
+      if (btn) btn.textContent = 'Ash · ' + word;
+    });
+  }
+
+  function cycleAsh() {
+    ashDensity = ashDensity === 'steady' ? 'thick' : ashDensity === 'thick' ? 'thin' : 'steady';
+    try { localStorage.setItem('emberwake.ash', ashDensity); } catch (err) { /* ignore */ }
+    syncAsh();
+    applyAshDensity();
+    saveGame();
+  }
+
   function loadEase() {
     let stored = null;
     let pace = null;
+    let ash = null;
     try {
       stored = localStorage.getItem('emberwake.motion');
       pace = localStorage.getItem('emberwake.pace');
+      ash = localStorage.getItem('emberwake.ash');
     } catch (err) { /* ignore */ }
     if (stored === 'off') motionWanted = false;
     else if (stored === 'on') motionWanted = true;
     else motionWanted = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (pace === 'slow' || pace === 'brisk' || pace === 'steady') combatPace = pace;
+    if (ash === 'thin' || ash === 'thick' || ash === 'steady') ashDensity = ash;
     syncMotion();
     syncPace();
+    syncAsh();
   }
 
   function setMotion(on) {
@@ -10355,6 +10715,7 @@
 
   function openPlaces() {
     if (gameState !== State.OVERWORLD || encounterLocked || dialogueOpen) return;
+    if (inventoryOpen) setInventory(false);
     const panel = $('#places-panel');
     const list = $('#places-list');
     if (!panel || !list) return;
@@ -10364,7 +10725,15 @@
 
   function closePlaces() {
     const panel = $('#places-panel');
+    const open = panel && !panel.classList.contains('hidden');
     if (panel) panel.classList.add('hidden');
+    if (!open) return;
+    joy.active = false;
+    joy.dx = 0;
+    joy.dy = 0;
+    if (joystickKnob) joystickKnob.style.transform = 'translate(-50%, -50%)';
+    updateHUD();
+    updatePrompt();
   }
 
   function setupUI() {
@@ -10412,6 +10781,10 @@
     if (packMotion) packMotion.addEventListener('click', () => setMotion(!motionWanted));
     const paceBtn = $('#btn-pace');
     if (paceBtn) paceBtn.addEventListener('click', () => cyclePace());
+    const ashBtn = $('#btn-ash');
+    if (ashBtn) ashBtn.addEventListener('click', () => cycleAsh());
+    const packAsh = $('#btn-pack-ash');
+    if (packAsh) packAsh.addEventListener('click', () => cycleAsh());
     const placesBtn = $('#btn-places');
     if (placesBtn) placesBtn.addEventListener('click', () => {
       const panel = $('#places-panel');
@@ -10589,6 +10962,7 @@
         kestrelWord: kestrelWord,
         motion: motionWanted,
         pace: combatPace,
+        ash: ashDensity,
         pos: { x: playerMesh.position.x, z: playerMesh.position.z },
         pools: pools.map((p) => ({
           id: p.id,
@@ -10694,12 +11068,15 @@
     grantReadyMerges({ quiet: true });
     if (typeof data.motion === 'boolean') motionWanted = data.motion;
     if (data.pace === 'slow' || data.pace === 'brisk' || data.pace === 'steady') combatPace = data.pace;
+    if (data.ash === 'thin' || data.ash === 'thick' || data.ash === 'steady') ashDensity = data.ash;
     try {
       localStorage.setItem('emberwake.motion', motionWanted ? 'on' : 'off');
       localStorage.setItem('emberwake.pace', combatPace);
+      localStorage.setItem('emberwake.ash', ashDensity);
     } catch (err) { /* ignore */ }
     syncMotion();
     syncPace();
+    syncAsh();
     refreshRumor();
   }
 
@@ -11195,9 +11572,29 @@
     if (typeof fn === 'function') fn();
   }
 
+  function updateAshDusk() {
+    if (locale !== 'ashen-marrow' || dialogueOpen || encounterLocked || skyPass) return;
+    if (!seenBeats.marrowStep || seenBeats['ash-dusk'] || ashDuskLatch) return;
+    ashDuskLatch = true;
+    const fn = EW.scenes['ash-dusk'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'ash-dusk';
+      else seenBeats['ash-dusk'] = true;
+    } else seenBeats['ash-dusk'] = true;
+  }
+
+  function noteDusk() {
+    seenBeats['ash-dusk'] = true;
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
   function noteMarrowStep() {
     seenBeats.marrowStep = true;
     seenBeats.marrowRoad = true;
+    seenBeats['ash-dusk'] = true;
     if (!seals.some((seal) => seal.name === 'Walked Marrow')) {
       seals.push({
         name: 'Walked Marrow',
@@ -11437,6 +11834,10 @@
   EW.hasBound = hasBound;
   EW.itemCount = itemCount;
   EW.notePatrol = notePatrol;
+  EW.patrolLooked = function () { return !!seenBeats['coast-patrol']; };
+  EW.armPatrol = armPatrol;
+  EW.finishPatrol = finishPatrol;
+  EW.noteDusk = noteDusk;
   EW.notePost = notePost;
   EW.noteRing = noteRing;
   EW.noteClerk = noteClerk;
