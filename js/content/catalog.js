@@ -67,7 +67,7 @@
     auditor: { name: 'Count Auditor', color: 0x6a5840, maxHp: 64, atk: 11, def: 6, xp: 28, gold: 16, shape: 'ledger' },
     captain: { name: 'Concord Captain', color: 0x2a2420, maxHp: 88, atk: 13, def: 7, xp: 46, gold: 28, shape: 'banner' },
     celebrant: { name: 'Rite Celebrant', color: 0x3a2418, maxHp: 108, atk: 14, def: 8, xp: 52, gold: 32, shape: 'rite' },
-    penitent: { name: 'Ash Penitent', color: 0x3a221c, maxHp: 58, atk: 12, def: 4, xp: 24, gold: 14, shape: 'cowl' },
+    penitent: { name: 'Ash Penitent', color: 0x3a221c, maxHp: 44, atk: 10, def: 3, xp: 20, gold: 12, shape: 'cowl' },
   };
 
   content.roster = {

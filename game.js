@@ -789,9 +789,9 @@
       Math.sin(x * 0.3) * Math.cos(y * 0.25) * 0.34
       + Math.sin(x * 0.82 + 1.4) * Math.cos(y * 0.66) * 0.09
     ));
-    const low = new THREE.Color(0x24562c);
-    const high = new THREE.Color(0x9cb85a);
-    const soil = new THREE.Color(0x6a5838);
+    const low = new THREE.Color(0x14361c);
+    const high = new THREE.Color(0xc6de74);
+    const soil = new THREE.Color(0x6a4a2c);
     tintPlane(groundGeo, (c, x, y, h) => {
       const t = Math.max(0, Math.min(1, (h + 0.28) / 0.5));
       c.copy(low).lerp(high, t);
@@ -802,7 +802,7 @@
       else if (grit < -0.55) c.lerp(high, 0.18);
     });
     const ground = new THREE.Mesh(groundGeo, new THREE.MeshPhongMaterial({
-      vertexColors: true, shininess: 7, specular: new THREE.Color(0x243018),
+      vertexColors: true, shininess: 18, specular: new THREE.Color(0x8aaa58),
     }));
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
@@ -915,18 +915,18 @@
 
     POOL_DEFS.forEach((def) => makePool(def));
 
-    overworldGroup.add(new THREE.AmbientLight(0xb0c4de, 0.7));
-    const sun = new THREE.DirectionalLight(0xfff5e0, 0.85);
+    overworldGroup.add(new THREE.AmbientLight(0xfff4e4, 0.36));
+    const sun = new THREE.DirectionalLight(0xfff6e0, 1.18);
     sun.position.set(20, 30, 10);
     sun.castShadow = true;
     sun.shadow.mapSize.set(1024, 1024);
     const sc = sun.shadow.camera;
     sc.near = 1; sc.far = 80; sc.left = -25; sc.right = 25; sc.top = 25; sc.bottom = -25;
     overworldGroup.add(sun);
-    const fill = new THREE.DirectionalLight(0x9eb4d0, 0.32);
+    const fill = new THREE.DirectionalLight(0x9eb4d0, 0.2);
     fill.position.set(-18, 12, -14);
     overworldGroup.add(fill);
-    overworldGroup.add(new THREE.HemisphereLight(0x87b5d9, 0x3d6b3d, 0.42));
+    overworldGroup.add(new THREE.HemisphereLight(0xb7d4ee, 0x2a5a30, 0.48));
 
     const spawnPin = landmark('spawn');
     playerMesh = makeCharacter(0xc47a4a, 0.95);
@@ -1060,6 +1060,7 @@
       light: 0xff8844,
       intensity: 0.55,
       openNorth: true,
+      phong: true,
     });
     const shelf = new THREE.Mesh(
       new THREE.BoxGeometry(2.4, 1.4, 0.4),
@@ -1433,8 +1434,8 @@
   function buildMarrow() {
     const g = new THREE.Group();
     g.visible = false;
-    g.add(new THREE.AmbientLight(0x6a4030, 0.45));
-    g.add(new THREE.HemisphereLight(0x8a4030, 0x1a100c, 0.35));
+    g.add(new THREE.AmbientLight(0x4a2818, 0.24));
+    g.add(new THREE.HemisphereLight(0x6a3020, 0x100806, 0.22));
     const ashGeo = new THREE.PlaneGeometry(36, 28, 22, 16);
     raisePlane(ashGeo, (x, y) => (
       Math.sin(x * 0.38) * Math.cos(y * 0.33) * 0.26
@@ -1452,7 +1453,7 @@
       if (groundGrain(x, y) > 0.4) c.lerp(sootAsh, 0.28);
     });
     const ash = new THREE.Mesh(ashGeo, new THREE.MeshPhongMaterial({
-      vertexColors: true, shininess: 4, specular: new THREE.Color(0x3a2018),
+      vertexColors: true, shininess: 14, specular: new THREE.Color(0x8a4030),
     }));
     ash.rotation.x = -Math.PI / 2;
     g.add(ash);
@@ -2318,9 +2319,9 @@
     claimFill.position.set(0, 2.6, 4.4);
     g.add(claimFill);
     const geo = new THREE.PlaneGeometry(22, 24, 16, 14);
-    const ash = new THREE.Color(0x120e10);
-    const ember = new THREE.Color(0xc44a18);
-    const stone = new THREE.Color(0x1a1412);
+    const ash = new THREE.Color(0x0c080a);
+    const ember = new THREE.Color(0xff5a18);
+    const stone = new THREE.Color(0x120e10);
     tintPlane(geo, (c, x, y) => {
       c.copy(ash);
       const core = Math.hypot(x, y + 6);
@@ -2331,7 +2332,7 @@
       if (groundGrain(x, y) > 0.35) c.lerp(stone, 0.25);
     });
     const floor = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
-      vertexColors: true, shininess: 6, specular: new THREE.Color(0x3a2010),
+      vertexColors: true, shininess: 22, specular: new THREE.Color(0xc45a28),
     }));
     floor.rotation.x = -Math.PI / 2;
     g.add(floor);
@@ -2358,7 +2359,9 @@
     dais.rotation.x = -Math.PI / 2;
     dais.position.set(0, 0.04, -6.05);
     g.add(dais);
-    const wallMat = new THREE.MeshLambertMaterial({ color: 0x1c1214 });
+    const wallMat = new THREE.MeshPhongMaterial({
+      color: 0x2a1a1c, shininess: 20, specular: new THREE.Color(0xc45a30),
+    });
     function addWall(w, d, x, z, h) {
       const height = h || 7.2;
       const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, height, d), wallMat);
@@ -2440,14 +2443,14 @@
     const massWash = new THREE.Mesh(
       new THREE.PlaneGeometry(4.6, 5.6),
       new THREE.MeshBasicMaterial({
-        color: 0xff6a2a, transparent: true, opacity: 0.28, fog: false, depthWrite: false, side: THREE.DoubleSide,
+        color: 0xff6a2a, transparent: true, opacity: 0.4, fog: false, depthWrite: false, side: THREE.DoubleSide,
       })
     );
     massWash.position.set(0, 2.7, -7.15);
     g.add(massWash);
     const stage = new THREE.Mesh(
       new THREE.CircleGeometry(3.4, 28),
-      new THREE.MeshBasicMaterial({ color: 0xff5a28, transparent: true, opacity: 0.28, fog: false })
+      new THREE.MeshBasicMaterial({ color: 0xff5a28, transparent: true, opacity: 0.42, fog: false })
     );
     stage.rotation.x = -Math.PI / 2;
     stage.position.set(0, 0.06, -6.05);
@@ -2753,7 +2756,7 @@
       else if (n < -0.4) c.lerp(alt, 0.28);
     });
     const mesh = new THREE.Mesh(geo, phong
-      ? new THREE.MeshPhongMaterial({ vertexColors: true, shininess: 10, specular: new THREE.Color(0x3a3024) })
+      ? new THREE.MeshPhongMaterial({ vertexColors: true, shininess: 22, specular: new THREE.Color(0x8a6840) })
       : new THREE.MeshLambertMaterial({ vertexColors: true }));
     mesh.rotation.x = -Math.PI / 2;
     return mesh;
@@ -2763,7 +2766,9 @@
     const g = new THREE.Group();
     const floor = variedFloor(9, 9, 8, 8, opts.floor, opts.floorAlt || opts.wall, 0.05, !!opts.phong);
     g.add(floor);
-    const mat = new THREE.MeshLambertMaterial({ color: opts.wall });
+    const mat = new THREE.MeshPhongMaterial({
+      color: opts.wall, shininess: 16, specular: new THREE.Color(0x6a5040),
+    });
     function addWall(w, d, x, z) {
       const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, 2.6, d), mat);
       mesh.position.set(x, 1.3, z);
@@ -2899,7 +2904,9 @@
     if (seenBeats['salt-cord']) {
       return {
         title: 'Salt cord',
-        hint: 'The coil is gone. The cord is in the pack. Press E to hear it again. The road did not change.',
+        hint: seenBeats['cord-bound']
+          ? 'The coil is gone. The cord is bound. Press E. The road did not change.'
+          : 'The coil is gone. The cord is in the pack. Press E to hear it again. Bind it from the pack.',
       };
     }
     return {
@@ -3173,9 +3180,9 @@
 
   function buildStormreach() {
     const g = stormreachGroup;
-    g.add(new THREE.AmbientLight(0xc5d0dc, 0.62));
-    g.add(new THREE.HemisphereLight(0x9bb0c4, 0x3a3428, 0.38));
-    const sun = new THREE.DirectionalLight(0xfff2dc, 0.72);
+    g.add(new THREE.AmbientLight(0x8098aa, 0.3));
+    g.add(new THREE.HemisphereLight(0x6a8498, 0x1c1814, 0.24));
+    const sun = new THREE.DirectionalLight(0xc5d4e6, 0.48);
     sun.position.set(8, 22, 14);
     g.add(sun);
 
@@ -3200,9 +3207,9 @@
       Math.sin(x * 0.42) * Math.cos(y * 0.36) * 0.32
       + Math.sin(x * 1.25 + y * 0.5) * 0.08
     ));
-    const stone = new THREE.Color(0x6a6258);
-    const wetStone = new THREE.Color(0x314048);
-    const pale = new THREE.Color(0x8d8578);
+    const stone = new THREE.Color(0x4a453e);
+    const wetStone = new THREE.Color(0x1c3038);
+    const pale = new THREE.Color(0x7a7368);
     tintPlane(shelfGeo, (c, x, y, h) => {
       c.copy(stone);
       if (y < -2) c.lerp(wetStone, 0.55);
@@ -3212,7 +3219,7 @@
       else if (grit < -0.5) c.lerp(pale, 0.2);
     });
     const shelf = new THREE.Mesh(shelfGeo, new THREE.MeshPhongMaterial({
-      vertexColors: true, shininess: 10, specular: new THREE.Color(0x3a4038),
+      vertexColors: true, shininess: 36, specular: new THREE.Color(0xc5d8ea),
     }));
     shelf.rotation.x = -Math.PI / 2;
     shelf.position.set(0, 0, 6);
@@ -3232,7 +3239,9 @@
       c.copy(sand);
       if (y > 1.2) c.lerp(damp, 0.4);
     });
-    const beach = new THREE.Mesh(beachGeo, new THREE.MeshLambertMaterial({ vertexColors: true }));
+    const beach = new THREE.Mesh(beachGeo, new THREE.MeshPhongMaterial({
+      vertexColors: true, shininess: 8, specular: new THREE.Color(0x6a5a40),
+    }));
     beach.rotation.x = -Math.PI / 2;
     beach.position.set(0, 0.02, 9.2);
     g.add(beach);
@@ -3489,9 +3498,13 @@
     );
     bowl.position.y = -0.08;
     g.add(bowl);
+    const rimMat = new THREE.MeshLambertMaterial({
+      color: elColor.clone(),
+      emissive: elColor.clone().multiplyScalar(0.62),
+    });
     const rim = new THREE.Mesh(
-      new THREE.TorusGeometry(3.5, 0.2, 6, 18),
-      new THREE.MeshLambertMaterial({ color: def.vesper ? 0x4a3040 : 0x6e675c })
+      new THREE.TorusGeometry(3.5, 0.28, 8, 20),
+      rimMat
     );
     rim.rotation.x = Math.PI / 2;
     rim.position.y = 0.16;
@@ -3524,7 +3537,7 @@
       color: elColor.clone(),
       emissive: elColor.clone().multiplyScalar(0.35),
     });
-    const core = new THREE.Mesh(new THREE.OctahedronGeometry(0.48, 0), coreMat);
+    const core = new THREE.Mesh(new THREE.OctahedronGeometry(0.64, 0), coreMat);
     core.position.y = 1.2;
     g.add(core);
 
@@ -3626,7 +3639,7 @@
       interior: def.interior || null,
       region: def.region || 'verdant-isle',
       rotMat, rotColor, healColor, elColor, lifeMat, coreMat, core, beamMat, neck,
-      spikes, flowers, motes, figure, seal, sealRing, rim, phase: Math.random() * 6,
+      spikes, flowers, motes, figure, seal, sealRing, rim, rimMat, phase: Math.random() * 6,
       group: g,
     };
     pools.push(pool);
@@ -3686,9 +3699,13 @@
       pool.core.rotation.y += dt * 0.7;
       pool.core.scale.setScalar((1 + Math.sin(t * 3 + pool.phase) * 0.08) * (1 + burst * 0.9));
       if (pool.rim) pool.rim.scale.setScalar((1 + Math.sin(t * 1.4 + pool.phase) * 0.035) * (1 + burst * 0.42));
-      const pulse = 0.16 + Math.sin(t * 2.1 + pool.phase) * 0.06;
+      if (pool.rimMat) {
+        pool.rimMat.color.copy(pool.elColor).lerp(pool.healColor, h);
+        pool.rimMat.emissive.copy(pool.elColor).multiplyScalar(0.62 * (1 - h) + burst * 0.4);
+      }
+      const pulse = 0.36 + Math.sin(t * 2.1 + pool.phase) * 0.1;
       pool.beamMat.opacity = pulse * (1 - h) + 0.07 * h + burst * 0.72;
-      if (pool.neck) pool.neck.material.opacity = (0.22 + Math.sin(t * 2.4 + pool.phase) * 0.08) * (1 - h * 0.85);
+      if (pool.neck) pool.neck.material.opacity = (0.4 + Math.sin(t * 2.4 + pool.phase) * 0.1) * (1 - h * 0.85);
       pool.spikes.forEach((s) => {
         s.scale.y = Math.max(0.001, 1 - h);
         s.visible = h < 0.97;
@@ -3714,6 +3731,7 @@
       if (pool.bottled) {
         pool.beamMat.opacity = 0.04;
         pool.coreMat.emissive.copy(pool.elColor).multiplyScalar(0.04);
+        if (pool.rimMat) pool.rimMat.emissive.copy(pool.elColor).multiplyScalar(0.05);
       }
     });
   }
@@ -4861,7 +4879,8 @@
       const waiting = [];
       if (seenBeats['furrow-letter']) waiting.push('A cousin’s letter says Vesper walked the Concord to the well. The furrow was the price. The road did not change.');
       if (seenBeats['wayside-chest']) waiting.push('The wayside chest gave one tonic. It is empty. The kiln is still the road.');
-      if (seenBeats['salt-cord']) waiting.push('A salt cord is in the pack. The vault does not count rope. The road did not change.');
+      if (seenBeats['cord-bound']) waiting.push('The salt cord is bound around the jerkin. Ash coughs for 4. It does not open a door and it does not pay a scar.');
+      else if (seenBeats['salt-cord']) waiting.push('A salt cord is in the pack. Bind it once. The vault does not count rope. The road did not change.');
       if (seenBeats['coast-notice']) waiting.push('A notice on the shale says mouths are numbered. It is not the vault door.');
       if (seenBeats['gallery-margin']) {
         waiting.push(seals.some((seal) => seal.name === 'Cousin’s Margin')
@@ -5014,7 +5033,12 @@
       : '<li class="empty-line">No shards. Whole pools leave none. Fights sometimes do.</li>';
 
     const keys = [{ name: 'Border Badge', desc: 'Lira’s scout token. The villages still answer to it, for now.' }].concat(seals);
-    $('#inv-seals').innerHTML = keys.map((k) => `<li class="inv-card" title="${esc(k.desc)}"><div class="name">${esc(k.name)}</div><div class="desc">${esc(k.desc)}</div></li>`).join('');
+    $('#inv-seals').innerHTML = keys.map((k) => {
+      const bind = k.name === 'Salt Cord' && !seenBeats['cord-bound']
+        ? '<button class="btn btn-small" type="button" data-act="bind-cord">Bind</button>'
+        : '';
+      return `<li class="inv-card" title="${esc(k.desc)}"><div class="row"><span class="name">${esc(k.name)}</span>${bind}</div><div class="desc">${esc(k.desc)}</div></li>`;
+    }).join('');
 
     $('#inv-level').textContent = String(spark.level);
     $('#inv-xp').textContent = String(spark.xp);
@@ -7026,7 +7050,9 @@
   function talkCord() {
     if (locale !== 'field' || regionId !== 'verdant-isle' || dialogueOpen) return;
     if (seenBeats['salt-cord']) {
-      showToast('The salt cord is in the pack. The vault does not count rope. The road did not change.');
+      showToast(seenBeats['cord-bound']
+        ? 'The cord is already bound. The grass stays empty. The road did not change.'
+        : 'The salt cord is in the pack. Bind it once. The vault does not count rope. The road did not change.');
       return;
     }
     const fn = EW.scenes['salt-cord'];
@@ -7041,10 +7067,41 @@
     if (!seals.some((seal) => seal.name === 'Salt Cord')) {
       seals.push({
         name: 'Salt Cord',
-        desc: 'A waxed cord from the isle grass. The coast ties rope like this. The vault does not count rope. It does not open a door.',
+        desc: 'A waxed cord from the isle grass. Bind it from the pack once. Ash in the teeth coughs for 4, not 6. It does not open a door.',
       });
     }
-    showToast('The cord is in the pack. The scar is still the other way.');
+    showToast('The cord is in the pack. Bind it once if you want the knot. The scar is still the other way.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function bindCord() {
+    if (seenBeats['cord-bound']) {
+      showToast('The cord is already bound. Ash coughs for 4. The road did not change.');
+      return;
+    }
+    if (!seals.some((seal) => seal.name === 'Salt Cord')) return;
+    setInventory(false);
+    const fn = EW.scenes['cord-bind'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'cord-bound';
+    } else noteBind();
+  }
+
+  function noteBind() {
+    const had = seals.some((seal) => seal.name === 'Salt Cord');
+    seenBeats['cord-bound'] = true;
+    const idx = seals.findIndex((seal) => seal.name === 'Salt Cord');
+    if (idx >= 0) seals.splice(idx, 1);
+    if (!seals.some((seal) => seal.name === 'Bound Cord')) {
+      seals.push({
+        name: 'Bound Cord',
+        desc: 'The waxed cord is tied around the jerkin. Ash in the teeth coughs for 4, not 6. It does not open a door and it does not pay a scar.',
+      });
+    }
+    if (had) showToast('The cord is bound. Ash in the teeth will cough for 4. The road did not change.');
     refreshRumor();
     updateHUD();
     saveGame();
@@ -7689,7 +7746,9 @@
     updateCombatUI();
     showMenus('main');
     const teach = enemies.some((e) => e.id === 'penitent')
-      ? 'An ash penitent on the approach. It kneels once. Ash sits in the teeth and coughs on the next turn. It is not a scar.'
+      ? (seenBeats['cord-bound']
+        ? 'An ash penitent on the approach. It kneels once. The bound cord keeps the cough at 4. It is not a scar.'
+        : 'An ash penitent on the approach. It kneels once. Ash sits in the teeth and coughs for 6 on the next turn. It is not a scar.')
       : enemies.some((e) => e.id === 'celebrant')
       ? 'A Concord last rite. The ward drinks a knife. A merge on the list tears it. A shoulder still stands in front.'
       : enemies.some((e) => e.id === 'captain')
@@ -7749,7 +7808,7 @@
     if (t.type === 'party') {
       const coughing = party[t.index];
       if (coughing && coughing.ash) {
-        const bite = 6;
+        const bite = seenBeats['cord-bound'] ? 4 : 6;
         coughing.ash = 0;
         coughing.hp = Math.max(0, coughing.hp - bite);
         showLog('Ash in the teeth. ' + coughing.name + ' loses ' + bite + '.');
@@ -9348,6 +9407,7 @@
       else if (act.dataset.act === 'unequip') unequip(act.dataset.who, act.dataset.slot);
       else if (act.dataset.act === 'use') useFieldItem(act.dataset.id);
       else if (act.dataset.act === 'digest') digestShard(act.dataset.uid);
+      else if (act.dataset.act === 'bind-cord') bindCord();
     });
     $('#btn-retry').addEventListener('click', () => {
       party.forEach((p) => {
@@ -10284,6 +10344,7 @@
   EW.hasMargin = hasMargin;
   EW.noteChest = noteChest;
   EW.noteCord = noteCord;
+  EW.noteBind = noteBind;
   EW.noteNotice = noteNotice;
   EW.noteMargin = noteMargin;
   EW.notePressure = notePressure;
