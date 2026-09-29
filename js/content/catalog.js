@@ -68,6 +68,7 @@
     captain: { name: 'Concord Captain', color: 0x2a2420, maxHp: 88, atk: 13, def: 7, xp: 46, gold: 28, shape: 'banner' },
     celebrant: { name: 'Rite Celebrant', color: 0x3a2418, maxHp: 108, atk: 14, def: 8, xp: 52, gold: 32, shape: 'rite' },
     penitent: { name: 'Ash Penitent', color: 0x3a221c, maxHp: 44, atk: 10, def: 3, xp: 20, gold: 12, shape: 'cowl' },
+    gull: { name: 'Shelf Gull', color: 0xc8d0d8, maxHp: 30, atk: 8, def: 2, xp: 14, gold: 7, shape: 'wing' },
   };
 
   content.roster = {

@@ -230,13 +230,20 @@ Playable on the Verdant Isle field:
 - Still freezes the nave banners and the cough pulse. On a phone the ash motes update every other tick. Credits still return to the aftermath when motion is stilled and pace is slow. Continue stores both.
 - Phone controls, Absorb, Pack, and Continue stay.
 
-## Chamber and cord (this branch)
+## Chamber and cord (shipped)
 
 - The isle sun is harder and the fill is thinner. The coast and the ash sit darker, so day and night are not the same wash. Room walls catch the lamp they already have. The remnant floor and the chamber walls take a hotter specular from the fire that is already there. No new light was added.
 - A living pool wears its element on a brighter rim and a taller column. A drunk or bottled mouth goes quiet.
 - The salt cord can be bound once from the pack. Torren and Nima speak if they came. If they did not, Lira still ties it. Ash in the teeth then coughs for 4, not 6. It does not open a door, add a scar, or change a claim flag.
 - The ash penitent is a shorter fight: less life, a lighter blow. Status chips are filled, and on a phone they are larger.
 - Phone controls, Absorb, Pack, and Continue stay.
+
+## Title and tally (this branch)
+
+- The title, the path, and the credits sit in a gold frame. When a save is waiting, Continue is the gold action and Wake stays quiet until it asks. Lira’s ember is a core, a glow, and three motes. Still parks the motes. On a phone they skip every other orbit.
+- A snapped mile post and a cold ring on the isle are optional looks. They do not open the kiln, drink a pool, or add a scar. A shelf gull can meet her on the coast. It cries once, spends up to 4 mind, and the cry fades on that person’s next turn. It does not add scar debt.
+- A tally clerk on the east shale counts weather. If the bound cord is held, he says the knot is not a licence. If Cousin’s Margin is held, he says the furrow is already filed. If both are held, he says neither opens the door. He is not the porter. The vault stays shut.
+- Phone controls, Absorb, Pack, and Continue stay. A phone-width walk from the claim into the aftermath still works with motion stilled.
 
 ## Still ahead
 

@@ -96,6 +96,32 @@
     return true;
   });
 
+  Emberwake.registerScene('way-post', function () {
+    Emberwake.present({
+      lines: [
+        { where: 'Verdant Isle', speaker: 'Lira', text: 'A mile post, snapped at the knee. The number is weather-eaten.' },
+        { speaker: 'The spark', text: 'It does not open the kiln. The road stays the road.' },
+      ],
+      onDone: function () {
+        if (Emberwake.notePost) Emberwake.notePost();
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('cold-ring', function () {
+    Emberwake.present({
+      lines: [
+        { where: 'Verdant Isle', speaker: 'Lira', text: 'A dead fire. Stones in a ring. Nothing in the middle is drinking.' },
+        { speaker: 'The spark', text: 'It is not a pool. It is not the scar. The grass kept the cold and not the name.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteRing) Emberwake.noteRing();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('cord-bind', function () {
     const torren = Emberwake.companyHas && Emberwake.companyHas('torren');
     const nima = Emberwake.companyHas && Emberwake.companyHas('nima');
