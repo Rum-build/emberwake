@@ -65,6 +65,7 @@
     stoker: { name: 'Pipe Stoker', color: 0x4a4038, maxHp: 78, atk: 12, def: 16, xp: 36, gold: 22, shape: 'human' },
     counter: { name: 'Concord Counter', color: 0x3a3530, maxHp: 48, atk: 13, def: 7, xp: 30, gold: 18, shape: 'human' },
     auditor: { name: 'Count Auditor', color: 0x6a5840, maxHp: 52, atk: 11, def: 6, xp: 28, gold: 16, shape: 'ledger' },
+    captain: { name: 'Concord Captain', color: 0x2a2420, maxHp: 78, atk: 13, def: 7, xp: 46, gold: 28, shape: 'banner' },
   };
 
   content.roster = {

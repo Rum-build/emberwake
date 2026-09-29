@@ -133,17 +133,23 @@ Playable on the Verdant Isle field:
 - After the count, a bird crosses the nave and does not land. Speak only if you walk to that crossing; ask or leave the air, and she still does not join. Stained light, denser ashfall, and banner wind sit on the nave. The remnant mass keeps a rim that reads through the fog. Cleave, Channel, and Aim each flash their own color.
 - The mouse stick, Absorb, and Pack stay.
 
-## Count crypt (this branch)
+## Count crypt (shipped)
 
 - Under the count-stair, **Enter** opens one crypt. A Concord ledger stands in a dark room. A Count Auditor meets you; the page on his arm takes the first physical blow, and the next lands on him. North, a crack shows the remnant. Vesper is the pressure and does not enter the host.
 - Press Named Feed and the Unwritten Passage into the crack and they stay in the pack, thinner. Put a mouth on the crack and take one scar. Leave the crack and take nothing. The cathedral bar stays shut. **Leave** at the south returns to the gallery, short of the stair. Continue stores the crypt, the choice, and whether the names were pressed.
 - Kestrel is not in the crypt and does not join. The mouse stick, Absorb, and Pack stay.
 
+## First breach (this branch)
+
+- If the crypt choice is Cracked Zero, **Enter** on the widened crack opens one threshold room. A mouth on the crack, or leaving the light, does not widen it; Look says so, and **Leave** / Continue stay safe. A Concord captain and a scribe hold the room. The captain’s licence hits once, harder, unless Torren’s shoulder is already in front. Nima’s first action still steadies the line. Victory puts remnant ash in the teeth and grants any merge those elements already name.
+- After the stand, Vesper is in the light and will not duel. Hold the threshold, set a mouth on the light (one scar), or step back. None of the three opens the cathedral bar. **Leave** at the south returns to the crypt, short of the crack. Continue stores the breach, the choice, and the ash. Kestrel is not in the light and does not join.
+- The room is taller than the crypt: ribs, light shafts, falling ash, a readable threshold plaque, and the remnant mass beside the light. The mouse stick, Absorb, and Pack stay.
+
 ## Still ahead
 
-From DESIGN.md, after this crypt:
+From DESIGN.md, after this breach:
 
-1. The rest of the scar’s debt. The kiln, the earth cork, a fed leak, Vesper’s taste, the spoken name, a drunk yard slag, a drunk remnant weep, a named cathedral hinge, and a mouth on the crypt crack each add a point. Banking the marrow leak eases one. Pressing a digit into the crack does not. The rest stays.
+1. The rest of the scar’s debt. The kiln, the earth cork, a fed leak, Vesper’s taste, the spoken name, a drunk yard slag, a drunk remnant weep, a named cathedral hinge, a mouth on the crypt crack, and a mouth on the breach light each add a point. Banking the marrow leak eases one. Pressing a digit, and holding the threshold, do not. The rest stays.
 2. The wider waystone network, the wind merges (ice, thunder, tide, root), and a party slot for Kestrel if she ever takes one.
 
 Combat menus stay Fight / Magic / Item / Flee. New panels stay desktop-first.

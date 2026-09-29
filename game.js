@@ -145,6 +145,13 @@
   let cryptLatch = false;
   let cryptTalk = false;
   let cryptGroup = null;
+  let nearCrack = null;
+  let breachWord = null;
+  let breachAsh = false;
+  let breachLatch = false;
+  let breachTalk = false;
+  let breachGroup = null;
+  let lastMergeNote = '';
   let kestrelNave = null;
   let kestrelFly = 0;
   let coverReady = false;
@@ -443,6 +450,11 @@
     cryptWord = null;
     cryptLatch = false;
     cryptTalk = false;
+    nearCrack = null;
+    breachWord = null;
+    breachAsh = false;
+    breachLatch = false;
+    breachTalk = false;
     kestrelNave = null;
     kestrelFly = 0;
     coverReady = false;
@@ -549,6 +561,7 @@
     buildNave();
     buildGallery();
     buildCrypt();
+    buildBreach();
     buildCombatArena();
     window.addEventListener('resize', onResize);
   }
@@ -623,6 +636,11 @@
       scene.fog.near = 4;
       scene.fog.far = 16;
       if (renderer) renderer.setClearColor(0x070506);
+    } else if (place === 'breach') {
+      scene.fog.color.set(0x12080c);
+      scene.fog.near = 8;
+      scene.fog.far = 32;
+      if (renderer) renderer.setClearColor(0x12080c);
     } else if (place === 'cellar') {
       scene.fog.color.set(0x1a1410);
       scene.fog.near = 8;
@@ -1680,6 +1698,7 @@
     if (naveGroup) naveGroup.visible = false;
     if (galleryGroup) galleryGroup.visible = false;
     if (cryptGroup) cryptGroup.visible = false;
+    if (breachGroup) breachGroup.visible = false;
     if (naveGroup && naveGroup.userData.bird && kestrelFly <= 0) naveGroup.userData.bird.visible = false;
   }
 
@@ -1851,6 +1870,110 @@
     scene.add(g);
   }
 
+  function buildBreach() {
+    const g = new THREE.Group();
+    g.visible = false;
+    g.add(new THREE.AmbientLight(0x1a1014, 0.28));
+    g.add(new THREE.HemisphereLight(0x6a4030, 0x08060a, 0.35));
+    const geo = new THREE.PlaneGeometry(16, 18, 8, 8);
+    const ash = new THREE.Color(0x1a1412);
+    const ember = new THREE.Color(0x6a3018);
+    tintPlane(geo, (c, x, y) => {
+      c.copy(ash);
+      if (y < -1.2) c.lerp(ember, 0.55);
+      else if (Math.abs(x) < 1.2) c.lerp(ember, 0.18);
+    });
+    const floor = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
+      vertexColors: true, shininess: 4, specular: new THREE.Color(0x2a1810),
+    }));
+    floor.rotation.x = -Math.PI / 2;
+    g.add(floor);
+    const wallMat = new THREE.MeshLambertMaterial({ color: 0x241816 });
+    function addWall(w, d, x, z, h) {
+      const height = h || 5.2;
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, height, d), wallMat);
+      mesh.position.set(x, height / 2, z);
+      g.add(mesh);
+    }
+    addWall(4.2, 0.4, -4.6, -6.5);
+    addWall(4.2, 0.4, 4.6, -6.5);
+    addWall(3.6, 0.4, -5.2, 5.7);
+    addWall(3.6, 0.4, 5.2, 5.7);
+    addWall(0.4, 12.2, -6.4, -0.4);
+    addWall(0.4, 12.2, 6.4, -0.4);
+    const ribMat = new THREE.MeshLambertMaterial({ color: 0x3a2a28 });
+    [-4.2, -1.6, 1.2, 3.6].forEach((z, i) => {
+      [-3.6, 3.6].forEach((x) => {
+        const h = 3.2 + i * 0.45;
+        const rib = new THREE.Mesh(new THREE.BoxGeometry(0.45, h, 0.45), ribMat);
+        rib.position.set(x, h / 2, z);
+        g.add(rib);
+      });
+    });
+    const shafts = [];
+    [[-1.6, -1.2], [1.4, -3.1], [0.2, 1.8]].forEach((spot, i) => {
+      const shaft = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.15, 6.4),
+        new THREE.MeshBasicMaterial({
+          color: i === 1 ? 0xff6a2a : 0xffe2b0,
+          transparent: true,
+          opacity: 0.22,
+          depthWrite: false,
+          fog: false,
+          side: THREE.DoubleSide,
+        })
+      );
+      shaft.position.set(spot[0], 3.3, spot[1]);
+      shaft.rotation.y = i * 0.35;
+      g.add(shaft);
+      const light = new THREE.PointLight(i === 1 ? 0xff6a2a : 0xffd8a0, 1.15, 14);
+      light.position.set(spot[0], 4.6, spot[1]);
+      g.add(light);
+      shafts.push(light);
+    });
+    g.userData.shafts = shafts;
+    const plaque = makeCountPage('THRESHOLD', ['Licence Zero', 'Not the door', 'The bar stays shut']);
+    plaque.position.set(0, 2.35, -5.55);
+    plaque.scale.set(1.35, 1.35, 1);
+    g.add(plaque);
+    const disc = new THREE.Mesh(
+      new THREE.CircleGeometry(1.7, 24),
+      new THREE.MeshBasicMaterial({ color: 0xff5a28, fog: false })
+    );
+    disc.position.set(0, 2.5, -5.85);
+    g.add(disc);
+    const ring = new THREE.Mesh(
+      new THREE.RingGeometry(1.75, 2.15, 24),
+      new THREE.MeshBasicMaterial({ color: 0x2a140c, side: THREE.DoubleSide, fog: false })
+    );
+    ring.position.set(0, 2.5, -5.82);
+    g.add(ring);
+    const watcher = makeSilhouette(2.2, -5.35);
+    watcher.visible = true;
+    watcher.position.y = 0.15;
+    watcher.scale.setScalar(2.15);
+    watcher.traverse((child) => {
+      if (child.material && child.material.isMeshBasicMaterial) child.material.fog = false;
+    });
+    g.add(watcher);
+    const bar = new THREE.Mesh(
+      new THREE.BoxGeometry(3.2, 0.9, 0.35),
+      new THREE.MeshPhongMaterial({ color: 0x4a3428, shininess: 8 })
+    );
+    bar.position.set(0, 0.45, 0.6);
+    g.add(bar);
+    const banner = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.7, 1.5),
+      new THREE.MeshBasicMaterial({ color: 0x8a3028, side: THREE.DoubleSide, fog: false })
+    );
+    banner.position.set(-2.4, 1.7, 0.4);
+    g.add(banner);
+    g.userData.banner = banner;
+    makeMotes(g, 80, 0xc4b4a4, { x: 12, y: 4.2, z: 14 }, { fall: true });
+    breachGroup = g;
+    scene.add(g);
+  }
+
   function naveFits(x, z) {
     if (z > 4.15 || z < -3.15) return false;
     if (Math.abs(x) > 4.3) return false;
@@ -1866,6 +1989,12 @@
   function cryptFits(x, z) {
     if (z > 2.7 || z < -2.15) return false;
     if (Math.abs(x) > 2.55) return false;
+    return true;
+  }
+
+  function breachFits(x, z) {
+    if (z > 5.4 || z < -6.15) return false;
+    if (Math.abs(x) > 5.8) return false;
     return true;
   }
 
@@ -2895,6 +3024,16 @@
 
   function makeEnemyMesh(enemy) {
     if (enemy.shape === 'human') return makeCharacter(enemy.color, 0.9);
+    if (enemy.shape === 'banner') {
+      const figure = makeCharacter(enemy.color, 1.05);
+      const cloth = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.85, 1.15),
+        new THREE.MeshBasicMaterial({ color: 0x8a3028, side: THREE.DoubleSide, fog: false })
+      );
+      cloth.position.set(0.15, 1.15, 0.28);
+      figure.add(cloth);
+      return figure;
+    }
     if (enemy.shape === 'ledger') {
       const figure = makeCharacter(enemy.color, 0.92);
       const board = new THREE.Mesh(
@@ -3022,12 +3161,20 @@
     if (!spark || !spark.path) return 'Choose how she fights.';
     const slag = pools.find((p) => p.id === 'yard-slag');
     const weep = pools.find((p) => p.id === 'mark-weep');
+    if (locale === 'first-breach') {
+      if (!seenBeats.breachFight) return 'Licence Zero opened a breach. A Concord last stand holds the threshold.';
+      if (!breachWord) return 'Vesper is in the light. Hold the threshold, take the scar, or step back. The bar stays shut.';
+      if (breachWord === 'mouth') return 'The light took a scar. The bar stayed shut. South is the crypt.';
+      if (breachWord === 'hold') return 'The threshold is held. The remnant is closer. The bar stayed shut. South is the crypt.';
+      return 'You stepped back from the light. The room stays. South is the crypt.';
+    }
     if (locale === 'count-crypt') {
       if (!seenBeats.cryptFight) return 'An auditor keeps the ledger under Licence Zero.';
       if (!cryptWord) return 'The crack is north. Spend a digit, take the scar, or leave it. The bar stays shut.';
-      if (cryptWord === 'mouth') return 'The crack has your mouth on it. The bar stayed shut. South is the gallery.';
-      if (cryptWord === 'digit') return 'A digit of Licence Zero is in the crack. The names stayed in the pack. South is the gallery.';
-      return 'You left the crack. The remnant stayed a light. South is the gallery.';
+      if (cryptWord === 'mouth') return 'The crack has your mouth on it. It is not Cracked Zero. South is the gallery.';
+      if (cryptWord === 'digit' && !breachWord) return 'Cracked Zero widened the crack. North is the first breach. The bar stays shut.';
+      if (cryptWord === 'digit') return 'The first breach was walked. The bar stayed shut. South is the gallery.';
+      return 'You left the crack. A pressed digit would widen it. South is the gallery.';
     }
     if (locale === 'watch-gallery') {
       if (!galleryWord) return 'The ledger numbers the cathedral. Read the count, or file the hinge. The stair stays shut until then.';
@@ -3037,6 +3184,8 @@
     if (locale === 'ash-nave') {
       if (!galleryWord) return 'East of the sealed door, the Concord keeps a watch gallery. The cathedral bar stays shut.';
       if (!cryptWord) return 'Licence Zero is counted. East, the stair under the gallery goes down. South is the mark.';
+      if (breachWord) return 'The first breach was walked. The cathedral bar stayed shut. South is the mark.';
+      if (cryptWord === 'digit') return 'Cracked Zero is in the pack. The stair under the gallery goes down. South is the mark.';
       return 'The crack under Licence Zero was faced. The cathedral bar stayed shut. South is the mark.';
     }
     if (locale === 'remnant-mark') {
@@ -3086,11 +3235,23 @@
     const left = pools.filter((p) => !p.absorbed && !p.bottled && !p.interior).length;
     const kilnQuiet = pools.some((p) => p.id === 'kiln' && p.absorbed);
     const mergeNames = earnedMergeNames();
-    if (locale === 'count-crypt') {
+    if (locale === 'first-breach') {
+      rumor = !seenBeats.breachFight
+        ? 'A Concord captain holds the threshold under Licence Zero. The light ahead is not a door. Kestrel is not in it.'
+        : breachWord === 'hold'
+          ? 'The threshold is held. Remnant ash is in the teeth. The cathedral bar stayed shut. South is the crypt.'
+          : breachWord === 'mouth'
+            ? 'You set a mouth on the light. The scar took the step. Vesper did not enter the host. South is the crypt.'
+            : breachWord === 'back'
+              ? 'You stepped back. The room stays open. The bar stayed shut. South is the crypt.'
+              : 'The last stand is down. Vesper is in the light and will not duel. She will not enter the host.';
+    } else if (locale === 'count-crypt') {
       rumor = !seenBeats.cryptFight
         ? 'Under Licence Zero, an auditor keeps the page. The remnant is a crack, not a door. Kestrel is not down here.'
         : cryptWord === 'digit'
-          ? 'A digit went into the crack. Named Feed and the Unwritten Passage, if they paid, stayed in the pack. The bar stayed shut. South is the gallery.'
+          ? (breachWord
+            ? 'The first breach was walked. The names stayed in the pack. The bar stayed shut. South is the gallery.'
+            : 'Cracked Zero widened the crack. North is one room of the remnant. The bar stayed shut. South is the gallery.')
           : cryptWord === 'mouth'
             ? 'You put a mouth on the crack. The scar took what the pack did not. The bar stayed shut. Vesper did not enter the host.'
             : cryptWord === 'leave'
@@ -3283,13 +3444,15 @@
     const showNave = idle && nearNave && seenBeats.markFight && !showAbsorb && !atExit && !showLook && !showPipe && !showThroat && !showStone && !showMark;
     const showGallery = idle && nearGallery && !showAbsorb && !atExit && !showNave;
     const showStair = idle && nearStair && !showAbsorb && !atExit;
+    const showCrack = idle && nearCrack && !showAbsorb && !atExit;
     const showKestrel = idle && nearKestrel && !showAbsorb && !atExit && !showGallery;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showKestrel);
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showKestrel);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
     else if (showGate) absorbBtn.textContent = 'Land';
     else if (showStair) absorbBtn.textContent = galleryWord ? 'Enter' : 'Look';
+    else if (showCrack) absorbBtn.textContent = nearCrack.open ? 'Enter' : 'Look';
     else if (showKestrel) absorbBtn.textContent = 'Speak';
     else if (showLook || showPipe || showThroat || showStone || showMark || showNave || showGallery) absorbBtn.textContent = 'Enter';
     else if (showTalk) absorbBtn.textContent = 'Speak';
@@ -3298,7 +3461,7 @@
 
   function updatePrompt() {
     const atExit = atInteriorExit();
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearKestrel && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearCrack && !nearKestrel && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -3314,7 +3477,7 @@
       return;
     }
     if (atExit) {
-      $('#interact-title').textContent = locale === 'root-cellar' ? 'The mouth' : locale === 'ashen-marrow' ? 'The hall' : locale === 'concord-yard' ? 'The ash' : locale === 'remnant-mark' ? 'The yard' : locale === 'ash-nave' ? 'The mark' : locale === 'watch-gallery' ? 'The nave' : locale === 'count-crypt' ? 'The gallery' : locale === 'marrow-pipe' ? 'The ash' : locale === 'engine-throat' ? 'The ash' : locale === 'harbor-vault' ? 'The shale' : 'The door';
+      $('#interact-title').textContent = locale === 'first-breach' ? 'The crypt' : locale === 'root-cellar' ? 'The mouth' : locale === 'ashen-marrow' ? 'The hall' : locale === 'concord-yard' ? 'The ash' : locale === 'remnant-mark' ? 'The yard' : locale === 'ash-nave' ? 'The mark' : locale === 'watch-gallery' ? 'The nave' : locale === 'count-crypt' ? 'The gallery' : locale === 'marrow-pipe' ? 'The ash' : locale === 'engine-throat' ? 'The ash' : locale === 'harbor-vault' ? 'The shale' : 'The door';
       $('#interact-detail').textContent = locale === 'root-cellar'
         ? 'Press E to step back onto the isle. The throat stays open behind you.'
         : locale === 'ashen-marrow'
@@ -3327,6 +3490,8 @@
             ? 'Press E to step back to the pillar. The cathedral door stays shut.'
           : locale === 'watch-gallery'
             ? 'Press E to step back to the nave. The count-stair stays where you left it.'
+          : locale === 'first-breach'
+            ? 'Press E to step back into the crypt. The threshold stays. The cathedral bar stays shut.'
           : locale === 'count-crypt'
             ? 'Press E to step back to the gallery. The crack stays. The cathedral bar stays shut.'
           : locale === 'marrow-pipe'
@@ -3393,6 +3558,11 @@
     if (nearStair) {
       $('#interact-title').textContent = nearStair.title;
       $('#interact-detail').textContent = nearStair.hint;
+      return;
+    }
+    if (nearCrack) {
+      $('#interact-title').textContent = nearCrack.title;
+      $('#interact-detail').textContent = nearCrack.hint;
       return;
     }
     if (nearKestrel) {
@@ -3475,6 +3645,15 @@
         waiting.push(feedSpent || passageLaid
           ? 'In the crypt those names went into the crack and stayed in the pack. They did not open the cathedral bar.'
           : 'In the watch gallery those names read as digits of Licence Zero. They do not open the cathedral bar.');
+      }
+      if (breachWord) {
+        waiting.push(breachWord === 'hold'
+          ? 'The first breach is held. Remnant ash is in the teeth. The cathedral bar stayed shut.'
+          : breachWord === 'mouth'
+            ? 'A mouth is on the breach light. The scar took the step. The bar stayed shut.'
+            : 'You stepped back from the breach light. The room stays. The bar stayed shut.');
+      } else if (cryptWord === 'digit') {
+        waiting.push('Cracked Zero widened the crypt crack. North of it, the first breach is still a room.');
       }
       if (scarDebt >= 2) waiting.push('Scar debt ' + scarDebt + ' has reached the walk. Lira coughs, and the feet go slower. Each point still cuts max HP by 6.');
       else if (scarDebt > 0) waiting.push('Scar debt ' + scarDebt + '. Each point cuts Lira’s max HP by 6. The kiln, the earth cork, and a fed engine add a point. Banking the marrow leak eases one.');
@@ -3751,6 +3930,11 @@
         else lookStair();
         return;
       }
+      if (nearCrack && locale === 'count-crypt' && !atMouth) {
+        if (nearCrack.open) enterBreach();
+        else lookCrack();
+        return;
+      }
       if (nearKestrel && locale === 'ash-nave' && !atMouth) {
         talkKestrelNave();
         return;
@@ -3766,6 +3950,7 @@
         else if (locale === 'ash-nave') exitNave();
         else if (locale === 'watch-gallery') exitGallery();
         else if (locale === 'count-crypt') exitCrypt();
+        else if (locale === 'first-breach') exitBreach();
         else if (locale === 'marrow-pipe') exitPipe();
         else if (locale === 'engine-throat') exitThroat();
         else exitInterior();
@@ -3942,6 +4127,7 @@
     if (locale === 'ash-nave') return playerMesh.position.z > 3.7;
     if (locale === 'watch-gallery') return playerMesh.position.z > 2.65;
     if (locale === 'count-crypt') return playerMesh.position.z > 2.45;
+    if (locale === 'first-breach') return playerMesh.position.z > 4.85;
     return playerMesh.position.z > 2.55;
   }
 
@@ -4457,6 +4643,21 @@
     };
   }
 
+  function nearestCrack() {
+    if (!playerMesh || locale !== 'count-crypt' || !cryptWord || skyPass) return null;
+    if (playerMesh.position.z > -1.25 || Math.abs(playerMesh.position.x) > 1.35) return null;
+    const open = cryptWord === 'digit';
+    return {
+      title: open ? 'The breach' : 'The crack',
+      open: open,
+      hint: open
+        ? 'Cracked Zero widened the stone. Press E. One room of the remnant. The cathedral bar stays shut.'
+        : cryptWord === 'mouth'
+          ? 'The scar breathes. Cracked Zero was the digit that widens this. Press E to look.'
+          : 'You left the light. A pressed digit would widen it. Press E to look.',
+    };
+  }
+
   function nearestKestrel() {
     if (!playerMesh || locale !== 'ash-nave' || skyPass || kestrelNave || !seenBeats['nave-fly']) return null;
     if (Math.hypot(0 - playerMesh.position.x, 1.8 - playerMesh.position.z) > 1.35) return null;
@@ -4509,6 +4710,7 @@
     playerMesh.position.set(2.2, 0, 0.15);
     if (galleryGroup) galleryGroup.visible = false;
     if (cryptGroup) cryptGroup.visible = false;
+    if (breachGroup) breachGroup.visible = false;
     naveGroup.visible = true;
     if (interiorGroup) interiorGroup.visible = false;
     if (overworldGroup) overworldGroup.visible = false;
@@ -4596,6 +4798,7 @@
     galleryGroup.add(playerMesh);
     playerMesh.position.set(0, 0, -1.15);
     if (cryptGroup) cryptGroup.visible = false;
+    if (breachGroup) breachGroup.visible = false;
     galleryGroup.visible = true;
     if (interiorGroup) interiorGroup.visible = false;
     if (overworldGroup) overworldGroup.visible = false;
@@ -4610,6 +4813,143 @@
     if (locLabel) locLabel.textContent = 'Watch Gallery';
     camera.position.set(0, CAMERA_HEIGHT, -1.15 + CAMERA_DIST);
     camera.lookAt(0, 1.2, -1.15);
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function lookCrack() {
+    showToast(cryptWord === 'mouth'
+      ? 'The scar breathes in the crack. It is not Cracked Zero. The stone does not widen. The bar stays shut.'
+      : 'You left this light. Pressing a digit would have opened the first breach. It stays a rumour.');
+  }
+
+  function syncBreachLight() {
+    if (!breachGroup || !breachGroup.userData.shafts) return;
+    const hot = breachWord === 'hold' || breachWord === 'mouth';
+    breachGroup.userData.shafts.forEach((light, i) => {
+      light.intensity = hot ? 1.75 : breachWord === 'back' ? 0.65 : 1.05;
+      if (i === 1) light.color.setHex(breachWord === 'mouth' ? 0xff3a18 : 0xff6a2a);
+    });
+  }
+
+  function enterBreach(opts) {
+    const silent = opts && opts.silent;
+    if (!breachGroup || !cryptGroup || !playerMesh) return;
+    if (!silent && (locale !== 'count-crypt' || cryptWord !== 'digit' || dialogueOpen || skyPass || encounterLocked)) return;
+    locale = 'first-breach';
+    if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
+    breachGroup.add(playerMesh);
+    const px = silent && opts.pos ? (opts.pos.x || 0) : 0;
+    const pz = silent && opts.pos ? (opts.pos.z == null ? 4.35 : opts.pos.z) : 4.35;
+    playerMesh.position.set(px, 0, pz);
+    if (interiorGroup) interiorGroup.visible = false;
+    if (overworldGroup) overworldGroup.visible = false;
+    if (stormreachGroup) stormreachGroup.visible = false;
+    if (marrowGroup) marrowGroup.visible = false;
+    if (yardGroup) yardGroup.visible = false;
+    if (markGroup) markGroup.visible = false;
+    tuckCathedral();
+    breachGroup.visible = true;
+    placeFog('breach');
+    syncBreachLight();
+    const locLabel = $('#hud-location');
+    if (locLabel) locLabel.textContent = 'First Breach';
+    camera.position.set(px, CAMERA_HEIGHT, pz + CAMERA_DIST);
+    camera.lookAt(px, 1.6, pz);
+    if (!silent) {
+      seenBeats.breachStep = true;
+      showToast('First breach. A Concord last stand is ahead. The light is not a door. Kestrel did not carry you.');
+    }
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function exitBreach() {
+    if (locale !== 'first-breach' || !playerMesh || !cryptGroup) return;
+    locale = 'count-crypt';
+    if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
+    cryptGroup.add(playerMesh);
+    playerMesh.position.set(0, 0, -0.15);
+    if (breachGroup) breachGroup.visible = false;
+    cryptGroup.visible = true;
+    if (interiorGroup) interiorGroup.visible = false;
+    if (overworldGroup) overworldGroup.visible = false;
+    if (naveGroup) naveGroup.visible = false;
+    if (galleryGroup) galleryGroup.visible = false;
+    placeFog('crypt');
+    syncCryptCrack();
+    const locLabel = $('#hud-location');
+    if (locLabel) locLabel.textContent = 'Count Crypt';
+    camera.position.set(0, CAMERA_HEIGHT, -0.15 + CAMERA_DIST);
+    camera.lookAt(0, 1.2, -0.15);
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function updateBreachFight() {
+    if (locale !== 'first-breach' || !playerMesh || dialogueOpen || encounterLocked || skyPass) return;
+    if (seenBeats.breachFight) return;
+    if (playerMesh.position.z > 1.6) {
+      breachLatch = false;
+      return;
+    }
+    if (breachLatch) return;
+    breachLatch = true;
+    beginScriptedFight(['captain', 'scribe'], 'breach-stand');
+  }
+
+  function updateBreachVesper() {
+    if (locale !== 'first-breach' || !playerMesh || !seenBeats.breachFight || dialogueOpen || encounterLocked || skyPass) return;
+    if (breachWord || seenBeats['breach-threshold']) return;
+    if (playerMesh.position.z > -3.2 || Math.abs(playerMesh.position.x) > 2.2) {
+      breachTalk = false;
+      return;
+    }
+    if (breachTalk) return;
+    breachTalk = true;
+    const fn = EW.scenes['breach-threshold'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'breach-threshold';
+    }
+  }
+
+  function noteBreach(id) {
+    if (breachWord) return;
+    seenBeats['breach-threshold'] = true;
+    if (id === 'mouth') {
+      breachWord = 'mouth';
+      addScar('breach', { quiet: true });
+      if (!seals.some((seal) => seal.name === 'Scarred Threshold')) {
+        seals.push({
+          name: 'Scarred Threshold',
+          desc: 'You set a mouth on the light past Cracked Zero. The scar took the step. The cathedral bar stayed shut. Vesper did not enter the host.',
+        });
+      }
+      showToast('You set a mouth on the light. The scar takes the step. The bar stays shut.' + scarDebtLine());
+    } else if (id === 'back') {
+      breachWord = 'back';
+      if (!seals.some((seal) => seal.name === 'Seen Threshold')) {
+        seals.push({
+          name: 'Seen Threshold',
+          desc: 'You walked the first breach and stepped back from the light. No new scar. The cathedral bar stayed shut.',
+        });
+      }
+      showToast('You step back. The room stays. The remnant is closer and still not yours.');
+    } else {
+      breachWord = 'hold';
+      if (!seals.some((seal) => seal.name === 'Held Threshold')) {
+        seals.push({
+          name: 'Held Threshold',
+          desc: 'You held the first breach under Licence Zero. The remnant is one room closer. The cathedral bar stayed shut. Vesper did not enter the host.',
+        });
+      }
+      showToast('The threshold stays open behind you. The bar stays shut. Kestrel is not in this light.');
+    }
+    syncBreachLight();
     refreshRumor();
     updateHUD();
     saveGame();
@@ -4802,6 +5142,14 @@
     if (cryptGroup && cryptGroup.visible && cryptGroup.userData.crack && !cryptWord) {
       cryptGroup.userData.crack.intensity = 0.28 + Math.abs(Math.sin(t * 1.8)) * 0.22;
     }
+    if (breachGroup && breachGroup.visible && breachGroup.userData.shafts && !breachWord) {
+      breachGroup.userData.shafts.forEach((light, i) => {
+        light.intensity = 0.85 + Math.abs(Math.sin(t * 1.4 + i)) * 0.45;
+      });
+    }
+    if (breachGroup && breachGroup.visible && breachGroup.userData.banner) {
+      breachGroup.userData.banner.rotation.y = Math.sin(t * 1.2) * 0.18;
+    }
     if (kestrelFly > 0 && naveGroup && naveGroup.userData.bird) {
       kestrelFly += dt || 0;
       const bird = naveGroup.userData.bird;
@@ -4908,10 +5256,23 @@
   function noteVictory() {
     const tag = victoryTag;
     victoryTag = null;
+    lastMergeNote = '';
     if (tag === 'cellar-crawl') seenBeats.cellarCrawl = true;
     if (tag === 'kiln-heart') seenBeats.kiln = true;
     if (tag === 'mark-counter') seenBeats.markFight = true;
     if (tag === 'crypt-auditor') seenBeats.cryptFight = true;
+    if (tag === 'breach-stand') {
+      seenBeats.breachFight = true;
+      if (!breachAsh) {
+        breachAsh = true;
+        spark.earth = (spark.earth || 0) + 1;
+        applyStrain(6);
+      }
+      const gained = grantReadyMerges({ quiet: true });
+      lastMergeNote = gained.length
+        ? ' ' + gained.join(', ') + (gained.length === 1 ? ' stays' : ' stay') + ' on the magic list.'
+        : ' No new merge was waiting.';
+    }
     if (tag === 'pipe-stoker') {
       pipeWord = 'crack';
       seenBeats['pipe-feed'] = true;
@@ -4971,6 +5332,7 @@
       nearNave = null;
       nearGallery = null;
       nearStair = null;
+      nearCrack = null;
       nearKestrel = null;
       joy.active = false;
       joy.dx = 0;
@@ -5022,6 +5384,9 @@
         } else if (locale === 'count-crypt') {
           if (cryptFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
           if (cryptFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
+        } else if (locale === 'first-breach') {
+          if (breachFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
+          if (breachFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
         } else if (locale === 'marrow-pipe') {
           if (pipeFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
           if (pipeFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
@@ -5049,6 +5414,7 @@
         nearNave = nearestNave();
         nearGallery = nearestGallery();
         nearStair = nearestStair();
+        nearCrack = nearestCrack();
         nearKestrel = nearestKestrel();
         const safe = nearPool && !nearPool.absorbed;
         const cooled = performance.now() < suppressEncountersUntil;
@@ -5075,6 +5441,7 @@
         nearNave = nearestNave();
         nearGallery = nearestGallery();
         nearStair = nearestStair();
+        nearCrack = nearestCrack();
         nearKestrel = nearestKestrel();
       }
 
@@ -5090,6 +5457,8 @@
       updateGalleryLedger();
       updateCryptFight();
       updateCryptVesper();
+      updateBreachFight();
+      updateBreachVesper();
       driftMotes();
       maybeResumeCoast();
 
@@ -5117,6 +5486,7 @@
       nearNave = nearestNave();
       nearGallery = nearestGallery();
       nearStair = nearestStair();
+      nearCrack = nearestCrack();
       nearKestrel = nearestKestrel();
       playerMesh.position.y = 0;
     }
@@ -5240,6 +5610,7 @@
     };
     e.hp = e.maxHp;
     if (id === 'auditor') e.page = true;
+    if (id === 'captain') e.licence = true;
     return e;
   }
 
@@ -5301,7 +5672,9 @@
     buildTurnQueue();
     updateCombatUI();
     showMenus('main');
-    const teach = enemies.some((e) => e.id === 'stoker')
+    const teach = enemies.some((e) => e.id === 'captain')
+      ? 'A Concord last stand. The captain’s licence hits once, hard, unless a shoulder is already in front. Nima’s steady keeps the line.'
+      : enemies.some((e) => e.id === 'stoker')
       ? 'Corked iron. A knife spends itself on the coat. Magma stays on them. Glass looks for the seam.'
       : enemies.some((e) => e.id === 'cinder')
         ? 'Ash that learned to crawl. The shelf is not empty.'
@@ -5793,11 +6166,19 @@
     }
     let dmg = Math.max(1, enemy.atk + rand(0, 4) - actorStats(pick.p).def);
     let coverNote = '';
+    if (enemy.licence) {
+      enemy.licence = false;
+      if (coverReady) coverNote = ' Torren’s shoulder tears the licence. The blow lands lighter.';
+      else {
+        dmg += 5;
+        coverNote = ' The licence comes down hard. A shoulder in front would have torn it.';
+      }
+    }
     if (coverReady) {
       const cut = Math.min(8, Math.max(0, dmg - 1));
       dmg -= cut;
       coverReady = false;
-      coverNote = cut
+      coverNote += cut
         ? ' Torren’s shoulder takes ' + cut + '.'
         : ' Torren’s shoulder meets a blow that was already thin.';
     }
@@ -5903,6 +6284,8 @@
           ? ' The counter is down. The pillar is still numbered. The weep is still a mouth.'
           : tag === 'crypt-auditor'
           ? ' The auditor is down. The page tore. The ledger and the crack are still ahead.'
+          : tag === 'breach-stand'
+          ? ' The last stand breaks. Remnant ash stays in the teeth.' + lastMergeNote + ' The light is still ahead. The bar stays shut.'
           : ' Lira keeps the bruises.';
     victoryText.textContent = msg;
     victoryOverlay.classList.remove('hidden');
@@ -5936,6 +6319,7 @@
     const onNave = locale === 'ash-nave';
     const onGallery = locale === 'watch-gallery';
     const onCrypt = locale === 'count-crypt';
+    const onBreach = locale === 'first-breach';
     overworldGroup.visible = locale === 'field' && !onCoast;
     if (stormreachGroup) stormreachGroup.visible = onCoast;
     if (coastGroup) coastGroup.visible = false;
@@ -5945,7 +6329,8 @@
     if (naveGroup) naveGroup.visible = onNave;
     if (galleryGroup) galleryGroup.visible = onGallery;
     if (cryptGroup) cryptGroup.visible = onCrypt;
-    if (interiorGroup) interiorGroup.visible = locale !== 'field' && !onMarrow && !onYard && !onMark && !onNave && !onGallery && !onCrypt;
+    if (breachGroup) breachGroup.visible = onBreach;
+    if (interiorGroup) interiorGroup.visible = locale !== 'field' && !onMarrow && !onYard && !onMark && !onNave && !onGallery && !onCrypt && !onBreach;
     if (vaultRoom) vaultRoom.visible = locale === 'harbor-vault';
     if (villageRoom) villageRoom.visible = locale === 'leaf-village';
     if (cellarRoom) cellarRoom.visible = locale === 'root-cellar';
@@ -5958,6 +6343,7 @@
     else if (onNave) placeFog('nave');
     else if (onGallery) placeFog('gallery');
     else if (onCrypt) placeFog('crypt');
+    else if (onBreach) placeFog('breach');
     else if (locale === 'root-cellar') placeFog('cellar');
     else if (locale === 'harbor-vault') placeFog('vault');
     else if (locale === 'marrow-pipe') placeFog('pipe');
@@ -6523,6 +6909,18 @@
     } else if (galleryWord) {
       rows.push({ name: 'Count crypt', note: 'Not walked yet. Down the count-stair. The list does not carry you.' });
     }
+    if (seenBeats.breachStep || breachWord) {
+      const breachNote = breachWord === 'hold'
+        ? 'The threshold is held. The bar stayed shut.'
+        : breachWord === 'mouth'
+          ? 'The light took a scar. The bar stayed shut.'
+          : breachWord === 'back'
+            ? 'You stepped back. The bar stayed shut.'
+            : 'Walked. The last stand or the light is still ahead.';
+      rows.push({ name: 'First breach', note: breachNote });
+    } else if (cryptWord === 'digit') {
+      rows.push({ name: 'First breach', note: 'Not walked yet. North of the widened crack. The list does not carry you.' });
+    }
     return rows;
   }
 
@@ -6711,6 +7109,8 @@
         feedSpent: !!feedSpent,
         passageLaid: !!passageLaid,
         cryptWord: cryptWord,
+        breachWord: breachWord,
+        breachAsh: !!breachAsh,
         kestrelNave: kestrelNave,
         duelWord: duelWord,
         kestrelWord: kestrelWord,
@@ -6766,6 +7166,8 @@
     feedSpent = !!data.feedSpent;
     passageLaid = !!data.passageLaid;
     cryptWord = data.cryptWord === 'digit' || data.cryptWord === 'mouth' || data.cryptWord === 'leave' ? data.cryptWord : null;
+    breachWord = data.breachWord === 'hold' || data.breachWord === 'mouth' || data.breachWord === 'back' ? data.breachWord : null;
+    breachAsh = !!data.breachAsh;
     kestrelNave = data.kestrelNave === 'ask' || data.kestrelNave === 'air' ? data.kestrelNave : null;
     if (marrowStain) marrowStain.visible = vesperAsh === 'refuse';
     if (typeof spark.earth !== 'number') spark.earth = 0;
@@ -6840,6 +7242,7 @@
     else if (data.locale === 'ash-nave') enterNave({ silent: true, pos: data.pos });
     else if (data.locale === 'watch-gallery') enterGallery({ silent: true, pos: data.pos });
     else if (data.locale === 'count-crypt') enterCrypt({ silent: true, pos: data.pos });
+    else if (data.locale === 'first-breach') enterBreach({ silent: true, pos: data.pos });
     else if (resumeInterior) enterInterior(data.locale, { silent: true, pos: data.pos });
     else if (data.region === 'stormreach') enterRegion('stormreach', { silent: true, pos: data.pos });
   }
@@ -7511,6 +7914,7 @@
   EW.noteNave = noteNave;
   EW.noteGallery = noteGallery;
   EW.noteCrypt = noteCrypt;
+  EW.noteBreach = noteBreach;
   EW.feedThin = function () { return !!feedSpent; };
   EW.passageLaid = function () { return !!passageLaid; };
   EW.noteKestrelNave = noteKestrelNave;

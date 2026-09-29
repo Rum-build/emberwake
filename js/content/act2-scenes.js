@@ -636,4 +636,37 @@
     });
     return true;
   });
+
+  Emberwake.registerScene('breach-threshold', function () {
+    Emberwake.present({
+      lines: [
+        {
+          where: 'First breach',
+          speaker: 'Vesper',
+          text: 'The Concord’s last stand is down. This light is the threshold, not the remnant. I will not duel her in this room, and I will not step into her. Kestrel is not in this light.',
+          choices: [
+            {
+              label: 'Hold the threshold.',
+              pick: 'hold',
+              reply: { speaker: 'Vesper', text: 'Then the room stays open behind you. The remnant is closer and still not yours. The cathedral bar stays shut. I do not enter the host.' },
+            },
+            {
+              label: 'Set a mouth on the light.',
+              pick: 'mouth',
+              reply: { speaker: 'Vesper', text: 'Then the scar takes the step. The light breathes. The bar stays shut. I still do not step into her.' },
+            },
+            {
+              label: 'Step back.',
+              pick: 'back',
+              reply: { speaker: 'Vesper', text: 'Then you keep the room and not the door. I do not enter the host. Kestrel stays out of this light.' },
+            },
+          ],
+        },
+      ],
+      onPick: function (id) {
+        if (Emberwake.noteBreach) Emberwake.noteBreach(id);
+      },
+    });
+    return true;
+  });
 })(window.Emberwake);
