@@ -101,6 +101,10 @@
   let duelWord = null;
   let kestrelWord = null;
   let hallWord = null;
+  let marrowWord = null;
+  let scarDebt = 0;
+  let scarMarks = {};
+  let nearWorker = null;
   let runLive = false;
   const SAVE_KEY = 'emberwake.save.v1';
   let combatsFought = 0;
@@ -221,6 +225,7 @@
     if (p.id === 'lira') {
       if (spark.strain >= 80) m -= Math.round(p.maxHp * 0.22);
       else if (spark.strain >= 45) m -= Math.round(p.maxHp * 0.12);
+      if (scarDebt > 0) m -= scarDebt * 6;
     }
     return Math.max(1, m);
   }
@@ -348,6 +353,10 @@
     duelWord = null;
     kestrelWord = null;
     hallWord = null;
+    marrowWord = null;
+    scarDebt = 0;
+    scarMarks = {};
+    nearWorker = null;
     locale = 'field';
     stepsSinceEncounter = 0;
     encounterLocked = false;
@@ -848,8 +857,40 @@
     leak.position.set(0, 1.4, 1.2);
     g.add(leak);
     g.userData.leak = leak;
+    const tender = makeCharacter(0x4a4038, 0.92);
+    tender.position.set(4.2, 0, 1.8);
+    tender.rotation.y = Math.PI * 0.85;
+    g.add(tender);
+    const gateL = new THREE.Mesh(
+      new THREE.BoxGeometry(0.35, 2.2, 0.35),
+      new THREE.MeshLambertMaterial({ color: 0x3a3532 })
+    );
+    gateL.position.set(-1.5, 1.1, 4.55);
+    const gateR = gateL.clone();
+    gateR.position.x = 1.5;
+    g.add(gateL);
+    g.add(gateR);
+    const lintel = new THREE.Mesh(
+      new THREE.BoxGeometry(3.4, 0.28, 0.28),
+      new THREE.MeshLambertMaterial({ color: 0x6e675c })
+    );
+    lintel.position.set(0, 2.2, 4.55);
+    g.add(lintel);
+    pools.forEach((pool) => {
+      if (pool.id === 'marrow-leak' && pool.group) {
+        pool.group.scale.setScalar(0.55);
+        g.add(pool.group);
+      }
+    });
+    g.userData.leak = leak;
     marrowGroup = g;
     scene.add(g);
+  }
+
+  function marrowFits(x, z) {
+    if (z > 4.7 || z < -5.4) return false;
+    if (Math.abs(x) > 6.2) return false;
+    return true;
   }
 
   function cellarFits(x, z) {
@@ -1798,7 +1839,13 @@
     const left = pools.filter((p) => !p.absorbed && !p.bottled && !p.interior).length;
     const kilnQuiet = pools.some((p) => p.id === 'kiln' && p.absorbed);
     const mergeNames = earnedMergeNames();
-    if (seenBeats.marrowRoad) {
+    if (seenBeats.marrowStep) {
+      rumor = marrowWord === 'bank'
+        ? 'You walked the ash and banked the leak. Scar debt is ' + scarDebt + '. The hall is south of the engine.'
+        : scarMarks.leak
+          ? 'You fed the digest-engine. The scar took the mouthful. Scar debt is ' + scarDebt + '.'
+          : 'Your feet are on Ashen Marrow. The engine eats what the harbor would not keep. The hall is south.';
+    } else if (seenBeats.marrowRoad) {
       rumor = 'You looked down the corked road. Ashen Marrow is inland, where a bottle already leaked. Your feet stayed in the hall.';
     } else if (seenBeats['bottle-hall']) {
       rumor = hallWord === 'crack'
@@ -1873,6 +1920,11 @@
     $('#el-lightning').textContent = String(spark.lightning);
     const earthEl = $('#el-earth');
     if (earthEl) earthEl.textContent = String(spark.earth || 0);
+    const scarEl = $('#hud-scar');
+    if (scarEl) {
+      scarEl.textContent = 'Scar ' + scarDebt + ' · −' + (scarDebt * 6) + ' HP';
+      scarEl.classList.toggle('hidden', scarDebt <= 0);
+    }
     $('#strain-nums').textContent = spark.strain + '/100';
     const bar = $('#strain-bar');
     bar.style.width = spark.strain + '%';
@@ -1884,7 +1936,7 @@
     $('#hud-rumor').textContent = rumor;
     const absorbBtn = $('#btn-absorb');
     const idle = gameState === State.OVERWORLD && !inventoryOpen && !encounterLocked && !dialogueOpen;
-    const atExit = idle && locale !== 'field' && playerMesh && playerMesh.position.z > 2.55;
+    const atExit = idle && atInteriorExit();
     const kilnGuarded = !!(nearPool && nearPool.id === 'kiln' && !seenBeats.kiln && !nearPool.absorbed);
     const poolReady = !!(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld && !kilnGuarded);
     const showAbsorb = idle && poolReady && (locale === 'field' ? !nearPool.interior : !atExit);
@@ -1897,18 +1949,18 @@
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
     else if (showGate) absorbBtn.textContent = 'Land';
-    else if (showLook) absorbBtn.textContent = 'Look';
+    else if (showLook) absorbBtn.textContent = 'Enter';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
   }
 
   function updatePrompt() {
-    const atExit = locale !== 'field' && playerMesh && playerMesh.position.z > 2.55;
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !atExit)) {
+    const atExit = atInteriorExit();
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
     interactPrompt.classList.remove('hidden');
-    if (locale !== 'field' && nearPool && !(playerMesh && playerMesh.position.z > 2.55)) {
+    if (locale !== 'field' && nearPool && !atInteriorExit()) {
       const guarded = nearPool.id === 'kiln' && !seenBeats.kiln && !nearPool.absorbed;
       $('#interact-title').textContent = nearPool.name;
       $('#interact-detail').textContent = guarded
@@ -1919,10 +1971,12 @@
       return;
     }
     if (atExit) {
-      $('#interact-title').textContent = locale === 'root-cellar' ? 'The mouth' : locale === 'harbor-vault' ? 'The shale' : 'The door';
+      $('#interact-title').textContent = locale === 'root-cellar' ? 'The mouth' : locale === 'ashen-marrow' ? 'The hall' : locale === 'harbor-vault' ? 'The shale' : 'The door';
       $('#interact-detail').textContent = locale === 'root-cellar'
         ? 'Press E to step back onto the isle. The throat stays open behind you.'
-        : locale === 'harbor-vault'
+        : locale === 'ashen-marrow'
+          ? 'Press E to step back into the bottle-hall. The engine stays on the ash.'
+          : locale === 'harbor-vault'
           ? (seenBeats['bottle-hall']
             ? 'Press E to step back onto the coast. The hall stays lit. The inland road does not come with you.'
             : 'Press E to step back onto the coast. The iron stays shut.')
@@ -1947,6 +2001,11 @@
     if (nearMarrow) {
       $('#interact-title').textContent = nearMarrow.title;
       $('#interact-detail').textContent = nearMarrow.hint;
+      return;
+    }
+    if (nearWorker) {
+      $('#interact-title').textContent = nearWorker.title;
+      $('#interact-detail').textContent = nearWorker.hint;
       return;
     }
     $('#interact-title').textContent = nearPool.name;
@@ -2002,7 +2061,14 @@
           ? 'The harbor count has Lira’s name on the shortage. The bottles stayed behind iron.'
           : 'You refused the harbor’s shortage line. The bottles stayed behind iron.');
       }
-      if (seenBeats.marrowRoad) waiting.push('You looked down Ashen Marrow from the hall. The digest-engine is inland. Your feet stayed.');
+      if (seenBeats.marrowStep) {
+        waiting.push(marrowWord === 'bank'
+          ? 'You walked the ash and banked the engine leak.'
+          : scarMarks.leak
+            ? 'You fed the digest-engine. The mouthful stayed in the scar.'
+            : 'You stepped onto Ashen Marrow. The hall is the way back.');
+      } else if (seenBeats.marrowRoad) waiting.push('You looked down Ashen Marrow from the hall. The digest-engine is inland. Your feet stayed.');
+      if (scarDebt > 0) waiting.push('Scar debt ' + scarDebt + '. Each point cuts Lira’s max HP by 6. The kiln, the earth cork, and a fed engine add a point. Banking the marrow leak eases one.');
       const heldMerges = earnedMergeNames();
       if (heldMerges.length) waiting.push(heldMerges.join(', ') + (heldMerges.length === 1 ? ' is' : ' are') + ' on the magic list.');
       if (seenBeats['vesper-duel']) waiting.push('Vesper measured a blow on the coast and walked away alive.');
@@ -2053,6 +2119,8 @@
     if (spark.strain >= 80) strainText += ' · Lira’s max HP badly cut';
     else if (spark.strain >= 45) strainText += ' · Lira’s max HP cut';
     $('#inv-strain').textContent = strainText;
+    const scarInv = $('#inv-scar');
+    if (scarInv) scarInv.textContent = 'Scar ' + scarDebt + (scarDebt > 0 ? ' · −' + (scarDebt * 6) + ' HP' : '');
     $('#inv-fire').textContent = String(spark.fire);
     $('#inv-water').textContent = String(spark.water);
     $('#inv-lightning').textContent = String(spark.lightning);
@@ -2202,16 +2270,23 @@
   function tryInteract() {
     if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen) return;
     if (locale !== 'field') {
-      const atMouth = playerMesh && playerMesh.position.z > 2.55;
-      if (nearMarrow && !atMouth) {
-        playMarrowLook();
+      const atMouth = atInteriorExit();
+      if (nearMarrow && locale === 'harbor-vault') {
+        enterMarrow();
         return;
       }
       if (nearPool && !atMouth) {
         tryAbsorb();
         return;
       }
-      if (atMouth) exitInterior();
+      if (nearWorker && !atMouth) {
+        talkMarrow();
+        return;
+      }
+      if (atMouth) {
+        if (locale === 'ashen-marrow') exitMarrow();
+        else exitInterior();
+      }
       return;
     }
     const poolReady = nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld;
@@ -2278,6 +2353,11 @@
     if (levels) msg += ' Spark level ' + spark.level + '. Capacity ' + spark.capacity + '.';
     msg += strainWarning(before) + bite;
     if (gained.length) msg += ' ' + gained.join(', ') + (gained.length === 1 ? ' stays' : ' stay') + ' on the magic list.';
+    if (pool.id === 'kiln' && addScar('kiln')) msg += scarDebtLine();
+    if (pool.id === 'marrow-leak' && addScar('leak')) {
+      if (marrowWord !== 'bank') marrowWord = 'fed';
+      msg += scarDebtLine();
+    }
     showToast(msg);
     refreshRumor();
     updateHUD();
@@ -2314,8 +2394,35 @@
     if (playerMesh.position.z > -13.2 || Math.abs(playerMesh.position.x) > 2.4) return null;
     return {
       title: 'Ashen Marrow',
-      hint: 'The inland cork. Press E to look down the road. Your feet stay here.',
+      hint: 'The inland road. Press E to step onto the ash. The hall stays behind you until you walk back.',
     };
+  }
+
+  function nearestWorker() {
+    if (!playerMesh || locale !== 'ashen-marrow' || skyPass) return null;
+    if (Math.hypot(4.2 - playerMesh.position.x, 1.8 - playerMesh.position.z) > 1.7) return null;
+    if (marrowWord === 'bank') {
+      return {
+        title: 'Concord tender',
+        hint: 'She already banked the leak. The engine is still hungry. The hall is south.',
+      };
+    }
+    if (scarMarks.leak) {
+      return {
+        title: 'Concord tender',
+        hint: 'The leak is already in Lira. Press E. She cannot pull a mouthful back.',
+      };
+    }
+    return {
+      title: 'Concord tender',
+      hint: 'She keeps the digest-engine fed. Press E. Banking eases one point of scar debt. The leak itself is the other choice.',
+    };
+  }
+
+  function atInteriorExit() {
+    if (!playerMesh || locale === 'field') return false;
+    if (locale === 'ashen-marrow') return playerMesh.position.z > 4.15;
+    return playerMesh.position.z > 2.55;
   }
 
   function updateVaultTriggers() {
@@ -2375,6 +2482,9 @@
   function updateOverworld(dt) {
     const camTarget = playerMesh.position;
     const coasting = skyHoldsFeet();
+    if (marrowGroup && marrowGroup.visible && marrowGroup.userData.leak) {
+      marrowGroup.userData.leak.intensity = 1.05 + Math.abs(Math.sin(performance.now() * 0.003)) * 0.7;
+    }
     if (waystoneGroup && waystoneGroup.userData.awake && waystoneGroup.userData.beamMat) {
       waystoneGroup.userData.beamMat.opacity = 0.55 + Math.sin(performance.now() * 0.004) * 0.25;
     }
@@ -2389,6 +2499,7 @@
       nearGate = null;
       nearReturn = null;
       nearMarrow = null;
+      nearWorker = null;
       joy.active = false;
       joy.dx = 0;
       joy.dy = 0;
@@ -2420,6 +2531,9 @@
         } else if (locale === 'harbor-vault') {
           if (vaultFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
           if (vaultFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
+        } else if (locale === 'ashen-marrow') {
+          if (marrowFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
+          if (marrowFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
         } else {
           if (cellarFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
           if (cellarFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
@@ -2432,6 +2546,7 @@
         nearGate = nearestGate();
         nearReturn = nearestReturn();
         nearMarrow = nearestMarrow();
+        nearWorker = nearestWorker();
         const safe = nearPool && !nearPool.absorbed;
         const cooled = performance.now() < suppressEncountersUntil;
         if (locale === 'field' && (regionId === 'verdant-isle' || regionId === 'stormreach') && !safe && !cooled && stepsSinceEncounter > ENCOUNTER_STEPS) {
@@ -2446,6 +2561,7 @@
         nearGate = nearestGate();
         nearReturn = nearestReturn();
         nearMarrow = nearestMarrow();
+        nearWorker = nearestWorker();
       }
 
       updateCellarTriggers();
@@ -2467,6 +2583,7 @@
       nearGate = nearestGate();
       nearReturn = nearestReturn();
       nearMarrow = nearestMarrow();
+      nearWorker = nearestWorker();
       playerMesh.position.y = 0;
     }
 
@@ -2571,6 +2688,10 @@
     interactPrompt.classList.add('hidden');
     combatUI.classList.remove('hidden');
     overworldGroup.visible = false;
+    if (interiorGroup) interiorGroup.visible = false;
+    if (stormreachGroup) stormreachGroup.visible = false;
+    if (marrowGroup) marrowGroup.visible = false;
+    if (coastGroup) coastGroup.visible = false;
     combatGroup.visible = true;
     scene.fog.near = 28;
     scene.fog.far = 80;
@@ -2752,7 +2873,14 @@
           ? elementLabel(sp.also) + ' ' + alsoNeed + ' + ' + elementLabel(sp.element) + ' ' + sp.cost
           : elementLabel(sp.element) + ' ' + sp.cost;
         const held = sp.also ? 'have ' + alsoHave + '/' + have : 'have ' + have;
-        costEl.textContent = cost + ' · ' + sp.mp + ' MP · ' + held;
+        const feel = {
+          plasma: 'cooks armor',
+          steam: 'softens the swing',
+          storm: 'chains',
+          magma: 'burns on their turn',
+          glass: 'pierces',
+        }[btn.dataset.magic];
+        costEl.textContent = cost + ' · ' + sp.mp + ' MP · ' + held + (feel ? ' · ' + feel : '');
       }
       btn.disabled = !actor || actor.mp < sp.mp || have < sp.cost || alsoHave < alsoNeed;
     });
@@ -2900,10 +3028,11 @@
       const mageBonus = actor.id === 'lira' && spark.path === 'mage' ? 6 : 0;
       if (sp.kind === 'heal') {
         const target = party[targetIdx];
-        const heal = 22 + Math.floor(stats.mag / 2) + mageBonus + rand(0, 8);
+        const kept = scarDebt * 4;
+        const heal = Math.max(1, 22 + Math.floor(stats.mag / 2) + mageBonus + rand(0, 8) - kept);
         const before = target.hp;
         target.hp = Math.min(maxHp(target), target.hp + heal);
-        showLog(actor.name + ' lays digested water on ' + target.name + '. ' + (target.hp - before) + ' HP returns.');
+        showLog(actor.name + ' lays digested water on ' + target.name + '. ' + (target.hp - before) + ' HP returns.' + (kept ? ' The scar keeps ' + kept + '.' : ''));
         flashMesh(combatPartyMeshes[targetIdx], sp.flash);
         if (actor.id === 'lira' && spark.path === 'mage' && grantPathXp(6)) {
           later(() => showLog('Mage attunement deepens.'), 600);
@@ -2913,17 +3042,48 @@
         if (!target || !target.alive) { combatBusy = false; advanceTurn(); return; }
         const usualCut = Math.floor(target.def / 3);
         const defCut = act.magic === 'glass' ? Math.floor(target.def * 0.08) : usualCut;
-        const dmg = Math.max(1, stats.mag + sp.power + mageBonus + rand(0, 6) - defCut);
+        let dmg = Math.max(1, stats.mag + sp.power + mageBonus + rand(0, 6) - defCut);
         target.hp = Math.max(0, target.hp - dmg);
+        let extra = '';
+        if (act.magic === 'plasma') {
+          target.def = Math.max(0, target.def - 2);
+          applyStrain(1);
+          extra = ' The guard cooks. Strain ' + spark.strain + '.';
+        } else if (act.magic === 'steam') {
+          target.atk = Math.max(1, target.atk - 2);
+          extra = ' The swing softens.';
+        } else if (act.magic === 'storm') {
+          const others = enemies.filter((enemy) => enemy.alive && enemy !== target);
+          if (others.length) {
+            others.forEach((other) => {
+              const splash = Math.max(1, Math.floor(dmg * 0.45));
+              other.hp = Math.max(0, other.hp - splash);
+              extra += ' The bolt walks to ' + other.name + ' for ' + splash + '.';
+              if (other.hp <= 0) markDead(enemies.indexOf(other));
+            });
+          } else if (target.hp > 0) {
+            target.hp = Math.max(0, target.hp - 5);
+            extra = ' The bolt has nowhere else to go. Another 5.';
+          }
+        } else if (act.magic === 'magma' && target.hp > 0) {
+          target.burn = (target.burn || 0) + 8;
+          extra = ' It stays on them.';
+        } else if (act.magic === 'glass') {
+          extra = ' The guard does not hold.';
+          if (target.hp > 0 && Math.random() < 0.45) {
+            target.hp = Math.max(0, target.hp - 8);
+            extra = ' The seam gives.';
+          }
+        }
         const lines = {
           fire: actor.name + ' spends a coal of fire. ' + target.name + ' takes ' + dmg + '.',
           water: actor.name + ' turns held water into a hard tide. ' + dmg + ' to ' + target.name + '.',
           lightning: 'Lightning the spark kept in the teeth. ' + target.name + ' takes ' + dmg + '.',
-          plasma: 'Plasma. Fire and lightning spend together. ' + target.name + ' takes ' + dmg + '.',
-          steam: 'Steam scalds the air between them. ' + target.name + ' takes ' + dmg + '.',
-          storm: 'Storm. Water and lightning spend together. ' + target.name + ' takes ' + dmg + '.',
-          magma: 'Magma. Fire and earth spend together. ' + target.name + ' takes ' + dmg + '.',
-          glass: 'Glass. The blow is bright and brittle. ' + target.name + ' takes ' + dmg + '.',
+          plasma: 'Plasma. Fire and lightning spend together. ' + target.name + ' takes ' + dmg + '.' + extra,
+          steam: 'Steam scalds the air between them. ' + target.name + ' takes ' + dmg + '.' + extra,
+          storm: 'Storm. Water and lightning spend together. ' + target.name + ' takes ' + dmg + '.' + extra,
+          magma: 'Magma. Fire and earth spend together. ' + target.name + ' takes ' + dmg + '.' + extra,
+          glass: 'Glass. The blow is bright and brittle. ' + target.name + ' takes ' + dmg + '.' + extra,
         };
         showLog(lines[act.magic] || (actor.name + ' spends a held word. ' + target.name + ' takes ' + dmg + '.'));
         flashMesh(combatEnemyMeshes[targetIdx], sp.flash);
@@ -2990,6 +3150,19 @@
     if (gameState !== State.COMBAT) return;
     const enemy = enemies[idx];
     if (!enemy || !enemy.alive) { advanceTurn(); return; }
+    if (enemy.burn) {
+      const bite = enemy.burn;
+      enemy.burn = 0;
+      enemy.hp = Math.max(0, enemy.hp - bite);
+      showLog('Magma bites ' + enemy.name + ' for ' + bite + '.');
+      flashMesh(combatEnemyMeshes[idx], 0xff6a2a);
+      if (enemy.hp <= 0) {
+        markDead(idx);
+        updateCombatUI();
+        later(() => { if (!checkCombatEnd()) advanceTurn(); }, 700);
+        return;
+      }
+    }
     const living = party.map((p, i) => ({ p, i })).filter((x) => x.p.hp > 0);
     if (!living.length) { checkCombatEnd(); return; }
     let pick = living[rand(0, living.length - 1)];
@@ -3120,15 +3293,17 @@
     victoryOverlay.classList.add('hidden');
     gameoverScreen.classList.add('hidden');
     const onCoast = locale === 'field' && regionId === 'stormreach';
+    const onMarrow = locale === 'ashen-marrow';
     overworldGroup.visible = locale === 'field' && !onCoast;
     if (stormreachGroup) stormreachGroup.visible = onCoast;
     if (coastGroup) coastGroup.visible = false;
-    if (marrowGroup) marrowGroup.visible = false;
-    if (interiorGroup) interiorGroup.visible = locale !== 'field';
+    if (marrowGroup) marrowGroup.visible = onMarrow;
+    if (interiorGroup) interiorGroup.visible = locale !== 'field' && !onMarrow;
+    if (vaultRoom) vaultRoom.visible = locale === 'harbor-vault';
     combatGroup.visible = false;
-    scene.fog.near = 18;
-    scene.fog.far = 55;
-    const sky = locale === 'root-cellar' ? 0x1a1410 : locale === 'harbor-vault' ? 0x1a222c : locale !== 'field' ? 0x3a342c : onCoast ? 0x6e7e90 : 0x87b5d9;
+    scene.fog.near = onMarrow ? 12 : 18;
+    scene.fog.far = onMarrow ? 42 : 55;
+    const sky = onMarrow ? 0x3a241c : locale === 'root-cellar' ? 0x1a1410 : locale === 'harbor-vault' ? 0x1a222c : locale !== 'field' ? 0x3a342c : onCoast ? 0x6e7e90 : 0x87b5d9;
     scene.fog.color.set(sky);
     renderer.setClearColor(sky);
     combatEnemyMeshes.forEach((m) => combatGroup.remove(m));
@@ -3152,7 +3327,8 @@
     const active = turn && turn.type === 'party' ? turn.index : -1;
     enemyPanel.innerHTML = enemies.map((e) => {
       const pct = Math.max(0, Math.min(100, (e.hp / e.maxHp) * 100));
-      return `<div class="enemy-card ${e.alive ? '' : 'dead'}"><div class="name">${esc(e.name)}</div><div class="bar-wrap"><div class="bar-hp" style="width:${pct}%"></div></div></div>`;
+      const burn = e.burn ? ' · magma ' + e.burn : '';
+      return `<div class="enemy-card ${e.alive ? '' : 'dead'}"><div class="name">${esc(e.name)}${burn}</div><div class="bar-wrap"><div class="bar-hp" style="width:${pct}%"></div></div></div>`;
     }).join('');
     partyPanel.innerHTML = party.map((p, i) => {
       const cap = maxHp(p);
@@ -3173,6 +3349,11 @@
         if (dead) return '';
         return `<span class="turn-chip${i === combatTurnIndex ? ' now' : ''}">${esc(name)}</span>`;
       }).join('');
+    }
+    const held = $('#combat-held');
+    if (held && spark) {
+      held.textContent = 'Held · Fire ' + spark.fire + ' · Water ' + spark.water + ' · Bolt ' + spark.lightning + ' · Earth ' + (spark.earth || 0)
+        + (scarDebt > 0 ? ' · Scar ' + scarDebt + ' (−' + (scarDebt * 6) + ' HP, Mend keeps ' + (scarDebt * 4) + ')' : '');
     }
   }
 
@@ -3618,6 +3799,9 @@
         mergeWord: mergeWord,
         merges: Object.keys(merges).filter((key) => merges[key]),
         hallWord: hallWord,
+        marrowWord: marrowWord,
+        scarDebt: scarDebt,
+        scarMarks: scarMarks,
         duelWord: duelWord,
         kestrelWord: kestrelWord,
         pos: { x: playerMesh.position.x, z: playerMesh.position.z },
@@ -3656,6 +3840,9 @@
     const held = Object.keys(merges).filter((key) => merges[key]);
     mergeWord = data.mergeWord && MERGE_OK[data.mergeWord] ? data.mergeWord : (held.length ? held[held.length - 1] : null);
     hallWord = data.hallWord === 'crack' || data.hallWord === 'leave' ? data.hallWord : null;
+    marrowWord = data.marrowWord === 'bank' || data.marrowWord === 'leave' || data.marrowWord === 'fed' ? data.marrowWord : null;
+    scarDebt = typeof data.scarDebt === 'number' ? Math.max(0, data.scarDebt) : 0;
+    scarMarks = data.scarMarks && typeof data.scarMarks === 'object' ? data.scarMarks : {};
     if (typeof spark.earth !== 'number') spark.earth = 0;
     duelWord = data.duelWord === 'press' || data.duelWord === 'hold' ? data.duelWord : null;
     kestrelWord = data.kestrelWord === 'ask' || data.kestrelWord === 'leave' ? data.kestrelWord : null;
@@ -3683,6 +3870,23 @@
     syncSilhouette();
     syncCoastVesper();
     if (seenBeats['waystone-wake']) wakeWaystone();
+    const kilnPool = pools.find((pool) => pool.id === 'kiln');
+    if (kilnPool && kilnPool.absorbed && !scarMarks.kiln) {
+      scarMarks.kiln = true;
+      scarDebt += 1;
+    }
+    if (hallWord === 'crack' && !scarMarks.cork) {
+      scarMarks.cork = true;
+      scarDebt += 1;
+    }
+    const leakPool = pools.find((pool) => pool.id === 'marrow-leak');
+    if (leakPool && leakPool.absorbed && !scarMarks.leak) {
+      scarMarks.leak = true;
+      scarDebt += 1;
+      if (marrowWord !== 'bank') marrowWord = 'fed';
+    }
+    if (marrowWord === 'bank' && leakPool && !leakPool.absorbed) leakPool.withheld = true;
+    clampHostHp();
     grantReadyMerges({ quiet: true });
     refreshRumor();
   }
@@ -3705,7 +3909,8 @@
       pathScreen.classList.remove('hidden');
       gameState = State.PATH;
     }
-    if (resumeInterior) enterInterior(data.locale, { silent: true, pos: data.pos });
+    if (data.locale === 'ashen-marrow') enterMarrow({ silent: true, pos: data.pos });
+    else if (resumeInterior) enterInterior(data.locale, { silent: true, pos: data.pos });
     else if (data.region === 'stormreach') enterRegion('stormreach', { silent: true, pos: data.pos });
   }
 
@@ -3983,12 +4188,13 @@
         });
       }
       gained = grantReadyMerges({ quiet: true });
+      addScar('cork');
     }
     if (hallWord === 'crack') {
       const spellBit = gained.length
         ? ' ' + gained.join(', ') + (gained.length === 1 ? ' stays' : ' stay') + ' on the magic list.'
         : '';
-      showToast('The earth cork cracks. A mouthful stays in the teeth. Strain ' + spark.strain + '/100.' + spellBit);
+      showToast('The earth cork cracks. A mouthful stays in the teeth. Strain ' + spark.strain + '/100.' + spellBit + scarDebtLine());
     }
     refreshRumor();
     updateHUD();
@@ -3999,23 +4205,146 @@
     return !!(skyPass && (skyPass.mode === 'coast' || skyPass.mode === 'land' || skyPass.mode === 'marrow'));
   }
 
-  function playMarrowLook() {
-    if (skyPass || dialogueOpen || !seenBeats['bottle-hall']) return;
-    marrowBusy = false;
+  function scarDebtLine() {
+    return ' Scar debt ' + scarDebt + '. Lira’s max HP is cut by ' + (scarDebt * 6) + '.';
+  }
+
+  function addScar(source) {
+    if (!source || scarMarks[source]) return false;
+    scarMarks[source] = true;
+    scarDebt += 1;
+    clampHostHp();
+    return true;
+  }
+
+  function enterMarrow(opts) {
+    const silent = opts && opts.silent;
+    if (!marrowGroup || !playerMesh) return;
+    if (!silent && (skyPass || dialogueOpen || !seenBeats['bottle-hall'])) return;
+    locale = 'ashen-marrow';
+    if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
+    marrowGroup.add(playerMesh);
+    const px = silent && opts.pos ? (opts.pos.x || 0) : 0;
+    const pz = silent && opts.pos ? (opts.pos.z || 3.1) : 3.1;
+    playerMesh.position.set(px, 0, pz);
     if (interiorGroup) interiorGroup.visible = false;
-    if (marrowGroup) marrowGroup.visible = true;
+    if (overworldGroup) overworldGroup.visible = false;
+    if (stormreachGroup) stormreachGroup.visible = false;
+    if (coastGroup) coastGroup.visible = false;
+    marrowGroup.visible = true;
     scene.fog.color.set(0x3a241c);
     scene.fog.near = 12;
-    scene.fog.far = 40;
+    scene.fog.far = 42;
     renderer.setClearColor(0x3a241c);
-    skyPass = { t: 0, dur: 8, mode: 'marrow' };
-    camera.position.set(8, 5.2, 8);
-    camera.lookAt(0, 1.2, -2);
     const locLabel = $('#hud-location');
     if (locLabel) locLabel.textContent = 'Ashen Marrow';
-    setFieldControls(false);
-    const fn = EW.scenes['marrow-road'];
+    camera.position.set(px, CAMERA_HEIGHT, pz + CAMERA_DIST);
+    camera.lookAt(px, 1, pz);
+    if (!silent && !seenBeats.marrowStep) {
+      const fn = EW.scenes['marrow-road'];
+      if (typeof fn === 'function') {
+        const played = fn();
+        if (played !== false && dialogueOpen) pendingBeat = 'marrow-road';
+      }
+    }
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function exitMarrow() {
+    if (locale !== 'ashen-marrow' || !playerMesh || !interiorGroup) return;
+    locale = 'harbor-vault';
+    if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
+    interiorGroup.add(playerMesh);
+    playerMesh.position.set(0, 0, -14.2);
+    marrowGroup.visible = false;
+    interiorGroup.visible = true;
+    if (vaultRoom) vaultRoom.visible = true;
+    if (overworldGroup) overworldGroup.visible = false;
+    if (stormreachGroup) stormreachGroup.visible = false;
+    scene.fog.color.set(0x1a222c);
+    scene.fog.near = 18;
+    scene.fog.far = 55;
+    renderer.setClearColor(0x1a222c);
+    const locLabel = $('#hud-location');
+    if (locLabel) locLabel.textContent = 'Harbor Vault';
+    camera.position.set(0, CAMERA_HEIGHT, -14.2 + CAMERA_DIST);
+    camera.lookAt(0, 1, -14.2);
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function talkMarrow() {
+    if (locale !== 'ashen-marrow' || dialogueOpen || skyPass) return;
+    const leak = pools.find((pool) => pool.id === 'marrow-leak');
+    if (marrowWord === 'bank') {
+      showToast('The leak is banked. The engine is still hungry, and the hall is south. Scar debt ' + scarDebt + '.');
+      return;
+    }
+    if (leak && leak.absorbed) {
+      if (marrowWord !== 'bank') marrowWord = 'fed';
+      showToast('The mouthful is already in her. The tender cannot pull it back.' + scarDebtLine());
+      saveGame();
+      return;
+    }
+    const fn = EW.scenes['marrow-tender'];
     if (typeof fn === 'function') fn();
+  }
+
+  function noteMarrowStep() {
+    seenBeats.marrowStep = true;
+    seenBeats.marrowRoad = true;
+    if (!seals.some((seal) => seal.name === 'Walked Marrow')) {
+      seals.push({
+        name: 'Walked Marrow',
+        desc: 'Not a licence. Feet left the bottle-hall onto the ash. The digest-engine is real. South is the hall.',
+      });
+    }
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function noteMarrowChoice(id) {
+    if (id !== 'bank') {
+      marrowWord = marrowWord || 'leave';
+      refreshRumor();
+      saveGame();
+      return;
+    }
+    const leak = pools.find((pool) => pool.id === 'marrow-leak');
+    if (leak && leak.absorbed) {
+      marrowWord = 'fed';
+      showToast('The leak is already in her. Banking cannot pull it back.' + scarDebtLine());
+      saveGame();
+      return;
+    }
+    if (leak) leak.withheld = true;
+    marrowWord = 'bank';
+    scarMarks.bank = true;
+    const beforeDebt = scarDebt;
+    if (scarDebt > 0) {
+      scarDebt -= 1;
+      clampHostHp();
+    }
+    if (!seals.some((seal) => seal.name === 'Banked Leak')) {
+      seals.push({
+        name: 'Banked Leak',
+        desc: 'The tender corked the engine’s mouth. One point of scar debt eased, if there was a point to ease. The engine is still there.',
+      });
+    }
+    showToast(beforeDebt > 0
+      ? 'The tender banks the leak. Scar debt ' + scarDebt + '. Lira’s max HP is cut by ' + (scarDebt * 6) + '.'
+      : 'The tender banks the leak. There was no scar debt to give back. The mouth stays corked.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function playMarrowLook() {
+    enterMarrow();
   }
 
   function updateMarrowPass(dt) {
@@ -4030,6 +4359,10 @@
   }
 
   function finishMarrow() {
+    if (locale === 'ashen-marrow') {
+      exitMarrow();
+      return;
+    }
     if (marrowBusy) return;
     marrowBusy = true;
     skyPass = null;
@@ -4194,6 +4527,8 @@
   EW.noteKestrelAsk = noteKestrelAsk;
   EW.noteHall = noteHall;
   EW.finishMarrow = finishMarrow;
+  EW.noteMarrowStep = noteMarrowStep;
+  EW.noteMarrowChoice = noteMarrowChoice;
   EW.revealCoastVesper = function () {
     if (coastVesper) coastVesper.visible = true;
   };

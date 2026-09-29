@@ -397,6 +397,14 @@ button, .inventory-panel, .inv-body, .credits-content {
   text-shadow: 0 1px 3px #000;
 }
 
+.hud-scar {
+  color: #e7b0a4;
+  border: 1px solid rgba(180, 80, 60, 0.45);
+  border-radius: 999px;
+  padding: 1px 8px;
+  background: rgba(40, 12, 10, 0.55);
+}
+
 .strain-wrap {
   width: 88px;
   height: 8px;
@@ -737,6 +745,17 @@ button, .inventory-panel, .inv-body, .credits-content {
   padding: max(10px, env(safe-area-inset-top)) 12px 0;
   pointer-events: none;
   gap: 8px;
+}
+
+.combat-held {
+  pointer-events: none;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: #f0e6d2;
+  background: rgba(8, 10, 16, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  padding: 4px 12px;
 }
 
 .turn-order {

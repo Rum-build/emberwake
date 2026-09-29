@@ -193,12 +193,12 @@
             {
               label: 'Crack the earth cork. Take the mouthful.',
               pick: 'crack',
-              reply: { speaker: 'A clerk', text: 'Cracked. You are hungrier than the licence, which is how rot learns a new name. Magma and glass, if the other elements are already in her, will sit on the magic list. The marrow bottle stays corked. Look north if you want the road you are not walking.' },
+              reply: { speaker: 'A clerk', text: 'Cracked. You are hungrier than the licence, which is how rot learns a new name. Magma and glass, if the other elements are already in her, will sit on the magic list. The marrow bottle stays corked. The north arch is a road. Walk it. The hall will be here when the ash is done with you.' },
             },
             {
               label: 'Leave every cork. Name the inland leak.',
               pick: 'leave',
-              reply: { speaker: 'A clerk', text: 'Then the show stays pretty. Ashen Marrow keeps the leak, and you keep your teeth clean of earth. The north arch is a look, not a gate. Describe it badly, if you describe it at all.' },
+              reply: { speaker: 'A clerk', text: 'Then the show stays pretty. Ashen Marrow keeps the leak, and you keep your teeth clean of earth. The north arch opens anyway. Walk it if you mean to. Coming back is not a licence.' },
             },
           ],
         },
@@ -214,12 +214,40 @@
   Emberwake.registerScene('marrow-road', function () {
     Emberwake.present({
       lines: [
-        { where: 'Ashen Marrow', speaker: 'A clerk', text: 'Inland. Ash under a red sky. The digest-engine sits where the seals failed, and it eats. This is not a door. This is the bill the harbor sent somewhere else.' },
-        { speaker: 'Lira', text: 'They keep the hall bright by pushing the rot where the ships do not have to smell it.' },
-        { speaker: 'The spark', text: 'Your feet are still on harbor stone. When this road opens, it will ask what you already swallowed, and what you refused.' },
+        { where: 'Ashen Marrow', speaker: 'Lira', text: 'Ash under a red sky. The hall is behind us. My feet are on the bill they sent inland.' },
+        { speaker: 'A tender', text: 'The digest-engine eats what the seals failed to hold. I keep it fed. I do not keep it honest. The leak in front of the maw is a mouth. South is the only door back.' },
+        { speaker: 'The spark', text: 'Feeding that mouth will scar her. Banking it gives one point of the debt back, if the kiln or the cork already took one. Neither choice is a licence.' },
       ],
       onDone: function () {
-        if (Emberwake.finishMarrow) Emberwake.finishMarrow();
+        if (Emberwake.noteMarrowStep) Emberwake.noteMarrowStep();
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('marrow-tender', function () {
+    Emberwake.present({
+      lines: [
+        { where: 'The engine', speaker: 'A tender', text: 'The leak is the harbor’s leftover. Feed the engine and the host pays. Bank it and I cork the mouth. I can ease one point of what is already in her. I cannot invent a debt to forgive.' },
+        {
+          speaker: 'Lira',
+          text: 'The tender’s hands are clean. The engine’s mouth is not.',
+          choices: [
+            {
+              label: 'Bank the leak. Ease one point of the scar.',
+              pick: 'bank',
+              reply: { speaker: 'A tender', text: 'Banked. The mouth is corked. If she was already carrying the kiln or the earth cork, one point of that cut comes back. If she was not, the cork still holds. Do not call it mercy.' },
+            },
+            {
+              label: 'Leave the leak a mouth.',
+              pick: 'leave',
+              reply: { speaker: 'A tender', text: 'Then it stays a mouth. Drink it if you mean to. I will still be here, and I will not be grateful.' },
+            },
+          ],
+        },
+      ],
+      onPick: function (id) {
+        if (Emberwake.noteMarrowChoice) Emberwake.noteMarrowChoice(id);
       },
     });
     return true;
