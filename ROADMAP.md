@@ -354,6 +354,15 @@ Playable on the Verdant Isle field:
 - Places shows the quest in full, and the lines wrap on a phone.
 - Phone controls, Absorb, Pack, and Continue stay.
 
+## Harbor board, hall, and crypt (this branch)
+
+- The shale has crates, a rope coil, two lantern posts, a gull perch, and wet cobble. They sit off the vault door, the tally clerk, the roost, the porter, the notice, the stall, the patrol, and the pools.
+- The bottle-hall has a side shelf of bottles, a tally slate, and an iron grate shadow off the aisle, the earth jar, and the marrow jar.
+- The count crypt has a standing tally slate and a grate shadow off the notice and the south step.
+- A telegraph draws a coloured ring at the enemy’s feet and a brighter chip. That ring is not a cue.
+- Magma and Glass already wash the way Plasma, Steam, and Storm do. The absorb sting and the merge sting already play. No ninth cue. The eight sounds stay the set in CREDITS.
+- Phone controls, Absorb, Pack, and Continue stay.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
