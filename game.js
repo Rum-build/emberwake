@@ -104,6 +104,11 @@
   let marrowWord = null;
   let scarDebt = 0;
   let scarMarks = {};
+  let vesperAsh = null;
+  let coughPuff = null;
+  let marrowVesper = null;
+  let marrowStain = null;
+  let vesperAshLatch = false;
   let nearWorker = null;
   let runLive = false;
   const SAVE_KEY = 'emberwake.save.v1';
@@ -356,6 +361,13 @@
     marrowWord = null;
     scarDebt = 0;
     scarMarks = {};
+    vesperAsh = null;
+    vesperAshLatch = false;
+    if (marrowStain) marrowStain.visible = false;
+    if (coughPuff) {
+      coughPuff.visible = false;
+      coughPuff.material.opacity = 0;
+    }
     nearWorker = null;
     locale = 'field';
     stepsSinceEncounter = 0;
@@ -405,12 +417,7 @@
       if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
       overworldGroup.add(playerMesh);
     }
-    if (scene && scene.fog) {
-      scene.fog.color.set(0x87b5d9);
-      scene.fog.near = 18;
-      scene.fog.far = 55;
-    }
-    if (renderer) renderer.setClearColor(0x87b5d9);
+    placeFog('verdant');
     inventoryOpen = false;
     inventoryPanel.classList.add('hidden');
     tintHost();
@@ -426,7 +433,7 @@
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x87b5d9, 18, 55);
+    scene.fog = new THREE.Fog(0x87b5d9, 16, 78);
     camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 120);
     camera.position.set(0, CAMERA_HEIGHT, CAMERA_DIST);
     clock = new THREE.Clock();
@@ -467,19 +474,100 @@
     return false;
   }
 
+  function placeFog(place) {
+    if (!scene || !scene.fog) return;
+    if (place === 'stormreach') {
+      scene.fog.color.set(0x6e7e90);
+      scene.fog.near = 20;
+      scene.fog.far = 86;
+      if (renderer) renderer.setClearColor(0x6e7e90);
+    } else if (place === 'marrow') {
+      scene.fog.color.set(0x3a241c);
+      scene.fog.near = 10;
+      scene.fog.far = 58;
+      if (renderer) renderer.setClearColor(0x3a241c);
+    } else if (place === 'vault') {
+      scene.fog.color.set(0x1a222c);
+      scene.fog.near = 18;
+      scene.fog.far = 55;
+      if (renderer) renderer.setClearColor(0x1a222c);
+    } else if (place === 'cellar') {
+      scene.fog.color.set(0x1a1410);
+      scene.fog.near = 8;
+      scene.fog.far = 28;
+      if (renderer) renderer.setClearColor(0x1a1410);
+    } else if (place === 'village') {
+      scene.fog.color.set(0x3a342c);
+      scene.fog.near = 8;
+      scene.fog.far = 22;
+      if (renderer) renderer.setClearColor(0x3a342c);
+    } else {
+      scene.fog.color.set(0x87b5d9);
+      scene.fog.near = 16;
+      scene.fog.far = 78;
+      if (renderer) renderer.setClearColor(0x87b5d9);
+    }
+  }
+
+  function raisePlane(geo, heightAt) {
+    const pos = geo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      pos.setZ(i, heightAt(pos.getX(i), pos.getY(i)));
+    }
+    geo.computeVertexNormals();
+  }
+
+  function tintPlane(geo, colorAt) {
+    const pos = geo.attributes.position;
+    const colors = new Float32Array(pos.count * 3);
+    const c = new THREE.Color();
+    for (let i = 0; i < pos.count; i++) {
+      colorAt(c, pos.getX(i), pos.getY(i), pos.getZ(i));
+      colors[i * 3] = c.r;
+      colors[i * 3 + 1] = c.g;
+      colors[i * 3 + 2] = c.b;
+    }
+    geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+  }
+
+  function makeSky(hex) {
+    return new THREE.Mesh(
+      new THREE.SphereGeometry(48, 16, 10),
+      new THREE.MeshBasicMaterial({ color: hex, side: THREE.BackSide, depthWrite: false, fog: false })
+    );
+  }
+
+  function layCloth(parent, x, z, radius, color, opacity) {
+    const cloth = new THREE.Mesh(
+      new THREE.CircleGeometry(radius, 10),
+      new THREE.MeshLambertMaterial({ color, transparent: opacity < 1, opacity })
+    );
+    cloth.rotation.x = -Math.PI / 2;
+    cloth.position.set(x, 0.03, z);
+    parent.add(cloth);
+    return cloth;
+  }
+
   function buildOverworld() {
     const groundGeo = new THREE.PlaneGeometry(WORLD_SIZE * 1.5, WORLD_SIZE * 1.5, 32, 32);
-    const pos = groundGeo.attributes.position;
-    for (let i = 0; i < pos.count; i++) {
-      const x = pos.getX(i);
-      const y = pos.getY(i);
-      pos.setZ(i, Math.sin(x * 0.3) * Math.cos(y * 0.25) * 0.15);
-    }
-    groundGeo.computeVertexNormals();
-    const ground = new THREE.Mesh(groundGeo, new THREE.MeshLambertMaterial({ color: 0x4a9c4a }));
+    raisePlane(groundGeo, (x, y) => (
+      Math.sin(x * 0.3) * Math.cos(y * 0.25) * 0.34
+      + Math.sin(x * 0.82 + 1.4) * Math.cos(y * 0.66) * 0.09
+    ));
+    const low = new THREE.Color(0x24562c);
+    const high = new THREE.Color(0x9cb85a);
+    const soil = new THREE.Color(0x6a5838);
+    tintPlane(groundGeo, (c, x, y, h) => {
+      const t = Math.max(0, Math.min(1, (h + 0.28) / 0.5));
+      c.copy(low).lerp(high, t);
+      const patch = Math.sin(x * 0.47) * Math.cos(y * 0.41);
+      if (patch > 0.72) c.lerp(soil, 0.45);
+    });
+    const ground = new THREE.Mesh(groundGeo, new THREE.MeshLambertMaterial({ vertexColors: true }));
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
     overworldGroup.add(ground);
+    overworldGroup.add(makeSky(0xb7d4ea));
 
     const grassMat = new THREE.MeshLambertMaterial({ color: 0x3d8b3d });
     for (let i = 0; i < 26; i++) {
@@ -595,6 +683,13 @@
     const spawnPin = landmark('spawn');
     playerMesh = makeCharacter(0xc47a4a, 0.95);
     playerMesh.position.set(spawnPin.x, 0, spawnPin.z);
+    coughPuff = new THREE.Mesh(
+      new THREE.SphereGeometry(0.22, 8, 6),
+      new THREE.MeshBasicMaterial({ color: 0xc5d0bc, transparent: true, opacity: 0, depthWrite: false })
+    );
+    coughPuff.position.set(0.08, 1.16, 0.32);
+    coughPuff.visible = false;
+    playerMesh.add(coughPuff);
     overworldGroup.add(playerMesh);
   }
 
@@ -829,18 +924,35 @@
     g.visible = false;
     g.add(new THREE.AmbientLight(0x6a4030, 0.45));
     g.add(new THREE.HemisphereLight(0x8a4030, 0x1a100c, 0.35));
-    const ash = new THREE.Mesh(
-      new THREE.PlaneGeometry(40, 40),
-      new THREE.MeshLambertMaterial({ color: 0x2a1814 })
-    );
+    const ashGeo = new THREE.PlaneGeometry(36, 28, 22, 16);
+    raisePlane(ashGeo, (x, y) => (
+      Math.sin(x * 0.38) * Math.cos(y * 0.33) * 0.26
+      + Math.sin(x * 1.15 + y * 0.4) * 0.07
+    ));
+    const ashDark = new THREE.Color(0x241410);
+    const ashRed = new THREE.Color(0x6a3424);
+    const cinder = new THREE.Color(0x3a3834);
+    tintPlane(ashGeo, (c, x, y, h) => {
+      const t = Math.max(0, Math.min(1, (h + 0.2) / 0.36));
+      c.copy(ashDark).lerp(ashRed, t);
+      if (Math.sin(x * 0.9) * Math.cos(y * 0.7) > 0.55) c.lerp(cinder, 0.4);
+    });
+    const ash = new THREE.Mesh(ashGeo, new THREE.MeshLambertMaterial({ vertexColors: true }));
     ash.rotation.x = -Math.PI / 2;
     g.add(ash);
+    g.add(makeSky(0x8a3a30));
     const engine = new THREE.Mesh(
       new THREE.BoxGeometry(3.2, 2.4, 2.2),
       new THREE.MeshLambertMaterial({ color: 0x3a3532 })
     );
     engine.position.set(0, 1.2, -2);
     g.add(engine);
+    const drum = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.85, 1.05, 1.15, 8),
+      new THREE.MeshLambertMaterial({ color: 0x4a4038 })
+    );
+    drum.position.set(0, 2.65, -2);
+    g.add(drum);
     const maw = new THREE.Mesh(
       new THREE.BoxGeometry(1.2, 1.4, 0.3),
       new THREE.MeshBasicMaterial({ color: 0x1a0808 })
@@ -870,6 +982,18 @@
     gateR.position.x = 1.5;
     g.add(gateL);
     g.add(gateR);
+    marrowVesper = makeSilhouette(-4.2, -3.6);
+    marrowVesper.visible = true;
+    marrowVesper.rotation.y = 0.9;
+    g.add(marrowVesper);
+    marrowStain = new THREE.Mesh(
+      new THREE.CircleGeometry(1.45, 14),
+      new THREE.MeshLambertMaterial({ color: 0x1a0814, transparent: true, opacity: 0.92 })
+    );
+    marrowStain.rotation.x = -Math.PI / 2;
+    marrowStain.position.set(-3.3, 0.05, -2.9);
+    marrowStain.visible = false;
+    g.add(marrowStain);
     const lintel = new THREE.Mesh(
       new THREE.BoxGeometry(3.4, 0.28, 0.28),
       new THREE.MeshLambertMaterial({ color: 0x6e675c })
@@ -1066,8 +1190,7 @@
       if (vaultRoom) vaultRoom.visible = false;
       overworldGroup.visible = false;
       stormreachGroup.visible = true;
-      scene.fog.color.set(0x6e7e90);
-      renderer.setClearColor(0x6e7e90);
+      placeFog('stormreach');
       const coastLabel = $('#hud-location');
       if (coastLabel) coastLabel.textContent = 'Stormreach Coast';
       saveGame();
@@ -1079,8 +1202,7 @@
     overworldGroup.visible = true;
     if (stormreachGroup) stormreachGroup.visible = false;
     regionId = 'verdant-isle';
-    scene.fog.color.set(0x87b5d9);
-    renderer.setClearColor(0x87b5d9);
+    placeFog('verdant');
     const locLabel = $('#hud-location');
     if (locLabel) locLabel.textContent = 'Verdant Isle';
     saveGame();
@@ -1194,6 +1316,7 @@
     sun.position.set(8, 22, 14);
     g.add(sun);
 
+    g.add(makeSky(0x9aafc0));
     const water = new THREE.Mesh(
       new THREE.PlaneGeometry(80, 80),
       new THREE.MeshLambertMaterial({ color: 0x163044 })
@@ -1201,19 +1324,47 @@
     water.rotation.x = -Math.PI / 2;
     water.position.y = -0.35;
     g.add(water);
-
-    const shelf = new THREE.Mesh(
-      new THREE.PlaneGeometry(24, 16),
-      new THREE.MeshLambertMaterial({ color: 0x6a6258 })
+    const shallows = new THREE.Mesh(
+      new THREE.PlaneGeometry(28, 7),
+      new THREE.MeshLambertMaterial({ color: 0x2c6278, transparent: true, opacity: 0.88 })
     );
+    shallows.rotation.x = -Math.PI / 2;
+    shallows.position.set(0, -0.28, 12.2);
+    g.add(shallows);
+
+    const shelfGeo = new THREE.PlaneGeometry(24, 16, 18, 12);
+    raisePlane(shelfGeo, (x, y) => (
+      Math.sin(x * 0.42) * Math.cos(y * 0.36) * 0.32
+      + Math.sin(x * 1.25 + y * 0.5) * 0.08
+    ));
+    const stone = new THREE.Color(0x6a6258);
+    const wetStone = new THREE.Color(0x314048);
+    const pale = new THREE.Color(0x8d8578);
+    tintPlane(shelfGeo, (c, x, y, h) => {
+      c.copy(stone);
+      if (y < -2) c.lerp(wetStone, 0.55);
+      if (h > 0.1) c.lerp(pale, 0.35);
+    });
+    const shelf = new THREE.Mesh(shelfGeo, new THREE.MeshLambertMaterial({ vertexColors: true }));
     shelf.rotation.x = -Math.PI / 2;
     shelf.position.set(0, 0, 6);
     g.add(shelf);
+    layCloth(g, -3.2, 6.5, 1.5, 0x243038, 0.62);
+    layCloth(g, 2.6, 4.4, 1.15, 0x1c2c34, 0.55);
+    layCloth(g, 6.2, 8.6, 1.7, 0x2a3c46, 0.5);
+    [[-8.2, 8.1], [7.6, 6.4], [-6.4, 3.2], [8.4, 3.6]].forEach((spot) => {
+      g.add(makeRock(spot[0], spot[1]));
+    });
 
-    const beach = new THREE.Mesh(
-      new THREE.PlaneGeometry(22, 5),
-      new THREE.MeshLambertMaterial({ color: 0xc2b48c })
-    );
+    const beachGeo = new THREE.PlaneGeometry(22, 5, 12, 4);
+    raisePlane(beachGeo, (x, y) => Math.sin(x * 0.8) * 0.04 + Math.cos(y * 1.4) * 0.03);
+    const sand = new THREE.Color(0xc2b48c);
+    const damp = new THREE.Color(0x8a7a58);
+    tintPlane(beachGeo, (c, x, y) => {
+      c.copy(sand);
+      if (y > 1.2) c.lerp(damp, 0.4);
+    });
+    const beach = new THREE.Mesh(beachGeo, new THREE.MeshLambertMaterial({ vertexColors: true }));
     beach.rotation.x = -Math.PI / 2;
     beach.position.set(0, 0.02, 9.2);
     g.add(beach);
@@ -1224,6 +1375,12 @@
     );
     cliff.position.set(0, 3.2, -4.2);
     g.add(cliff);
+    const cliffFace = new THREE.Mesh(
+      new THREE.BoxGeometry(14, 5.2, 1.4),
+      new THREE.MeshLambertMaterial({ color: 0x3e3832 })
+    );
+    cliffFace.position.set(1.2, 2.6, -2.4);
+    g.add(cliffFace);
 
     const vaultPin = coastLandmark('harbor-vault') || { x: 0.2, z: 0.15 };
     const vault = new THREE.Group();
@@ -1291,6 +1448,7 @@
   function buildCoast() {
     const g = new THREE.Group();
     g.visible = false;
+    g.add(makeSky(0x9aafc0));
     g.add(new THREE.AmbientLight(0xb7c4d4, 0.62));
     g.add(new THREE.HemisphereLight(0x8aa4c0, 0x2a2418, 0.42));
     const sun = new THREE.DirectionalLight(0xfff0d8, 0.7);
@@ -1400,16 +1558,39 @@
     const rotColor = new THREE.Color(def.vesper ? 0x2a1022 : 0x3a2432);
     const healColor = new THREE.Color(0x2f7a3e);
 
+    const bowl = new THREE.Mesh(
+      new THREE.CylinderGeometry(3.25, 2.45, 0.42, 14),
+      new THREE.MeshLambertMaterial({ color: 0x161014 })
+    );
+    bowl.position.y = -0.08;
+    g.add(bowl);
+    const rim = new THREE.Mesh(
+      new THREE.TorusGeometry(3.5, 0.2, 6, 18),
+      new THREE.MeshLambertMaterial({ color: def.vesper ? 0x4a3040 : 0x6e675c })
+    );
+    rim.rotation.x = Math.PI / 2;
+    rim.position.y = 0.16;
+    g.add(rim);
     const rotMat = new THREE.MeshLambertMaterial({ color: rotColor.clone(), transparent: true, opacity: 0.94 });
-    const disc = new THREE.Mesh(new THREE.CircleGeometry(4.3, 28), rotMat);
+    const disc = new THREE.Mesh(new THREE.CircleGeometry(3.35, 22), rotMat);
     disc.rotation.x = -Math.PI / 2;
-    disc.position.y = 0.03;
+    disc.position.y = 0.08;
     g.add(disc);
+    const neckMat = new THREE.MeshLambertMaterial({
+      color: elColor.clone(),
+      transparent: true,
+      opacity: 0.26,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.78, 1.15, 8, 1, true), neckMat);
+    neck.position.y = 0.85;
+    g.add(neck);
 
     const lifeMat = new THREE.MeshBasicMaterial({
       color: 0x6ed36a, transparent: true, opacity: 0, depthWrite: false,
     });
-    const life = new THREE.Mesh(new THREE.CircleGeometry(4.15, 28), lifeMat);
+    const life = new THREE.Mesh(new THREE.CircleGeometry(3.2, 22), lifeMat);
     life.rotation.x = -Math.PI / 2;
     life.position.y = 0.05;
     g.add(life);
@@ -1519,7 +1700,7 @@
       absorbed: false, bottled: false, withheld: false, healing: false, heal: 0,
       interior: def.interior || null,
       region: def.region || 'verdant-isle',
-      rotMat, rotColor, healColor, elColor, lifeMat, coreMat, core, beamMat,
+      rotMat, rotColor, healColor, elColor, lifeMat, coreMat, core, beamMat, neck,
       spikes, flowers, motes, figure, seal, sealRing, phase: Math.random() * 6,
       group: g,
     };
@@ -1577,6 +1758,7 @@
       pool.core.rotation.y += dt * 0.7;
       const pulse = 0.16 + Math.sin(t * 2.1 + pool.phase) * 0.06;
       pool.beamMat.opacity = pulse * (1 - h) + 0.07 * h;
+      if (pool.neck) pool.neck.material.opacity = (0.22 + Math.sin(t * 2.4 + pool.phase) * 0.08) * (1 - h * 0.85);
       pool.spikes.forEach((s) => {
         s.scale.y = Math.max(0.001, 1 - h);
         s.visible = h < 0.97;
@@ -1840,11 +2022,17 @@
     const kilnQuiet = pools.some((p) => p.id === 'kiln' && p.absorbed);
     const mergeNames = earnedMergeNames();
     if (seenBeats.marrowStep) {
-      rumor = marrowWord === 'bank'
+      const vesperBit = seenBeats['marrow-vesper']
+        ? (vesperAsh === 'taste'
+          ? 'Vesper tasted the scar and did not step in. '
+          : 'You refused Vesper’s mouth. The stain is on the ash. ')
+        : '';
+      const coughBit = scarDebt >= 2 ? ' Lira coughs. The feet go slower.' : '';
+      rumor = vesperBit + (marrowWord === 'bank'
         ? 'You walked the ash and banked the leak. Scar debt is ' + scarDebt + '. The hall is south of the engine.'
         : scarMarks.leak
           ? 'You fed the digest-engine. The scar took the mouthful. Scar debt is ' + scarDebt + '.'
-          : 'Your feet are on Ashen Marrow. The engine eats what the harbor would not keep. The hall is south.';
+          : 'Your feet are on Ashen Marrow. The engine eats what the harbor would not keep. The hall is south.') + coughBit;
     } else if (seenBeats.marrowRoad) {
       rumor = 'You looked down the corked road. Ashen Marrow is inland, where a bottle already leaked. Your feet stayed in the hall.';
     } else if (seenBeats['bottle-hall']) {
@@ -2070,7 +2258,13 @@
             ? 'You fed the digest-engine. The mouthful stayed in the scar.'
             : 'You stepped onto Ashen Marrow. The hall is the way back.');
       } else if (seenBeats.marrowRoad) waiting.push('You looked down Ashen Marrow from the hall. The digest-engine is inland. Your feet stayed.');
-      if (scarDebt > 0) waiting.push('Scar debt ' + scarDebt + '. Each point cuts Lira’s max HP by 6. The kiln, the earth cork, and a fed engine add a point. Banking the marrow leak eases one.');
+      if (scarDebt >= 2) waiting.push('Scar debt ' + scarDebt + ' has reached the walk. Lira coughs, and the feet go slower. Each point still cuts max HP by 6.');
+      else if (scarDebt > 0) waiting.push('Scar debt ' + scarDebt + '. Each point cuts Lira’s max HP by 6. The kiln, the earth cork, and a fed engine add a point. Banking the marrow leak eases one.');
+      if (seenBeats['marrow-vesper']) {
+        waiting.push(vesperAsh === 'taste'
+          ? 'Vesper tasted the scar on the ash and did not step into the host.'
+          : 'You refused Vesper’s mouth. A stain stayed on the ash. She did not enter.');
+      }
       const heldMerges = earnedMergeNames();
       if (heldMerges.length) waiting.push(heldMerges.join(', ') + (heldMerges.length === 1 ? ' is' : ' are') + ' on the magic list.');
       if (seenBeats['vesper-duel']) waiting.push('Vesper measured a blow on the coast and walked away alive.');
@@ -2417,7 +2611,9 @@
     }
     return {
       title: 'Concord tender',
-      hint: 'She keeps the digest-engine fed. Press E. Banking eases one point of scar debt. The leak itself is the other choice.',
+      hint: scarDebt >= 2
+      ? 'She can hear the cough. Press E. Banking eases one point. The leak is the other choice.'
+      : 'She keeps the digest-engine fed. Press E. Banking eases one point of scar debt. The leak itself is the other choice.',
     };
   }
 
@@ -2425,6 +2621,23 @@
     if (!playerMesh || locale === 'field') return false;
     if (locale === 'ashen-marrow') return playerMesh.position.z > 4.15;
     return playerMesh.position.z > 2.55;
+  }
+
+  function updateMarrowVesper() {
+    if (locale !== 'ashen-marrow' || !playerMesh || dialogueOpen || skyPass) return;
+    if (!seenBeats.marrowStep || seenBeats['marrow-vesper']) return;
+    const d = Math.hypot(-4.2 - playerMesh.position.x, -3.6 - playerMesh.position.z);
+    if (d > 2.15) {
+      vesperAshLatch = false;
+      return;
+    }
+    if (vesperAshLatch) return;
+    vesperAshLatch = true;
+    const fn = EW.scenes['marrow-vesper'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'marrow-vesper';
+    }
   }
 
   function updateVaultTriggers() {
@@ -2517,7 +2730,8 @@
       if (len > 0.08) {
         mx /= len;
         mz /= len;
-        const speed = PLAYER_SPEED * dt;
+        const drag = scarDebt >= 2 ? 0.78 : 1;
+        const speed = PLAYER_SPEED * drag * dt;
         const nx = playerMesh.position.x + mx * speed;
         const nz = playerMesh.position.z + mz * speed;
         if (locale === 'field' && regionId === 'stormreach') {
@@ -2568,6 +2782,7 @@
 
       updateCellarTriggers();
       updateVaultTriggers();
+      updateMarrowVesper();
       maybeResumeCoast();
 
       if (locale === 'field') regionBeats().forEach((b) => {
@@ -2596,8 +2811,22 @@
       camera.lookAt(camTarget.x, camTarget.y + 1, camTarget.z);
     }
     tintHost();
+    syncCough();
     updateHUD();
     updatePrompt();
+  }
+
+  function syncCough() {
+    if (!coughPuff) return;
+    const sick = scarDebt >= 2;
+    coughPuff.visible = sick;
+    if (!sick) {
+      coughPuff.material.opacity = 0;
+      return;
+    }
+    const pulse = Math.sin(performance.now() * 0.007) * 0.5 + 0.5;
+    coughPuff.material.opacity = 0.55 + pulse * 0.35;
+    coughPuff.scale.setScalar(0.85 + pulse * 0.7);
   }
 
   function triggerEncounter() {
@@ -3303,11 +3532,12 @@
     if (interiorGroup) interiorGroup.visible = locale !== 'field' && !onMarrow;
     if (vaultRoom) vaultRoom.visible = locale === 'harbor-vault';
     combatGroup.visible = false;
-    scene.fog.near = onMarrow ? 12 : 18;
-    scene.fog.far = onMarrow ? 42 : 55;
-    const sky = onMarrow ? 0x3a241c : locale === 'root-cellar' ? 0x1a1410 : locale === 'harbor-vault' ? 0x1a222c : locale !== 'field' ? 0x3a342c : onCoast ? 0x6e7e90 : 0x87b5d9;
-    scene.fog.color.set(sky);
-    renderer.setClearColor(sky);
+    if (onMarrow) placeFog('marrow');
+    else if (locale === 'root-cellar') placeFog('cellar');
+    else if (locale === 'harbor-vault') placeFog('vault');
+    else if (locale !== 'field') placeFog('village');
+    else if (onCoast) placeFog('stormreach');
+    else placeFog('verdant');
     combatEnemyMeshes.forEach((m) => combatGroup.remove(m));
     combatPartyMeshes.forEach((m) => combatGroup.remove(m));
     combatEnemyMeshes = [];
@@ -3804,6 +4034,7 @@
         marrowWord: marrowWord,
         scarDebt: scarDebt,
         scarMarks: scarMarks,
+        vesperAsh: vesperAsh,
         duelWord: duelWord,
         kestrelWord: kestrelWord,
         pos: { x: playerMesh.position.x, z: playerMesh.position.z },
@@ -3845,6 +4076,8 @@
     marrowWord = data.marrowWord === 'bank' || data.marrowWord === 'leave' || data.marrowWord === 'fed' ? data.marrowWord : null;
     scarDebt = typeof data.scarDebt === 'number' ? Math.max(0, data.scarDebt) : 0;
     scarMarks = data.scarMarks && typeof data.scarMarks === 'object' ? data.scarMarks : {};
+    vesperAsh = data.vesperAsh === 'taste' || data.vesperAsh === 'refuse' ? data.vesperAsh : null;
+    if (marrowStain) marrowStain.visible = vesperAsh === 'refuse';
     if (typeof spark.earth !== 'number') spark.earth = 0;
     duelWord = data.duelWord === 'press' || data.duelWord === 'hold' ? data.duelWord : null;
     kestrelWord = data.kestrelWord === 'ask' || data.kestrelWord === 'leave' ? data.kestrelWord : null;
@@ -4016,10 +4249,7 @@
     if (marrowGroup) marrowGroup.visible = false;
     if (locale === 'field' && overworldGroup) {
       overworldGroup.visible = true;
-      scene.fog.color.set(0x87b5d9);
-      scene.fog.near = 18;
-      scene.fog.far = 55;
-      renderer.setClearColor(0x87b5d9);
+      placeFog('verdant');
     }
     skyPass = null;
     if (playerMesh && locale === 'field') {
@@ -4062,11 +4292,7 @@
     if (coastGroup) coastGroup.visible = false;
     if (marrowGroup) marrowGroup.visible = false;
     if (interiorGroup) interiorGroup.visible = false;
-    const sky = regionId === 'stormreach' ? 0x6e7e90 : 0x87b5d9;
-    scene.fog.color.set(sky);
-    scene.fog.near = 18;
-    scene.fog.far = 55;
-    renderer.setClearColor(sky);
+    placeFog(regionId === 'stormreach' ? 'stormreach' : 'verdant');
     beatHold = {};
     const locLabel = $('#hud-location');
     if (locLabel) locLabel.textContent = regionId === 'stormreach' ? 'Stormreach Coast' : 'Verdant Isle';
@@ -4211,12 +4437,48 @@
     return ' Scar debt ' + scarDebt + '. Lira’s max HP is cut by ' + (scarDebt * 6) + '.';
   }
 
-  function addScar(source) {
+  function addScar(source, opts) {
     if (!source || scarMarks[source]) return false;
+    const before = scarDebt;
     scarMarks[source] = true;
     scarDebt += 1;
     clampHostHp();
+    if (!(opts && opts.quiet) && before < 2 && scarDebt >= 2) {
+      showToast('The scar reaches the walk. Lira coughs. The feet go slower.');
+    }
     return true;
+  }
+
+  function noteVesperAsh(id) {
+    if (vesperAsh) return;
+    vesperAsh = id === 'taste' ? 'taste' : 'refuse';
+    seenBeats['marrow-vesper'] = true;
+    const before = scarDebt;
+    if (vesperAsh === 'taste') {
+      addScar('vesper-taste', { quiet: true });
+      applyStrain(6);
+      if (!seals.some((seal) => seal.name === "Vesper's Thumb")) {
+        seals.push({
+          name: "Vesper's Thumb",
+          desc: 'She breathed across the scar and did not step in. The rot in the teeth thickened. The host is still Lira.',
+        });
+      }
+      const cough = before < 2 && scarDebt >= 2 ? ' Lira coughs. The feet go slower.' : '';
+      showToast('Vesper tastes the scar and does not enter. The rot thickens.' + cough + scarDebtLine());
+    } else {
+      applyStrain(3);
+      if (marrowStain) marrowStain.visible = true;
+      if (!seals.some((seal) => seal.name === 'Refused Mouth')) {
+        seals.push({
+          name: 'Refused Mouth',
+          desc: 'Lira refused Vesper’s mouth on the ash. The stain stayed. Refusal is not a cleaning. She did not take the host.',
+        });
+      }
+      showToast('You refuse her mouth. A stain stays on the ash. She does not enter.');
+    }
+    refreshRumor();
+    updateHUD();
+    saveGame();
   }
 
   function enterMarrow(opts) {
@@ -4234,10 +4496,7 @@
     if (stormreachGroup) stormreachGroup.visible = false;
     if (coastGroup) coastGroup.visible = false;
     marrowGroup.visible = true;
-    scene.fog.color.set(0x3a241c);
-    scene.fog.near = 12;
-    scene.fog.far = 42;
-    renderer.setClearColor(0x3a241c);
+    placeFog('marrow');
     const locLabel = $('#hud-location');
     if (locLabel) locLabel.textContent = 'Ashen Marrow';
     camera.position.set(px, CAMERA_HEIGHT, pz + CAMERA_DIST);
@@ -4265,10 +4524,7 @@
     if (vaultRoom) vaultRoom.visible = true;
     if (overworldGroup) overworldGroup.visible = false;
     if (stormreachGroup) stormreachGroup.visible = false;
-    scene.fog.color.set(0x1a222c);
-    scene.fog.near = 18;
-    scene.fog.far = 55;
-    renderer.setClearColor(0x1a222c);
+    placeFog('vault');
     const locLabel = $('#hud-location');
     if (locLabel) locLabel.textContent = 'Harbor Vault';
     camera.position.set(0, CAMERA_HEIGHT, -14.2 + CAMERA_DIST);
@@ -4337,8 +4593,10 @@
         desc: 'The tender corked the engine’s mouth. One point of scar debt eased, if there was a point to ease. The engine is still there.',
       });
     }
+    const easedWalk = beforeDebt >= 2 && scarDebt < 2;
     showToast(beforeDebt > 0
       ? 'The tender banks the leak. Scar debt ' + scarDebt + '. Lira’s max HP is cut by ' + (scarDebt * 6) + '.'
+        + (easedWalk ? ' The cough eases. The feet remember their pace.' : '')
       : 'The tender banks the leak. There was no scar debt to give back. The mouth stays corked.');
     refreshRumor();
     updateHUD();
@@ -4531,6 +4789,8 @@
   EW.finishMarrow = finishMarrow;
   EW.noteMarrowStep = noteMarrowStep;
   EW.noteMarrowChoice = noteMarrowChoice;
+  EW.noteVesperAsh = noteVesperAsh;
+  EW.scarCount = function () { return scarDebt; };
   EW.revealCoastVesper = function () {
     if (coastVesper) coastVesper.visible = true;
   };

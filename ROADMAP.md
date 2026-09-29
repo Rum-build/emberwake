@@ -78,18 +78,25 @@ Playable on the Verdant Isle field:
 - **Storm** (water and lightning), **Magma** (fire and earth), and **Glass** (lightning and earth) join Plasma and Steam on the magic list once those elements are held.
 - The mouse stick, Absorb, Pack, and the browser save stay.
 
-## Act III tease (this branch)
+## Act III tease (shipped)
 
 - **Enter** at the north arch puts feet on a short ash shelf: digest-engine, a Concord tender, and one leak. **Leave** at the south gate returns to the bottle-hall. Continue restores the shelf.
 - In a fight, Plasma cooks armor, Steam softens the swing, Storm chains, Magma burns on the enemy’s turn, and Glass pierces and can find a seam. The combat UI shows what is held and what each spell spends. Mend returns less while scar debt is up.
 - Scar debt shows on the HUD and in the pack after the buried kiln, the earth cork, or feeding the engine leak. Each point cuts Lira’s max HP by 6. Banking the leak eases one point. Feeding the leak adds one.
 - Kestrel still does not join. The mouse stick, Absorb, and Pack stay.
 
+## Ground, Vesper on the ash, scar in the walk (this branch)
+
+- Verdant Isle, Stormreach shelf, and the ash shelf use height and vertex color: grass and soil, wet stone, red ash. Each place has a sky. Pool mouths have a bowl, a stone rim, and a glass neck. The figures stay simple. The page stays one Three.js file.
+- On the ash, after the arrival, walk to Vesper. Taste the scar or refuse her mouth. She does not step into the host and she does not die. Taste adds one scar debt and strain. Refusal leaves a dark stain and a little strain. Both keep the rot.
+- When scar debt is 2 or more, Lira coughs and the walk slows. The tender can hear it. Banking back under 2 eases the cough and the pace. Continue stores the choice and the debt.
+- No music. Kestrel still does not join.
+
 ## Still ahead
 
 From DESIGN.md, after this shelf:
 
-1. The rest of the scar’s debt. One banked leak does not pay the kiln.
+1. The rest of the scar’s debt. One banked leak does not pay the kiln, and Vesper’s taste is another point if you let her.
 2. The rest of Ashen Marrow, the wind merges (ice, thunder, tide, root), and a party slot for Kestrel if she ever takes one.
 
 Combat menus stay Fight / Magic / Item / Flee. New panels stay desktop-first.
