@@ -1356,6 +1356,45 @@
     hallClerk.position.set(1.8, 0, -8.6);
     hallClerk.rotation.y = Math.PI * 0.5;
     g.add(hallClerk);
+    const shelfMat = new THREE.MeshLambertMaterial({ color: 0x2a3038 });
+    const corkMat = new THREE.MeshLambertMaterial({ color: 0xc4a46a, emissive: new THREE.Color(0x3a2c10) });
+    [-2.85, 2.85].forEach((x) => {
+      [-9.2, -11.1, -13.0].forEach((z) => {
+        const post = new THREE.Mesh(new THREE.BoxGeometry(0.16, 2.15, 0.16), shelfMat);
+        post.position.set(x, 1.08, z);
+        g.add(post);
+      });
+      const lintel = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.12, 4.2), shelfMat);
+      lintel.position.set(x, 2.15, -11.1);
+      g.add(lintel);
+    });
+    [[-2.15, -10.4], [2.15, -10.6], [-2.15, -12.3], [2.15, -12.5]].forEach((spot, i) => {
+      const vial = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.08, 0.1, 0.36, 6),
+        new THREE.MeshLambertMaterial({
+          color: i % 2 ? 0x3ec6ff : 0xd2b4ff,
+          emissive: new THREE.Color(i % 2 ? 0x123040 : 0x2a1840),
+        })
+      );
+      vial.position.set(spot[0], 0.22, spot[1]);
+      g.add(vial);
+      const cork = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.08, 5), corkMat);
+      cork.position.set(spot[0], 0.42, spot[1]);
+      g.add(cork);
+    });
+    const wax = new THREE.Mesh(
+      new THREE.CircleGeometry(0.34, 10),
+      new THREE.MeshBasicMaterial({ color: 0x8a6840, transparent: true, opacity: 0.85, fog: false })
+    );
+    wax.rotation.x = -Math.PI / 2;
+    wax.position.set(-0.35, 0.05, -8.7);
+    g.add(wax);
+    const chain = new THREE.Mesh(
+      new THREE.TorusGeometry(0.22, 0.03, 5, 10),
+      new THREE.MeshPhongMaterial({ color: 0xd4b56a, shininess: 40, emissive: new THREE.Color(0x3a2c10) })
+    );
+    chain.position.set(0.15, 2.15, -11.4);
+    g.add(chain);
     g.visible = false;
     return g;
   }
@@ -2347,6 +2386,37 @@
     rib.position.set(-0.9, 0.06, 0.95);
     rib.rotation.y = 0.45;
     g.add(rib);
+    const urnMat = new THREE.MeshPhongMaterial({ color: 0x3a3028, shininess: 8, specular: new THREE.Color(0x2a2018) });
+    const brassUrn = new THREE.MeshBasicMaterial({ color: 0xc4a46a, fog: false });
+    [[-1.62, -0.15], [1.62, -0.35], [-1.55, 0.72], [1.58, 0.55]].forEach((spot, i) => {
+      const urn = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.2, 0.42, 6), urnMat);
+      urn.position.set(spot[0], 0.22, spot[1]);
+      g.add(urn);
+      const lip = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.03, 5, 8), brassUrn);
+      lip.rotation.x = Math.PI / 2;
+      lip.position.set(spot[0], 0.44, spot[1]);
+      g.add(lip);
+      if (i % 2 === 0) {
+        const ashCap = new THREE.Mesh(new THREE.SphereGeometry(0.1, 5, 4), new THREE.MeshLambertMaterial({ color: 0x2a221c }));
+        ashCap.scale.y = 0.4;
+        ashCap.position.set(spot[0], 0.48, spot[1]);
+        g.add(ashCap);
+      }
+    });
+    [-1.85, 1.85].forEach((x) => {
+      [-0.85, 0.35].forEach((z) => {
+        const post = new THREE.Mesh(new THREE.BoxGeometry(0.16, 1.35, 0.16), urnMat);
+        post.position.set(x, 0.68, z);
+        g.add(post);
+      });
+    });
+    const tally = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.7, 0.08),
+      brassUrn
+    );
+    tally.rotation.x = -Math.PI / 2;
+    tally.position.set(-1.15, 0.045, -0.55);
+    g.add(tally);
     cryptGroup = g;
     scene.add(g);
   }
@@ -2868,18 +2938,37 @@
     function endImage(kind) {
       const image = new THREE.Group();
       if (kind === 'claim') {
+        const stand = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.16, 0.22, 0.55, 6),
+          new THREE.MeshLambertMaterial({ color: 0x3a3024 })
+        );
+        stand.position.set(2.15, 0.28, 0.9);
+        image.add(stand);
         const frame = new THREE.Mesh(
           new THREE.TorusGeometry(0.58, 0.07, 6, 18),
           new THREE.MeshBasicMaterial({ color: 0xe8d2a0, fog: false })
         );
-        frame.position.set(2.15, 1.2, 0.9);
+        frame.position.set(2.15, 1.15, 0.9);
         image.add(frame);
+        const cup = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.1, 0.12, 0.22, 6),
+          new THREE.MeshLambertMaterial({ color: 0x4a3428 })
+        );
+        cup.position.set(0.4, 0.12, -1.05);
+        image.add(cup);
         const sprig = new THREE.Mesh(
           new THREE.ConeGeometry(0.14, 0.48, 5),
           new THREE.MeshBasicMaterial({ color: 0x6ed36a, fog: false })
         );
-        sprig.position.set(0.4, 0.26, -1.05);
+        sprig.position.set(0.4, 0.46, -1.05);
         image.add(sprig);
+        const leaf = new THREE.Mesh(
+          new THREE.ConeGeometry(0.08, 0.22, 4),
+          new THREE.MeshBasicMaterial({ color: 0x3a8a40, fog: false })
+        );
+        leaf.position.set(0.52, 0.38, -0.95);
+        leaf.rotation.z = 0.6;
+        image.add(leaf);
       } else if (kind === 'refuse') {
         const post = new THREE.Mesh(
           new THREE.CylinderGeometry(0.08, 0.11, 0.8, 6),
@@ -2893,6 +2982,18 @@
         );
         seal.position.set(-1.75, 0.95, 1.05);
         image.add(seal);
+        const plate = new THREE.Mesh(
+          new THREE.BoxGeometry(0.42, 0.06, 0.28),
+          new THREE.MeshBasicMaterial({ color: 0xe0cc8a, fog: false })
+        );
+        plate.position.set(-1.75, 0.08, 1.28);
+        image.add(plate);
+        const digit = new THREE.Mesh(
+          new THREE.BoxGeometry(0.16, 0.04, 0.05),
+          new THREE.MeshBasicMaterial({ color: 0x2a2418, fog: false })
+        );
+        digit.position.set(-1.75, 0.12, 1.28);
+        image.add(digit);
         const dead = new THREE.Mesh(
           new THREE.CircleGeometry(0.85, 12),
           new THREE.MeshBasicMaterial({ color: 0x3a2430, transparent: true, opacity: 0.92, fog: false })
@@ -2912,6 +3013,12 @@
           half.rotation.y = i ? -0.45 : 0.45;
           image.add(half);
         });
+        const seam = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.06, 1.05),
+          new THREE.MeshBasicMaterial({ color: 0x1a1018, fog: false })
+        );
+        seam.position.set(0, 0.75, -0.2);
+        image.add(seam);
       } else {
         const gash = new THREE.Mesh(
           new THREE.PlaneGeometry(0.18, 2.6),
@@ -2927,6 +3034,20 @@
         heap.scale.y = 0.32;
         heap.position.set(-0.85, 0.14, 0.2);
         image.add(heap);
+        const coal = new THREE.Mesh(
+          new THREE.SphereGeometry(0.16, 6, 5),
+          new THREE.MeshBasicMaterial({ color: 0xff4a18, fog: false })
+        );
+        coal.position.set(-0.55, 0.22, 0.35);
+        image.add(coal);
+        const second = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.08, 1.4),
+          new THREE.MeshBasicMaterial({ color: 0xff6a28, fog: false })
+        );
+        second.rotation.x = -Math.PI / 2;
+        second.rotation.z = 0.4;
+        second.position.set(0.55, 0.06, 0.2);
+        image.add(second);
       }
       image.visible = kind === 'claim';
       g.add(image);
@@ -5539,6 +5660,25 @@
         g.add(leg);
       }
       combatSilhouette(g, color, 1.2, 0.7, 0.36);
+    } else if (enemy.shape === 'spire') {
+      const shell = mats.cloth.clone();
+      shell.shininess = 40;
+      shell.specular = new THREE.Color(0xc8d4ee);
+      shell.emissive = new THREE.Color(0x1a2848);
+      const body = new THREE.Mesh(new THREE.SphereGeometry(0.22, 8, 6), shell);
+      body.scale.set(1.1, 0.55, 0.9);
+      body.position.y = 0.28;
+      g.add(body);
+      const spine = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.09, 1.35, 6), mats.metal);
+      spine.position.y = 0.95;
+      g.add(spine);
+      const salt = new THREE.Mesh(
+        new THREE.SphereGeometry(0.08, 6, 5),
+        new THREE.MeshBasicMaterial({ color: 0xd6e8ff, fog: false })
+      );
+      salt.position.set(0.12, 1.45, 0.06);
+      g.add(salt);
+      combatSilhouette(g, color, 0.7, 1.7, 0.85);
     } else {
       const body = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.42, 0.4), mats.cloth);
       body.position.set(0, 0.42, 0);
@@ -9660,6 +9800,10 @@
     const table = pressure > 0.4
       ? ['wisp', 'wisp', 'clerk', 'brine', 'scribe', 'gull']
       : ['wisp', 'brine', 'clerk', 'scribe', 'gull'];
+    if (seenBeats['vault-face']) {
+      table.push('spire');
+      if (pressure <= 0.4) table.push('spire');
+    }
     const list = [];
     for (let i = 0; i < n; i++) list.push(table[rand(0, table.length - 1)]);
     const counts = {};
@@ -9731,7 +9875,7 @@
     hud.classList.add('hidden');
     setFieldControls(false);
     interactPrompt.classList.add('hidden');
-    combatUI.classList.remove('hidden', 'juice-cleave', 'juice-channel', 'juice-aim', 'hit');
+    combatUI.classList.remove('hidden', 'juice-cleave', 'juice-channel', 'juice-aim', 'juice-magma', 'juice-glass', 'hit');
     overworldGroup.visible = false;
     if (interiorGroup) interiorGroup.visible = false;
     if (stormreachGroup) stormreachGroup.visible = false;
@@ -9794,6 +9938,8 @@
         ? 'Ash that learned to crawl. It splits once. The next bite is a spark.'
         : enemies.some((e) => e.id === 'counter')
         ? 'A counter left to number a leak. He lifts a bead. The next blow he throws is already thin.'
+        : enemies.some((e) => e.id === 'spire')
+        ? 'A spire mite on the shale, after the vault. It lifts salt. The next bite costs a little life and a little mind.'
       : enemies.some((e) => e.id === 'brine')
           ? 'The coast grew a thing with too many legs. It wets the stone. The splash is a nick, not a second full bite.'
       : enemies.some((e) => e.id === 'echo')
@@ -10295,7 +10441,9 @@
         showLog(lines[act.magic] || (actor.name + ' spends a held word. ' + target.name + ' takes ' + dmg + '.'));
         punchNumber(dmg, 'harm');
         if (sp.merge) playMergeSting();
-        flashMesh(combatEnemyMeshes[targetIdx], sp.flash);
+        const flash = act.magic === 'magma' ? 0xff3a10 : act.magic === 'glass' ? 0xd6fff6 : sp.flash;
+        flashMesh(combatEnemyMeshes[targetIdx], flash);
+        if (act.magic === 'magma' || act.magic === 'glass') celebrateMerge(act.magic);
         if (target.hp <= 0) markDead(targetIdx);
         if (actor.id === 'lira' && spark.path === 'mage') grantPathXp(8);
       }
@@ -10391,7 +10539,8 @@
       enemy.burn = 0;
       enemy.hp = Math.max(0, enemy.hp - bite);
       showLog('Magma bites ' + enemy.name + ' for ' + bite + '.');
-      flashMesh(combatEnemyMeshes[idx], 0xff6a2a);
+      flashMesh(combatEnemyMeshes[idx], 0xff3a10);
+      celebrateMerge('magma');
       if (enemy.hp <= 0) {
         markDead(idx);
         updateCombatUI();
@@ -10502,6 +10651,14 @@
       later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
       return;
     }
+    if (enemy.id === 'spire' && !enemy.salted) {
+      enemy.salted = true;
+      enemy.salt = true;
+      showLog('The mite lifts a spine. The next bite is salt. It costs a little life and a little mind.');
+      updateCombatUI();
+      later(() => { if (!checkCombatEnd()) advanceTurn(); }, 520);
+      return;
+    }
     let pick = living[rand(0, living.length - 1)];
     if (enemy.id === 'echo') {
       const lira = living.find((x) => x.p.id === 'lira');
@@ -10540,6 +10697,19 @@
         flareNote = ' The spark comes off the split. A shoulder in front would have taken it.';
       }
     }
+    let saltNote = '';
+    if (enemy.salt) {
+      enemy.salt = false;
+      if (coverReady) saltNote = ' Torren’s shoulder takes the salt.';
+      else {
+        dmg += 2;
+        const nick = Math.min(2, pick.p.mp);
+        pick.p.mp -= nick;
+        saltNote = nick
+          ? ' The salt costs ' + nick + ' mind. A shoulder in front would have taken it.'
+          : ' The salt finds no mind left. A shoulder in front would have taken the bite.';
+      }
+    }
     if (coverReady) {
       const cut = Math.min(8, Math.max(0, dmg - 1));
       dmg -= cut;
@@ -10553,12 +10723,12 @@
       const drain = Math.min(6, pick.p.mp);
       pick.p.mp -= drain;
       pick.p.hp = Math.max(0, pick.p.hp - dmg);
-      showLog(enemy.name + ' corks ' + pick.p.name + '. ' + dmg + ' HP, and ' + drain + ' mind sealed away.' + coverNote + beadNote + flareNote);
+      showLog(enemy.name + ' corks ' + pick.p.name + '. ' + dmg + ' HP, and ' + drain + ' mind sealed away.' + coverNote + beadNote + flareNote + saltNote);
     } else if (enemy.id === 'echo') {
       const before = spark.strain;
       applyStrain(4);
       pick.p.hp = Math.max(0, pick.p.hp - dmg);
-      showLog('The echo strikes ' + pick.p.name + ' for ' + dmg + ' and leaves a thumbprint of Vesper’s hunger. Strain ' + spark.strain + '.' + strainWarning(before) + coverNote + beadNote + flareNote);
+      showLog('The echo strikes ' + pick.p.name + ' for ' + dmg + ' and leaves a thumbprint of Vesper’s hunger. Strain ' + spark.strain + '.' + strainWarning(before) + coverNote + beadNote + flareNote + saltNote);
     } else {
       pick.p.hp = Math.max(0, pick.p.hp - dmg);
       let splashNote = '';
@@ -10588,7 +10758,7 @@
           }
         }
       }
-      showLog(enemy.name + ' hits ' + pick.p.name + ' for ' + dmg + '.' + coverNote + beadNote + flareNote + splashNote + jawNote);
+      showLog(enemy.name + ' hits ' + pick.p.name + ' for ' + dmg + '.' + coverNote + beadNote + flareNote + saltNote + splashNote + jawNote);
     }
     punchNumber(dmg, 'harm');
     animateAttack(combatEnemyMeshes[idx], combatPartyMeshes[pick.i]);
@@ -10641,6 +10811,7 @@
       else if (e.id === 'echo') names.push(makeShard('lightning').name);
       else if (e.id === 'kiln-heart') names.push(makeShard('fire').name);
       else if (e.id === 'mite' && Math.random() < 0.55) { addRotAsh(); names.push('Rot-ash'); }
+      else if (e.id === 'spire' && Math.random() < 0.45) { addRotAsh(); names.push('Rot-ash'); }
       else if (e.id === 'brine' && Math.random() < 0.45) { addRotAsh(); names.push('Rot-ash'); }
       else if (e.id === 'cinder' && Math.random() < 0.4) { addRotAsh(); names.push('Rot-ash'); }
       else if (e.id === 'gull' && Math.random() < 0.35) { addRotAsh(); names.push('Rot-ash'); }
@@ -10801,6 +10972,7 @@
       if (e.wet) bits.push({ kind: 'wet', label: 'Wet', title: 'The next bite hits two. The splash is a nick' });
       if (e.bead) bits.push({ kind: 'bead', label: 'Bead', title: 'The next blow he throws lands thin' });
       if (e.flare) bits.push({ kind: 'flare', label: 'Flare', title: 'The next bite is a spark' });
+      if (e.salt) bits.push({ kind: 'salt', label: 'Salt', title: 'The next bite costs a little life and a little mind' });
       if (e.page) bits.push({ kind: 'page', label: 'Page', title: 'A page is open' });
       if (e.rite) bits.push({ kind: 'rite', label: 'Rite', title: 'The rite is up' });
       if (e.knelt) bits.push({ kind: 'ash', label: 'Knelt', title: 'Ash is in the teeth' });
@@ -10843,11 +11015,21 @@
     }
   }
 
+  function celebrateMerge(kind) {
+    if (!combatUI || (kind !== 'magma' && kind !== 'glass')) return;
+    const cls = kind === 'magma' ? 'juice-magma' : 'juice-glass';
+    combatUI.classList.remove('juice-cleave', 'juice-channel', 'juice-aim', 'juice-magma', 'juice-glass');
+    const hit = $('#hit-float');
+    if (hit) hit.classList.remove('juice-cleave', 'juice-channel', 'juice-aim', 'juice-magma', 'juice-glass');
+    combatUI.classList.add(cls);
+    if (hit) hit.classList.add(cls);
+  }
+
   function strikeJuice(path, fromMesh, toMesh) {
     if (!path || !combatUI) return;
-    combatUI.classList.remove('juice-cleave', 'juice-channel', 'juice-aim');
+    combatUI.classList.remove('juice-cleave', 'juice-channel', 'juice-aim', 'juice-magma', 'juice-glass');
     const hit = $('#hit-float');
-    if (hit) hit.classList.remove('juice-cleave', 'juice-channel', 'juice-aim');
+    if (hit) hit.classList.remove('juice-cleave', 'juice-channel', 'juice-aim', 'juice-magma', 'juice-glass');
     const cls = path === 'warrior' ? 'juice-cleave' : path === 'mage' ? 'juice-channel' : 'juice-aim';
     combatUI.classList.add(cls);
     if (hit) hit.classList.add(cls);

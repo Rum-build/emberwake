@@ -832,11 +832,17 @@
   });
 
   Emberwake.registerScene('scrap-read', function () {
+    const torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    const nima = Emberwake.companyHas && Emberwake.companyHas('nima');
+    const lines = [
+      { where: 'The pack', speaker: 'Lira', text: 'The scrap says the pillar is a number. They left the count and took the door with them.' },
+      { speaker: 'The spark', text: 'A tally. A clerk on the shale can see a number. He cannot open a vault with it, and this page does not open the nave.' },
+    ];
+    if (torren) lines.push({ speaker: 'Torren', text: 'I numbered shortages like that and called them spoilage. A pillar count is not a licence. The nave stays shut.' });
+    if (nima) lines.push({ speaker: 'Nima', text: 'Dust on a page is not a tonic. Read it and put it back. The road does not move.' });
+    if (!torren && !nima) lines.push({ speaker: 'The spark', text: 'Nobody else is here to count it. The page stays in the pack. The nave stays shut.' });
     Emberwake.present({
-      lines: [
-        { where: 'The pack', speaker: 'Lira', text: 'The scrap says the pillar is a number. They left the count and took the door with them.' },
-        { speaker: 'The spark', text: 'A tally. A clerk on the shale can see a number. He cannot open a vault with it, and this page does not open the nave.' },
-      ],
+      lines: lines,
       onDone: function () {
         if (Emberwake.noteScrapRead) Emberwake.noteScrapRead();
       },

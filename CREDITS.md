@@ -23,7 +23,7 @@ Add a row before a file is referenced by the game. Leave the row in place if a c
 | Door sting | Emberwake (original, this repository) | CC0 | Procedural. No recording. Two short low sine tones in `game.js`. | Plays when she steps through a door, if Sound is on |
 | Combat draw | Emberwake (original, this repository) | CC0 | Procedural. No recording. Two short low triangle tones in `game.js`. | Plays when a fight starts, if Sound is on |
 
-These eight cues are the full set that ships. Telegraphs, the sky pass, and the coast crossing are silent on purpose. They are not missing rows.
+These eight cues are the full set that ships. Telegraphs, the sky pass, and the coast crossing are silent on purpose. They are not missing rows. Magma and Glass show their colour in the fight. That colour is not a cue.
 
 ## Attribution rules
 

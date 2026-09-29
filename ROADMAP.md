@@ -309,7 +309,7 @@ Playable on the Verdant Isle field:
 - Wake says the first pool is behind her. Flat stones lead to it. Absorb is named. Credits lists the eight cues that ship and says telegraphs stay silent.
 - Phone controls, Absorb, Pack, and Continue stay.
 
-## Nave and scrap (this branch)
+## Nave and scrap (shipped)
 
 - The ash nave has pews, choir stalls, and a brass inlay off the aisle. The first breach has fallen voussoirs, a side colonnade, and more ash. Neither sits on the door, the bar, or the south step.
 - Walking swings the arms and shifts the weight. Standing breathes. Still freezes both.
@@ -318,6 +318,16 @@ Playable on the Verdant Isle field:
 - A Concord counter lifts a bead before his next blow, and that blow lands thin. A cinder splits before a small spark. The chips say Bead and Flare.
 - An ash penitent still kneels. The cough is 5, or 4 if the cord is bound, and the swing is lighter. A brine’s splash on a second body is a nick of at most 3.
 - Places lists the numbered scrap once it is in the pack. On a phone the place list still starts under the HUD.
+- Phone controls, Absorb, Pack, and Continue stay.
+
+## Crypt and hall (this branch)
+
+- The count crypt has urns, side posts, and a brass tally off the aisle, the notice, and the south step. The bottle-hall has a side colonnade, small vials, a wax circle, and a gold chain. The center walk, the earth jar, and the marrow jar stay clear.
+- Each aftermath object is a little fuller: a stand and a cup under the claim, a plate under the refuse number, a seam between the share halves, a coal beside the burn. The words and the lights do not change.
+- The title carries a ring, a spark, and a bottle. Still and reduced motion hold the pulse.
+- If Torren or Nima is in the company when the scrap is read, they answer once. If neither is, the spark says the page stays in the pack. Reading it still does not open the nave.
+- Magma and Glass show their colour in the fight. That colour is not a cue. The eight sounds stay the set in CREDITS.
+- After the harbor vault has been seen, a spire mite can meet her on the shale. It lifts salt. The next bite costs a little life and a little mind. The chip says Salt. It does not appear on the first coast walks.
 - Phone controls, Absorb, Pack, and Continue stay.
 
 ## Still ahead

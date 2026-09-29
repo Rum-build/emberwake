@@ -100,6 +100,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 
 - The Remnant Mark has a night arcade. A numbered scrap on a peg does not open the nave. A bird on the west pier can be asked to keep company, and she still refuses. Coast skies sit at dusk. The nave and the mark sit at night, with an ember horizon. A pool carries a ripple. A brine, a stoker, and a mite telegraph the next bite. On a phone the status chips are larger and named. The wake tells her to turn: flat stones lead to the first pool, and Absorb drinks it. Credits names the eight cues that ship, and says the rest stay silent.
 - The ash nave has pews and stalls off the aisle. The first breach has fallen stone and a side colonnade. Walking swings the arms. A fight’s light matches the isle, the shale, or the ash. The numbered scrap can be read once from the pack. A tally clerk can see that count and does not open the vault. A counter lifts a bead, and a cinder splits, before the bite. An ash cough is 5, or 4 if the cord is bound. A brine’s splash is a nick. Places names the scrap.
+- The count crypt and the bottle-hall carry more stone and glass off the walk. Each ending object is a little fuller. The title shows a ring, a spark, and a bottle. If Torren or Nima is there when the scrap is read, they answer. Magma and Glass show colour, and that colour is not a sound. After the vault, a spire mite on the shale lifts salt before the bite. The eight cues stay the full set.
 
 ## Play on your phone
 
