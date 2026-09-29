@@ -153,13 +153,20 @@ Playable on the Verdant Isle field:
 - **Leave** at the south returns to the breach, short of the bar. Continue stores the claim, the flag, and whether she landed. The chamber is larger than the breach: a bar you have passed, ribs, light shafts, ash, a readable claim plaque, and Vesper’s silhouette beside the mass.
 - The mouse stick, Absorb, and Pack stay.
 
-## Aftermath (this branch)
+## Aftermath (shipped)
 
 - After a claim flag is set, **Enter** on the north mass opens one coda room. The quest line names it. Without a flag, that door is not there. **Leave** and Continue stay safe.
 - The room resolves the flag. Claim: Lira still wears it, Licence Zero has no number, Vesper stays outside, the rot slows and does not die, the spark is fed and still hungry. Refuse: her name stays, the licence and the rot stay. Share: Vesper stands beside the mass, the page fails for two, both hungers remain. Burn: the scar is the echo, debt and the HP cut are spoken, they will write another licence, the rot roots deeper, the spark is angrier. She does not enter the host.
 - Light, fog, the core, the licence ring, and her silhouette change with the path. The plaque is readable. Burn’s plaque names the debt and the cut. If Kestrel landed, she stands in the room and is still not in the pack. If she stayed in the air, she is not in the room.
 - **Credits** are north and open the credits card. **Return** comes back to the aftermath, not the title. **Leave** south returns to the claim, short of the door. Continue stores the aftermath. The quest line completes when the ending has been heard.
 - The mouse stick, Absorb, and Pack stay.
+
+## Visual pass (this branch)
+
+- Figures have a rim, eyes, and a sash so they separate from the grass and from a dark room. Lira’s chest holds a spark ember in the field and in a fight. Vesper’s silhouette keeps a thin rim and does not gain the ember.
+- Verdant Isle has a far hill line and a sea that takes the sun. Stormreach’s water does the same, and the cliff carries teeth against the sky. The ash shelf catches a little highlight.
+- The remnant claim is darker so the mass, the shafts, and the floor light own the room. A fill keeps the host readable. The fight stands on a ring: warm light on her side, cold light on theirs.
+- Phone controls, Absorb, Pack, and Continue are unchanged.
 
 ## Still ahead
 

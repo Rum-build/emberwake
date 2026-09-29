@@ -757,7 +757,9 @@
       const patch = Math.sin(x * 0.47) * Math.cos(y * 0.41);
       if (patch > 0.72) c.lerp(soil, 0.45);
     });
-    const ground = new THREE.Mesh(groundGeo, new THREE.MeshLambertMaterial({ vertexColors: true }));
+    const ground = new THREE.Mesh(groundGeo, new THREE.MeshPhongMaterial({
+      vertexColors: true, shininess: 7, specular: new THREE.Color(0x243018),
+    }));
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
     overworldGroup.add(ground);
@@ -776,7 +778,9 @@
 
     const water = new THREE.Mesh(
       new THREE.RingGeometry(WORLD_SIZE * 0.72, WORLD_SIZE * 1.1, 48),
-      new THREE.MeshLambertMaterial({ color: 0x2a6fad, transparent: true, opacity: 0.85 })
+      new THREE.MeshPhongMaterial({
+        color: 0x1d629e, shininess: 48, specular: new THREE.Color(0xd4ecff), transparent: true, opacity: 0.92,
+      })
     );
     water.rotation.x = -Math.PI / 2;
     water.position.y = -0.15;
@@ -789,6 +793,7 @@
     beach.rotation.x = -Math.PI / 2;
     beach.position.y = 0.01;
     overworldGroup.add(beach);
+    ringHills(overworldGroup, 31, 16, 0x1a4552);
 
     for (let i = 0; i < 22; i++) {
       const tx = (Math.random() - 0.5) * WORLD_SIZE * 0.7;
@@ -879,6 +884,7 @@
 
     const spawnPin = landmark('spawn');
     playerMesh = makeCharacter(0xc47a4a, 0.95);
+    if (playerMesh.userData.ember) playerMesh.userData.ember.visible = true;
     playerMesh.position.set(spawnPin.x, 0, spawnPin.z);
     coughPuff = new THREE.Mesh(
       new THREE.SphereGeometry(0.22, 8, 6),
@@ -1290,7 +1296,9 @@
       c.copy(ashDark).lerp(ashRed, t);
       if (Math.sin(x * 0.9) * Math.cos(y * 0.7) > 0.55) c.lerp(cinder, 0.4);
     });
-    const ash = new THREE.Mesh(ashGeo, new THREE.MeshLambertMaterial({ vertexColors: true }));
+    const ash = new THREE.Mesh(ashGeo, new THREE.MeshPhongMaterial({
+      vertexColors: true, shininess: 4, specular: new THREE.Color(0x3a2018),
+    }));
     ash.rotation.x = -Math.PI / 2;
     g.add(ash);
     g.add(makeSky(0x8a3a30));
@@ -2017,8 +2025,11 @@
   function buildClaim() {
     const g = new THREE.Group();
     g.visible = false;
-    g.add(new THREE.AmbientLight(0x140c10, 0.22));
-    g.add(new THREE.HemisphereLight(0x8a4030, 0x060408, 0.32));
+    g.add(new THREE.AmbientLight(0x140c10, 0.1));
+    g.add(new THREE.HemisphereLight(0x8a4030, 0x060408, 0.16));
+    const claimFill = new THREE.PointLight(0xffd0a8, 0.7, 18);
+    claimFill.position.set(0, 2.6, 4.4);
+    g.add(claimFill);
     const geo = new THREE.PlaneGeometry(22, 24, 10, 10);
     const ash = new THREE.Color(0x120e10);
     const ember = new THREE.Color(0x8a3414);
@@ -2073,7 +2084,7 @@
         new THREE.MeshBasicMaterial({
           color: i === 2 ? 0xff5a28 : 0xffe6c0,
           transparent: true,
-          opacity: i === 2 ? 0.28 : 0.16,
+          opacity: i === 2 ? 0.46 : 0.28,
           depthWrite: false,
           fog: false,
           side: THREE.DoubleSide,
@@ -2094,6 +2105,13 @@
     core.position.set(0, 2.35, -6.15);
     g.add(core);
     g.userData.core = core;
+    const stage = new THREE.Mesh(
+      new THREE.CircleGeometry(3.4, 28),
+      new THREE.MeshBasicMaterial({ color: 0xff5a28, transparent: true, opacity: 0.28, fog: false })
+    );
+    stage.rotation.x = -Math.PI / 2;
+    stage.position.set(0, 0.06, -6.05);
+    g.add(stage);
     const halo = new THREE.Mesh(
       new THREE.RingGeometry(2.3, 2.7, 28),
       new THREE.MeshBasicMaterial({ color: 0xffe2b0, side: THREE.DoubleSide, transparent: true, opacity: 0.55, fog: false })
@@ -2627,7 +2645,7 @@
     g.add(makeSky(0x9aafc0));
     const water = new THREE.Mesh(
       new THREE.PlaneGeometry(80, 80),
-      new THREE.MeshLambertMaterial({ color: 0x163044 })
+      new THREE.MeshPhongMaterial({ color: 0x14344e, shininess: 64, specular: new THREE.Color(0xd0e8ff) })
     );
     water.rotation.x = -Math.PI / 2;
     water.position.y = -0.35;
@@ -2653,7 +2671,9 @@
       if (y < -2) c.lerp(wetStone, 0.55);
       if (h > 0.1) c.lerp(pale, 0.35);
     });
-    const shelf = new THREE.Mesh(shelfGeo, new THREE.MeshLambertMaterial({ vertexColors: true }));
+    const shelf = new THREE.Mesh(shelfGeo, new THREE.MeshPhongMaterial({
+      vertexColors: true, shininess: 10, specular: new THREE.Color(0x3a4038),
+    }));
     shelf.rotation.x = -Math.PI / 2;
     shelf.position.set(0, 0, 6);
     g.add(shelf);
@@ -2683,6 +2703,14 @@
     );
     cliff.position.set(0, 3.2, -4.2);
     g.add(cliff);
+    [[-8.4, 6.4, -5.1], [0.2, 7.6, -6.2], [7.2, 5.8, -4.6]].forEach((spot, i) => {
+      const tooth = new THREE.Mesh(
+        new THREE.ConeGeometry(0.7 + i * 0.15, 2.4 + i * 0.4, 5),
+        new THREE.MeshLambertMaterial({ color: 0x3a342e })
+      );
+      tooth.position.set(spot[0], spot[1], spot[2]);
+      g.add(tooth);
+    });
     const cliffFace = new THREE.Mesh(
       new THREE.BoxGeometry(14, 5.2, 1.4),
       new THREE.MeshLambertMaterial({ color: 0x3e3832 })
@@ -2849,12 +2877,17 @@
     const g = new THREE.Group();
     const fig = makeCharacter(0x100c10, 1.35);
     fig.traverse((c) => {
-      if (c.isMesh && c.material) {
+      if (!c.isMesh || !c.material) return;
+      if (c.userData && c.userData.rim) {
         c.material = c.material.clone();
-        c.material.transparent = true;
-        c.material.opacity = 0.94;
-        if (c.material.emissive) c.material.emissive.setHex(0x14080c);
+        c.material.color.setHex(0x4a2018);
+        c.material.opacity = 0.5;
+        return;
       }
+      c.material = c.material.clone();
+      c.material.transparent = true;
+      c.material.opacity = 0.94;
+      if (c.material.emissive) c.material.emissive.setHex(0x14080c);
     });
     g.add(fig);
     const rim = new THREE.Mesh(
@@ -3132,6 +3165,17 @@
     return g;
   }
 
+  function ringHills(parent, radius, count, color) {
+    const mat = new THREE.MeshLambertMaterial({ color });
+    for (let i = 0; i < count; i++) {
+      const a = (i / count) * Math.PI * 2 + 0.15;
+      const hill = new THREE.Mesh(new THREE.SphereGeometry(2.2 + (i % 4) * 0.85, 7, 5), mat);
+      hill.scale.set(1.55, 0.42 + (i % 3) * 0.1, 1.1);
+      hill.position.set(Math.cos(a) * radius, -0.85, Math.sin(a) * radius);
+      parent.add(hill);
+    }
+  }
+
   function makeRock(x, z) {
     const m = new THREE.Mesh(
       new THREE.DodecahedronGeometry(0.35 + Math.random() * 0.4, 0),
@@ -3211,6 +3255,39 @@
     hair.scale.y = 0.5;
     hair.position.y = 1.2 * scale;
     g.add(hair);
+    const rimColor = new THREE.Color(color).lerp(new THREE.Color(0xffe6c8), 0.62);
+    const rim = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.62 * scale, 1.25 * scale),
+      new THREE.MeshBasicMaterial({
+        color: rimColor, transparent: true, opacity: 0.38, depthWrite: false, side: THREE.DoubleSide, fog: false,
+      })
+    );
+    rim.position.set(0, 0.72 * scale, -0.26 * scale);
+    rim.userData.rim = true;
+    g.add(rim);
+    [-0.07, 0.07].forEach((x) => {
+      const eye = new THREE.Mesh(
+        new THREE.SphereGeometry(0.032 * scale, 5, 4),
+        new THREE.MeshBasicMaterial({ color: 0x140c0a, fog: false })
+      );
+      eye.position.set(x * scale, 1.1 * scale, 0.17 * scale);
+      g.add(eye);
+    });
+    const sashColor = new THREE.Color(color).offsetHSL(0, 0.05, 0.18);
+    const sash = new THREE.Mesh(
+      new THREE.BoxGeometry(0.5 * scale, 0.1 * scale, 0.12 * scale),
+      new THREE.MeshBasicMaterial({ color: sashColor, fog: false })
+    );
+    sash.position.set(0, 0.74 * scale, 0.2 * scale);
+    g.add(sash);
+    const ember = new THREE.Mesh(
+      new THREE.SphereGeometry(0.075 * scale, 6, 5),
+      new THREE.MeshBasicMaterial({ color: 0xff8a3a, fog: false })
+    );
+    ember.position.set(0.1 * scale, 0.78 * scale, 0.22 * scale);
+    ember.visible = false;
+    g.add(ember);
+    g.userData.ember = ember;
     const nose = new THREE.Mesh(
       new THREE.BoxGeometry(0.06 * scale, 0.06 * scale, 0.08 * scale),
       new THREE.MeshLambertMaterial({ color: 0xe0a080 })
@@ -3288,25 +3365,38 @@
     if (spark.strain >= 80) mat.emissive.setHex(0x6a2010);
     else if (spark.strain >= 45) mat.emissive.setHex(0x3a140c);
     else mat.emissive.setHex(0x000000);
+    pulseHost();
+  }
+
+  function pulseHost() {
+    const meshes = [];
+    if (playerMesh) meshes.push(playerMesh);
+    combatPartyMeshes.forEach((mesh) => meshes.push(mesh));
+    const scale = 0.82 + Math.sin(performance.now() * 0.006) * 0.22;
+    meshes.forEach((mesh) => {
+      const ember = mesh && mesh.userData.ember;
+      if (ember && ember.visible) ember.scale.setScalar(scale);
+    });
   }
 
   function buildCombatArena() {
     const floor = new THREE.Mesh(
-      new THREE.PlaneGeometry(26, 16),
-      new THREE.MeshLambertMaterial({ color: 0x3a4638 })
+      new THREE.CircleGeometry(10, 28),
+      new THREE.MeshPhongMaterial({ color: 0x242c28, shininess: 10, specular: new THREE.Color(0x304038) })
     );
     floor.rotation.x = -Math.PI / 2;
     combatGroup.add(floor);
-    const platform = new THREE.Mesh(
-      new THREE.BoxGeometry(18, 0.25, 9),
-      new THREE.MeshLambertMaterial({ color: 0x4a5644 })
+    const ring = new THREE.Mesh(
+      new THREE.RingGeometry(6.4, 6.75, 36),
+      new THREE.MeshBasicMaterial({ color: 0xc4a06a, side: THREE.DoubleSide, fog: false })
     );
-    platform.position.y = 0.08;
-    combatGroup.add(platform);
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.y = 0.04;
+    combatGroup.add(ring);
     for (let i = 0; i < 5; i++) {
       const hill = new THREE.Mesh(
         new THREE.SphereGeometry(2.6 + (i % 3) * 0.4, 8, 6),
-        new THREE.MeshLambertMaterial({ color: 0x2a3a30 })
+        new THREE.MeshLambertMaterial({ color: 0x1a2428 })
       );
       hill.position.set(-8 + i * 4, -0.8, -7.5);
       hill.scale.y = 0.45;
@@ -3314,14 +3404,20 @@
     }
     const back = new THREE.Mesh(
       new THREE.PlaneGeometry(40, 18),
-      new THREE.MeshBasicMaterial({ color: 0x5c6c80 })
+      new THREE.MeshBasicMaterial({ color: 0x1c2832 })
     );
     back.position.set(0, 7, -11);
     combatGroup.add(back);
-    combatGroup.add(new THREE.AmbientLight(0xe8e0d8, 0.62));
-    const light = new THREE.DirectionalLight(0xfff0dd, 0.75);
+    combatGroup.add(new THREE.AmbientLight(0xc8c0b8, 0.28));
+    const light = new THREE.DirectionalLight(0xfff0dd, 0.55);
     light.position.set(4, 14, 8);
     combatGroup.add(light);
+    const warm = new THREE.PointLight(0xffb070, 1.25, 16);
+    warm.position.set(4.4, 3.1, 0.4);
+    combatGroup.add(warm);
+    const cold = new THREE.PointLight(0x7aa0d8, 1.05, 16);
+    cold.position.set(-3.4, 3.2, -1.4);
+    combatGroup.add(cold);
   }
 
   function makeEnemyMesh(enemy) {
@@ -6497,10 +6593,10 @@
     tuckCathedral();
     if (coastGroup) coastGroup.visible = false;
     combatGroup.visible = true;
-    scene.fog.near = 28;
-    scene.fog.far = 80;
-    scene.fog.color.set(0x5c6c80);
-    renderer.setClearColor(0x5c6c80);
+    scene.fog.near = 22;
+    scene.fog.far = 70;
+    scene.fog.color.set(0x1c2832);
+    renderer.setClearColor(0x1c2832);
 
     const preset = scriptedEncounter;
     scriptedEncounter = null;
@@ -6521,6 +6617,7 @@
     });
     party.forEach((p, i) => {
       const mesh = makeCharacter(p.color, 0.85);
+      if (p.id === 'lira' && mesh.userData.ember) mesh.userData.ember.visible = true;
       mesh.position.set(3.6, 0, -1.7 + i * 1.55);
       mesh.rotation.y = Math.PI / 2;
       if (p.hp <= 0) mesh.visible = false;
@@ -7979,7 +8076,10 @@
     requestAnimationFrame(animate);
     const dt = Math.min(clock.getDelta(), 0.05);
     if (gameState === State.OVERWORLD) updateOverworld(dt);
-    else if (gameState === State.COMBAT || gameState === State.VICTORY) updateCombatCamera(dt);
+    else if (gameState === State.COMBAT || gameState === State.VICTORY) {
+      updateCombatCamera(dt);
+      pulseHost();
+    }
     if (pools.length) updatePools(dt);
     renderer.render(scene, camera);
   }
