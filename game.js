@@ -7339,8 +7339,11 @@
   function noteStamp(target, dmg, text) {
     if (!target || !target.stamp) return { dmg: dmg, text: text };
     target.stamp = false;
-    if (dmg <= 1) return { dmg: dmg, text: text };
-    return { dmg: 1, text: text + ' The clerk’s stamp holds. The blow lands thin.' };
+    if (dmg <= 1) return { dmg: 1, text: text + ' The clerk’s stamp holds. The blow lands thin.' };
+    const needle = String(dmg);
+    const at = text.lastIndexOf(needle);
+    const rewritten = at < 0 ? text : text.slice(0, at) + '1' + text.slice(at + needle.length);
+    return { dmg: 1, text: rewritten + ' The clerk’s stamp holds. The blow lands thin.' };
   }
 
   function pathStrike(actor, target, path) {
