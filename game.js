@@ -20,6 +20,7 @@
   }
 
   const WORLD_SIZE = 40;
+  const seaMats = [];
   const PLAYER_SPEED = 6.2;
   const CAMERA_DIST = 8;
   const CAMERA_HEIGHT = 5.1;
@@ -179,6 +180,7 @@
   let nearClerk = null;
   let nearRation = null;
   let nearAside = null;
+  let nearNima = null;
   let bedWanted = true;
   let motionWanted = true;
   let combatPace = 'steady';
@@ -834,13 +836,18 @@
 
     const water = new THREE.Mesh(
       new THREE.RingGeometry(WORLD_SIZE * 0.72, WORLD_SIZE * 1.1, 48),
-      new THREE.MeshPhongMaterial({
-        color: 0x1d629e, shininess: 48, specular: new THREE.Color(0xd4ecff), transparent: true, opacity: 0.92,
-      })
+      seaMaterial(0x1d629e, 0.16)
     );
     water.rotation.x = -Math.PI / 2;
     water.position.y = -0.15;
     overworldGroup.add(water);
+    const foam = new THREE.Mesh(
+      new THREE.RingGeometry(WORLD_SIZE * 0.70, WORLD_SIZE * 0.755, 64),
+      seaMaterial(0xc5dde8, 0.05)
+    );
+    foam.rotation.x = -Math.PI / 2;
+    foam.position.y = -0.06;
+    overworldGroup.add(foam);
 
     const beach = new THREE.Mesh(
       new THREE.RingGeometry(WORLD_SIZE * 0.62, WORLD_SIZE * 0.74, 48),
@@ -878,6 +885,7 @@
     );
     crystal.position.set(0, 1.5, 2.4);
     village.add(crystal);
+    dressVillage(village);
     overworldGroup.add(village);
     const bannerPin = landmark('concord-banner');
     overworldGroup.add(makeConcordBanner(bannerPin.x, bannerPin.z));
@@ -1720,6 +1728,7 @@
     rest.position.set(-4.15, 0, 2.55);
     g.add(rest);
     g.add(makeAsideBench(-0.15, -4.15));
+    g.add(makeNimaStop(5.15, -0.85));
     yardGroup = g;
     scene.add(g);
   }
@@ -2410,13 +2419,15 @@
       g.add(post);
     });
     const shafts = [];
+    const stains = [];
+    const stainHue = [0xc45a78, 0xe8c56a, 0xff5a28, 0x6a94c8];
     [[-2.4, -2.2], [2.2, -5.4], [0, -6.4], [-0.6, 2.4]].forEach((spot, i) => {
       const shaft = new THREE.Mesh(
         new THREE.PlaneGeometry(1.35, 8.2),
         new THREE.MeshBasicMaterial({
-          color: i === 2 ? 0xff5a28 : 0xffe6c0,
+          color: stainHue[i],
           transparent: true,
-          opacity: i === 2 ? 0.46 : 0.28,
+          opacity: i === 2 ? 0.5 : 0.34,
           depthWrite: false,
           fog: false,
           side: THREE.DoubleSide,
@@ -2424,12 +2435,28 @@
       );
       shaft.position.set(spot[0], 4.2, spot[1]);
       g.add(shaft);
-      const light = new THREE.PointLight(i === 2 ? 0xff5a28 : 0xffd0a0, i === 2 ? 1.8 : 0.9, 18);
+      const pane = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.42, 6.6),
+        new THREE.MeshBasicMaterial({
+          color: stainHue[(i + 1) % stainHue.length],
+          transparent: true,
+          opacity: 0.28,
+          depthWrite: false,
+          fog: false,
+          side: THREE.DoubleSide,
+        })
+      );
+      pane.position.set(spot[0] + 0.28, 3.7, spot[1]);
+      pane.rotation.y = 0.4;
+      g.add(pane);
+      stains.push(pane);
+      const light = new THREE.PointLight(i === 2 ? 0xff5a28 : stainHue[i], i === 2 ? 1.8 : 0.9, 18);
       light.position.set(spot[0], 5.4, spot[1]);
       g.add(light);
       shafts.push(light);
     });
     g.userData.shafts = shafts;
+    g.userData.stains = stains;
     const core = new THREE.Mesh(
       new THREE.IcosahedronGeometry(1.85, 1),
       new THREE.MeshBasicMaterial({ color: 0xff6a2a, fog: false })
@@ -3025,6 +3052,21 @@
     };
   }
 
+  function nearestNima() {
+    if (!playerMesh || locale !== 'concord-yard' || skyPass) return null;
+    if (Math.hypot(5.15 - playerMesh.position.x, -0.85 - playerMesh.position.z) > 0.95) return null;
+    if (seenBeats['yard-nima']) {
+      return {
+        title: 'Nima’s herbs',
+        hint: 'The bundle was already named. The mark stays north. Press E to hear it again.',
+      };
+    }
+    return {
+      title: 'Nima’s herbs',
+      hint: 'A dry bundle by the east fence. Press E. It is not a tonic and not the mark.',
+    };
+  }
+
   function nearestPorter() {
     if (!playerMesh || locale !== 'field' || regionId !== 'stormreach' || skyPass) return null;
     if (Math.hypot(2.45 - playerMesh.position.x, 2.55 - playerMesh.position.z) > 1.45) return null;
@@ -3298,15 +3340,15 @@
 
     g.add(makeSky(0x5e7c90, 0xe4d2b8));
     const water = new THREE.Mesh(
-      new THREE.PlaneGeometry(80, 80),
-      new THREE.MeshPhongMaterial({ color: 0x14344e, shininess: 64, specular: new THREE.Color(0xd0e8ff) })
+      new THREE.PlaneGeometry(80, 80, 24, 24),
+      seaMaterial(0x14344e, 0.12)
     );
     water.rotation.x = -Math.PI / 2;
     water.position.y = -0.35;
     g.add(water);
     const shallows = new THREE.Mesh(
-      new THREE.PlaneGeometry(28, 7),
-      new THREE.MeshLambertMaterial({ color: 0x2c6278, transparent: true, opacity: 0.88 })
+      new THREE.PlaneGeometry(28, 7, 16, 6),
+      seaMaterial(0x3a7a90, 0.08)
     );
     shallows.rotation.x = -Math.PI / 2;
     shallows.position.set(0, -0.28, 12.2);
@@ -3748,7 +3790,7 @@
 
     const pool = {
       id: def.id, element: def.element, name: def.name, short: def.short,
-      x: def.x, z: def.z, xp: def.xp, strain: def.strain,
+      x: def.x, z: def.z, xp: def.xp, strain: def.strain, rot: def.rot || 0,
       hint: def.hint, line: def.line, vesper: !!def.vesper, concord: !!def.concord, patrol: !!def.patrol,
       absorbed: false, bottled: false, withheld: false, healing: false, heal: 0,
       interior: def.interior || null,
@@ -4300,6 +4342,99 @@
     return g;
   }
 
+  function seaMaterial(color, amp) {
+    const mat = new THREE.MeshPhongMaterial({
+      color: color,
+      shininess: 72,
+      specular: new THREE.Color(0xd4ecff),
+      transparent: true,
+      opacity: 0.92,
+    });
+    mat.onBeforeCompile = function (shader) {
+      shader.uniforms.uTime = { value: 0 };
+      shader.uniforms.uAmp = { value: amp || 0.12 };
+      shader.vertexShader = shader.vertexShader
+        .replace('#include <common>', '#include <common>\nuniform float uTime;\nuniform float uAmp;\nvarying vec3 vSeaPos;')
+        .replace(
+          '#include <begin_vertex>',
+          '#include <begin_vertex>\ntransformed.z += (sin(position.x * 0.42 + uTime * 1.15) + sin(position.y * 0.33 + uTime * 0.8)) * uAmp;\nvSeaPos = position;'
+        );
+      shader.fragmentShader = shader.fragmentShader
+        .replace('#include <common>', '#include <common>\nuniform float uTime;\nvarying vec3 vSeaPos;')
+        .replace(
+          '#include <color_fragment>',
+          '#include <color_fragment>\nfloat foam = sin(vSeaPos.x * 0.55 + uTime) * sin(vSeaPos.y * 0.4 - uTime * 0.75);\ndiffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.86, 0.94, 0.97), smoothstep(0.22, 0.86, foam) * 0.55);'
+        );
+      mat.userData.shader = shader;
+    };
+    seaMats.push(mat);
+    return mat;
+  }
+
+  function driftSea() {
+    if (!motionWanted || !seaMats.length) return;
+    if (phoneMode && ((Math.floor(performance.now() / 40) % 2) === 0)) return;
+    const t = performance.now() * 0.001;
+    seaMats.forEach((mat) => {
+      if (mat.userData.shader) mat.userData.shader.uniforms.uTime.value = t;
+    });
+  }
+
+  function dressVillage(g) {
+    const wood = new THREE.MeshLambertMaterial({ color: 0x6a4a32 });
+    const iron = new THREE.MeshLambertMaterial({ color: 0x3a342c });
+    const bed = new THREE.Mesh(new THREE.BoxGeometry(1.35, 0.26, 0.78), wood);
+    bed.position.set(3.75, 0.42, -1.4);
+    g.add(bed);
+    [-0.38, 0.38].forEach((z) => {
+      const wheel = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.08, 8), iron);
+      wheel.rotation.z = Math.PI / 2;
+      wheel.position.set(3.75, 0.2, -1.4 + z);
+      g.add(wheel);
+    });
+    [0, 1].forEach((i) => {
+      const crate = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.4, 0.48), wood);
+      crate.position.set(-3.55 + i * 0.12, 0.22 + i * 0.38, 2.45);
+      g.add(crate);
+    });
+    const postMat = new THREE.MeshLambertMaterial({ color: 0x5c4634 });
+    for (let i = 0; i < 5; i++) {
+      const post = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.68, 0.1), postMat);
+      post.position.set(-2.2 + i * 1.1, 0.34, -3.4);
+      g.add(post);
+    }
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(4.5, 0.07, 0.07), postMat);
+    rail.position.set(0, 0.55, -3.4);
+    g.add(rail);
+    const rack = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.06, 0.08), postMat);
+    rack.position.set(2.85, 1.12, 2.7);
+    g.add(rack);
+  }
+
+  function makeNimaStop(x, z) {
+    const g = new THREE.Group();
+    const cloth = new THREE.Mesh(
+      new THREE.BoxGeometry(0.55, 0.06, 0.4),
+      new THREE.MeshLambertMaterial({ color: 0x3d6a48 })
+    );
+    cloth.position.y = 0.05;
+    g.add(cloth);
+    const herb = new THREE.Mesh(
+      new THREE.ConeGeometry(0.16, 0.42, 5),
+      new THREE.MeshLambertMaterial({ color: 0x6a8a48 })
+    );
+    herb.position.set(0.08, 0.24, 0.02);
+    g.add(herb);
+    const tie = new THREE.Mesh(
+      new THREE.BoxGeometry(0.08, 0.08, 0.08),
+      new THREE.MeshLambertMaterial({ color: 0xc4a06a })
+    );
+    tie.position.set(0.08, 0.12, 0.02);
+    g.add(tie);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
   function makeRationStall(x, z) {
     const g = new THREE.Group();
     const crate = new THREE.Mesh(
@@ -4495,6 +4630,13 @@
     );
     floor.rotation.x = -Math.PI / 2;
     combatGroup.add(floor);
+    const grain = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.16, 12.4),
+      new THREE.MeshBasicMaterial({ color: 0x141a18, fog: false })
+    );
+    grain.rotation.x = -Math.PI / 2;
+    grain.position.y = 0.02;
+    combatGroup.add(grain);
     const ring = new THREE.Mesh(
       new THREE.RingGeometry(6.4, 6.75, 36),
       new THREE.MeshBasicMaterial({ color: 0xc4a06a, side: THREE.DoubleSide, fog: false })
@@ -4502,6 +4644,23 @@
     ring.rotation.x = -Math.PI / 2;
     ring.position.y = 0.04;
     combatGroup.add(ring);
+    const inner = new THREE.Mesh(
+      new THREE.RingGeometry(3.15, 3.32, 28),
+      new THREE.MeshBasicMaterial({ color: 0x8a7048, side: THREE.DoubleSide, fog: false })
+    );
+    inner.rotation.x = -Math.PI / 2;
+    inner.position.y = 0.035;
+    combatGroup.add(inner);
+    const postMat = new THREE.MeshLambertMaterial({ color: 0x3a342c });
+    const capMat = new THREE.MeshBasicMaterial({ color: 0xc4a06a, fog: false });
+    [[-5.2, -4.2], [5.2, -4.2], [-5.2, 4.4], [5.2, 4.4]].forEach((spot) => {
+      const post = new THREE.Mesh(new THREE.BoxGeometry(0.22, 1.55, 0.22), postMat);
+      post.position.set(spot[0], 0.78, spot[1]);
+      combatGroup.add(post);
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.1, 0.38), capMat);
+      cap.position.set(spot[0], 1.6, spot[1]);
+      combatGroup.add(cap);
+    });
     for (let i = 0; i < 5; i++) {
       const hill = new THREE.Mesh(
         new THREE.SphereGeometry(2.6 + (i % 3) * 0.4, 8, 6),
@@ -5069,7 +5228,8 @@
     const showClerk = idle && nearClerk && !showAbsorb && !showDoor && !showGate && !showReturn && !showPorter && !showNotice && !showChest;
     const showRation = idle && nearRation && !showAbsorb && !showDoor && !showGate && !showReturn && !showPorter && !showNotice && !showClerk && !showChest;
     const showAside = idle && nearAside && !showAbsorb && !atExit && !showTalk && !showMark && !showCamp;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showNotice && !showCord && !showPost && !showRing && !showClerk && !showRation && !showAside);
+    const showNima = idle && nearNima && !showAbsorb && !atExit && !showTalk && !showMark && !showCamp && !showAside;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showNotice && !showCord && !showPost && !showRing && !showClerk && !showRation && !showAside && !showNima);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
@@ -5084,13 +5244,13 @@
     else if (showLook || showPipe || showThroat || showStone || showMark || showNave || showGallery) absorbBtn.textContent = 'Enter';
     else if (showTalk) absorbBtn.textContent = 'Speak';
     else if (showChest) absorbBtn.textContent = seenBeats['wayside-chest'] ? 'Look' : 'Open';
-    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showRing || showClerk || showRation || showAside) absorbBtn.textContent = 'Look';
+    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showRing || showClerk || showRation || showAside || showNima) absorbBtn.textContent = 'Look';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
   }
 
   function updatePrompt() {
     const atExit = atInteriorExit();
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !nearLetter && !nearChest && !nearNotice && !nearCord && !nearPost && !nearRing && !nearClerk && !nearRation && !nearAside && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !nearLetter && !nearChest && !nearNotice && !nearCord && !nearPost && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -5258,6 +5418,11 @@
       $('#interact-detail').textContent = nearAside.hint;
       return;
     }
+    if (nearNima) {
+      $('#interact-title').textContent = nearNima.title;
+      $('#interact-detail').textContent = nearNima.hint;
+      return;
+    }
     if (nearCrack) {
       $('#interact-title').textContent = nearCrack.title;
       $('#interact-detail').textContent = nearCrack.hint;
@@ -5331,8 +5496,9 @@
       if (seenBeats['way-post']) waiting.push('A snapped mile post on the isle does not open the kiln.');
       if (seenBeats['cold-ring']) waiting.push('A cold ring in the grass is not a pool and not the scar.');
       if (seenBeats['clerk-tally']) waiting.push('A tally clerk on the shale counted weather. The vault door did not change.');
-      if (seenBeats['ration-swap']) waiting.push('A stall on the shale traded rot-ash for a Concord ration. It closes 22 HP. It does not open the vault.');
+      if (seenBeats['ration-swap']) waiting.push('A stall on the shale traded rot-ash for a Concord ration. It closes 22 HP or returns 12 mind. It does not open the vault.');
       if (seenBeats['yard-aside']) waiting.push('A private word was said short of the north stone. The mark and the slag stayed where they were.');
+      if (seenBeats['yard-nima']) waiting.push('Nima’s herbs by the east fence were named once. The mark and the slag stayed where they were.');
       if (seenBeats['gallery-margin']) {
         waiting.push(seals.some((seal) => seal.name === 'Cousin’s Margin')
           ? 'The gallery’s filed copy matches the cousin’s letter. The stair did not change.'
@@ -5474,9 +5640,11 @@
     $('#inv-items').innerHTML = items.filter((s) => s.count > 0).map((s) => {
       const def = ITEM_DEFS[s.id];
       const gain = itemGain(def);
-      const use = def.field
-        ? `<button class="btn btn-small" type="button" data-act="use" data-id="${esc(s.id)}">Use${gain ? ' · ' + gain : ''}</button>`
-        : '';
+      const use = def.field && def.heal && def.mp
+        ? `<button class="btn btn-small" type="button" data-act="use" data-id="${esc(s.id)}" data-mode="hp">${def.heal} HP</button><button class="btn btn-small" type="button" data-act="use" data-id="${esc(s.id)}" data-mode="mp">${def.mp} mind</button>`
+        : def.field
+          ? `<button class="btn btn-small" type="button" data-act="use" data-id="${esc(s.id)}">Use${gain ? ' · ' + gain : ''}</button>`
+          : '';
       return `<li class="inv-card"><div class="row"><span class="name">${esc(def.name)} ×${s.count}</span>${use}</div><div class="desc">${esc(def.desc)}${gain ? ' Restores up to ' + gain + '.' : ''}</div></li>`;
     }).join('') || '<li class="empty-line">No consumables.</li>';
 
@@ -5566,16 +5734,22 @@
 
   function itemGain(def) {
     if (!def) return '';
+    if (def.heal && def.mp) return def.heal + ' HP or ' + def.mp + ' mind';
     if (def.heal) return def.heal + ' HP';
     if (def.mp) return def.mp + ' mind';
     return '';
   }
 
-  function useFieldItem(id) {
+  function useFieldItem(id, mode) {
     const stack = items.find((s) => s.id === id);
     const def = ITEM_DEFS[id];
     if (!stack || stack.count <= 0 || !def || !def.field) return;
-    if (def.heal) {
+    const split = !!(def.heal && def.mp);
+    if (split && mode !== 'hp' && mode !== 'mp') {
+      showToast('Choose HP or mind. It stays in the pack.');
+      return;
+    }
+    if ((mode === 'hp' || (!split && def.heal)) && def.heal) {
       const living = party.filter((p) => p.hp > 0).slice().sort((a, b) => (a.hp / maxHp(a)) - (b.hp / maxHp(b)));
       const t = living[0];
       if (!t || t.hp >= maxHp(t)) {
@@ -5586,7 +5760,7 @@
       const before = t.hp;
       t.hp = Math.min(maxHp(t), t.hp + def.heal);
       showToast(t.name + ' drinks the ' + def.name + '. ' + (t.hp - before) + ' HP. Now ' + t.hp + '/' + maxHp(t) + '.');
-    } else if (def.mp) {
+    } else if ((mode === 'mp' || (!split && def.mp)) && def.mp) {
       const living = party.filter((p) => p.hp > 0).slice().sort((a, b) => (a.mp / a.maxMp) - (b.mp / b.maxMp));
       const t = living[0];
       if (!t || t.mp >= t.maxMp) {
@@ -5708,6 +5882,10 @@
       }
       if (nearAside && locale === 'concord-yard' && !atMouth) {
         talkAside();
+        return;
+      }
+      if (nearNima && locale === 'concord-yard' && !atMouth) {
+        talkNima();
         return;
       }
       if (nearNave && locale === 'remnant-mark' && seenBeats.markFight && !atMouth) {
@@ -5890,6 +6068,10 @@
     }
     if (pool.id === 'yard-slag' && addScar('yard')) msg += scarDebtLine();
     if (pool.id === 'mark-weep' && addScar('mark')) msg += scarDebtLine();
+    if (pool.rot >= 0.7) {
+      addRotAsh();
+      msg += ' Rot-ash in the pack. The stall on the shale trades it.';
+    }
     playSting();
     showToast(msg, seenBeats.fedOnce && msg.indexOf('A scar is a separate cut') >= 0 ? 7200 : 4600);
     refreshRumor();
@@ -7402,6 +7584,11 @@
         light.intensity = (i === 2 ? 1.4 : 0.7) + Math.abs(Math.sin(t * 1.3 + i)) * 0.35;
       });
     }
+    if (claimGroup && claimGroup.visible && claimGroup.userData.stains && !claimWord) {
+      claimGroup.userData.stains.forEach((pane, i) => {
+        pane.material.opacity = 0.22 + Math.abs(Math.sin(t * 1.15 + i)) * 0.16;
+      });
+    }
     if (aftermathGroup && aftermathGroup.visible && aftermathGroup.userData.core) {
       const core = aftermathGroup.userData.core;
       core.rotation.y = t * (claimWord === 'burn' ? 0.15 : 0.4);
@@ -7707,7 +7894,7 @@
       const ration = items.find((row) => row.id === 'ration');
       if (ration) ration.count += 1;
       else items.push({ id: 'ration', count: 1 });
-      showToast('One rot-ash for a Concord ration. It closes up to 22 HP. The vault door did not change.');
+      showToast('One rot-ash for a Concord ration. It closes up to 22 HP or returns 12 mind. The vault door did not change.');
     } else showToast('The stall still wants rot-ash. Nothing was traded.');
     refreshRumor();
     updateHUD();
@@ -7730,6 +7917,27 @@
   function noteAside() {
     seenBeats['yard-aside'] = true;
     showToast('The word is said. The north stone is still the mark. The slag stays.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function talkNima() {
+    if (locale !== 'concord-yard' || dialogueOpen) return;
+    if (seenBeats['yard-nima']) {
+      showToast('The herbs stay named. The mark did not open. The slag did not change.');
+      return;
+    }
+    const fn = EW.scenes['yard-nima'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'yard-nima';
+    }
+  }
+
+  function noteNima() {
+    seenBeats['yard-nima'] = true;
+    showToast('Nima’s word is said. The east fence is not the mark. The slag stays.');
     refreshRumor();
     updateHUD();
     saveGame();
@@ -7951,6 +8159,7 @@
       nearClerk = null;
       nearRation = null;
       nearAside = null;
+      nearNima = null;
       joy.active = false;
       joy.dx = 0;
       joy.dy = 0;
@@ -8056,6 +8265,7 @@
         nearClerk = nearestClerk();
         nearRation = nearestRation();
         nearAside = nearestAside();
+        nearNima = nearestNima();
         const safe = nearPool && !nearPool.absorbed;
         const cooled = performance.now() < suppressEncountersUntil;
         const onField = locale === 'field' && (regionId === 'verdant-isle' || regionId === 'stormreach');
@@ -8102,6 +8312,7 @@
         nearClerk = nearestClerk();
         nearRation = nearestRation();
         nearAside = nearestAside();
+        nearNima = nearestNima();
         poseHost('idle');
       }
 
@@ -8167,11 +8378,13 @@
         nearClerk = nearestClerk();
         nearRation = nearestRation();
         nearAside = nearestAside();
+        nearNima = nearestNima();
       poseHost('still');
     }
 
     bobHoods();
     driftGusts();
+    driftSea();
     driftNave(dt);
     if (skyPass) updateSkyPass(dt);
     else {
@@ -8617,16 +8830,23 @@
 
   function renderCombatItems() {
     itemMenu.innerHTML = '';
-    items.forEach((stack) => {
-      const def = ITEM_DEFS[stack.id];
-      if (!def || !def.combat || stack.count <= 0) return;
+    function addItem(stack, def, mode) {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'btn btn-menu';
       btn.dataset.item = stack.id;
-      const gain = itemGain(def);
+      if (mode) btn.dataset.mode = mode;
+      const gain = mode === 'hp' ? def.heal + ' HP' : mode === 'mp' ? def.mp + ' mind' : itemGain(def);
       btn.innerHTML = esc(def.name) + (gain ? ' <span class="cost">' + gain + '</span>' : '') + ' <span class="cost">×' + stack.count + '</span>';
       itemMenu.appendChild(btn);
+    }
+    items.forEach((stack) => {
+      const def = ITEM_DEFS[stack.id];
+      if (!def || !def.combat || stack.count <= 0) return;
+      if (def.heal && def.mp) {
+        addItem(stack, def, 'hp');
+        addItem(stack, def, 'mp');
+      } else addItem(stack, def, '');
     });
     shards.forEach((sh) => {
       const btn = document.createElement('button');
@@ -8889,17 +9109,33 @@
         showMenus('item');
         return;
       }
+      const split = !!(def.heal && def.mp);
+      const asMind = act.mode === 'mp' || (!def.heal && !!def.mp);
+      if (asMind && target.mp >= target.maxMp) {
+        showLog(target.name + ' already has a full mind. The ' + def.name + ' stays in the pack.');
+        combatBusy = false;
+        inputEnabled = true;
+        showMenus('item');
+        return;
+      }
+      if (!asMind && split && target.hp >= maxHp(target)) {
+        showLog(target.name + ' has no open wound. The ' + def.name + ' stays in the pack.');
+        combatBusy = false;
+        inputEnabled = true;
+        showMenus('item');
+        return;
+      }
       stack.count -= 1;
-      if (def.heal) {
-        const before = target.hp;
-        target.hp = Math.min(maxHp(target), target.hp + def.heal);
-        showLog(actor.name + ' gives ' + target.name + ' the ' + def.name + '. ' + (target.hp - before) + ' HP. Now ' + target.hp + '/' + maxHp(target) + '.');
-        flashMesh(combatPartyMeshes[targetIdx], 0x9dffc8);
-      } else if (def.mp) {
+      if (asMind) {
         const before = target.mp;
         target.mp = Math.min(target.maxMp, target.mp + def.mp);
         showLog(actor.name + ' gives ' + target.name + ' the ' + def.name + '. ' + (target.mp - before) + ' mind. Now ' + target.mp + '/' + target.maxMp + '.');
         flashMesh(combatPartyMeshes[targetIdx], 0x9ec6e8);
+      } else if (def.heal) {
+        const before = target.hp;
+        target.hp = Math.min(maxHp(target), target.hp + def.heal);
+        showLog(actor.name + ' gives ' + target.name + ' the ' + def.name + '. ' + (target.hp - before) + ' HP. Now ' + target.hp + '/' + maxHp(target) + '.');
+        flashMesh(combatPartyMeshes[targetIdx], 0x9dffc8);
       }
     }
 
@@ -9083,6 +9319,9 @@
       else if (e.id === 'echo') names.push(makeShard('lightning').name);
       else if (e.id === 'kiln-heart') names.push(makeShard('fire').name);
       else if (e.id === 'mite' && Math.random() < 0.55) { addRotAsh(); names.push('Rot-ash'); }
+      else if (e.id === 'brine' && Math.random() < 0.45) { addRotAsh(); names.push('Rot-ash'); }
+      else if (e.id === 'cinder' && Math.random() < 0.4) { addRotAsh(); names.push('Rot-ash'); }
+      else if (e.id === 'gull' && Math.random() < 0.35) { addRotAsh(); names.push('Rot-ash'); }
     });
     return names;
   }
@@ -9578,7 +9817,7 @@
         return;
       }
       if (itemCount(item) <= 0) { showLog('The pack is out.'); return; }
-      pendingAction = { kind: 'item', item };
+      pendingAction = { kind: 'item', item, mode: btn.dataset.mode || '' };
       showTargetSelect(true);
     });
 
@@ -10066,7 +10305,7 @@
       if (!act) return;
       if (act.dataset.act === 'equip') equipFromBag(act.dataset.id);
       else if (act.dataset.act === 'unequip') unequip(act.dataset.who, act.dataset.slot);
-      else if (act.dataset.act === 'use') useFieldItem(act.dataset.id);
+      else if (act.dataset.act === 'use') useFieldItem(act.dataset.id, act.dataset.mode);
       else if (act.dataset.act === 'digest') digestShard(act.dataset.uid);
       else if (act.dataset.act === 'bind-cord') bindCord();
     });
@@ -11016,6 +11255,7 @@
   EW.noteClerk = noteClerk;
   EW.noteRation = noteRation;
   EW.noteAside = noteAside;
+  EW.noteNima = noteNima;
   EW.noteChest = noteChest;
   EW.noteCord = noteCord;
   EW.noteBind = noteBind;
