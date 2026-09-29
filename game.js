@@ -121,6 +121,12 @@
   let yardStone = null;
   let nearStone = null;
   let nearWarden = null;
+  let markWord = null;
+  let markLatch = false;
+  let markTalk = false;
+  let markGroup = null;
+  let markStone = null;
+  let nearMark = null;
   let motes = [];
   let bedWanted = true;
   let audioCtx = null;
@@ -396,7 +402,12 @@
     yardLatch = false;
     nearStone = null;
     nearWarden = null;
+    markWord = null;
+    markLatch = false;
+    markTalk = false;
+    nearMark = null;
     if (yardGroup) yardGroup.visible = false;
+    if (markGroup) markGroup.visible = false;
     if (yardStone && yardStone.userData.beamMat) yardStone.userData.beamMat.opacity = 0.12;
     if (throatRoom) throatRoom.visible = false;
     if (marrowStain) marrowStain.visible = false;
@@ -434,6 +445,7 @@
     if (coastGroup) coastGroup.visible = false;
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
+    if (markGroup) markGroup.visible = false;
     if (stormreachGroup) stormreachGroup.visible = false;
     if (coastVesper) coastVesper.visible = false;
     if (vaultRoom) vaultRoom.visible = false;
@@ -490,6 +502,7 @@
     buildCoast();
     buildMarrow();
     buildYard();
+    buildMark();
     buildCombatArena();
     window.addEventListener('resize', onResize);
   }
@@ -544,6 +557,11 @@
       scene.fog.near = 12;
       scene.fog.far = 42;
       if (renderer) renderer.setClearColor(0x3a3428);
+    } else if (place === 'mark') {
+      scene.fog.color.set(0x2c2430);
+      scene.fog.near = 7;
+      scene.fog.far = 32;
+      if (renderer) renderer.setClearColor(0x2c2430);
     } else if (place === 'cellar') {
       scene.fog.color.set(0x1a1410);
       scene.fog.near = 8;
@@ -736,7 +754,7 @@
 
     POOL_DEFS.forEach((def) => makePool(def));
 
-    overworldGroup.add(new THREE.AmbientLight(0xb0c4de, 0.55));
+    overworldGroup.add(new THREE.AmbientLight(0xb0c4de, 0.7));
     const sun = new THREE.DirectionalLight(0xfff5e0, 0.85);
     sun.position.set(20, 30, 10);
     sun.castShadow = true;
@@ -744,7 +762,10 @@
     const sc = sun.shadow.camera;
     sc.near = 1; sc.far = 80; sc.left = -25; sc.right = 25; sc.top = 25; sc.bottom = -25;
     overworldGroup.add(sun);
-    overworldGroup.add(new THREE.HemisphereLight(0x87b5d9, 0x3d6b3d, 0.35));
+    const fill = new THREE.DirectionalLight(0x9eb4d0, 0.32);
+    fill.position.set(-18, 12, -14);
+    overworldGroup.add(fill);
+    overworldGroup.add(new THREE.HemisphereLight(0x87b5d9, 0x3d6b3d, 0.42));
 
     const spawnPin = landmark('spawn');
     playerMesh = makeCharacter(0xc47a4a, 0.95);
@@ -1288,11 +1309,14 @@
   function buildYard() {
     const g = new THREE.Group();
     g.visible = false;
-    g.add(new THREE.AmbientLight(0x8a7a62, 0.48));
-    g.add(new THREE.HemisphereLight(0xc4a878, 0x2a2418, 0.38));
-    const sun = new THREE.DirectionalLight(0xffe0b0, 0.55);
+    g.add(new THREE.AmbientLight(0x8a7a62, 0.58));
+    g.add(new THREE.HemisphereLight(0xc4a878, 0x2a2418, 0.46));
+    const sun = new THREE.DirectionalLight(0xffe0b0, 0.88);
     sun.position.set(-8, 14, 6);
     g.add(sun);
+    const yardFill = new THREE.DirectionalLight(0x8aa0c0, 0.28);
+    yardFill.position.set(6, 8, -10);
+    g.add(yardFill);
     const geo = new THREE.PlaneGeometry(32, 24, 18, 14);
     raisePlane(geo, (x, y) => Math.sin(x * 0.45) * Math.cos(y * 0.4) * 0.16);
     const iron = new THREE.Color(0x3a342c);
@@ -1302,7 +1326,9 @@
       c.copy(iron).lerp(ash, Math.max(0, Math.min(1, (h + 0.1) / 0.28)));
       if (Math.sin(x * 0.8) * Math.cos(y * 0.6) < -0.4) c.lerp(soot, 0.45);
     });
-    const ground = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ vertexColors: true }));
+    const ground = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
+      vertexColors: true, shininess: 5, specular: new THREE.Color(0x2a241c),
+    }));
     ground.rotation.x = -Math.PI / 2;
     g.add(ground);
     g.add(makeSky(0x4a4034, 0xe4c48a));
@@ -1346,6 +1372,11 @@
         g.add(pool.group);
       }
     });
+    markStone = makeWaystone(4.55, -3.85);
+    markStone.scale.setScalar(0.55);
+    if (markStone.userData.beamMat) markStone.userData.beamMat.opacity = 0.34;
+    if (markStone.userData.glow) markStone.userData.glow.intensity = 0.55;
+    g.add(markStone);
     makeMotes(g, 36, 0xd8c49a, { x: 10, y: 1.6, z: 8 });
     yardGroup = g;
     scene.add(g);
@@ -1354,6 +1385,79 @@
   function yardFits(x, z) {
     if (z > 4.7 || z < -4.6) return false;
     if (Math.abs(x) > 5.8) return false;
+    return true;
+  }
+
+  function buildMark() {
+    const g = new THREE.Group();
+    g.visible = false;
+    g.add(new THREE.AmbientLight(0x6a5848, 0.52));
+    g.add(new THREE.HemisphereLight(0xc4a888, 0x1a1218, 0.62));
+    const sun = new THREE.DirectionalLight(0xffd2a0, 1.05);
+    sun.position.set(8, 16, 4);
+    g.add(sun);
+    const fill = new THREE.DirectionalLight(0x7a8cb8, 0.36);
+    fill.position.set(-10, 8, -6);
+    g.add(fill);
+    const geo = new THREE.PlaneGeometry(30, 26, 16, 14);
+    raisePlane(geo, (x, y) => Math.sin(x * 0.35) * Math.cos(y * 0.5) * 0.22 + (y < -1.2 ? 0.08 : 0));
+    const ash = new THREE.Color(0x3a2e32);
+    const bone = new THREE.Color(0x6a5848);
+    const soot = new THREE.Color(0x1a1418);
+    tintPlane(geo, (c, x, y, h) => {
+      c.copy(ash).lerp(bone, Math.max(0, Math.min(1, (h + 0.08) / 0.3)));
+      if (Math.hypot(x, y + 2.4) < 2.4) c.lerp(new THREE.Color(0x8a7860), 0.55);
+      if (Math.sin(x * 1.1) * Math.cos(y * 0.7) < -0.35) c.lerp(soot, 0.4);
+    });
+    const ground = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
+      vertexColors: true, shininess: 6, specular: new THREE.Color(0x2a2018),
+    }));
+    ground.rotation.x = -Math.PI / 2;
+    g.add(ground);
+    g.add(makeSky(0x241c28, 0xc4a07a));
+    const stone = new THREE.MeshPhongMaterial({
+      color: 0x2a2428, shininess: 8, specular: new THREE.Color(0x3a3030),
+    });
+    const left = new THREE.Mesh(new THREE.BoxGeometry(0.42, 3.4, 0.7), stone);
+    left.position.set(-0.28, 1.7, -2.4);
+    left.rotation.z = 0.08;
+    g.add(left);
+    const right = new THREE.Mesh(new THREE.BoxGeometry(0.38, 2.8, 0.62), stone);
+    right.position.set(0.34, 1.4, -2.35);
+    right.rotation.z = -0.12;
+    g.add(right);
+    const band = new THREE.Mesh(
+      new THREE.BoxGeometry(0.9, 0.12, 0.78),
+      new THREE.MeshPhongMaterial({ color: 0xc4a46a, emissive: new THREE.Color(0x3a2a10), shininess: 18 })
+    );
+    band.position.set(0.02, 1.15, -2.38);
+    g.add(band);
+    const lamp = new THREE.PointLight(0xffb060, 0.85, 11);
+    lamp.position.set(0.1, 2.4, -2.2);
+    g.add(lamp);
+    const vesper = makeSilhouette(-2.4, -2.55);
+    vesper.visible = true;
+    vesper.rotation.y = 0.4;
+    g.add(vesper);
+    [-1.2, 1.2].forEach((x) => {
+      const post = new THREE.Mesh(new THREE.BoxGeometry(0.26, 1.6, 0.26), stone);
+      post.position.set(x, 0.8, 4.2);
+      g.add(post);
+    });
+    pools.forEach((pool) => {
+      if (pool.id === 'mark-weep' && pool.group) {
+        pool.group.scale.setScalar(0.5);
+        g.add(pool.group);
+      }
+    });
+    makeMotes(g, 28, 0xd2b48a, { x: 9, y: 1.8, z: 8 });
+    markGroup = g;
+    scene.add(g);
+  }
+
+  function markFits(x, z) {
+    if (z > 4.4 || z < -4.2) return false;
+    if (Math.abs(x) > 5.4) return false;
     return true;
   }
 
@@ -1497,6 +1601,7 @@
     if (stormreachGroup) stormreachGroup.visible = false;
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
+    if (markGroup) markGroup.visible = false;
     interiorGroup.visible = true;
     villageRoom.visible = id === 'leaf-village';
     cellarRoom.visible = id === 'root-cellar';
@@ -2209,7 +2314,12 @@
 
   function makeCharacter(color, scale) {
     const g = new THREE.Group();
-    const clothMat = new THREE.MeshLambertMaterial({ color, emissive: new THREE.Color(0x1a100c) });
+    const clothMat = new THREE.MeshPhongMaterial({
+      color,
+      emissive: new THREE.Color(0x1a100c),
+      shininess: 12,
+      specular: new THREE.Color(0x3a2a22),
+    });
     const torso = new THREE.Mesh(
       new THREE.CylinderGeometry(0.26 * scale, 0.32 * scale, 0.62 * scale, 7),
       clothMat
@@ -2234,7 +2344,12 @@
     );
     belt.position.y = 0.42 * scale;
     g.add(belt);
-    const skin = new THREE.MeshLambertMaterial({ color: 0xffdbac, emissive: new THREE.Color(0x000000) });
+    const skin = new THREE.MeshPhongMaterial({
+      color: 0xffdbac,
+      emissive: new THREE.Color(0x1a0c08),
+      shininess: 16,
+      specular: new THREE.Color(0x4a3028),
+    });
     const head = new THREE.Mesh(new THREE.SphereGeometry(0.2 * scale, 8, 7), skin);
     head.position.y = 1.08 * scale;
     g.add(head);
@@ -2454,15 +2569,39 @@
     combatUI.classList.add('hit');
   }
 
+  function punchNumber(n, kind) {
+    const el = $('#hit-float');
+    if (!el || !n) return;
+    el.textContent = (kind === 'heal' ? '+' : '−') + n;
+    el.classList.remove('show', 'harm', 'heal');
+    void el.offsetWidth;
+    el.classList.add('show', kind === 'heal' ? 'heal' : 'harm');
+  }
+
   function questLine() {
     if (!spark || !spark.path) return 'Choose how she fights.';
     const slag = pools.find((p) => p.id === 'yard-slag');
+    const weep = pools.find((p) => p.id === 'mark-weep');
+    if (locale === 'remnant-mark') {
+      if (!seenBeats.markFight) return 'A counter stands on the road to the pillar.';
+      if (weep && weep.absorbed) return 'The weep is in the spark. South is the yard. The remnant is not this stone.';
+      if (weep && weep.bottled) return 'They numbered the weep. South is the yard.';
+      return 'The weep is at the pillar. Drink it, or let them number it.';
+    }
     if (locale === 'concord-yard') {
-      if (slag && slag.absorbed) return 'The slag is in the spark. South is the stone back to the ash.';
-      if (slag && slag.bottled) return 'The warden sealed the slag. South is the ash.';
+      if (!seenBeats.markStep && (slag && (slag.absorbed || slag.bottled) || yardWord)) {
+        return 'North of the yard, a stone opens the Remnant Mark.';
+      }
+      if (!seenBeats.markStep && slag && !slag.absorbed && !slag.bottled) {
+        return 'The slag is in the yard. North, a stone opens the Remnant Mark.';
+      }
+      if (seenBeats.markStep && weep && weep.absorbed) return 'The weep is digested. South is the ash. North is the mark.';
+      if (slag && slag.absorbed) return 'The slag is in the spark. North is the Remnant Mark.';
+      if (slag && slag.bottled) return 'The warden sealed the slag. North is the Remnant Mark.';
       return 'The slag is in the yard. Drink it, or let the warden seal it.';
     }
-    if (slag && slag.absorbed) return 'The slag is digested. West of the engine, the stone leads back.';
+    if (seenBeats.markStep && weep && weep.absorbed) return 'The weep is digested. The remnant is still ahead of the pillar.';
+    if (slag && slag.absorbed && !seenBeats.markStep) return 'The slag is digested. North of the yard, the mark is still shut from here.';
     if (yardWord === 'seal') return 'The yard is licensed. The slag stayed bottled.';
     if (locale === 'ashen-marrow' || seenBeats.yardStep || seenBeats.marrowStep) {
       if (locale === 'engine-throat') return 'The bottle is north. Name it, or cork it.';
@@ -2487,7 +2626,16 @@
     const left = pools.filter((p) => !p.absorbed && !p.bottled && !p.interior).length;
     const kilnQuiet = pools.some((p) => p.id === 'kiln' && p.absorbed);
     const mergeNames = earnedMergeNames();
-    if (seenBeats.marrowStep && locale === 'concord-yard') {
+    if (seenBeats.markStep && locale === 'remnant-mark') {
+      const weep = pools.find((p) => p.id === 'mark-weep');
+      rumor = !seenBeats.markFight
+        ? 'A counter was left to number the leak. The pillar is north. Kestrel did not carry you.'
+        : weep && weep.absorbed
+          ? 'The weep is in the spark. The Prime Remnant is not this pillar. South is the yard.'
+          : weep && weep.bottled
+            ? 'They numbered the weep. The pillar stayed. South is the yard.'
+            : 'The Remnant Mark. The rumour has a stone. The weep is still a mouth. Vesper will not enter the host.';
+    } else if (seenBeats.marrowStep && locale === 'concord-yard') {
       const slag = pools.find((p) => p.id === 'yard-slag');
       rumor = slag && slag.absorbed
         ? 'The yard slag is in the spark. The warden has the name. South is the stone.'
@@ -2605,10 +2753,14 @@
     if (earthEl) earthEl.textContent = String(spark.earth || 0);
     const scarEl = $('#hud-scar');
     if (scarEl) {
-      scarEl.textContent = 'Scar ' + scarDebt + ' · −' + (scarDebt * 6) + ' HP';
-      scarEl.classList.toggle('hidden', scarDebt <= 0);
+      scarEl.classList.remove('hidden');
+      scarEl.classList.toggle('quiet', scarDebt <= 0);
+      scarEl.textContent = scarDebt > 0
+        ? 'Scar ' + scarDebt + ' · max HP −' + (scarDebt * 6)
+        : 'Scar 0';
     }
-    $('#strain-nums').textContent = spark.strain + '/100';
+    const strainWord = spark.strain >= 70 ? 'tearing' : spark.strain >= 40 ? 'taxed' : 'steady';
+    $('#strain-nums').textContent = spark.strain + '/100 · ' + strainWord;
     const bar = $('#strain-bar');
     bar.style.width = spark.strain + '%';
     bar.classList.toggle('warn', spark.strain >= 40 && spark.strain < 70);
@@ -2640,20 +2792,21 @@
     const showPipe = idle && nearPipe && !showAbsorb && !atExit && !showLook;
     const showThroat = idle && nearThroat && !showAbsorb && !atExit && !showLook && !showPipe;
     const showStone = idle && nearStone && !showAbsorb && !atExit && !showLook && !showPipe && !showThroat;
-    const showTalk = idle && (nearWorker || nearWarden) && !showAbsorb && !atExit && !showLook && !showPipe && !showThroat && !showStone;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk);
+    const showTalk = idle && (nearWorker || nearWarden) && !showAbsorb && !atExit && !showLook && !showPipe && !showThroat && !showStone && !nearMark;
+    const showMark = idle && nearMark && !showAbsorb && !atExit && !showLook && !showPipe && !showThroat && !showStone;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
     else if (showGate) absorbBtn.textContent = 'Land';
-    else if (showLook || showPipe || showThroat || showStone) absorbBtn.textContent = 'Enter';
+    else if (showLook || showPipe || showThroat || showStone || showMark) absorbBtn.textContent = 'Enter';
     else if (showTalk) absorbBtn.textContent = 'Speak';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
   }
 
   function updatePrompt() {
     const atExit = atInteriorExit();
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -2669,13 +2822,15 @@
       return;
     }
     if (atExit) {
-      $('#interact-title').textContent = locale === 'root-cellar' ? 'The mouth' : locale === 'ashen-marrow' ? 'The hall' : locale === 'concord-yard' ? 'The ash' : locale === 'marrow-pipe' ? 'The ash' : locale === 'engine-throat' ? 'The ash' : locale === 'harbor-vault' ? 'The shale' : 'The door';
+      $('#interact-title').textContent = locale === 'root-cellar' ? 'The mouth' : locale === 'ashen-marrow' ? 'The hall' : locale === 'concord-yard' ? 'The ash' : locale === 'remnant-mark' ? 'The yard' : locale === 'marrow-pipe' ? 'The ash' : locale === 'engine-throat' ? 'The ash' : locale === 'harbor-vault' ? 'The shale' : 'The door';
       $('#interact-detail').textContent = locale === 'root-cellar'
         ? 'Press E to step back onto the isle. The throat stays open behind you.'
         : locale === 'ashen-marrow'
           ? 'Press E to step back into the bottle-hall. The engine stays on the ash.'
           : locale === 'concord-yard'
             ? 'Press E to step back through the stone. The yard stays licensed or leaking as you left it.'
+          : locale === 'remnant-mark'
+            ? 'Press E to step back into the yard. The pillar stays numbered. Kestrel is not waiting.'
           : locale === 'marrow-pipe'
             ? 'Press E to step back onto the ash. The feed stays where you left it.'
           : locale === 'engine-throat'
@@ -2720,6 +2875,11 @@
     if (nearStone) {
       $('#interact-title').textContent = nearStone.title;
       $('#interact-detail').textContent = nearStone.hint;
+      return;
+    }
+    if (nearMark) {
+      $('#interact-title').textContent = nearMark.title;
+      $('#interact-detail').textContent = nearMark.hint;
       return;
     }
     if (nearWorker || nearWarden) {
@@ -2805,6 +2965,13 @@
         if (slag && slag.absorbed) waiting.push('You drank the yard slag. The stone carried you. Kestrel did not join.');
         else if (yardWord === 'seal') waiting.push('You let the warden seal the yard slag. Kestrel did not join.');
         else waiting.push('You stepped into the Concord yard. The stone carried you. Kestrel did not join.');
+      }
+      if (seenBeats.markStep) {
+        const weep = pools.find((p) => p.id === 'mark-weep');
+        if (weep && weep.absorbed) waiting.push('You drank the remnant weep. The pillar is not the Prime Remnant. Kestrel did not join.');
+        else if (markWord === 'seal') waiting.push('You let them number the weep. The pillar stayed. Kestrel did not join.');
+        else if (!seenBeats.markFight) waiting.push('The Remnant Mark is open. A counter is still on the road. Kestrel did not join.');
+        else waiting.push('You stood at the Remnant Mark. The weep is still a mouth. Kestrel did not join.');
       }
       const heldMerges = earnedMergeNames();
       if (heldMerges.length) waiting.push(heldMerges.join(', ') + (heldMerges.length === 1 ? ' is' : ' are') + ' on the magic list.');
@@ -3033,6 +3200,10 @@
         talkWarden();
         return;
       }
+      if (nearMark && locale === 'concord-yard' && !atMouth) {
+        enterMark();
+        return;
+      }
       if (nearWorker && !atMouth) {
         talkMarrow();
         return;
@@ -3040,6 +3211,7 @@
       if (atMouth) {
         if (locale === 'ashen-marrow') exitMarrow();
         else if (locale === 'concord-yard') exitYard();
+        else if (locale === 'remnant-mark') exitMark();
         else if (locale === 'marrow-pipe') exitPipe();
         else if (locale === 'engine-throat') exitThroat();
         else exitInterior();
@@ -3096,10 +3268,16 @@
       lira.hp = Math.max(1, lira.hp - 10);
       bite = ' The excess bites. She keeps her feet.';
     }
-    if (pool.concord) {
+    if (pool.concord && pool.id !== 'mark-weep') {
       seals.push({
         name: 'Cracked Well Seal',
         desc: 'Ashen Concord licence, split. Cracking it further in the open is how rot learns your name.',
+      });
+    }
+    if (pool.id === 'mark-weep' && !seals.some((seal) => seal.name === 'Remnant Weep')) {
+      seals.push({
+        name: 'Remnant Weep',
+        desc: 'Earth from the numbered pillar. The Prime Remnant is not this stone. The count will still write the mouth.',
       });
     }
     const levels = grantSparkXp(pool.xp);
@@ -3116,6 +3294,7 @@
       msg += scarDebtLine();
     }
     if (pool.id === 'yard-slag' && addScar('yard')) msg += scarDebtLine();
+    if (pool.id === 'mark-weep' && addScar('mark')) msg += scarDebtLine();
     playSting();
     showToast(msg);
     refreshRumor();
@@ -3205,6 +3384,7 @@
     if (!playerMesh || locale === 'field') return false;
     if (locale === 'ashen-marrow') return playerMesh.position.z > 4.15;
     if (locale === 'concord-yard') return playerMesh.position.z > 4.05;
+    if (locale === 'remnant-mark') return playerMesh.position.z > 3.85;
     return playerMesh.position.z > 2.55;
   }
 
@@ -3409,6 +3589,7 @@
     if (stormreachGroup) stormreachGroup.visible = false;
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
+    if (markGroup) markGroup.visible = false;
     yardGroup.visible = true;
     placeFog('yard');
     const locLabel = $('#hud-location');
@@ -3460,6 +3641,122 @@
       const played = fn();
       if (played !== false && dialogueOpen) pendingBeat = 'yard-vesper';
     }
+  }
+
+  function nearestMark() {
+    if (!playerMesh || locale !== 'concord-yard' || skyPass) return null;
+    if (Math.hypot(4.55 - playerMesh.position.x, -3.85 - playerMesh.position.z) > 1.4) return null;
+    return {
+      title: 'Remnant Mark',
+      hint: seenBeats.markStep
+        ? 'The pillar is through. Press E. It is a rumour with a stone, not the remnant. Kestrel is not the road.'
+        : 'North of the yard, a stone the count could not cork. Press E. The Prime Remnant is not this pillar.',
+    };
+  }
+
+  function enterMark(opts) {
+    const silent = opts && opts.silent;
+    if (!markGroup || !playerMesh) return;
+    if (!silent && (locale !== 'concord-yard' || dialogueOpen || skyPass || encounterLocked)) return;
+    locale = 'remnant-mark';
+    if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
+    markGroup.add(playerMesh);
+    const px = silent && opts.pos ? (opts.pos.x || 0) : 0;
+    const pz = silent && opts.pos ? (opts.pos.z || 3.15) : 3.15;
+    playerMesh.position.set(px, 0, pz);
+    if (interiorGroup) interiorGroup.visible = false;
+    if (overworldGroup) overworldGroup.visible = false;
+    if (stormreachGroup) stormreachGroup.visible = false;
+    if (marrowGroup) marrowGroup.visible = false;
+    if (yardGroup) yardGroup.visible = false;
+    if (markGroup) markGroup.visible = false;
+    markGroup.visible = true;
+    placeFog('mark');
+    const locLabel = $('#hud-location');
+    if (locLabel) locLabel.textContent = 'Remnant Mark';
+    camera.position.set(px, CAMERA_HEIGHT, pz + CAMERA_DIST);
+    camera.lookAt(px, 1, pz);
+    if (!silent) {
+      seenBeats.markStep = true;
+      showToast('The Remnant Mark. A pillar they numbered and could not cork. Kestrel did not carry you.');
+    }
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function exitMark() {
+    if (locale !== 'remnant-mark' || !playerMesh || !yardGroup) return;
+    locale = 'concord-yard';
+    if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
+    yardGroup.add(playerMesh);
+    playerMesh.position.set(4.55, 0, -2.2);
+    markGroup.visible = false;
+    if (interiorGroup) interiorGroup.visible = false;
+    if (overworldGroup) overworldGroup.visible = false;
+    if (stormreachGroup) stormreachGroup.visible = false;
+    if (marrowGroup) marrowGroup.visible = false;
+    yardGroup.visible = true;
+    placeFog('yard');
+    const locLabel = $('#hud-location');
+    if (locLabel) locLabel.textContent = 'Concord Yard';
+    camera.position.set(4.55, CAMERA_HEIGHT, -2.2 + CAMERA_DIST);
+    camera.lookAt(4.55, 1, -2.2);
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function updateMarkFight() {
+    if (locale !== 'remnant-mark' || !playerMesh || dialogueOpen || encounterLocked || skyPass) return;
+    if (seenBeats.markFight) return;
+    if (playerMesh.position.z > 0.55) {
+      markLatch = false;
+      return;
+    }
+    if (markLatch) return;
+    markLatch = true;
+    beginScriptedFight(['counter'], 'mark-counter');
+  }
+
+  function updateMarkVesper() {
+    if (locale !== 'remnant-mark' || !playerMesh || !seenBeats.markFight || dialogueOpen || encounterLocked || skyPass) return;
+    if (seenBeats['mark-vesper']) return;
+    const d = Math.hypot(-2.4 - playerMesh.position.x, -2.55 - playerMesh.position.z);
+    if (d > 2.1) {
+      markTalk = false;
+      return;
+    }
+    if (markTalk) return;
+    markTalk = true;
+    const fn = EW.scenes['mark-vesper'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'mark-vesper';
+    }
+  }
+
+  function noteMark(id) {
+    if (markWord) return;
+    const pool = pools.find((p) => p.id === 'mark-weep');
+    seenBeats['mark-vesper'] = true;
+    if (id === 'seal') {
+      markWord = 'seal';
+      if (pool && !pool.absorbed) bottlePool('mark-weep');
+      if (!seals.some((seal) => seal.name === 'Counted Mouth')) {
+        seals.push({
+          name: 'Counted Mouth',
+          desc: 'The Concord numbered the weep at the Remnant Mark. You left it. The pillar is not the Prime Remnant. The count is still hungry.',
+        });
+      }
+      showToast('You let them number the weep. The pillar stays. The remnant is not here.');
+    } else {
+      markWord = 'drink';
+      showToast('The weep stays a mouth. Drink it. She will not step into Lira to take it.');
+    }
+    refreshRumor();
+    updateHUD();
+    saveGame();
   }
 
   function talkWarden() {
@@ -3552,6 +3849,7 @@
     victoryTag = null;
     if (tag === 'cellar-crawl') seenBeats.cellarCrawl = true;
     if (tag === 'kiln-heart') seenBeats.kiln = true;
+    if (tag === 'mark-counter') seenBeats.markFight = true;
     if (tag === 'pipe-stoker') {
       pipeWord = 'crack';
       seenBeats['pipe-feed'] = true;
@@ -3607,6 +3905,7 @@
       nearThroat = null;
       nearStone = null;
       nearWarden = null;
+      nearMark = null;
       joy.active = false;
       joy.dx = 0;
       joy.dy = 0;
@@ -3645,6 +3944,9 @@
         } else if (locale === 'concord-yard') {
           if (yardFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
           if (yardFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
+        } else if (locale === 'remnant-mark') {
+          if (markFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
+          if (markFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
         } else if (locale === 'marrow-pipe') {
           if (pipeFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
           if (pipeFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
@@ -3668,6 +3970,7 @@
         nearThroat = nearestThroat();
         nearStone = nearestStone();
         nearWarden = nearestWarden();
+        nearMark = nearestMark();
         const safe = nearPool && !nearPool.absorbed;
         const cooled = performance.now() < suppressEncountersUntil;
         const onField = locale === 'field' && (regionId === 'verdant-isle' || regionId === 'stormreach');
@@ -3689,6 +3992,7 @@
         nearThroat = nearestThroat();
         nearStone = nearestStone();
         nearWarden = nearestWarden();
+        nearMark = nearestMark();
       }
 
       updateCellarTriggers();
@@ -3697,6 +4001,8 @@
       updatePipeTrigger();
       updateThroatTrigger();
       updateYardVesper();
+      updateMarkFight();
+      updateMarkVesper();
       driftMotes();
       maybeResumeCoast();
 
@@ -3720,6 +4026,7 @@
       nearThroat = nearestThroat();
       nearStone = nearestStone();
       nearWarden = nearestWarden();
+      nearMark = nearestMark();
       playerMesh.position.y = 0;
     }
 
@@ -3856,6 +4163,7 @@
     if (stormreachGroup) stormreachGroup.visible = false;
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
+    if (markGroup) markGroup.visible = false;
     if (coastGroup) coastGroup.visible = false;
     combatGroup.visible = true;
     scene.fog.near = 28;
@@ -3901,7 +4209,9 @@
       ? 'Corked iron. A knife spends itself on the coat. Magma stays on them. Glass looks for the seam.'
       : enemies.some((e) => e.id === 'cinder')
         ? 'Ash that learned to crawl. The shelf is not empty.'
-        : enemies.some((e) => e.id === 'brine')
+        : enemies.some((e) => e.id === 'counter')
+        ? 'A counter left to number a leak. He counts blows the same way.'
+      : enemies.some((e) => e.id === 'brine')
           ? 'The coast grew a thing with too many legs. The wet is not only water.'
       : enemies.some((e) => e.id === 'echo')
       ? 'Vesper is not on this field. Something that remembers her mouth is.'
@@ -4186,6 +4496,7 @@
         text += ' ' + PATH_LABEL[spark.path] + ' attunement deepens.';
       }
       showLog(text);
+      punchNumber(result.dmg, 'harm');
       animateAttack(combatPartyMeshes[turn.index], combatEnemyMeshes[targetIdx]);
       if (target.hp <= 0) markDead(targetIdx);
     } else if (act.kind === 'magic') {
@@ -4210,6 +4521,7 @@
         const before = target.hp;
         target.hp = Math.min(maxHp(target), target.hp + heal);
         showLog(actor.name + ' lays digested water on ' + target.name + '. ' + (target.hp - before) + ' HP returns.' + (kept ? ' The scar keeps ' + kept + '.' : ''));
+        punchNumber(target.hp - before, 'heal');
         flashMesh(combatPartyMeshes[targetIdx], sp.flash);
         if (actor.id === 'lira' && spark.path === 'mage' && grantPathXp(6)) {
           later(() => showLog('Mage attunement deepens.'), 600);
@@ -4263,6 +4575,8 @@
           glass: 'Glass. The blow is bright and brittle. ' + target.name + ' takes ' + dmg + '.' + extra,
         };
         showLog(lines[act.magic] || (actor.name + ' spends a held word. ' + target.name + ' takes ' + dmg + '.'));
+        punchNumber(dmg, 'harm');
+        if (sp.merge) playMergeSting();
         flashMesh(combatEnemyMeshes[targetIdx], sp.flash);
         if (target.hp <= 0) markDead(targetIdx);
         if (actor.id === 'lira' && spark.path === 'mage') grantPathXp(8);
@@ -4362,6 +4676,7 @@
       pick.p.hp = Math.max(0, pick.p.hp - dmg);
       showLog(enemy.name + ' hits ' + pick.p.name + ' for ' + dmg + '.');
     }
+    punchNumber(dmg, 'harm');
     animateAttack(combatEnemyMeshes[idx], combatPartyMeshes[pick.i]);
     if (pick.p.hp <= 0) {
       const mesh = combatPartyMeshes[pick.i];
@@ -4443,8 +4758,10 @@
       ? ' Somewhere Vesper looks up, as if named.'
       : tag === 'kiln-heart'
         ? ' The kiln is unguarded. What they buried is still offering.'
-        : tag === 'pipe-stoker'
+          : tag === 'pipe-stoker'
           ? ' The feed is cracked. The coat did not save him. The engine is hungrier, and the shelf is not cleaner.'
+          : tag === 'mark-counter'
+          ? ' The counter is down. The pillar is still numbered. The weep is still a mouth.'
           : ' Lira keeps the bruises.';
     victoryText.textContent = msg;
     victoryOverlay.classList.remove('hidden');
@@ -4474,12 +4791,14 @@
     const onCoast = locale === 'field' && regionId === 'stormreach';
     const onMarrow = locale === 'ashen-marrow';
     const onYard = locale === 'concord-yard';
+    const onMark = locale === 'remnant-mark';
     overworldGroup.visible = locale === 'field' && !onCoast;
     if (stormreachGroup) stormreachGroup.visible = onCoast;
     if (coastGroup) coastGroup.visible = false;
     if (marrowGroup) marrowGroup.visible = onMarrow;
     if (yardGroup) yardGroup.visible = onYard;
-    if (interiorGroup) interiorGroup.visible = locale !== 'field' && !onMarrow && !onYard;
+    if (markGroup) markGroup.visible = onMark;
+    if (interiorGroup) interiorGroup.visible = locale !== 'field' && !onMarrow && !onYard && !onMark;
     if (vaultRoom) vaultRoom.visible = locale === 'harbor-vault';
     if (villageRoom) villageRoom.visible = locale === 'leaf-village';
     if (cellarRoom) cellarRoom.visible = locale === 'root-cellar';
@@ -4488,6 +4807,7 @@
     combatGroup.visible = false;
     if (onMarrow) placeFog('marrow');
     else if (onYard) placeFog('yard');
+    else if (onMark) placeFog('mark');
     else if (locale === 'root-cellar') placeFog('cellar');
     else if (locale === 'harbor-vault') placeFog('vault');
     else if (locale === 'marrow-pipe') placeFog('pipe');
@@ -4851,6 +5171,7 @@
     if (coastGroup) coastGroup.visible = false;
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
+    if (markGroup) markGroup.visible = false;
     combatGroup.visible = false;
     const locLabel = $('#hud-location');
     if (locLabel) locLabel.textContent = 'Verdant Isle';
@@ -4890,6 +5211,27 @@
       gain.connect(audioCtx.destination);
       osc.start(start);
       osc.stop(start + 0.36);
+    });
+  }
+
+  function playMergeSting() {
+    if (!bedWanted) return;
+    ensureBed();
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    [311, 466, 622].forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      const start = now + i * 0.06;
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.05, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.28);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(start);
+      osc.stop(start + 0.32);
     });
   }
 
@@ -4967,8 +5309,24 @@
     if (throatWord || seenBeats['throat-name']) {
       rows.push({ name: 'Sealed throat', note: throatWord === 'name' ? 'The name is in the spark.' : 'The word stayed in the glass.' });
     }
-    if (seenBeats.yardStep) rows.push({ name: 'Concord yard', note: 'Through the stone west of the engine. Kestrel did not carry you.' });
-    else if (seenBeats.marrowStep) rows.push({ name: 'Concord yard', note: 'Not walked yet. The stone is west of the engine.' });
+    if (seenBeats.yardStep) {
+      const slag = pools.find((p) => p.id === 'yard-slag');
+      const yardNote = slag && !slag.absorbed && !slag.bottled
+        ? 'Walked. The slag is still a mouth.'
+        : 'Through the stone west of the engine. Kestrel did not carry you.';
+      rows.push({ name: 'Concord yard', note: yardNote });
+    } else if (seenBeats.marrowStep) rows.push({ name: 'Concord yard', note: 'Not walked yet. The stone is west of the engine.' });
+    if (seenBeats.markStep) {
+      const weep = pools.find((p) => p.id === 'mark-weep');
+      let note = 'The rumour has a pillar. Kestrel did not carry you.';
+      if (!seenBeats.markFight) note = 'Walked. A counter is still on the road.';
+      else if (weep && weep.absorbed) note = 'The weep is in the spark. The remnant is not this pillar.';
+      else if (weep && weep.bottled) note = 'The weep was numbered. The pillar stayed.';
+      else note = 'Walked. The weep is still a mouth.';
+      rows.push({ name: 'Remnant Mark', note: note });
+    } else if (seenBeats.yardStep) {
+      rows.push({ name: 'Remnant Mark', note: 'Not walked yet. North of the yard. The list does not carry you.' });
+    }
     return rows;
   }
 
@@ -5149,6 +5507,7 @@
         throatWord: throatWord,
         kestrelMarrow: kestrelMarrow,
         yardWord: yardWord,
+        markWord: markWord,
         duelWord: duelWord,
         kestrelWord: kestrelWord,
         pos: { x: playerMesh.position.x, z: playerMesh.position.z },
@@ -5195,6 +5554,7 @@
     throatWord = data.throatWord === 'name' || data.throatWord === 'cork' ? data.throatWord : null;
     kestrelMarrow = data.kestrelMarrow === 'ask' || data.kestrelMarrow === 'air' ? data.kestrelMarrow : null;
     yardWord = data.yardWord === 'drink' || data.yardWord === 'seal' ? data.yardWord : null;
+    markWord = data.markWord === 'drink' || data.markWord === 'seal' ? data.markWord : null;
     if (marrowStain) marrowStain.visible = vesperAsh === 'refuse';
     if (typeof spark.earth !== 'number') spark.earth = 0;
     duelWord = data.duelWord === 'press' || data.duelWord === 'hold' ? data.duelWord : null;
@@ -5264,6 +5624,7 @@
     }
     if (data.locale === 'ashen-marrow') enterMarrow({ silent: true, pos: data.pos });
     else if (data.locale === 'concord-yard') enterYard({ silent: true, pos: data.pos });
+    else if (data.locale === 'remnant-mark') enterMark({ silent: true, pos: data.pos });
     else if (resumeInterior) enterInterior(data.locale, { silent: true, pos: data.pos });
     else if (data.region === 'stormreach') enterRegion('stormreach', { silent: true, pos: data.pos });
   }
@@ -5344,6 +5705,7 @@
     coastGroup.visible = true;
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
+    if (markGroup) markGroup.visible = false;
     overworldGroup.visible = false;
     if (stormreachGroup) stormreachGroup.visible = false;
     scene.fog.color.set(0x6e7e90);
@@ -5368,6 +5730,7 @@
     if (coastGroup) coastGroup.visible = false;
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
+    if (markGroup) markGroup.visible = false;
     if (locale === 'field' && overworldGroup) {
       overworldGroup.visible = true;
       placeFog('verdant');
@@ -5413,6 +5776,7 @@
     if (coastGroup) coastGroup.visible = false;
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
+    if (markGroup) markGroup.visible = false;
     if (interiorGroup) interiorGroup.visible = false;
     placeFog(regionId === 'stormreach' ? 'stormreach' : 'verdant');
     beatHold = {};
@@ -5477,6 +5841,7 @@
     if (coastGroup) coastGroup.visible = false;
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
+    if (markGroup) markGroup.visible = false;
     skyPass = null;
     enterRegion('stormreach');
     if (gameState === State.OVERWORLD && !dialogueOpen && !inventoryOpen && !encounterLocked) {
@@ -5751,6 +6116,7 @@
     skyPass = null;
     if (marrowGroup) marrowGroup.visible = false;
     if (yardGroup) yardGroup.visible = false;
+    if (markGroup) markGroup.visible = false;
     if (interiorGroup) interiorGroup.visible = locale !== 'field';
     if (vaultRoom) vaultRoom.visible = locale === 'harbor-vault';
     if (villageRoom) villageRoom.visible = locale === 'leaf-village';
@@ -5921,6 +6287,7 @@
   EW.throatNamed = function () { return throatWord === 'name'; };
   EW.noteKestrelMarrow = noteKestrelMarrow;
   EW.noteYard = noteYard;
+  EW.noteMark = noteMark;
   EW.poolMark = function (id) {
     const pool = pools.find((p) => p.id === id);
     if (!pool) return 'gone';

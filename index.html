@@ -55,6 +55,7 @@
       <p>Emberwake uses open-licence audio only — CC0, CC-BY with attribution, or a similarly clear grant. Every cue that ships is named in <strong>CREDITS.md</strong> and on this screen.</p>
       <p><strong>Field bed.</strong> Original, this repository. CC0. A quiet loop of filtered noise and two slow tones, generated in the browser. No sample is loaded. Press Silent on the field to stop it.</p>
       <p><strong>Absorb sting.</strong> Original, this repository. CC0. Two short tones when a pool is drunk. No sample is loaded. Silent stops it with the bed.</p>
+      <p><strong>Merge sting.</strong> Original, this repository. CC0. Three short tones when a merge is spent in a fight. No sample is loaded. Silent stops it with the bed.</p>
       <p class="credits-note">Commercial libraries stay out. If a licence is doubtful, the moment stays quiet.</p>
       <button id="btn-credits-close" class="btn btn-primary" type="button">Return</button>
     </div>
@@ -86,7 +87,7 @@
         <span class="label">Host strain</span>
         <div class="strain-wrap"><div class="strain-bar" id="strain-bar"></div></div>
         <span class="nums" id="strain-nums">0/100</span>
-        <span class="hud-scar hidden" id="hud-scar" title="Each point cuts Lira’s max HP. The kiln, the earth cork, and a fed engine add one. Banking the marrow leak eases one.">Scar 0</span>
+        <span class="hud-scar quiet" id="hud-scar" title="Each point cuts Lira’s max HP. The kiln, the earth cork, a fed engine, the spoken name, the yard slag, and the remnant weep can add one. Banking the marrow leak eases one.">Scar 0</span>
       </div>
       <p class="hud-rumor" id="hud-rumor">The leaf-villages pretend the Concord’s seals are mercy.</p>
       <p class="hud-keys">Stick or WASD · Absorb / E · Pack / I · click commands</p>
@@ -221,6 +222,7 @@
       </div>
     </div>
     <div id="combat-log" class="combat-log"></div>
+    <div id="hit-float" class="hit-float" aria-hidden="true"></div>
     <div id="turn-indicator" class="turn-indicator"></div>
   </div>
 

@@ -453,4 +453,44 @@
     });
     return true;
   });
+
+  Emberwake.registerScene('mark-vesper', function () {
+    var mark = Emberwake.poolMark ? Emberwake.poolMark('mark-weep') : 'open';
+    var lines = [
+      {
+        where: 'Remnant Mark',
+        speaker: 'Vesper',
+        text: mark === 'drunk'
+          ? 'You drank the weep. They will write your name on a pillar and call the remnant answered. It is not answered. I am not here for the coat.'
+          : 'This pillar is the rumour. The Prime Remnant is the death that taught the world to keep power. They numbered this mouth and the number rotted. Drink the weep, or let the count finish.',
+      },
+    ];
+    if (mark === 'open') {
+      lines.push({
+        speaker: 'Lira',
+        text: 'The count has a number. The stone has a mouth.',
+        choices: [
+          {
+            label: 'Drink the weep.',
+            pick: 'drink',
+            reply: { speaker: 'Vesper', text: 'Then the mouth stays open. I will not step into her to take it. Kestrel is not the road here either.' },
+          },
+          {
+            label: 'Let them number it.',
+            pick: 'seal',
+            reply: { speaker: 'Vesper', text: 'Then the count goes on. The weep stays. The remnant does not arrive, and neither do I enter the host.' },
+          },
+        ],
+      });
+    } else {
+      lines.push({ speaker: 'The spark', text: 'Kestrel did not carry this crossing. The pillar is not the remnant.' });
+    }
+    Emberwake.present({
+      lines: lines,
+      onPick: function (id) {
+        if (Emberwake.noteMark) Emberwake.noteMark(id);
+      },
+    });
+    return true;
+  });
 })(window.Emberwake);
