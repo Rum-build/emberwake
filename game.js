@@ -177,6 +177,8 @@
   let nearPost = null;
   let nearRing = null;
   let nearClerk = null;
+  let nearRation = null;
+  let nearAside = null;
   let bedWanted = true;
   let motionWanted = true;
   let combatPace = 'steady';
@@ -789,8 +791,8 @@
   function buildOverworld() {
     const groundGeo = new THREE.PlaneGeometry(WORLD_SIZE * 1.5, WORLD_SIZE * 1.5, 40, 40);
     raisePlane(groundGeo, (x, y) => (
-      Math.sin(x * 0.3) * Math.cos(y * 0.25) * 0.34
-      + Math.sin(x * 0.82 + 1.4) * Math.cos(y * 0.66) * 0.09
+      Math.sin(x * 0.3) * Math.cos(y * 0.25) * 0.48
+      + Math.sin(x * 0.82 + 1.4) * Math.cos(y * 0.66) * 0.14
     ));
     const low = new THREE.Color(0x14361c);
     const high = new THREE.Color(0xc6de74);
@@ -814,6 +816,9 @@
     overworldGroup.add(makeSaltCord(3.2, -8));
     overworldGroup.add(makeWayPost(-11.2, 1.6));
     overworldGroup.add(makeColdRing(9.2, -12.4));
+    overworldGroup.add(makeMound(3.4, -1.6, 1.35));
+    overworldGroup.add(makeLog(-2.8, -3.4));
+    overworldGroup.add(makeCairn(6.8, 5.5));
     overworldGroup.add(makeSky(0x6ea0c8, 0xf3e2c0));
 
     const grassMat = new THREE.MeshLambertMaterial({ color: 0x3d8b3d });
@@ -1443,8 +1448,8 @@
     g.add(new THREE.HemisphereLight(0x6a3020, 0x100806, 0.22));
     const ashGeo = new THREE.PlaneGeometry(36, 28, 22, 16);
     raisePlane(ashGeo, (x, y) => (
-      Math.sin(x * 0.38) * Math.cos(y * 0.33) * 0.26
-      + Math.sin(x * 1.15 + y * 0.4) * 0.07
+      Math.sin(x * 0.38) * Math.cos(y * 0.33) * 0.4
+      + Math.sin(x * 1.15 + y * 0.4) * 0.11
     ));
     const ashDark = new THREE.Color(0x241410);
     const ashRed = new THREE.Color(0x6a3424);
@@ -1463,6 +1468,10 @@
     ash.rotation.x = -Math.PI / 2;
     g.add(ash);
     g.add(makeSky(0x4a2018, 0xd08048));
+    g.add(makeAshRib(3.4, 3.4));
+    g.add(makeCinderCone(-5.2, 3.6));
+    g.add(makeAshRib(2.4, -3.6));
+    g.userData.gusts = makeGusts(g, 7, 0xc45a28);
     [[1.7, 2.35, 0.85], [-1.85, 0.55, 0.65], [0.55, -1.05, 0.5]].forEach((spot) => {
       const drift = new THREE.Mesh(
         new THREE.SphereGeometry(spot[2], 8, 6),
@@ -1710,6 +1719,7 @@
     rest.add(bedroll);
     rest.position.set(-4.15, 0, 2.55);
     g.add(rest);
+    g.add(makeAsideBench(-0.15, -4.15));
     yardGroup = g;
     scene.add(g);
   }
@@ -2473,10 +2483,30 @@
     const watcher = makeSilhouette(-3.4, -5.6);
     watcher.visible = true;
     watcher.position.y = 0.2;
+    watcher.userData.homeY = 0.2;
     watcher.scale.setScalar(2.65);
     watcher.traverse((child) => {
       if (child.material && child.material.isMeshBasicMaterial) child.material.fog = false;
     });
+    const foot = new THREE.Mesh(
+      new THREE.RingGeometry(0.85, 1.2, 18),
+      new THREE.MeshBasicMaterial({
+        color: 0xff6a28, transparent: true, opacity: 0.5, side: THREE.DoubleSide, fog: false, depthWrite: false,
+      })
+    );
+    foot.rotation.x = -Math.PI / 2;
+    foot.position.y = 0.06;
+    watcher.add(foot);
+    const edge = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.15, 2.6),
+      new THREE.MeshBasicMaterial({
+        color: 0xffb060, transparent: true, opacity: 0.22, side: THREE.DoubleSide, fog: false, depthWrite: false,
+      })
+    );
+    edge.position.set(-0.2, 1.2, -0.18);
+    watcher.add(edge);
+    watcher.userData.edge = edge;
+    watcher.userData.claim = true;
     g.add(watcher);
     g.userData.watcher = watcher;
     const landed = makeCharacter(0x6a5348, 0.92);
@@ -2965,6 +2995,36 @@
     };
   }
 
+  function nearestRation() {
+    if (!playerMesh || locale !== 'field' || regionId !== 'stormreach' || skyPass) return null;
+    if (Math.hypot(-8.6 - playerMesh.position.x, 3.2 - playerMesh.position.z) > 1.1) return null;
+    if (seenBeats['ration-swap']) {
+      return {
+        title: 'Ration stall',
+        hint: 'The stamp already moved. The ration is in the pack. Press E. The vault door did not change.',
+      };
+    }
+    return {
+      title: 'A ration stall',
+      hint: 'A stamped crate on the west shale. Press E. He wants rot-ash, not a licence.',
+    };
+  }
+
+  function nearestAside() {
+    if (!playerMesh || locale !== 'concord-yard' || skyPass) return null;
+    if (Math.hypot(-0.15 - playerMesh.position.x, -4.15 - playerMesh.position.z) > 1.0) return null;
+    if (seenBeats['yard-aside']) {
+      return {
+        title: 'A private word',
+        hint: 'It was already said. The mark stays north. Press E to hear it again.',
+      };
+    }
+    return {
+      title: 'A private word',
+      hint: 'A bench short of the north stone. Press E. It is not the mark and not the slag.',
+    };
+  }
+
   function nearestPorter() {
     if (!playerMesh || locale !== 'field' || regionId !== 'stormreach' || skyPass) return null;
     if (Math.hypot(2.45 - playerMesh.position.x, 2.55 - playerMesh.position.z) > 1.45) return null;
@@ -3254,8 +3314,8 @@
 
     const shelfGeo = new THREE.PlaneGeometry(24, 16, 18, 12);
     raisePlane(shelfGeo, (x, y) => (
-      Math.sin(x * 0.42) * Math.cos(y * 0.36) * 0.32
-      + Math.sin(x * 1.25 + y * 0.5) * 0.08
+      Math.sin(x * 0.42) * Math.cos(y * 0.36) * 0.46
+      + Math.sin(x * 1.25 + y * 0.5) * 0.12
     ));
     const stone = new THREE.Color(0x4a453e);
     const wetStone = new THREE.Color(0x1c3038);
@@ -3393,6 +3453,10 @@
 
     coastVesper = makeSilhouette(7.4, 8.1);
     g.add(coastVesper);
+    g.add(makeDriftwood(-9.4, 2.6));
+    g.add(makeCairn(4.2, 8.8));
+    g.add(makeRationStall(-8.6, 3.2));
+    g.userData.gusts = makeGusts(g, 5, 0xd0e4f0);
   }
 
   function buildCoast() {
@@ -4124,13 +4188,202 @@
     return g;
   }
 
+  function makeMound(x, z, scale) {
+    const g = new THREE.Group();
+    const hill = new THREE.Mesh(
+      new THREE.SphereGeometry(1.15 * (scale || 1), 8, 6),
+      new THREE.MeshLambertMaterial({ color: 0x2f6a34 })
+    );
+    hill.scale.y = 0.38;
+    hill.position.y = 0.12;
+    g.add(hill);
+    const cap = new THREE.Mesh(
+      new THREE.SphereGeometry(0.42 * (scale || 1), 6, 5),
+      new THREE.MeshLambertMaterial({ color: 0x6a4a2c })
+    );
+    cap.scale.y = 0.55;
+    cap.position.set(0.35, 0.28, 0.1);
+    g.add(cap);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeLog(x, z) {
+    const g = new THREE.Group();
+    const log = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.16, 0.18, 1.6, 6),
+      new THREE.MeshLambertMaterial({ color: 0x6a4a32 })
+    );
+    log.rotation.z = Math.PI / 2;
+    log.rotation.y = 0.4;
+    log.position.y = 0.18;
+    g.add(log);
+    const stub = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.2, 0.22, 0.16, 6),
+      new THREE.MeshLambertMaterial({ color: 0x8a6240 })
+    );
+    stub.position.set(-0.72, 0.16, 0.05);
+    g.add(stub);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeCairn(x, z) {
+    const g = new THREE.Group();
+    [0.28, 0.2, 0.12].forEach((r, i) => {
+      const stone = new THREE.Mesh(
+        new THREE.DodecahedronGeometry(r, 0),
+        new THREE.MeshLambertMaterial({ color: i === 2 ? 0xc4b8a4 : 0x6e675c })
+      );
+      stone.position.y = 0.16 + i * 0.28;
+      g.add(stone);
+    });
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeDriftwood(x, z) {
+    const g = new THREE.Group();
+    const wood = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.08, 0.12, 1.4, 5),
+      new THREE.MeshLambertMaterial({ color: 0x8a7a62 })
+    );
+    wood.rotation.z = Math.PI / 2.4;
+    wood.position.y = 0.14;
+    g.add(wood);
+    const salt = new THREE.Mesh(
+      new THREE.SphereGeometry(0.1, 5, 4),
+      new THREE.MeshLambertMaterial({ color: 0xd8d0c4 })
+    );
+    salt.position.set(0.4, 0.12, 0.08);
+    g.add(salt);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeAshRib(x, z) {
+    const g = new THREE.Group();
+    const rib = new THREE.Mesh(
+      new THREE.TorusGeometry(0.42, 0.06, 5, 10, Math.PI),
+      new THREE.MeshLambertMaterial({ color: 0x4a3028 })
+    );
+    rib.rotation.x = Math.PI / 2;
+    rib.rotation.z = 0.4;
+    rib.position.y = 0.28;
+    g.add(rib);
+    const ash = new THREE.Mesh(
+      new THREE.SphereGeometry(0.22, 6, 5),
+      new THREE.MeshLambertMaterial({ color: 0x2a1814 })
+    );
+    ash.scale.y = 0.35;
+    ash.position.y = 0.06;
+    g.add(ash);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeCinderCone(x, z) {
+    const g = new THREE.Group();
+    const cone = new THREE.Mesh(
+      new THREE.ConeGeometry(0.38, 0.7, 6),
+      new THREE.MeshLambertMaterial({ color: 0x3a221c })
+    );
+    cone.position.y = 0.32;
+    g.add(cone);
+    const glow = new THREE.Mesh(
+      new THREE.SphereGeometry(0.08, 5, 4),
+      new THREE.MeshBasicMaterial({ color: 0xff6a28, fog: false })
+    );
+    glow.position.y = 0.62;
+    g.add(glow);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeRationStall(x, z) {
+    const g = new THREE.Group();
+    const crate = new THREE.Mesh(
+      new THREE.BoxGeometry(0.62, 0.38, 0.48),
+      new THREE.MeshLambertMaterial({ color: 0x6a5840 })
+    );
+    crate.position.y = 0.22;
+    g.add(crate);
+    const stamp = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.28, 0.18),
+      new THREE.MeshBasicMaterial({ color: 0xe2c878, fog: false })
+    );
+    stamp.position.set(0, 0.42, 0.02);
+    stamp.rotation.x = -Math.PI / 2;
+    g.add(stamp);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeAsideBench(x, z) {
+    const g = new THREE.Group();
+    const seat = new THREE.Mesh(
+      new THREE.BoxGeometry(0.9, 0.08, 0.32),
+      new THREE.MeshLambertMaterial({ color: 0x5c4634 })
+    );
+    seat.position.y = 0.32;
+    g.add(seat);
+    [-0.32, 0.32].forEach((sx) => {
+      const leg = new THREE.Mesh(
+        new THREE.BoxGeometry(0.08, 0.32, 0.08),
+        new THREE.MeshLambertMaterial({ color: 0x3a3028 })
+      );
+      leg.position.set(sx, 0.16, 0);
+      g.add(leg);
+    });
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeGusts(parent, count, color) {
+    const gusts = [];
+    for (let i = 0; i < count; i++) {
+      const streak = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.85 + (i % 3) * 0.28, 0.035),
+        new THREE.MeshBasicMaterial({
+          color, transparent: true, opacity: 0.38, depthWrite: false, fog: false, side: THREE.DoubleSide,
+        })
+      );
+      streak.position.set(-3 + i * 1.15, 0.85 + (i % 4) * 0.28, -1.2 + (i % 5) * 0.7);
+      streak.userData.ox = streak.position.x;
+      streak.userData.oz = streak.position.z;
+      parent.add(streak);
+      gusts.push(streak);
+    }
+    return gusts;
+  }
+
+  function driftGusts() {
+    const lists = [];
+    if (marrowGroup && marrowGroup.visible && marrowGroup.userData.gusts) lists.push(marrowGroup.userData.gusts);
+    if (stormreachGroup && stormreachGroup.visible && stormreachGroup.userData.gusts) lists.push(stormreachGroup.userData.gusts);
+    if (!lists.length || !motionWanted) return;
+    if (phoneMode && ((Math.floor(performance.now() / 40) % 2) === 0)) return;
+    const t = performance.now() * 0.001;
+    lists.forEach((gusts) => {
+      gusts.forEach((streak, i) => {
+        const span = 7.5;
+        streak.position.x = streak.userData.ox + ((t * (1.15 + i * 0.12) + i) % span) - span * 0.5;
+        streak.position.z = streak.userData.oz + Math.sin(t * 0.45 + i) * 0.28;
+      });
+    });
+  }
+
   function bobHoods() {
     if (!motionWanted || !hoods.length) return;
     const t = performance.now() * 0.001;
     hoods.forEach((g, i) => {
       if (!g.visible) return;
-      g.position.y = Math.sin(t * 1.25 + i * 0.7) * 0.055;
-      if (g.userData.ribbon) g.userData.ribbon.rotation.z = Math.sin(t * 1.5 + i) * 0.28;
+      const lift = g.userData.claim ? 0.09 : 0.055;
+      g.position.y = (g.userData.homeY || 0) + Math.sin(t * 1.25 + i * 0.7) * lift;
+      if (g.userData.ribbon) g.userData.ribbon.rotation.z = Math.sin(t * 1.5 + i) * (g.userData.claim ? 0.42 : 0.28);
+      if (g.userData.claim && g.userData.edge && g.userData.edge.material) {
+        g.userData.edge.material.opacity = 0.16 + Math.sin(t * 1.4) * 0.08;
+      }
     });
   }
 
@@ -4814,7 +5067,9 @@
     const showPost = idle && nearPost && !showAbsorb && !showDoor && !showChest && !showCord;
     const showRing = idle && nearRing && !showAbsorb && !showDoor && !showChest && !showCord && !showPost;
     const showClerk = idle && nearClerk && !showAbsorb && !showDoor && !showGate && !showReturn && !showPorter && !showNotice && !showChest;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showNotice && !showCord && !showPost && !showRing && !showClerk);
+    const showRation = idle && nearRation && !showAbsorb && !showDoor && !showGate && !showReturn && !showPorter && !showNotice && !showClerk && !showChest;
+    const showAside = idle && nearAside && !showAbsorb && !atExit && !showTalk && !showMark && !showCamp;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showNotice && !showCord && !showPost && !showRing && !showClerk && !showRation && !showAside);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
@@ -4829,13 +5084,13 @@
     else if (showLook || showPipe || showThroat || showStone || showMark || showNave || showGallery) absorbBtn.textContent = 'Enter';
     else if (showTalk) absorbBtn.textContent = 'Speak';
     else if (showChest) absorbBtn.textContent = seenBeats['wayside-chest'] ? 'Look' : 'Open';
-    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showRing || showClerk) absorbBtn.textContent = 'Look';
+    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showRing || showClerk || showRation || showAside) absorbBtn.textContent = 'Look';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
   }
 
   function updatePrompt() {
     const atExit = atInteriorExit();
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !nearLetter && !nearChest && !nearNotice && !nearCord && !nearPost && !nearRing && !nearClerk && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearPorter && !nearLetter && !nearChest && !nearNotice && !nearCord && !nearPost && !nearRing && !nearClerk && !nearRation && !nearAside && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -4993,6 +5248,16 @@
       $('#interact-detail').textContent = nearClerk.hint;
       return;
     }
+    if (nearRation && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
+      $('#interact-title').textContent = nearRation.title;
+      $('#interact-detail').textContent = nearRation.hint;
+      return;
+    }
+    if (nearAside) {
+      $('#interact-title').textContent = nearAside.title;
+      $('#interact-detail').textContent = nearAside.hint;
+      return;
+    }
     if (nearCrack) {
       $('#interact-title').textContent = nearCrack.title;
       $('#interact-detail').textContent = nearCrack.hint;
@@ -5066,6 +5331,8 @@
       if (seenBeats['way-post']) waiting.push('A snapped mile post on the isle does not open the kiln.');
       if (seenBeats['cold-ring']) waiting.push('A cold ring in the grass is not a pool and not the scar.');
       if (seenBeats['clerk-tally']) waiting.push('A tally clerk on the shale counted weather. The vault door did not change.');
+      if (seenBeats['ration-swap']) waiting.push('A stall on the shale traded rot-ash for a Concord ration. It closes 22 HP. It does not open the vault.');
+      if (seenBeats['yard-aside']) waiting.push('A private word was said short of the north stone. The mark and the slag stayed where they were.');
       if (seenBeats['gallery-margin']) {
         waiting.push(seals.some((seal) => seal.name === 'Cousin’s Margin')
           ? 'The gallery’s filed copy matches the cousin’s letter. The stair did not change.'
@@ -5206,10 +5473,11 @@
 
     $('#inv-items').innerHTML = items.filter((s) => s.count > 0).map((s) => {
       const def = ITEM_DEFS[s.id];
+      const gain = itemGain(def);
       const use = def.field
-        ? `<button class="btn btn-small" type="button" data-act="use" data-id="${esc(s.id)}">Use</button>`
+        ? `<button class="btn btn-small" type="button" data-act="use" data-id="${esc(s.id)}">Use${gain ? ' · ' + gain : ''}</button>`
         : '';
-      return `<li class="inv-card"><div class="row"><span class="name">${esc(def.name)} ×${s.count}</span>${use}</div><div class="desc">${esc(def.desc)}</div></li>`;
+      return `<li class="inv-card"><div class="row"><span class="name">${esc(def.name)} ×${s.count}</span>${use}</div><div class="desc">${esc(def.desc)}${gain ? ' Restores up to ' + gain + '.' : ''}</div></li>`;
     }).join('') || '<li class="empty-line">No consumables.</li>';
 
     $('#inv-shards').innerHTML = shards.length
@@ -5296,6 +5564,13 @@
     renderInventory();
   }
 
+  function itemGain(def) {
+    if (!def) return '';
+    if (def.heal) return def.heal + ' HP';
+    if (def.mp) return def.mp + ' mind';
+    return '';
+  }
+
   function useFieldItem(id) {
     const stack = items.find((s) => s.id === id);
     const def = ITEM_DEFS[id];
@@ -5303,22 +5578,29 @@
     if (def.heal) {
       const living = party.filter((p) => p.hp > 0).slice().sort((a, b) => (a.hp / maxHp(a)) - (b.hp / maxHp(b)));
       const t = living[0];
-      if (!t || t.hp >= maxHp(t)) { showToast('No one is bleeding.'); return; }
+      if (!t || t.hp >= maxHp(t)) {
+        showToast('No wound is open. It would close up to ' + def.heal + ' HP. It stays in the pack.');
+        return;
+      }
       stack.count -= 1;
       const before = t.hp;
       t.hp = Math.min(maxHp(t), t.hp + def.heal);
-      showToast(t.name + ' drinks the ' + def.name + '. ' + (t.hp - before) + ' HP. The bitterness is the point.');
+      showToast(t.name + ' drinks the ' + def.name + '. ' + (t.hp - before) + ' HP. Now ' + t.hp + '/' + maxHp(t) + '.');
     } else if (def.mp) {
       const living = party.filter((p) => p.hp > 0).slice().sort((a, b) => (a.mp / a.maxMp) - (b.mp / b.maxMp));
       const t = living[0];
-      if (!t || t.mp >= t.maxMp) { showToast('Every mind is already full.'); return; }
+      if (!t || t.mp >= t.maxMp) {
+        showToast('Every mind is already full. It would return up to ' + def.mp + ' mind. It stays in the pack.');
+        return;
+      }
       stack.count -= 1;
       const before = t.mp;
       t.mp = Math.min(t.maxMp, t.mp + def.mp);
-      showToast(t.name + ' takes the ' + def.name + '. ' + (t.mp - before) + ' MP returns.');
+      showToast(t.name + ' takes the ' + def.name + '. ' + (t.mp - before) + ' mind. Now ' + t.mp + '/' + t.maxMp + '.');
     }
     renderInventory();
     updateHUD();
+    saveGame();
   }
 
   function digestShard(uid) {
@@ -5424,6 +5706,10 @@
         talkCamp();
         return;
       }
+      if (nearAside && locale === 'concord-yard' && !atMouth) {
+        talkAside();
+        return;
+      }
       if (nearNave && locale === 'remnant-mark' && seenBeats.markFight && !atMouth) {
         cross(enterNave);
         return;
@@ -5525,6 +5811,10 @@
     }
     if (nearClerk) {
       talkClerk();
+      return;
+    }
+    if (nearRation) {
+      talkRation();
       return;
     }
     if (nearGate) {
@@ -7391,6 +7681,60 @@
     saveGame();
   }
 
+  function talkRation() {
+    if (locale !== 'field' || regionId !== 'stormreach' || dialogueOpen) return;
+    if (seenBeats['ration-swap']) {
+      showToast('The stall already traded. The ration closes 22 HP. The vault door did not change.');
+      return;
+    }
+    const ash = items.find((row) => row.id === 'rotash');
+    if (!ash || ash.count <= 0) {
+      showToast('He wants rot-ash, not marks. The vault door did not change.');
+      return;
+    }
+    const fn = EW.scenes['ration-swap'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'ration-swap';
+    }
+  }
+
+  function noteRation() {
+    seenBeats['ration-swap'] = true;
+    const ash = items.find((row) => row.id === 'rotash');
+    if (ash && ash.count > 0) {
+      ash.count -= 1;
+      const ration = items.find((row) => row.id === 'ration');
+      if (ration) ration.count += 1;
+      else items.push({ id: 'ration', count: 1 });
+      showToast('One rot-ash for a Concord ration. It closes up to 22 HP. The vault door did not change.');
+    } else showToast('The stall still wants rot-ash. Nothing was traded.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function talkAside() {
+    if (locale !== 'concord-yard' || dialogueOpen) return;
+    if (seenBeats['yard-aside']) {
+      showToast('The word stays private. The mark did not open. The slag did not change.');
+      return;
+    }
+    const fn = EW.scenes['yard-aside'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'yard-aside';
+    }
+  }
+
+  function noteAside() {
+    seenBeats['yard-aside'] = true;
+    showToast('The word is said. The north stone is still the mark. The slag stays.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
   function noteLetter() {
     seenBeats['furrow-letter'] = true;
     if (!seals.some((seal) => seal.name === 'Cousin’s Margin')) {
@@ -7605,6 +7949,8 @@
       nearPost = null;
       nearRing = null;
       nearClerk = null;
+      nearRation = null;
+      nearAside = null;
       joy.active = false;
       joy.dx = 0;
       joy.dy = 0;
@@ -7708,6 +8054,8 @@
         nearPost = nearestPost();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
+        nearRation = nearestRation();
+        nearAside = nearestAside();
         const safe = nearPool && !nearPool.absorbed;
         const cooled = performance.now() < suppressEncountersUntil;
         const onField = locale === 'field' && (regionId === 'verdant-isle' || regionId === 'stormreach');
@@ -7752,6 +8100,8 @@
         nearPost = nearestPost();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
+        nearRation = nearestRation();
+        nearAside = nearestAside();
         poseHost('idle');
       }
 
@@ -7815,10 +8165,13 @@
         nearPost = nearestPost();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
+        nearRation = nearestRation();
+        nearAside = nearestAside();
       poseHost('still');
     }
 
     bobHoods();
+    driftGusts();
     driftNave(dt);
     if (skyPass) updateSkyPass(dt);
     else {
@@ -8271,7 +8624,8 @@
       btn.type = 'button';
       btn.className = 'btn btn-menu';
       btn.dataset.item = stack.id;
-      btn.innerHTML = esc(def.name) + ' <span class="cost">×' + stack.count + '</span>';
+      const gain = itemGain(def);
+      btn.innerHTML = esc(def.name) + (gain ? ' <span class="cost">' + gain + '</span>' : '') + ' <span class="cost">×' + stack.count + '</span>';
       itemMenu.appendChild(btn);
     });
     shards.forEach((sh) => {
@@ -8539,12 +8893,12 @@
       if (def.heal) {
         const before = target.hp;
         target.hp = Math.min(maxHp(target), target.hp + def.heal);
-        showLog(actor.name + ' gives ' + target.name + ' the ' + def.name + '. ' + (target.hp - before) + ' HP.');
+        showLog(actor.name + ' gives ' + target.name + ' the ' + def.name + '. ' + (target.hp - before) + ' HP. Now ' + target.hp + '/' + maxHp(target) + '.');
         flashMesh(combatPartyMeshes[targetIdx], 0x9dffc8);
       } else if (def.mp) {
         const before = target.mp;
         target.mp = Math.min(target.maxMp, target.mp + def.mp);
-        showLog(actor.name + ' gives ' + target.name + ' the ' + def.name + '. ' + (target.mp - before) + ' MP.');
+        showLog(actor.name + ' gives ' + target.name + ' the ' + def.name + '. ' + (target.mp - before) + ' mind. Now ' + target.mp + '/' + target.maxMp + '.');
         flashMesh(combatPartyMeshes[targetIdx], 0x9ec6e8);
       }
     }
@@ -10660,6 +11014,8 @@
   EW.notePost = notePost;
   EW.noteRing = noteRing;
   EW.noteClerk = noteClerk;
+  EW.noteRation = noteRation;
+  EW.noteAside = noteAside;
   EW.noteChest = noteChest;
   EW.noteCord = noteCord;
   EW.noteBind = noteBind;

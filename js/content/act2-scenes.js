@@ -84,6 +84,38 @@
     return true;
   });
 
+  Emberwake.registerScene('ration-swap', function () {
+    Emberwake.present({
+      lines: [
+        { where: 'Stormreach shale', speaker: 'A stall clerk', text: 'Rot-ash for a stamped biscuit. Twenty-two life, if a wound is open. I do not take marks, and I do not open the vault.' },
+        { speaker: 'Lira', text: 'Then it is food, not a licence. The door stays the other board.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteRation) Emberwake.noteRation();
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('yard-aside', function () {
+    const torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    const nima = Emberwake.companyHas && Emberwake.companyHas('nima');
+    const lines = [
+      { where: 'Concord yard, short of the north stone', speaker: 'Lira', text: 'A bench. This is not the rest, and it is not the mark.' },
+    ];
+    if (torren) lines.push({ speaker: 'Torren', text: 'I left the coat. The pillar ahead is not a promotion. If you drink what leaks there, that is your mouth, not my rank.' });
+    else if (nima) lines.push({ speaker: 'Nima', text: 'The air here is not a tonic. If the pillar is a mouth, I will not call it medicine. I am still walking with you.' });
+    else lines.push({ speaker: 'Lira', text: 'Torren is not at this shoulder. Nima is not either. The stone is still north.' });
+    lines.push({ speaker: 'The spark', text: 'A private word does not open the mark. The slag stays where it was.' });
+    Emberwake.present({
+      lines: lines,
+      onDone: function () {
+        if (Emberwake.noteAside) Emberwake.noteAside();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('vault-porter', function () {
     Emberwake.present({
       lines: [
