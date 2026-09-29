@@ -66,6 +66,7 @@
     counter: { name: 'Concord Counter', color: 0x3a3530, maxHp: 48, atk: 13, def: 7, xp: 30, gold: 18, shape: 'human' },
     auditor: { name: 'Count Auditor', color: 0x6a5840, maxHp: 52, atk: 11, def: 6, xp: 28, gold: 16, shape: 'ledger' },
     captain: { name: 'Concord Captain', color: 0x2a2420, maxHp: 78, atk: 13, def: 7, xp: 46, gold: 28, shape: 'banner' },
+    celebrant: { name: 'Rite Celebrant', color: 0x3a2418, maxHp: 90, atk: 14, def: 8, xp: 52, gold: 32, shape: 'rite' },
   };
 
   content.roster = {

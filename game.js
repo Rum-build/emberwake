@@ -151,6 +151,14 @@
   let breachLatch = false;
   let breachTalk = false;
   let breachGroup = null;
+  let nearBar = null;
+  let claimWord = null;
+  let claimLatch = false;
+  let claimTalk = false;
+  let claimGroup = null;
+  let nearPerch = null;
+  let kestrelClaim = null;
+  let riteTorn = false;
   let lastMergeNote = '';
   let kestrelNave = null;
   let kestrelFly = 0;
@@ -455,6 +463,13 @@
     breachAsh = false;
     breachLatch = false;
     breachTalk = false;
+    nearBar = null;
+    claimWord = null;
+    claimLatch = false;
+    claimTalk = false;
+    nearPerch = null;
+    kestrelClaim = null;
+    riteTorn = false;
     kestrelNave = null;
     kestrelFly = 0;
     coverReady = false;
@@ -562,6 +577,7 @@
     buildGallery();
     buildCrypt();
     buildBreach();
+    buildClaim();
     buildCombatArena();
     window.addEventListener('resize', onResize);
   }
@@ -641,6 +657,11 @@
       scene.fog.near = 8;
       scene.fog.far = 32;
       if (renderer) renderer.setClearColor(0x12080c);
+    } else if (place === 'claim') {
+      scene.fog.color.set(0x14080e);
+      scene.fog.near = 10;
+      scene.fog.far = 42;
+      if (renderer) renderer.setClearColor(0x14080e);
     } else if (place === 'cellar') {
       scene.fog.color.set(0x1a1410);
       scene.fog.near = 8;
@@ -1699,6 +1720,7 @@
     if (galleryGroup) galleryGroup.visible = false;
     if (cryptGroup) cryptGroup.visible = false;
     if (breachGroup) breachGroup.visible = false;
+    if (claimGroup) claimGroup.visible = false;
     if (naveGroup && naveGroup.userData.bird && kestrelFly <= 0) naveGroup.userData.bird.visible = false;
   }
 
@@ -1974,6 +1996,115 @@
     scene.add(g);
   }
 
+  function buildClaim() {
+    const g = new THREE.Group();
+    g.visible = false;
+    g.add(new THREE.AmbientLight(0x140c10, 0.22));
+    g.add(new THREE.HemisphereLight(0x8a4030, 0x060408, 0.32));
+    const geo = new THREE.PlaneGeometry(22, 24, 10, 10);
+    const ash = new THREE.Color(0x120e10);
+    const ember = new THREE.Color(0x8a3414);
+    tintPlane(geo, (c, x, y) => {
+      c.copy(ash);
+      const core = Math.hypot(x, y + 6);
+      if (core < 4.5) c.lerp(ember, 0.62);
+      else if (y < 0) c.lerp(ember, 0.22);
+    });
+    const floor = new THREE.Mesh(geo, new THREE.MeshPhongMaterial({
+      vertexColors: true, shininess: 6, specular: new THREE.Color(0x3a2010),
+    }));
+    floor.rotation.x = -Math.PI / 2;
+    g.add(floor);
+    const wallMat = new THREE.MeshLambertMaterial({ color: 0x1c1214 });
+    function addWall(w, d, x, z, h) {
+      const height = h || 7.2;
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, height, d), wallMat);
+      mesh.position.set(x, height / 2, z);
+      g.add(mesh);
+    }
+    addWall(6.2, 0.5, -5.4, -8.6);
+    addWall(6.2, 0.5, 5.4, -8.6);
+    addWall(5.4, 0.5, -6.2, 8.1);
+    addWall(5.4, 0.5, 6.2, 8.1);
+    addWall(0.5, 16.4, -8.2, -0.2);
+    addWall(0.5, 16.4, 8.2, -0.2);
+    const ribMat = new THREE.MeshLambertMaterial({ color: 0x3a2824 });
+    [-6.2, -3.2, -0.2, 2.8, 5.4].forEach((z, i) => {
+      [-5.2, 5.2].forEach((x) => {
+        const h = 3.6 + i * 0.55;
+        const rib = new THREE.Mesh(new THREE.BoxGeometry(0.55, h, 0.55), ribMat);
+        rib.position.set(x, h / 2, z);
+        g.add(rib);
+      });
+    });
+    const lintel = new THREE.Mesh(
+      new THREE.BoxGeometry(4.4, 0.45, 0.55),
+      new THREE.MeshPhongMaterial({ color: 0x4a3028, shininess: 10 })
+    );
+    lintel.position.set(0, 3.4, 6.6);
+    g.add(lintel);
+    [[-1.7, 6.6], [1.7, 6.6]].forEach((pair) => {
+      const post = new THREE.Mesh(new THREE.BoxGeometry(0.42, 3.2, 0.42), ribMat);
+      post.position.set(pair[0], 1.6, pair[1]);
+      g.add(post);
+    });
+    const shafts = [];
+    [[-2.4, -2.2], [2.2, -5.4], [0, -6.4], [-0.6, 2.4]].forEach((spot, i) => {
+      const shaft = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.35, 8.2),
+        new THREE.MeshBasicMaterial({
+          color: i === 2 ? 0xff5a28 : 0xffe6c0,
+          transparent: true,
+          opacity: i === 2 ? 0.28 : 0.16,
+          depthWrite: false,
+          fog: false,
+          side: THREE.DoubleSide,
+        })
+      );
+      shaft.position.set(spot[0], 4.2, spot[1]);
+      g.add(shaft);
+      const light = new THREE.PointLight(i === 2 ? 0xff5a28 : 0xffd0a0, i === 2 ? 1.8 : 0.9, 18);
+      light.position.set(spot[0], 5.4, spot[1]);
+      g.add(light);
+      shafts.push(light);
+    });
+    g.userData.shafts = shafts;
+    const core = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(1.85, 1),
+      new THREE.MeshBasicMaterial({ color: 0xff6a2a, fog: false })
+    );
+    core.position.set(0, 2.35, -6.15);
+    g.add(core);
+    g.userData.core = core;
+    const halo = new THREE.Mesh(
+      new THREE.RingGeometry(2.3, 2.7, 28),
+      new THREE.MeshBasicMaterial({ color: 0xffe2b0, side: THREE.DoubleSide, transparent: true, opacity: 0.55, fog: false })
+    );
+    halo.position.set(0, 2.35, -6.05);
+    g.add(halo);
+    const plaque = makeCountPage('THE CLAIM', ['Prime Remnant', 'Not a licence', 'Lira is the host']);
+    plaque.position.set(0, 4.15, -5.15);
+    plaque.scale.set(1.55, 1.55, 1);
+    g.add(plaque);
+    const watcher = makeSilhouette(-3.4, -5.6);
+    watcher.visible = true;
+    watcher.position.y = 0.2;
+    watcher.scale.setScalar(2.65);
+    watcher.traverse((child) => {
+      if (child.material && child.material.isMeshBasicMaterial) child.material.fog = false;
+    });
+    g.add(watcher);
+    g.userData.watcher = watcher;
+    const landed = makeCharacter(0x6a5348, 0.92);
+    landed.position.set(0, 0, 0.2);
+    landed.visible = false;
+    g.add(landed);
+    g.userData.landed = landed;
+    makeMotes(g, 120, 0xd0b8a4, { x: 16, y: 5.5, z: 18 }, { fall: true });
+    claimGroup = g;
+    scene.add(g);
+  }
+
   function naveFits(x, z) {
     if (z > 4.15 || z < -3.15) return false;
     if (Math.abs(x) > 4.3) return false;
@@ -1995,6 +2126,12 @@
   function breachFits(x, z) {
     if (z > 5.4 || z < -6.15) return false;
     if (Math.abs(x) > 5.8) return false;
+    return true;
+  }
+
+  function claimFits(x, z) {
+    if (z > 7.55 || z < -8.15) return false;
+    if (Math.abs(x) > 7.5) return false;
     return true;
   }
 
@@ -3024,6 +3161,17 @@
 
   function makeEnemyMesh(enemy) {
     if (enemy.shape === 'human') return makeCharacter(enemy.color, 0.9);
+    if (enemy.shape === 'rite') {
+      const figure = makeCharacter(enemy.color, 1.12);
+      const ring = new THREE.Mesh(
+        new THREE.TorusGeometry(0.72, 0.08, 6, 16),
+        new THREE.MeshBasicMaterial({ color: 0xffb060, fog: false })
+      );
+      ring.rotation.x = Math.PI / 2;
+      ring.position.y = 1.15;
+      figure.add(ring);
+      return figure;
+    }
     if (enemy.shape === 'banner') {
       const figure = makeCharacter(enemy.color, 1.05);
       const cloth = new THREE.Mesh(
@@ -3161,12 +3309,21 @@
     if (!spark || !spark.path) return 'Choose how she fights.';
     const slag = pools.find((p) => p.id === 'yard-slag');
     const weep = pools.find((p) => p.id === 'mark-weep');
+    if (locale === 'remnant-claim') {
+      if (!seenBeats.claimFight) return 'Past the bar. A Concord last rite stands before the claim.';
+      if (!claimWord) return 'Vesper is at the remnant. Claim, refuse, share, or burn. The ending is not written.';
+      if (claimWord === 'claim') return 'The spark claimed the remnant. Lira is still the host. South is the breach.';
+      if (claimWord === 'refuse') return 'The remnant was refused. The room stays. South is the breach.';
+      if (claimWord === 'share') return 'The claim is shared and unfinished. She did not enter. South is the breach.';
+      return 'The claim was burned. The scar took it. South is the breach.';
+    }
     if (locale === 'first-breach') {
       if (!seenBeats.breachFight) return 'Licence Zero opened a breach. A Concord last stand holds the threshold.';
       if (!breachWord) return 'Vesper is in the light. Hold the threshold, take the scar, or step back. The bar stays shut.';
-      if (breachWord === 'mouth') return 'The light took a scar. The bar stayed shut. South is the crypt.';
-      if (breachWord === 'hold') return 'The threshold is held. The remnant is closer. The bar stayed shut. South is the crypt.';
-      return 'You stepped back from the light. The room stays. South is the crypt.';
+      if (breachWord === 'mouth') return 'The scar is not Held Threshold. The bar stays shut. South is the crypt.';
+      if (breachWord === 'hold' && !claimWord) return 'Held Threshold. North, past the bar, is the remnant claim.';
+      if (breachWord === 'hold') return 'The claim was set. The ending is not written. South is the crypt.';
+      return 'You stepped back. Holding the threshold opens the bar. South is the crypt.';
     }
     if (locale === 'count-crypt') {
       if (!seenBeats.cryptFight) return 'An auditor keeps the ledger under Licence Zero.';
@@ -3235,11 +3392,25 @@
     const left = pools.filter((p) => !p.absorbed && !p.bottled && !p.interior).length;
     const kilnQuiet = pools.some((p) => p.id === 'kiln' && p.absorbed);
     const mergeNames = earnedMergeNames();
-    if (locale === 'first-breach') {
+    if (locale === 'remnant-claim') {
+      rumor = !seenBeats.claimFight
+        ? 'A last rite stands under the remnant. A merge tears the ward. A knife spends itself. Kestrel is on a rib, not in the pack.'
+        : claimWord === 'claim'
+          ? 'The spark claimed the mass. Lira is still the host. This is not the ending. South is the breach.'
+          : claimWord === 'refuse'
+            ? 'You refused the remnant. The room stays open. The ending is not written. South is the breach.'
+            : claimWord === 'share'
+              ? 'The claim is shared. Vesper did not step into the host. South is the breach.'
+              : claimWord === 'burn'
+                ? 'The claim was burned. The scar took the ash. She did not enter. South is the breach.'
+                : 'The rite is down. Vesper is at the mass. Claim, refuse, share, or burn. None of them is the ending.';
+    } else if (locale === 'first-breach') {
       rumor = !seenBeats.breachFight
         ? 'A Concord captain holds the threshold under Licence Zero. The light ahead is not a door. Kestrel is not in it.'
         : breachWord === 'hold'
-          ? 'The threshold is held. Remnant ash is in the teeth. The cathedral bar stayed shut. South is the crypt.'
+          ? (claimWord
+            ? 'The claim was set past the bar. The ending is not written. South is the crypt.'
+            : 'Held Threshold. North, past the bar, is the remnant claim. It is not the ending. South is the crypt.')
           : breachWord === 'mouth'
             ? 'You set a mouth on the light. The scar took the step. Vesper did not enter the host. South is the crypt.'
             : breachWord === 'back'
@@ -3445,15 +3616,18 @@
     const showGallery = idle && nearGallery && !showAbsorb && !atExit && !showNave;
     const showStair = idle && nearStair && !showAbsorb && !atExit;
     const showCrack = idle && nearCrack && !showAbsorb && !atExit;
+    const showBar = idle && nearBar && !showAbsorb && !atExit;
+    const showPerch = idle && nearPerch && !showAbsorb && !atExit && !showBar;
     const showKestrel = idle && nearKestrel && !showAbsorb && !atExit && !showGallery;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showKestrel);
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showPerch && !showKestrel);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
     else if (showGate) absorbBtn.textContent = 'Land';
     else if (showStair) absorbBtn.textContent = galleryWord ? 'Enter' : 'Look';
     else if (showCrack) absorbBtn.textContent = nearCrack.open ? 'Enter' : 'Look';
-    else if (showKestrel) absorbBtn.textContent = 'Speak';
+    else if (showBar) absorbBtn.textContent = nearBar.open ? 'Enter' : 'Look';
+    else if (showPerch || showKestrel) absorbBtn.textContent = 'Speak';
     else if (showLook || showPipe || showThroat || showStone || showMark || showNave || showGallery) absorbBtn.textContent = 'Enter';
     else if (showTalk) absorbBtn.textContent = 'Speak';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
@@ -3461,7 +3635,7 @@
 
   function updatePrompt() {
     const atExit = atInteriorExit();
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearCrack && !nearKestrel && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearCrack && !nearBar && !nearPerch && !nearKestrel && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -3477,7 +3651,7 @@
       return;
     }
     if (atExit) {
-      $('#interact-title').textContent = locale === 'first-breach' ? 'The crypt' : locale === 'root-cellar' ? 'The mouth' : locale === 'ashen-marrow' ? 'The hall' : locale === 'concord-yard' ? 'The ash' : locale === 'remnant-mark' ? 'The yard' : locale === 'ash-nave' ? 'The mark' : locale === 'watch-gallery' ? 'The nave' : locale === 'count-crypt' ? 'The gallery' : locale === 'marrow-pipe' ? 'The ash' : locale === 'engine-throat' ? 'The ash' : locale === 'harbor-vault' ? 'The shale' : 'The door';
+      $('#interact-title').textContent = locale === 'remnant-claim' ? 'The breach' : locale === 'first-breach' ? 'The crypt' : locale === 'root-cellar' ? 'The mouth' : locale === 'ashen-marrow' ? 'The hall' : locale === 'concord-yard' ? 'The ash' : locale === 'remnant-mark' ? 'The yard' : locale === 'ash-nave' ? 'The mark' : locale === 'watch-gallery' ? 'The nave' : locale === 'count-crypt' ? 'The gallery' : locale === 'marrow-pipe' ? 'The ash' : locale === 'engine-throat' ? 'The ash' : locale === 'harbor-vault' ? 'The shale' : 'The door';
       $('#interact-detail').textContent = locale === 'root-cellar'
         ? 'Press E to step back onto the isle. The throat stays open behind you.'
         : locale === 'ashen-marrow'
@@ -3490,8 +3664,10 @@
             ? 'Press E to step back to the pillar. The cathedral door stays shut.'
           : locale === 'watch-gallery'
             ? 'Press E to step back to the nave. The count-stair stays where you left it.'
+          : locale === 'remnant-claim'
+            ? 'Press E to step back into the breach. The claim stays. This is not the ending.'
           : locale === 'first-breach'
-            ? 'Press E to step back into the crypt. The threshold stays. The cathedral bar stays shut.'
+            ? 'Press E to step back into the crypt. The threshold stays. The bar, if you held it, is still north.'
           : locale === 'count-crypt'
             ? 'Press E to step back to the gallery. The crack stays. The cathedral bar stays shut.'
           : locale === 'marrow-pipe'
@@ -3563,6 +3739,16 @@
     if (nearCrack) {
       $('#interact-title').textContent = nearCrack.title;
       $('#interact-detail').textContent = nearCrack.hint;
+      return;
+    }
+    if (nearBar) {
+      $('#interact-title').textContent = nearBar.title;
+      $('#interact-detail').textContent = nearBar.hint;
+      return;
+    }
+    if (nearPerch) {
+      $('#interact-title').textContent = nearPerch.title;
+      $('#interact-detail').textContent = nearPerch.hint;
       return;
     }
     if (nearKestrel) {
@@ -3646,12 +3832,28 @@
           ? 'In the crypt those names went into the crack and stayed in the pack. They did not open the cathedral bar.'
           : 'In the watch gallery those names read as digits of Licence Zero. They do not open the cathedral bar.');
       }
+      if (claimWord) {
+        waiting.push(claimWord === 'claim'
+          ? 'The spark claimed the remnant. Lira is still the host. This is not the ending.'
+          : claimWord === 'refuse'
+            ? 'The remnant was refused. The ending is not written.'
+            : claimWord === 'share'
+              ? 'The claim is shared. Vesper did not enter the host.'
+              : 'The claim was burned. The scar took the ash.');
+      } else if (breachWord === 'hold') {
+        waiting.push('Held Threshold. North, past the bar, is the remnant claim.');
+      }
+      if (kestrelClaim) {
+        waiting.push(kestrelClaim === 'land'
+          ? 'Kestrel landed in the claim chamber. She did not join.'
+          : 'Kestrel stayed on the rib in the claim chamber. She did not join.');
+      }
       if (breachWord) {
         waiting.push(breachWord === 'hold'
-          ? 'The first breach is held. Remnant ash is in the teeth. The cathedral bar stayed shut.'
+          ? 'The first breach is held. Remnant ash is in the teeth.'
           : breachWord === 'mouth'
-            ? 'A mouth is on the breach light. The scar took the step. The bar stayed shut.'
-            : 'You stepped back from the breach light. The room stays. The bar stayed shut.');
+            ? 'A mouth is on the breach light. The scar took the step. The bar stays shut.'
+            : 'You stepped back from the breach light. Holding the threshold opens the bar.');
       } else if (cryptWord === 'digit') {
         waiting.push('Cracked Zero widened the crypt crack. North of it, the first breach is still a room.');
       }
@@ -3935,6 +4137,15 @@
         else lookCrack();
         return;
       }
+      if (nearBar && locale === 'first-breach' && !atMouth) {
+        if (nearBar.open) enterClaim();
+        else lookBar();
+        return;
+      }
+      if (nearPerch && locale === 'remnant-claim' && !atMouth) {
+        talkKestrelClaim();
+        return;
+      }
       if (nearKestrel && locale === 'ash-nave' && !atMouth) {
         talkKestrelNave();
         return;
@@ -3951,6 +4162,7 @@
         else if (locale === 'watch-gallery') exitGallery();
         else if (locale === 'count-crypt') exitCrypt();
         else if (locale === 'first-breach') exitBreach();
+        else if (locale === 'remnant-claim') exitClaim();
         else if (locale === 'marrow-pipe') exitPipe();
         else if (locale === 'engine-throat') exitThroat();
         else exitInterior();
@@ -4128,6 +4340,7 @@
     if (locale === 'watch-gallery') return playerMesh.position.z > 2.65;
     if (locale === 'count-crypt') return playerMesh.position.z > 2.45;
     if (locale === 'first-breach') return playerMesh.position.z > 4.85;
+    if (locale === 'remnant-claim') return playerMesh.position.z > 7.15;
     return playerMesh.position.z > 2.55;
   }
 
@@ -4944,12 +5157,206 @@
       if (!seals.some((seal) => seal.name === 'Held Threshold')) {
         seals.push({
           name: 'Held Threshold',
-          desc: 'You held the first breach under Licence Zero. The remnant is one room closer. The cathedral bar stayed shut. Vesper did not enter the host.',
+          desc: 'You held the first breach under Licence Zero. North, past the bar, is the remnant claim. The ending is not written. Vesper did not enter the host.',
         });
       }
-      showToast('The threshold stays open behind you. The bar stays shut. Kestrel is not in this light.');
+      showToast('Held Threshold. North, past the bar, is the remnant claim. It is not the ending.');
     }
     syncBreachLight();
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function nearestBar() {
+    if (!playerMesh || locale !== 'first-breach' || !breachWord || skyPass) return null;
+    if (playerMesh.position.z > -3.2 || Math.abs(playerMesh.position.x) > 2.2) return null;
+    const open = breachWord === 'hold';
+    return {
+      title: open ? 'Past the bar' : 'The bar',
+      open: open,
+      hint: open
+        ? 'Held Threshold. Press E. The nave interior is the claim, not the ending.'
+        : breachWord === 'mouth'
+          ? 'The scar breathed. Held Threshold is what opens the bar. Press E to look.'
+          : 'You stepped back. Holding the threshold opens the bar. Press E to look.',
+    };
+  }
+
+  function nearestPerch() {
+    if (!playerMesh || locale !== 'remnant-claim' || !seenBeats.claimFight || kestrelClaim || skyPass) return null;
+    if (Math.hypot(playerMesh.position.x, playerMesh.position.z - 0.2) > 2.1) return null;
+    return {
+      title: 'Kestrel',
+      hint: 'She is on the rib, not in the pack. Press E. Landing is not a joining.',
+    };
+  }
+
+  function lookBar() {
+    showToast(breachWord === 'mouth'
+      ? 'The scar opened a breath, not the bar. Held Threshold is the step past it.'
+      : 'You stepped back from the light. Holding the threshold is what opens the bar.');
+  }
+
+  function syncClaimLight() {
+    if (!claimGroup || !claimGroup.userData.shafts) return;
+    const hot = claimWord === 'claim' || claimWord === 'share';
+    claimGroup.userData.shafts.forEach((light, i) => {
+      light.intensity = claimWord === 'burn' ? 1.9 : hot ? 1.55 : claimWord === 'refuse' ? 0.55 : 1.05;
+      if (i === 2) light.color.setHex(claimWord === 'burn' ? 0xff2a10 : 0xff5a28);
+    });
+    if (claimGroup.userData.landed) claimGroup.userData.landed.visible = kestrelClaim === 'land';
+  }
+
+  function enterClaim(opts) {
+    const silent = opts && opts.silent;
+    if (!claimGroup || !breachGroup || !playerMesh) return;
+    if (!silent && (locale !== 'first-breach' || breachWord !== 'hold' || dialogueOpen || skyPass || encounterLocked)) return;
+    locale = 'remnant-claim';
+    if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
+    claimGroup.add(playerMesh);
+    const px = silent && opts.pos ? (opts.pos.x || 0) : 0;
+    const pz = silent && opts.pos ? (opts.pos.z == null ? 6.4 : opts.pos.z) : 6.4;
+    playerMesh.position.set(px, 0, pz);
+    if (interiorGroup) interiorGroup.visible = false;
+    if (overworldGroup) overworldGroup.visible = false;
+    if (stormreachGroup) stormreachGroup.visible = false;
+    if (marrowGroup) marrowGroup.visible = false;
+    if (yardGroup) yardGroup.visible = false;
+    if (markGroup) markGroup.visible = false;
+    tuckCathedral();
+    claimGroup.visible = true;
+    placeFog('claim');
+    syncClaimLight();
+    const locLabel = $('#hud-location');
+    if (locLabel) locLabel.textContent = 'Remnant Claim';
+    camera.position.set(px, CAMERA_HEIGHT, pz + CAMERA_DIST);
+    camera.lookAt(px, 2.2, pz);
+    if (!silent) {
+      seenBeats.claimStep = true;
+      showToast('Past the bar. A last rite is ahead. The mass is not a licence. Kestrel did not carry you.');
+    }
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function exitClaim() {
+    if (locale !== 'remnant-claim' || !playerMesh || !breachGroup) return;
+    locale = 'first-breach';
+    if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
+    breachGroup.add(playerMesh);
+    playerMesh.position.set(0, 0, -1.05);
+    if (claimGroup) claimGroup.visible = false;
+    breachGroup.visible = true;
+    if (interiorGroup) interiorGroup.visible = false;
+    if (naveGroup) naveGroup.visible = false;
+    if (cryptGroup) cryptGroup.visible = false;
+    if (galleryGroup) galleryGroup.visible = false;
+    placeFog('breach');
+    syncBreachLight();
+    const locLabel = $('#hud-location');
+    if (locLabel) locLabel.textContent = 'First Breach';
+    camera.position.set(0, CAMERA_HEIGHT, -1.05 + CAMERA_DIST);
+    camera.lookAt(0, 1.4, -1.05);
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function updateClaimFight() {
+    if (locale !== 'remnant-claim' || !playerMesh || dialogueOpen || encounterLocked || skyPass) return;
+    if (seenBeats.claimFight) return;
+    if (playerMesh.position.z > 2.4 || Math.abs(playerMesh.position.x) > 3.2) {
+      claimLatch = false;
+      return;
+    }
+    if (claimLatch) return;
+    claimLatch = true;
+    riteTorn = false;
+    beginScriptedFight(['celebrant'], 'claim-rite');
+  }
+
+  function updateClaimVesper() {
+    if (locale !== 'remnant-claim' || !playerMesh || !seenBeats.claimFight || dialogueOpen || encounterLocked || skyPass) return;
+    if (claimWord || seenBeats['claim-approach']) return;
+    if (playerMesh.position.z > -4.6 || Math.abs(playerMesh.position.x) > 2.8) {
+      claimTalk = false;
+      return;
+    }
+    if (claimTalk) return;
+    claimTalk = true;
+    const fn = EW.scenes['claim-approach'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'claim-approach';
+    }
+  }
+
+  function noteClaim(id) {
+    if (claimWord) return;
+    seenBeats['claim-approach'] = true;
+    if (id === 'refuse') {
+      claimWord = 'refuse';
+      if (!seals.some((seal) => seal.name === 'Refused Remnant')) {
+        seals.push({
+          name: 'Refused Remnant',
+          desc: 'You refused the Prime Remnant past the bar. The room stays. The ending is not written. Vesper did not enter the host.',
+        });
+      }
+      showToast('You refuse the remnant. The room stays. This is not the ending.');
+    } else if (id === 'share') {
+      claimWord = 'share';
+      if (!seals.some((seal) => seal.name === 'Shared Remnant')) {
+        seals.push({
+          name: 'Shared Remnant',
+          desc: 'You offered the remnant to both sparks. Vesper did not step into Lira. The claim is split and unfinished.',
+        });
+      }
+      showToast('You offer the light to both sparks. She does not enter the host. The claim is unfinished.');
+    } else if (id === 'burn') {
+      claimWord = 'burn';
+      addScar('claim', { quiet: true });
+      if (!seals.some((seal) => seal.name === 'Burned Claim')) {
+        seals.push({
+          name: 'Burned Claim',
+          desc: 'You set the rite’s ash against the remnant. The scar took it. The mass charred and is not gone. Vesper did not enter the host.',
+        });
+      }
+      showToast('You burn the claim. The scar takes the ash. The remnant is not gone.' + scarDebtLine());
+    } else {
+      claimWord = 'claim';
+      if (!seals.some((seal) => seal.name === 'Remnant Claim')) {
+        seals.push({
+          name: 'Remnant Claim',
+          desc: 'The spark named the Prime Remnant hers. Lira is still the host. This is a flag, not the ending. Vesper did not enter.',
+        });
+      }
+      showToast('The spark claims the remnant. Lira is still the host. This is not the ending.');
+    }
+    syncClaimLight();
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
+  function talkKestrelClaim() {
+    if (locale !== 'remnant-claim' || dialogueOpen || kestrelClaim || !seenBeats.claimFight) return;
+    const fn = EW.scenes['claim-kestrel'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'claim-kestrel';
+    }
+  }
+
+  function noteKestrelClaim(id) {
+    if (kestrelClaim) return;
+    kestrelClaim = id === 'land' ? 'land' : 'air';
+    seenBeats['claim-kestrel'] = true;
+    syncClaimLight();
+    showToast(kestrelClaim === 'land'
+      ? 'She lands on the stone. She is still not in the pack.'
+      : 'You leave her the rib. She does not join.');
     refreshRumor();
     updateHUD();
     saveGame();
@@ -5150,6 +5557,16 @@
     if (breachGroup && breachGroup.visible && breachGroup.userData.banner) {
       breachGroup.userData.banner.rotation.y = Math.sin(t * 1.2) * 0.18;
     }
+    if (claimGroup && claimGroup.visible && claimGroup.userData.core) {
+      claimGroup.userData.core.rotation.y = t * 0.35;
+      const pulse = claimWord === 'burn' ? 1.15 : 1 + Math.sin(t * 1.5) * 0.06;
+      claimGroup.userData.core.scale.setScalar(pulse);
+    }
+    if (claimGroup && claimGroup.visible && claimGroup.userData.shafts && !claimWord) {
+      claimGroup.userData.shafts.forEach((light, i) => {
+        light.intensity = (i === 2 ? 1.4 : 0.7) + Math.abs(Math.sin(t * 1.3 + i)) * 0.35;
+      });
+    }
     if (kestrelFly > 0 && naveGroup && naveGroup.userData.bird) {
       kestrelFly += dt || 0;
       const bird = naveGroup.userData.bird;
@@ -5273,6 +5690,12 @@
         ? ' ' + gained.join(', ') + (gained.length === 1 ? ' stays' : ' stay') + ' on the magic list.'
         : ' No new merge was waiting.';
     }
+    if (tag === 'claim-rite') {
+      seenBeats.claimFight = true;
+      lastMergeNote = riteTorn
+        ? ' The merge spent the rite.'
+        : ' The rite frayed under the knife.';
+    }
     if (tag === 'pipe-stoker') {
       pipeWord = 'crack';
       seenBeats['pipe-feed'] = true;
@@ -5333,6 +5756,8 @@
       nearGallery = null;
       nearStair = null;
       nearCrack = null;
+      nearBar = null;
+      nearPerch = null;
       nearKestrel = null;
       joy.active = false;
       joy.dx = 0;
@@ -5387,6 +5812,9 @@
         } else if (locale === 'first-breach') {
           if (breachFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
           if (breachFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
+        } else if (locale === 'remnant-claim') {
+          if (claimFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
+          if (claimFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
         } else if (locale === 'marrow-pipe') {
           if (pipeFits(nx, playerMesh.position.z)) playerMesh.position.x = nx;
           if (pipeFits(playerMesh.position.x, nz)) playerMesh.position.z = nz;
@@ -5415,6 +5843,8 @@
         nearGallery = nearestGallery();
         nearStair = nearestStair();
         nearCrack = nearestCrack();
+        nearBar = nearestBar();
+        nearPerch = nearestPerch();
         nearKestrel = nearestKestrel();
         const safe = nearPool && !nearPool.absorbed;
         const cooled = performance.now() < suppressEncountersUntil;
@@ -5442,6 +5872,8 @@
         nearGallery = nearestGallery();
         nearStair = nearestStair();
         nearCrack = nearestCrack();
+        nearBar = nearestBar();
+        nearPerch = nearestPerch();
         nearKestrel = nearestKestrel();
       }
 
@@ -5459,6 +5891,8 @@
       updateCryptVesper();
       updateBreachFight();
       updateBreachVesper();
+      updateClaimFight();
+      updateClaimVesper();
       driftMotes();
       maybeResumeCoast();
 
@@ -5487,6 +5921,8 @@
       nearGallery = nearestGallery();
       nearStair = nearestStair();
       nearCrack = nearestCrack();
+      nearBar = nearestBar();
+      nearPerch = nearestPerch();
       nearKestrel = nearestKestrel();
       playerMesh.position.y = 0;
     }
@@ -5611,6 +6047,7 @@
     e.hp = e.maxHp;
     if (id === 'auditor') e.page = true;
     if (id === 'captain') e.licence = true;
+    if (id === 'celebrant') e.rite = true;
     return e;
   }
 
@@ -5672,7 +6109,9 @@
     buildTurnQueue();
     updateCombatUI();
     showMenus('main');
-    const teach = enemies.some((e) => e.id === 'captain')
+    const teach = enemies.some((e) => e.id === 'celebrant')
+      ? 'A Concord last rite. The ward drinks a knife. A merge on the list tears it. A shoulder still stands in front.'
+      : enemies.some((e) => e.id === 'captain')
       ? 'A Concord last stand. The captain’s licence hits once, hard, unless a shoulder is already in front. Nima’s steady keeps the line.'
       : enemies.some((e) => e.id === 'stoker')
       ? 'Corked iron. A knife spends itself on the coat. Magma stays on them. Glass looks for the seam.'
@@ -5934,11 +6373,13 @@
   function pathStrike(actor, target, path) {
     const s = actorStats(actor);
     if (actor.id !== 'lira' || !path) {
-      const dmg = Math.max(1, s.atk + rand(0, 5) - target.def);
+      let dmg = Math.max(1, s.atk + rand(0, 5) - target.def);
+      if (target.rite) dmg = Math.max(1, Math.floor(dmg * 0.4));
       let text;
       if (actor.id === 'torren') text = 'Torren puts a quartermaster’s weight into ' + target.name + '. ' + dmg + '.';
       else if (actor.id === 'nima') text = 'Nima’s rod finds ' + target.name + ' for ' + dmg + '. It is not her real work.';
       else text = actor.name + ' strikes ' + target.name + ' for ' + dmg + '.';
+      if (target.rite) text += ' The rite holds.';
       return { dmg, text, pathXp: 0, mpGain: 0 };
     }
     const thin = path !== spark.path;
@@ -5972,6 +6413,10 @@
       dmg = Math.max(1, Math.floor(dmg * 0.5));
       target.page = false;
       text += ' The ledger page takes the edge. The next blow lands on the person.';
+    }
+    if (target.rite) {
+      dmg = Math.max(1, Math.floor(dmg * 0.4));
+      text += ' The last rite takes the edge. ' + dmg + ' lands. A merge would tear the ward.';
     }
     return { dmg, text, pathXp: thin ? 0 : 7, mpGain };
   }
@@ -6035,8 +6480,15 @@
         const usualCut = Math.floor(target.def / 3);
         const defCut = act.magic === 'glass' ? Math.floor(target.def * 0.08) : usualCut;
         let dmg = Math.max(1, stats.mag + sp.power + mageBonus + rand(0, 6) - defCut);
-        target.hp = Math.max(0, target.hp - dmg);
         let extra = '';
+        let toreRite = false;
+        if (target.rite && sp.merge) {
+          target.rite = false;
+          riteTorn = true;
+          toreRite = true;
+          dmg += 12;
+        }
+        target.hp = Math.max(0, target.hp - dmg);
         if (act.magic === 'plasma') {
           target.def = Math.max(0, target.def - 2);
           applyStrain(1);
@@ -6067,6 +6519,7 @@
             extra = ' The seam gives.';
           }
         }
+        if (toreRite) extra += ' The merge spends the rite. The ward comes off.';
         const lines = {
           fire: actor.name + ' spends a coal of fire. ' + target.name + ' takes ' + dmg + '.',
           water: actor.name + ' turns held water into a hard tide. ' + dmg + ' to ' + target.name + '.',
@@ -6286,6 +6739,8 @@
           ? ' The auditor is down. The page tore. The ledger and the crack are still ahead.'
           : tag === 'breach-stand'
           ? ' The last stand breaks. Remnant ash stays in the teeth.' + lastMergeNote + ' The light is still ahead. The bar stays shut.'
+          : tag === 'claim-rite'
+          ? ' The last rite is down.' + lastMergeNote + ' The remnant is ahead. This is not the ending.'
           : ' Lira keeps the bruises.';
     victoryText.textContent = msg;
     victoryOverlay.classList.remove('hidden');
@@ -6320,6 +6775,7 @@
     const onGallery = locale === 'watch-gallery';
     const onCrypt = locale === 'count-crypt';
     const onBreach = locale === 'first-breach';
+    const onClaim = locale === 'remnant-claim';
     overworldGroup.visible = locale === 'field' && !onCoast;
     if (stormreachGroup) stormreachGroup.visible = onCoast;
     if (coastGroup) coastGroup.visible = false;
@@ -6330,7 +6786,8 @@
     if (galleryGroup) galleryGroup.visible = onGallery;
     if (cryptGroup) cryptGroup.visible = onCrypt;
     if (breachGroup) breachGroup.visible = onBreach;
-    if (interiorGroup) interiorGroup.visible = locale !== 'field' && !onMarrow && !onYard && !onMark && !onNave && !onGallery && !onCrypt && !onBreach;
+    if (claimGroup) claimGroup.visible = onClaim;
+    if (interiorGroup) interiorGroup.visible = locale !== 'field' && !onMarrow && !onYard && !onMark && !onNave && !onGallery && !onCrypt && !onBreach && !onClaim;
     if (vaultRoom) vaultRoom.visible = locale === 'harbor-vault';
     if (villageRoom) villageRoom.visible = locale === 'leaf-village';
     if (cellarRoom) cellarRoom.visible = locale === 'root-cellar';
@@ -6344,6 +6801,7 @@
     else if (onGallery) placeFog('gallery');
     else if (onCrypt) placeFog('crypt');
     else if (onBreach) placeFog('breach');
+    else if (onClaim) placeFog('claim');
     else if (locale === 'root-cellar') placeFog('cellar');
     else if (locale === 'harbor-vault') placeFog('vault');
     else if (locale === 'marrow-pipe') placeFog('pipe');
@@ -6921,6 +7379,20 @@
     } else if (cryptWord === 'digit') {
       rows.push({ name: 'First breach', note: 'Not walked yet. North of the widened crack. The list does not carry you.' });
     }
+    if (seenBeats.claimStep || claimWord) {
+      const claimNote = claimWord === 'claim'
+        ? 'The spark claimed it. The ending is not written.'
+        : claimWord === 'refuse'
+          ? 'Refused. The room stays.'
+          : claimWord === 'share'
+            ? 'Shared. She did not enter.'
+            : claimWord === 'burn'
+              ? 'Burned. The scar took the ash.'
+              : 'Walked. The rite or the claim is still ahead.';
+      rows.push({ name: 'Remnant claim', note: claimNote });
+    } else if (breachWord === 'hold') {
+      rows.push({ name: 'Remnant claim', note: 'Not walked yet. North, past the bar. The list does not carry you.' });
+    }
     return rows;
   }
 
@@ -7111,6 +7583,8 @@
         cryptWord: cryptWord,
         breachWord: breachWord,
         breachAsh: !!breachAsh,
+        claimWord: claimWord,
+        kestrelClaim: kestrelClaim,
         kestrelNave: kestrelNave,
         duelWord: duelWord,
         kestrelWord: kestrelWord,
@@ -7168,6 +7642,8 @@
     cryptWord = data.cryptWord === 'digit' || data.cryptWord === 'mouth' || data.cryptWord === 'leave' ? data.cryptWord : null;
     breachWord = data.breachWord === 'hold' || data.breachWord === 'mouth' || data.breachWord === 'back' ? data.breachWord : null;
     breachAsh = !!data.breachAsh;
+    claimWord = data.claimWord === 'claim' || data.claimWord === 'refuse' || data.claimWord === 'share' || data.claimWord === 'burn' ? data.claimWord : null;
+    kestrelClaim = data.kestrelClaim === 'land' || data.kestrelClaim === 'air' ? data.kestrelClaim : null;
     kestrelNave = data.kestrelNave === 'ask' || data.kestrelNave === 'air' ? data.kestrelNave : null;
     if (marrowStain) marrowStain.visible = vesperAsh === 'refuse';
     if (typeof spark.earth !== 'number') spark.earth = 0;
@@ -7243,6 +7719,7 @@
     else if (data.locale === 'watch-gallery') enterGallery({ silent: true, pos: data.pos });
     else if (data.locale === 'count-crypt') enterCrypt({ silent: true, pos: data.pos });
     else if (data.locale === 'first-breach') enterBreach({ silent: true, pos: data.pos });
+    else if (data.locale === 'remnant-claim') enterClaim({ silent: true, pos: data.pos });
     else if (resumeInterior) enterInterior(data.locale, { silent: true, pos: data.pos });
     else if (data.region === 'stormreach') enterRegion('stormreach', { silent: true, pos: data.pos });
   }
@@ -7915,6 +8392,8 @@
   EW.noteGallery = noteGallery;
   EW.noteCrypt = noteCrypt;
   EW.noteBreach = noteBreach;
+  EW.noteClaim = noteClaim;
+  EW.noteKestrelClaim = noteKestrelClaim;
   EW.feedThin = function () { return !!feedSpent; };
   EW.passageLaid = function () { return !!passageLaid; };
   EW.noteKestrelNave = noteKestrelNave;

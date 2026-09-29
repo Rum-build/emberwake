@@ -669,4 +669,70 @@
     });
     return true;
   });
+
+  Emberwake.registerScene('claim-approach', function () {
+    Emberwake.present({
+      lines: [
+        {
+          where: 'Remnant claim',
+          speaker: 'Vesper',
+          text: 'The bar is behind you. This mass is the remnant, not a bottle. The last rite is down. I will not take her, and I will not be taken. Choose. None of this is the ending. Kestrel may land. She still does not join.',
+          choices: [
+            {
+              label: 'Claim the remnant.',
+              pick: 'claim',
+              reply: { speaker: 'Vesper', text: 'Then the spark names it. Lira is still the host. I do not enter. This is a flag, not the ending.' },
+            },
+            {
+              label: 'Refuse it.',
+              pick: 'refuse',
+              reply: { speaker: 'Vesper', text: 'Then it stays unclaimed. The room remains. I do not enter the host. The ending is not written.' },
+            },
+            {
+              label: 'Share the light.',
+              pick: 'share',
+              reply: { speaker: 'Vesper', text: 'Then both sparks are named on it. I still do not step into her. The claim is split and unfinished.' },
+            },
+            {
+              label: 'Burn the claim.',
+              pick: 'burn',
+              reply: { speaker: 'Vesper', text: 'Then the scar takes the ash. The mass chars and is not gone. I do not enter the host.' },
+            },
+          ],
+        },
+      ],
+      onPick: function (id) {
+        if (Emberwake.noteClaim) Emberwake.noteClaim(id);
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('claim-kestrel', function () {
+    Emberwake.present({
+      lines: [
+        {
+          where: 'Remnant claim',
+          speaker: 'Lira',
+          text: 'She is on the rib. The air in here is hers if she wants it. Landing is not a place in the pack.',
+          choices: [
+            {
+              label: 'Ask her to land.',
+              pick: 'land',
+              reply: { speaker: 'The spark', text: 'She comes down onto the stone. She does not take a place beside Lira. She is not in the pack.' },
+            },
+            {
+              label: 'Leave her the rib.',
+              pick: 'air',
+              reply: { speaker: 'The spark', text: 'The rib stays hers. She does not join.' },
+            },
+          ],
+        },
+      ],
+      onPick: function (id) {
+        if (Emberwake.noteKestrelClaim) Emberwake.noteKestrelClaim(id);
+      },
+    });
+    return true;
+  });
 })(window.Emberwake);
