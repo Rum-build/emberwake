@@ -1093,6 +1093,35 @@
     soot.rotation.x = -Math.PI / 2;
     soot.position.set(2.35, 0.045, 1.5);
     villageRoom.add(soot);
+    const cupWood = new THREE.MeshLambertMaterial({ color: 0x6a4e38 });
+    const cupClay = new THREE.MeshLambertMaterial({ color: 0xc46a48 });
+    const table = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.08, 0.46), cupWood);
+    table.position.set(0.95, 0.28, 1.55);
+    villageRoom.add(table);
+    [[0.78, 1.42], [1.12, 1.66]].forEach((spot) => {
+      const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.05, 0.1, 6), cupClay);
+      cup.position.set(spot[0], 0.37, spot[1]);
+      villageRoom.add(cup);
+    });
+    const bench = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.1, 0.32), cupWood);
+    bench.position.set(-0.15, 0.28, -2.15);
+    villageRoom.add(bench);
+    const benchLeg = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.26, 0.28), cupWood);
+    benchLeg.position.set(-0.15, 0.13, -2.15);
+    villageRoom.add(benchLeg);
+    const shawl = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.42, 0.7),
+      new THREE.MeshLambertMaterial({ color: 0x6aa8a0, side: THREE.DoubleSide })
+    );
+    shawl.position.set(2.05, 1.35, -2.35);
+    shawl.rotation.y = -0.4;
+    villageRoom.add(shawl);
+    const herbs = new THREE.Mesh(
+      new THREE.BoxGeometry(0.16, 0.42, 0.1),
+      new THREE.MeshLambertMaterial({ color: 0x3e6a38 })
+    );
+    herbs.position.set(-1.85, 1.45, -1.55);
+    villageRoom.add(herbs);
     const margin = makeCountPage('MARGIN', ['Not the clerk', 'Vesper walked them', 'The furrow paid']);
     margin.position.set(-1.35, 0.95, 0.82);
     margin.rotation.x = -0.42;
@@ -1188,6 +1217,31 @@
     const kilnLight = new THREE.PointLight(0xff3300, 1.05, 14);
     kilnLight.position.set(0, 2.1, -21);
     g.add(kilnLight);
+    const brick = new THREE.MeshLambertMaterial({ color: 0x5a2a22 });
+    const ashPanMat = new THREE.MeshLambertMaterial({ color: 0x2a2420 });
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2;
+      const brickBit = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.16, 0.18), brick);
+      brickBit.position.set(Math.cos(a) * 1.72, 0.1, -21 + Math.sin(a) * 1.72);
+      brickBit.rotation.y = -a;
+      g.add(brickBit);
+    }
+    const pan = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.08, 0.36), ashPanMat);
+    pan.position.set(-1.35, 0.08, -19.55);
+    g.add(pan);
+    const poker = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.025, 0.025, 1.15, 5),
+      new THREE.MeshLambertMaterial({ color: 0x3a3532 })
+    );
+    poker.position.set(1.45, 0.55, -19.35);
+    poker.rotation.z = 0.35;
+    g.add(poker);
+    const grateMat = new THREE.MeshLambertMaterial({ color: 0x6a4030 });
+    [-0.18, 0, 0.18].forEach((dz) => {
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.04, 0.04), grateMat);
+      bar.position.set(0.15, 0.16, -19.7 + dz);
+      g.add(bar);
+    });
     return g;
   }
 
@@ -1705,6 +1759,28 @@
     bill.position.set(1.35, 1.55, 1.05);
     bill.rotation.x = -0.34;
     g.add(bill);
+    const shelfWood = new THREE.MeshLambertMaterial({ color: 0x4a3428 });
+    const shelfPlank = new THREE.Mesh(new THREE.BoxGeometry(1.35, 0.08, 0.38), shelfWood);
+    shelfPlank.position.set(-2.45, 0.62, 2.35);
+    g.add(shelfPlank);
+    [-2.95, -1.95].forEach((x) => {
+      const leg = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.58, 0.08), shelfWood);
+      leg.position.set(x, 0.29, 2.35);
+      g.add(leg);
+    });
+    const ashCloth = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.7, 0.28),
+      new THREE.MeshBasicMaterial({ color: 0xd0c4b0, transparent: true, opacity: 0.82, side: THREE.DoubleSide })
+    );
+    ashCloth.rotation.x = -Math.PI / 2;
+    ashCloth.position.set(-2.45, 0.68, 2.35);
+    g.add(ashCloth);
+    const stakeMat = new THREE.MeshLambertMaterial({ color: 0x2a1814 });
+    [[3.15, -3.45], [3.5, -3.05], [2.85, -3.8]].forEach((spot) => {
+      const stake = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.06, 0.85, 5), stakeMat);
+      stake.position.set(spot[0], 0.4, spot[1]);
+      g.add(stake);
+    });
     makeMotes(g, 40, 0xc45a3a, { x: 10, y: 1.8, z: 8 });
     const pipeMouth = new THREE.Group();
     pipeMouth.position.set(5.55, 0, -3.15);
@@ -10355,6 +10431,7 @@
 
   function renderCombatItems() {
     itemMenu.innerHTML = '';
+    let stackUses = 0;
     function addItem(stack, def, mode) {
       const btn = document.createElement('button');
       btn.type = 'button';
@@ -10362,8 +10439,12 @@
       btn.dataset.item = stack.id;
       if (mode) btn.dataset.mode = mode;
       const gain = mode === 'hp' ? def.heal + ' HP' : mode === 'mp' ? def.mp + ' mind' : itemGain(def);
-      btn.innerHTML = esc(def.name) + (gain ? ' <span class="cost">' + gain + '</span>' : '') + ' <span class="cost">×' + stack.count + '</span>';
+      const side = def.heal && def.mp
+        ? (mode === 'mp' ? ' · mind breaks a cry' : ' · a wound, the cry stays')
+        : '';
+      btn.innerHTML = '<span class="cmd">Use 1 · ' + esc(def.name) + '</span><span class="meta"><span class="cost">stack ' + stack.count + (gain ? ' · ' + gain : '') + side + '</span></span>';
       itemMenu.appendChild(btn);
+      stackUses += 1;
     }
     items.forEach((stack) => {
       const def = ITEM_DEFS[stack.id];
@@ -10382,7 +10463,12 @@
       btn.innerHTML = 'Dump ' + esc(sh.name) + ' <span class="cost">strain</span>';
       itemMenu.appendChild(btn);
     });
-    if (!itemMenu.children.length) {
+    if (stackUses) {
+      const note = document.createElement('p');
+      note.className = 'menu-label span-2';
+      note.textContent = 'One use takes one from the stack. The number is the stack now.';
+      itemMenu.insertBefore(note, itemMenu.firstChild);
+    } else if (!itemMenu.children.length) {
       const p = document.createElement('p');
       p.className = 'menu-label span-2';
       p.textContent = 'Nothing in the pack will help this minute.';
@@ -10653,6 +10739,12 @@
         return;
       }
       stack.count -= 1;
+      const left = stack.count;
+      if (left <= 0) {
+        const idx = items.indexOf(stack);
+        if (idx >= 0) items.splice(idx, 1);
+      }
+      const remain = left > 0 ? ' Stack ' + left + ' remains.' : ' The stack is empty.';
       if (asMind) {
         const before = target.mp;
         target.mp = Math.min(target.maxMp, target.mp + def.mp);
@@ -10664,14 +10756,14 @@
             cryNote = ' The cry breaks.';
           }
         }
-        showLog(actor.name + ' gives ' + target.name + ' the ' + def.name + '. ' + (target.mp - before) + ' mind. Now ' + target.mp + '/' + target.maxMp + '.' + cryNote);
+        showLog(actor.name + ' uses 1 ' + def.name + ' on ' + target.name + '. ' + (target.mp - before) + ' mind. Now ' + target.mp + '/' + target.maxMp + '.' + cryNote + remain);
         flashMesh(combatPartyMeshes[targetIdx], 0x9ec6e8);
         if (act.item === 'ration') playRation();
       } else if (def.heal) {
         const before = target.hp;
         target.hp = Math.min(maxHp(target), target.hp + def.heal);
         const cryNote = act.item === 'ration' && target.cry ? ' The cry stays.' : '';
-        showLog(actor.name + ' gives ' + target.name + ' the ' + def.name + '. ' + (target.hp - before) + ' HP. Now ' + target.hp + '/' + maxHp(target) + '.' + cryNote);
+        showLog(actor.name + ' uses 1 ' + def.name + ' on ' + target.name + '. ' + (target.hp - before) + ' HP. Now ' + target.hp + '/' + maxHp(target) + '.' + cryNote + remain);
         flashMesh(combatPartyMeshes[targetIdx], 0x9dffc8);
         if (act.item === 'ration') playRation();
       }
@@ -11244,21 +11336,23 @@
   }
 
   function updateCombatCamera(dt) {
+    const frame = { x: 0.9, y: 5.35, z: 10.15, lx: 0.85, ly: 1.4, lz: -1.45 };
     if (!motionWanted) {
       combatKick = 0;
       bobParty(false);
-      camera.position.set(0.4, 4.8, 8.4);
-      camera.lookAt(0.2, 1.2, -0.4);
+      camera.position.set(frame.x, frame.y, frame.z);
+      camera.lookAt(frame.lx, frame.ly, frame.lz);
       return;
     }
     bobParty(true);
-    combatCameraAngle += dt * 0.12;
+    combatCameraAngle += dt * 0.08;
     combatKick = Math.max(0, combatKick - dt * 1.6);
-    const kick = combatKick * 0.42;
-    camera.position.x = 0.4 + Math.sin(combatCameraAngle) * 0.45 + kick;
-    camera.position.y = 4.8 + Math.sin(combatCameraAngle * 0.7) * 0.12 - kick * 0.35;
-    camera.position.z = 8.4 - kick;
-    camera.lookAt(0.2, 1.2 - kick * 0.15, -0.4);
+    const kick = combatKick * 0.28;
+    const sway = Math.sin(combatCameraAngle) * 0.22;
+    camera.position.x = frame.x + sway + kick * 0.35;
+    camera.position.y = frame.y + Math.sin(combatCameraAngle * 0.6) * 0.06 - kick * 0.18;
+    camera.position.z = frame.z - kick * 0.3;
+    camera.lookAt(frame.lx + sway * 0.2, frame.ly - kick * 0.08, frame.lz);
   }
 
   // ─── Input & flow ─────────────────────────────────────────
@@ -11973,6 +12067,8 @@
     const list = $('#places-list');
     if (!panel || !list) return;
     list.innerHTML = knownPlaces().map((place) => `<li><strong>${esc(place.name)}</strong><span>${esc(place.note)}</span></li>`).join('');
+    const quest = $('#places-quest');
+    if (quest) quest.textContent = questLine();
     panel.classList.remove('hidden');
   }
 

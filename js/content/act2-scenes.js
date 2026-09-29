@@ -99,8 +99,10 @@
     const margin = Emberwake.hasMargin && Emberwake.hasMargin();
     const ration = Emberwake.itemCount && Emberwake.itemCount('ration') > 0;
     const torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    const cork = Emberwake.corkedCup && Emberwake.corkedCup();
     let coat = 'Unlicensed feet. We are not the tally clerk. The vault stays shut.';
-    if (bound && margin && ration) coat = 'Rope, a filed furrow, and a stamped biscuit. None of them is a licence. The door stays the other board.';
+    if (cork) coat = 'The leaf-cup was corked where a coat watched. The furrow stayed shut. A cork is not a licence. The vault stays the other board.';
+    else if (bound && margin && ration) coat = 'Rope, a filed furrow, and a stamped biscuit. None of them is a licence. The door stays the other board.';
     else if (bound && margin) coat = 'The knot is not a number. The furrow is already a margin. We do not open the vault for either.';
     else if (bound && ration) coat = 'Rope on a coat, and a biscuit with our stamp. Food is not a licence. The count does not move.';
     else if (margin && ration) coat = 'The cousin’s letter is already weather. The biscuit is food. Neither opens the door.';
@@ -118,7 +120,7 @@
     };
     const lines = looked
       ? [
-        { where: 'Stormreach shale, west of the roost', speaker: 'A Concord coat', text: 'We already read the pack. Provoke us and the shale answers. The vault still does not.' },
+        { where: 'Stormreach shale, west of the roost', speaker: 'A Concord coat', text: cork ? 'The cup stayed corked. Provoke us and the shale answers. The vault still does not.' : 'We already read the pack. Provoke us and the shale answers. The vault still does not.' },
         choice,
       ]
       : [
@@ -1100,29 +1102,37 @@
     const bird = Emberwake.kestrelClaimWord && Emberwake.kestrelClaimWord() === 'land'
       ? 'Kestrel landed and did not join.'
       : 'Kestrel stayed in the air.';
-    const company = [];
-    if (Emberwake.companyHas && Emberwake.companyHas('torren')) company.push('Torren is the shoulder.');
-    if (Emberwake.companyHas && Emberwake.companyHas('nima')) company.push('Nima is the steady.');
     const debt = Emberwake.scarCount ? Emberwake.scarCount() : 0;
     const cut = debt * (Emberwake.scarCut ? Emberwake.scarCut() : 5);
+    const torrenHere = Emberwake.companyHas && Emberwake.companyHas('torren');
+    const nimaHere = Emberwake.companyHas && Emberwake.companyHas('nima');
     let vesper = 'You named it. Licence Zero cannot follow a thing with no number. I stay outside the host. The rot slows where she walks. It does not die. The spark is fed, and it still wants the next mouth.';
-    let lira = 'I am still the one wearing it. ' + (company.length ? company.join(' ') + ' ' : '') + bird + ' The hunger is quieter. It is not gone.';
+    let lira = 'I am still the one wearing it. ' + bird + ' The hunger is quieter. It is not gone.';
+    let torrenLine = 'She wears it. I do not number her. The licence has no page for a host who kept the mass. I am still the shoulder, not the seal.';
+    let nimaLine = 'The hunger is quieter. That is not a cure. I will walk while she is still the one wearing it.';
     if (word === 'refuse') {
       vesper = 'Unclaimed. The Concord keeps Licence Zero. The land keeps rotting. I do not take her mouth. The spark stays hungry, and honest.';
       lira = 'My name is still mine. The mass can still be numbered. I walk out with the hunger I came in with. ' + bird;
+      torrenLine = 'The number stayed theirs. Her name stayed hers. I left the coat for this, and the coat still does not get the mass.';
+      nimaLine = 'Unclaimed is not clean. The rot keeps its mouth. I stay with the host, not the licence.';
     } else if (word === 'share') {
       vesper = 'Two sparks on one light. The licence splits and fails. I do not step into her. The rot hesitates. That is not a healing. Both hungers remain.';
       lira = 'Half a name. She is beside the mass, not inside me. The Concord has no page for two owners. ' + bird;
+      torrenLine = 'Two names on one light. The Concord has no column for that. I will not write one.';
+      nimaLine = 'She is beside the mass, not in Lira. I do not call that a healing. Both hungers stay.';
     } else if (word === 'burn') {
       vesper = 'The claim burned. The licence burns with it, and they will write another. The rot eats the ash and roots deeper. I do not enter. I wanted it alive. The scar is the echo.';
       lira = 'The burn is in the host. Scar debt ' + debt + '. Max life cut by ' + cut + '. The spark ate ash and is angrier. The land will not thank me. ' + bird;
+      torrenLine = 'The burn took the page and the land with it. I will not call the scar a rank.';
+      nimaLine = 'Scar debt ' + debt + '. The cut is in her life. I can close a wound. I cannot close this ash.';
     }
-    Emberwake.present({
-      lines: [
-        { where: 'Aftermath', speaker: 'Vesper', text: vesper },
-        { where: 'Aftermath', speaker: 'Lira', text: lira },
-      ],
-    });
+    const lines = [
+      { where: 'Aftermath', speaker: 'Vesper', text: vesper },
+      { where: 'Aftermath', speaker: 'Lira', text: lira },
+    ];
+    if (torrenHere) lines.push({ speaker: 'Torren', text: torrenLine });
+    if (nimaHere) lines.push({ speaker: 'Nima', text: nimaLine });
+    Emberwake.present({ lines: lines });
     return true;
   });
 })(window.Emberwake);

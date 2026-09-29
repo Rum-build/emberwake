@@ -678,11 +678,13 @@ body.still-motion .encounter-flash.active {
 }
 .places-legend li {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   align-items: baseline;
   margin: 0 0 6px;
   font-size: 0.82rem;
   color: #f4ead8;
+  min-width: 0;
 }
 .places-legend .key {
   flex: 0 0 auto;
@@ -732,6 +734,25 @@ body:not(.still-motion) .btn-absorb.is-ready {
   padding: 8px 0;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 0.92rem;
+  min-width: 0;
+  max-width: 100%;
+}
+.places-card li strong,
+.places-card li span,
+.places-note,
+.places-quest {
+  overflow-wrap: anywhere;
+  white-space: normal;
+  min-width: 0;
+}
+.places-quest {
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  color: #ffe6c0;
+  background: rgba(18, 10, 6, 0.55);
+  border-left: 2px solid #e0a04a;
 }
 .places-card li span { color: #e7d7c0; font-size: 0.8rem; }
 .hud-location { cursor: pointer; }
@@ -1600,7 +1621,8 @@ body:not(.still-motion) .btn-absorb.is-ready {
     box-shadow: none;
   }
   .places-panel { padding-top: 196px; }
-  .places-card { max-height: min(38vh, 300px); }
+  .places-card { max-height: min(46vh, 360px); }
+  .places-quest { font-size: 0.92rem; line-height: 1.45; }
   .hud-left { max-width: calc(100% - 108px); }
   .hud-location {
     font-size: 1.1rem;
@@ -1621,6 +1643,8 @@ body:not(.still-motion) .btn-absorb.is-ready {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    overflow-wrap: anywhere;
+    white-space: normal;
   }
   .hud-scar { max-width: 100%; white-space: normal; }
   .hud-row, .hud-elements { max-width: 100%; }
