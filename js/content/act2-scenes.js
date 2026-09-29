@@ -70,8 +70,12 @@
     const margin = Emberwake.hasMargin && Emberwake.hasMargin();
     const scrap = Emberwake.scrapRead && Emberwake.scrapRead();
     const held = Emberwake.packHas && Emberwake.packHas('Numbered Scrap');
+    const salt = Emberwake.feltSalt && Emberwake.feltSalt();
     let board = 'Unlicensed feet. I am counting weather, not mouths. The door is the other board.';
-    if (scrap && bound) board = 'Rope on a coat, and a pillar number already read. Neither is a licence. The door is the other board.';
+    if (scrap && salt) board = 'A pillar number already read, and salt off a shale spine. Neither is a licence. The door is the other board.';
+    else if (salt && bound) board = 'Rope on a coat, and salt off a spine. Neither is a licence. The door is the other board.';
+    else if (salt) board = 'That spine left salt on the shale. Salt is not a licence. The door is the other board.';
+    else if (scrap && bound) board = 'Rope on a coat, and a pillar number already read. Neither is a licence. The door is the other board.';
     else if (scrap && margin) board = 'A filed furrow, and a pillar number already read. Neither opens the door.';
     else if (scrap) board = 'That scrap is a pillar number, not a licence. I can see the count. The door is the other board.';
     else if (held) board = 'Dust in the pack is not a line until you read it. The door does not move for a scrap.';
@@ -419,6 +423,7 @@
         { speaker: 'The spark', text: 'She worsens rot. She does not take the host. Kestrel is still in the air. This ash is not a roost. Taste is a debt. Refusal still leaves a stain.' },
     ];
     if (heard) lines.push({ speaker: 'Vesper', text: heard });
+    if (Emberwake.feltSalt && Emberwake.feltSalt()) lines.push({ speaker: 'Vesper', text: 'A spine on the shale salted her teeth. That is weather, not a door. I still do not enter.' });
     lines.push({
           speaker: 'Lira',
           text: coughing ? 'The cough answers before I do.' : 'The ash is quiet enough to hear her.',

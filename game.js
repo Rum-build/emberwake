@@ -888,6 +888,10 @@
     foam.rotation.x = -Math.PI / 2;
     foam.position.y = -0.06;
     overworldGroup.add(foam);
+    overworldGroup.add(makeBuoy(-6.2, -25.4));
+    overworldGroup.add(makeBuoy(1.4, -26.1));
+    overworldGroup.add(makeBuoy(7.2, -25.2));
+    overworldGroup.add(makeHull(-2.2, -26.4));
 
     const beach = new THREE.Mesh(
       new THREE.RingGeometry(WORLD_SIZE * 0.62, WORLD_SIZE * 0.74, 48),
@@ -1229,6 +1233,32 @@
     guard.position.set(2.2, 0, -1.1);
     guard.rotation.y = Math.PI * 0.85;
     g.add(guard);
+    const countWood = new THREE.MeshLambertMaterial({ color: 0x4a4034 });
+    const countBrass = new THREE.MeshBasicMaterial({ color: 0xe2c878, fog: false });
+    const shelf = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.9, 1.15), countWood);
+    shelf.position.set(1.55, 0.45, 1.45);
+    g.add(shelf);
+    [[1.42, 0.95, 1.15], [1.68, 0.98, 1.55]].forEach((spot, i) => {
+      const pot = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.07, 0.08, 0.16, 6),
+        new THREE.MeshPhongMaterial({ color: i ? 0x1a2430 : 0x2a1810, shininess: 18 })
+      );
+      pot.position.set(spot[0], spot[1], spot[2]);
+      g.add(pot);
+    });
+    const quill = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.28, 0.04), countBrass);
+    quill.position.set(1.5, 1.15, 1.7);
+    quill.rotation.z = 0.4;
+    g.add(quill);
+    const pile = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.22, 0.34), new THREE.MeshPhongMaterial({ color: 0xd2c09a, shininess: 4 }));
+    pile.position.set(-1.85, 0.14, 1.35);
+    g.add(pile);
+    const stool = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.18, 0.42, 6), countWood);
+    stool.position.set(1.45, 0.21, 0.15);
+    g.add(stool);
+    const tallyBar = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.04, 0.08), countBrass);
+    tallyBar.position.set(0.55, 0.05, -1.05);
+    g.add(tallyBar);
     [-1.35, 1.35].forEach((x) => {
       const post = new THREE.Mesh(
         new THREE.BoxGeometry(0.18, 2.2, 0.18),
@@ -2738,6 +2768,28 @@
       slab.rotation.y = -a;
       g.add(slab);
     }
+    const plinth = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.85, 2.05, 0.55, 8),
+      new THREE.MeshPhongMaterial({ color: 0x2a1814, shininess: 18, specular: new THREE.Color(0xc45a28) })
+    );
+    plinth.position.set(0, 0.28, -6.15);
+    g.add(plinth);
+    const column = new THREE.Mesh(
+      new THREE.BoxGeometry(0.16, 3.4, 0.16),
+      new THREE.MeshBasicMaterial({ color: 0xffe6c0, fog: false })
+    );
+    column.position.set(0, 2.35, -6.15);
+    g.add(column);
+    for (let i = 0; i < 5; i++) {
+      const chip = new THREE.Mesh(
+        new THREE.BoxGeometry(0.28, 0.5, 0.12),
+        new THREE.MeshBasicMaterial({ color: i % 2 ? 0xffb060 : 0xffe2b0, fog: false })
+      );
+      const a = (i / 5) * Math.PI * 2;
+      chip.position.set(Math.cos(a) * 2.15, 0.7, -6.15 + Math.sin(a) * 1.35);
+      chip.rotation.y = -a;
+      g.add(chip);
+    }
     const massWash = new THREE.Mesh(
       new THREE.PlaneGeometry(4.6, 5.6),
       new THREE.MeshBasicMaterial({
@@ -3867,6 +3919,10 @@
 
     coastVesper = makeSilhouette(7.4, 8.1);
     g.add(coastVesper);
+    g.add(makeBuoy(-3.4, 11.55));
+    g.add(makeBuoy(3.6, 11.7));
+    g.add(makeHull(6.1, 11.85));
+    g.add(makeNet(-6.2, 11.6));
     g.add(makeDriftwood(-9.4, 2.6));
     g.add(makeCairn(4.2, 8.8));
     g.add(makeRationStall(-8.6, 3.2));
@@ -4632,8 +4688,17 @@
       base[i * 3 + 1] = 0.25 + Math.random() * box.y;
       base[i * 3 + 2] = (Math.random() - 0.5) * box.z;
     }
+    const colors = new Float32Array(count * 3);
+    const tint = new THREE.Color(color);
+    for (let i = 0; i < count; i++) {
+      const flicker = 0.45 + Math.random() * 0.85;
+      colors[i * 3] = Math.min(1, tint.r * flicker);
+      colors[i * 3 + 1] = Math.min(1, tint.g * flicker);
+      colors[i * 3 + 2] = Math.min(1, tint.b * flicker);
+    }
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(base.slice(), 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
     const pts = new THREE.Points(geo, new THREE.PointsMaterial({
       color,
       size: 0.055,
@@ -4641,6 +4706,7 @@
       opacity: 0.42,
       depthWrite: false,
       sizeAttenuation: true,
+      vertexColors: true,
     }));
     pts.userData.base = base;
     pts.userData.count = count;
@@ -4887,6 +4953,76 @@
       g.add(stone);
     });
     g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeBuoy(x, z) {
+    const g = new THREE.Group();
+    const body = new THREE.Mesh(
+      new THREE.SphereGeometry(0.28, 8, 6),
+      new THREE.MeshPhongMaterial({ color: 0xc45a28, shininess: 30, specular: new THREE.Color(0xffe0c0) })
+    );
+    body.scale.y = 0.82;
+    body.position.y = 0.16;
+    g.add(body);
+    const band = new THREE.Mesh(
+      new THREE.TorusGeometry(0.2, 0.035, 5, 10),
+      new THREE.MeshBasicMaterial({ color: 0xe2c878, fog: false })
+    );
+    band.rotation.x = Math.PI / 2;
+    band.position.y = 0.18;
+    g.add(band);
+    const spar = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.025, 0.025, 0.5, 5),
+      new THREE.MeshLambertMaterial({ color: 0x2a241c })
+    );
+    spar.position.y = 0.46;
+    g.add(spar);
+    g.position.set(x, -0.05, z);
+    return g;
+  }
+
+  function makeHull(x, z) {
+    const g = new THREE.Group();
+    const hull = new THREE.Mesh(
+      new THREE.BoxGeometry(1.55, 0.26, 0.52),
+      new THREE.MeshLambertMaterial({ color: 0x6a4a32 })
+    );
+    hull.position.y = 0.08;
+    hull.rotation.z = 0.18;
+    g.add(hull);
+    const rib = new THREE.Mesh(
+      new THREE.BoxGeometry(0.08, 0.4, 0.46),
+      new THREE.MeshLambertMaterial({ color: 0x3a2a22 })
+    );
+    rib.position.set(0.15, 0.22, 0);
+    g.add(rib);
+    g.position.set(x, -0.1, z);
+    g.rotation.y = 0.35;
+    return g;
+  }
+
+  function makeNet(x, z) {
+    const g = new THREE.Group();
+    const postMat = new THREE.MeshLambertMaterial({ color: 0x5c4634 });
+    [-0.7, 0.7].forEach((dx) => {
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 0.9, 5), postMat);
+      post.position.set(dx, 0.4, 0);
+      g.add(post);
+    });
+    const line = new THREE.Mesh(
+      new THREE.BoxGeometry(1.4, 0.02, 0.02),
+      new THREE.MeshBasicMaterial({ color: 0xd8e4ea, fog: false })
+    );
+    line.position.y = 0.72;
+    g.add(line);
+    const mesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.35, 0.45),
+      new THREE.MeshBasicMaterial({ color: 0xc5d8e4, transparent: true, opacity: 0.45, side: THREE.DoubleSide, fog: false })
+    );
+    mesh.position.y = 0.48;
+    g.add(mesh);
+    g.position.set(x, -0.02, z);
     return g;
   }
 
@@ -5785,7 +5921,11 @@
     }
     if (locale === 'remnant-mark') {
       if (!seenBeats.markFight) return 'A counter stands on the road to the pillar.';
-      if (!seenBeats.naveStep) return 'North of the pillar, the road goes on to a sealed door.';
+      if (!seenBeats.naveStep) {
+      if (seenBeats['scrap-read']) return 'The scrap is read. A tally clerk can see the count. North, the nave stays shut.';
+      if (seenBeats['mark-scrap']) return 'The numbered scrap is in the pack. Read it once. North, the road goes on.';
+      return 'North of the pillar, the road goes on to a sealed door.';
+    }
       if (naveWord === 'name') return 'The nave is named and shut. South is the yard.';
       if (naveWord === 'turn') return 'You left the cathedral seal. South is the yard.';
       if (weep && weep.absorbed) return 'The weep is in the spark. North, the nave is still a door.';
@@ -6541,14 +6681,30 @@
       </div>`;
     }).join('');
 
-    $('#inv-gear').innerHTML = bag.length
-      ? bag.map((id) => {
+    const gearIds = bag.slice().sort((a, b) => {
+      const an = GEAR[a] ? GEAR[a].name : a;
+      const bn = GEAR[b] ? GEAR[b].name : b;
+      return an.localeCompare(bn);
+    });
+    $('#inv-gear').innerHTML = gearIds.length
+      ? gearIds.map((id) => {
         const g = GEAR[id];
         return `<li class="inv-card"><div class="row"><span class="name">${esc(g.name)}</span><button class="btn btn-small" type="button" data-act="equip" data-id="${esc(id)}">Equip on ${esc(WHO_NAME[g.who])}</button></div><div class="desc">${esc(g.desc)}</div></li>`;
       }).join('')
       : '<li class="empty-line">The spare gear is all being worn.</li>';
 
-    $('#inv-items').innerHTML = items.filter((s) => s.count > 0).map((s) => {
+    const stacked = {};
+    items.forEach((s) => {
+      if (!s || !s.id || s.count <= 0) return;
+      stacked[s.id] = (stacked[s.id] || 0) + s.count;
+    });
+    items = Object.keys(stacked).map((id) => ({ id: id, count: stacked[id] }));
+    items.sort((a, b) => {
+      const an = ITEM_DEFS[a.id] ? ITEM_DEFS[a.id].name : a.id;
+      const bn = ITEM_DEFS[b.id] ? ITEM_DEFS[b.id].name : b.id;
+      return an.localeCompare(bn);
+    });
+    $('#inv-items').innerHTML = items.map((s) => {
       const def = ITEM_DEFS[s.id];
       const gain = itemGain(def);
       const use = def.field && def.heal && def.mp
@@ -6556,14 +6712,21 @@
         : def.field
           ? `<button class="btn btn-small" type="button" data-act="use" data-id="${esc(s.id)}">Use${gain ? ' · ' + gain : ''}</button>`
           : '';
-      return `<li class="inv-card"><div class="row"><span class="name">${esc(def.name)} ×${s.count}</span>${use}</div><div class="desc">${esc(def.desc)}${gain ? ' Restores up to ' + gain + '.' : ''}</div></li>`;
-    }).join('') || '<li class="empty-line">No consumables.</li>';
+      return `<li class="inv-card"><div class="row"><span class="name">${esc(def.name)} · stack ${s.count}</span>${use}</div><div class="desc">${esc(def.desc)}${gain ? ' Restores up to ' + gain + '.' : ''}</div></li>`;
+    }).join('') || '<li class="empty-line">No consumables. Stacks stay together.</li>';
 
-    $('#inv-shards').innerHTML = shards.length
-      ? shards.map((sh) => `<li class="inv-card"><div class="row"><span class="name">${esc(sh.name)}</span><button class="btn btn-small" type="button" data-act="digest" data-uid="${esc(sh.uid)}">Digest</button></div><div class="desc">Undigested ${esc(sh.element)}. Clean digestion feeds the spark and strains the host.</div></li>`).join('')
+    const shardRows = shards.slice().sort((a, b) => {
+      const ae = a.element || '';
+      const be = b.element || '';
+      if (ae !== be) return ae.localeCompare(be);
+      return (a.name || '').localeCompare(b.name || '');
+    });
+    $('#inv-shards').innerHTML = shardRows.length
+      ? shardRows.map((sh) => `<li class="inv-card"><div class="row"><span class="name">${esc(sh.name)}</span><button class="btn btn-small" type="button" data-act="digest" data-uid="${esc(sh.uid)}">Digest</button></div><div class="desc">Undigested ${esc(sh.element)}. One shard, not a stack. Clean digestion feeds the spark and strains the host.</div></li>`).join('')
       : '<li class="empty-line">No shards. Whole pools leave none. Fights sometimes do.</li>';
 
-    const keys = [{ name: 'Border Badge', desc: 'Lira’s scout token. The villages still answer to it, for now.' }].concat(seals);
+    const sealRows = seals.slice().sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    const keys = [{ name: 'Border Badge', desc: 'Lira’s scout token. The villages still answer to it, for now.' }].concat(sealRows);
     $('#inv-seals').innerHTML = keys.map((k) => {
       const bind = k.name === 'Salt Cord' && !seenBeats['cord-bound']
         ? '<button class="btn btn-small" type="button" data-act="bind-cord">Bind</button>'
@@ -9875,7 +10038,8 @@
     hud.classList.add('hidden');
     setFieldControls(false);
     interactPrompt.classList.add('hidden');
-    combatUI.classList.remove('hidden', 'juice-cleave', 'juice-channel', 'juice-aim', 'juice-magma', 'juice-glass', 'hit');
+    combatUI.classList.remove('hidden', 'hit');
+    JUICE_NAMES.forEach((name) => combatUI.classList.remove(name));
     overworldGroup.visible = false;
     if (interiorGroup) interiorGroup.visible = false;
     if (stormreachGroup) stormreachGroup.visible = false;
@@ -10441,9 +10605,9 @@
         showLog(lines[act.magic] || (actor.name + ' spends a held word. ' + target.name + ' takes ' + dmg + '.'));
         punchNumber(dmg, 'harm');
         if (sp.merge) playMergeSting();
-        const flash = act.magic === 'magma' ? 0xff3a10 : act.magic === 'glass' ? 0xd6fff6 : sp.flash;
+        const flash = MERGE_FLASH[act.magic] || sp.flash;
         flashMesh(combatEnemyMeshes[targetIdx], flash);
-        if (act.magic === 'magma' || act.magic === 'glass') celebrateMerge(act.magic);
+        if (MERGE_JUICE[act.magic]) celebrateMerge(act.magic);
         if (target.hp <= 0) markDead(targetIdx);
         if (actor.id === 'lira' && spark.path === 'mage') grantPathXp(8);
       }
@@ -10700,6 +10864,7 @@
     let saltNote = '';
     if (enemy.salt) {
       enemy.salt = false;
+      seenBeats['spire-salt'] = true;
       if (coverReady) saltNote = ' Torren’s shoulder takes the salt.';
       else {
         dmg += 2;
@@ -11015,21 +11180,30 @@
     }
   }
 
+  const MERGE_JUICE = { plasma: 'juice-plasma', steam: 'juice-steam', storm: 'juice-storm', magma: 'juice-magma', glass: 'juice-glass' };
+  const MERGE_FLASH = { plasma: 0xffe14a, steam: 0xe8f4ff, storm: 0x6eb6ff, magma: 0xff3a10, glass: 0xd6fff6 };
+  const JUICE_NAMES = ['juice-cleave', 'juice-channel', 'juice-aim', 'juice-plasma', 'juice-steam', 'juice-storm', 'juice-magma', 'juice-glass'];
+
+  function clearJuice(node) {
+    if (!node) return;
+    JUICE_NAMES.forEach((name) => node.classList.remove(name));
+  }
+
   function celebrateMerge(kind) {
-    if (!combatUI || (kind !== 'magma' && kind !== 'glass')) return;
-    const cls = kind === 'magma' ? 'juice-magma' : 'juice-glass';
-    combatUI.classList.remove('juice-cleave', 'juice-channel', 'juice-aim', 'juice-magma', 'juice-glass');
+    const cls = MERGE_JUICE[kind];
+    if (!combatUI || !cls) return;
+    clearJuice(combatUI);
     const hit = $('#hit-float');
-    if (hit) hit.classList.remove('juice-cleave', 'juice-channel', 'juice-aim', 'juice-magma', 'juice-glass');
+    clearJuice(hit);
     combatUI.classList.add(cls);
     if (hit) hit.classList.add(cls);
   }
 
   function strikeJuice(path, fromMesh, toMesh) {
     if (!path || !combatUI) return;
-    combatUI.classList.remove('juice-cleave', 'juice-channel', 'juice-aim', 'juice-magma', 'juice-glass');
+    clearJuice(combatUI);
     const hit = $('#hit-float');
-    if (hit) hit.classList.remove('juice-cleave', 'juice-channel', 'juice-aim', 'juice-magma', 'juice-glass');
+    clearJuice(hit);
     const cls = path === 'warrior' ? 'juice-cleave' : path === 'mage' ? 'juice-channel' : 'juice-aim';
     combatUI.classList.add(cls);
     if (hit) hit.classList.add(cls);
@@ -12972,6 +13146,7 @@
   EW.noteScrap = noteScrap;
   EW.noteScrapRead = noteScrapRead;
   EW.scrapRead = function () { return !!seenBeats['scrap-read']; };
+  EW.feltSalt = function () { return !!seenBeats['spire-salt']; };
   EW.noteCompany = noteCompany;
   EW.packHas = function (name) { return !!(seals && seals.some((seal) => seal.name === name)); };
   EW.naveChoice = function () { return naveWord; };
