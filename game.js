@@ -3133,7 +3133,7 @@
     locale = 'ashen-marrow';
     if (playerMesh.parent) playerMesh.parent.remove(playerMesh);
     marrowGroup.add(playerMesh);
-    playerMesh.position.set(0, 0, -2.7);
+    playerMesh.position.set(2.2, 0, -2.7);
     if (interiorGroup) interiorGroup.visible = false;
     if (throatRoom) throatRoom.visible = false;
     if (overworldGroup) overworldGroup.visible = false;
@@ -3142,8 +3142,8 @@
     placeFog('marrow');
     const locLabel = $('#hud-location');
     if (locLabel) locLabel.textContent = 'Ashen Marrow';
-    camera.position.set(0, CAMERA_HEIGHT, -2.7 + CAMERA_DIST);
-    camera.lookAt(0, 1, -2.7);
+    camera.position.set(2.2, CAMERA_HEIGHT, -2.7 + CAMERA_DIST);
+    camera.lookAt(2.2, 1, -2.7);
     refreshRumor();
     updateHUD();
     saveGame();
