@@ -151,3 +151,10 @@ Playable web slice under `/workspace/emberwake/`: Three.js overworld (**Verdant 
 - **Not Zelda:** no shrine-puzzle toybox framing, no “fun gadget open world” fantasy as the pitch.
 
 Combat feel: FF menus and party turns; narrative feel: Witcher moral mud.
+
+---
+
+## Platform (locked)
+
+- **PC first** — keyboard/mouse, larger UI density for FF menus and Witcher-style readability.
+- **Mobile supported** — same web build; touch joystick + large tap targets; not the design driver.
