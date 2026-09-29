@@ -213,13 +213,21 @@ Playable on the Verdant Isle field:
 - West of the Concord yard’s south gate, a rest is one optional Look. Torren speaks if he came. Nima speaks if she came. If neither came, Lira says the road is still hers. It does not drink the slag, set the yard’s word, add a scar, or block Leave. Continue stores the beat.
 - Phone controls, Absorb, Pack, and Continue stay.
 
-## Sky and aftermath (this branch)
+## Sky and aftermath (shipped)
 
 - Skies carry a horizon band. Isle grass, coast shale, and ash take a finer grain. Fog sits closer on the mark and opens up on the isle, the coast, and the ash. The remnant mass is a column of stone around a fire, readable without another light.
 - Each aftermath shows one object with the plaque: an empty ring and a living sprig, a sealed number over dead ground, a page split in two colors, or a red scar and a heap of ash. The burn line uses the same scar cut as the HUD.
 - If Torren or Nima is in the party, they speak after a claim flag. If they are not, the choice is still Vesper’s. It does not change the flag.
 - Motion can be stilled from the title or the pack. A fight’s Pace button runs slow, steady, or brisk. On a phone the command taps and the stick are larger, and the picture skips shadows and a full-resolution buffer.
 - Credits still return to the aftermath. Leave still returns to the claim, short of the door. Continue stores motion and pace.
+- Phone controls, Absorb, Pack, and Continue stay.
+
+## Cast and notices (this branch)
+
+- Vesper’s silhouette is a hood and an ash ribbon, and it lifts a little when motion is on. In a fight the party does the same. Still holds them quiet. The command window and the dialogue frame take a gold inner line. The turn ribbon names who is Now, and party and foe chips sit in different colors.
+- A wayside chest on the isle gives one tonic and then stays empty. A waxed salt cord in the grass west of the scar goes in the pack and does not open a door. A posted notice on the shale says mouths are numbered. If Cousin’s Margin is already held, it names the furrow. It does not open the vault.
+- Fights show chips for burn, stamp, air, licence, page, rite, knelt, ash in the teeth, and scar debt on Lira. Walking the ash nave, the first breach, or the remnant claim before the flag can meet an ash penitent. It kneels once. Ash coughs for 6 on that person’s next turn and does not add scar debt. After the flag, the claim stays quiet.
+- Still freezes the nave banners and the cough pulse. On a phone the ash motes update every other tick. Credits still return to the aftermath when motion is stilled and pace is slow. Continue stores both.
 - Phone controls, Absorb, Pack, and Continue stay.
 
 ## Still ahead

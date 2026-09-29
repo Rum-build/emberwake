@@ -70,6 +70,32 @@
     return true;
   });
 
+  Emberwake.registerScene('wayside-chest', function () {
+    Emberwake.present({
+      lines: [
+        { where: 'Verdant Isle', speaker: 'Lira', text: 'A chest off the path. No seal. Someone left it for a walker, or forgot it.' },
+        { speaker: 'The spark', text: 'One bitter green. It closes a wound. It does not open the kiln.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteChest) Emberwake.noteChest();
+      },
+    });
+    return true;
+  });
+
+  Emberwake.registerScene('salt-cord', function () {
+    Emberwake.present({
+      lines: [
+        { where: 'Verdant Isle', speaker: 'Lira', text: 'A cord in the grass, waxed against the wet. It is not a licence.' },
+        { speaker: 'The spark', text: 'The coast ties rope like this. The vault does not count rope. Pocket it. The road stays.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteCord) Emberwake.noteCord();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('furrow-letter', function () {
     Emberwake.present({
       lines: [

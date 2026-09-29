@@ -42,10 +42,10 @@ This is the player map of the current browser build. It is not the Year 2–3 ca
 
 | Stretch | What the feet can do |
 |---|---|
-| **Act I — Verdant Isle** | Wake and choose Warrior, Mage, or Ranged. Enter the leaf-village (Nima can join; a cousin’s letter in the basket is optional and does not open a door). Enter the root-cellar kiln. Stand at the scar. Meet the patrol, where Torren can refuse the licence. The waystone opens after the kiln and a scar verdict. |
-| **Act II — Stormreach Coast** | Land on the shale. Drink lightning pools. Speak to a porter. Enter the harbor vault and the bottle-hall. Ask Kestrel to land. She refuses. |
+| **Act I — Verdant Isle** | Wake and choose Warrior, Mage, or Ranged. Enter the leaf-village (Nima can join; a cousin’s letter in the basket is optional and does not open a door). A wayside chest and a salt cord in the grass are optional. Enter the root-cellar kiln. Stand at the scar. Meet the patrol, where Torren can refuse the licence. The waystone opens after the kiln and a scar verdict. |
+| **Act II — Stormreach Coast** | Land on the shale. Drink lightning pools. Speak to a porter. Read a posted notice. It does not open the door. Enter the harbor vault and the bottle-hall. Ask Kestrel to land. She refuses. |
 | **Act III — Ashen Marrow** | Walk the ash, the digest-engine, the tender, and the leak. Meet Vesper and do not let her into the host. Enter the pipe and the sealed throat. Enter the Concord yard and drink the slag or let the warden seal it. West of the south gate, an optional rest: Torren and Nima speak if they came, and Lira speaks if they did not. It does not open the mark. North of the yard is the Remnant Mark. |
-| **Act IV — remnant through aftermath** | Ash nave (west chalk is optional), watch gallery (a filed copy is optional), count crypt, first breach, remnant claim, and the aftermath. The claim is claim, refuse, share, or burn. Each ending shows one object with the plaque. Credits are north of that room. Leave returns to the claim. |
+| **Act IV — remnant through aftermath** | Ash nave (west chalk is optional), watch gallery (a filed copy is optional), count crypt, first breach, remnant claim, and the aftermath. Walking the nave, the breach, or the claim before the flag can meet an ash penitent. The claim is claim, refuse, share, or burn. Each ending shows one object with the plaque. Credits are north of that room. Leave returns to the claim. |
 
 Phone controls stay MOVE, Pack, and Absorb / Enter / Leave / Look / Speak. Motion can be stilled from the title or the pack. A fight has a pace: slow, steady, or brisk. Open **https://rum-build.github.io/emberwake/**.
 
