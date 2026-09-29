@@ -363,6 +363,15 @@ Playable on the Verdant Isle field:
 - Magma and Glass already wash the way Plasma, Steam, and Storm do. The absorb sting and the merge sting already play. No ninth cue. The eight sounds stay the set in CREDITS.
 - Phone controls, Absorb, Pack, and Continue stay.
 
+## Nave, breach, claim, and the first hour (this branch)
+
+- The ash nave has a fallen pew, an ash drift, and iron candle stubs off the west chalk, the gallery door, and the south step.
+- The first breach has a cracked column base, an ash drift, and iron candle stubs off the bar and the south step.
+- The remnant claim has a plinth scrap, a cracked column base, an ash drift, and iron candle stubs off the mass and the south step.
+- Before the village, the quest and Places say the leaf-village is north-west and a letter is in the basket. That line does not name the kiln or the road past it.
+- Drinking a pool throws a ground ring and a short burst of embers. The ring is not a cue. The eight sounds stay the set in CREDITS.
+- Phone controls, Absorb, Pack, and Continue stay.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

@@ -2289,6 +2289,24 @@
     chalk.scale.set(0.48, 0.48, 1);
     g.add(chalk);
     layCloth(g, -2.85, 1.7, 0.55, 0x1a100c, 0.55);
+    const pewFrag = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.16, 0.24), pewMat);
+    pewFrag.position.set(-1.15, 0.1, 2.72);
+    pewFrag.rotation.y = 0.65;
+    pewFrag.rotation.z = 0.32;
+    g.add(pewFrag);
+    const naveDrift = new THREE.Mesh(
+      new THREE.SphereGeometry(0.36, 6, 5),
+      new THREE.MeshLambertMaterial({ color: 0x1a1412 })
+    );
+    naveDrift.scale.y = 0.28;
+    naveDrift.position.set(1.55, 0.07, 2.48);
+    g.add(naveDrift);
+    const stubMat = new THREE.MeshLambertMaterial({ color: 0x3a3532 });
+    [-0.55, 0.38].forEach((x) => {
+      const stub = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.055, 0.18, 5), stubMat);
+      stub.position.set(x, 0.09, 1.82);
+      g.add(stub);
+    });
     naveGroup = g;
     scene.add(g);
   }
@@ -2729,6 +2747,34 @@
       ashPile.position.set(pile[0], pile[2] * 0.14, pile[1]);
       g.add(ashPile);
     });
+    const columnBase = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.38, 0.52, 0.26, 7),
+      voussoirMat
+    );
+    columnBase.position.set(2.85, 0.13, 1.05);
+    columnBase.rotation.z = 0.18;
+    g.add(columnBase);
+    const columnCrack = new THREE.Mesh(
+      new THREE.BoxGeometry(0.05, 0.3, 0.07),
+      new THREE.MeshBasicMaterial({ color: 0x120c0c, fog: false })
+    );
+    columnCrack.position.set(2.85, 0.28, 1.05);
+    g.add(columnCrack);
+    const breachDrift = new THREE.Mesh(
+      new THREE.SphereGeometry(0.34, 6, 5),
+      new THREE.MeshLambertMaterial({ color: 0x1a1412 })
+    );
+    breachDrift.scale.y = 0.26;
+    breachDrift.position.set(-1.35, 0.06, 3.85);
+    g.add(breachDrift);
+    [3.15, 3.55].forEach((x) => {
+      const stub = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.035, 0.05, 0.16, 5),
+        new THREE.MeshLambertMaterial({ color: 0x3a3532 })
+      );
+      stub.position.set(x, 0.08, 2.15);
+      g.add(stub);
+    });
     makeMotes(g, 80, 0xc4b4a4, { x: 12, y: 4.2, z: 14 }, { fall: true });
     breachGroup = g;
     scene.add(g);
@@ -2940,6 +2986,34 @@
     plaque.position.set(0, 4.15, -5.15);
     plaque.scale.set(1.55, 1.55, 1);
     g.add(plaque);
+    const plinthScrap = makeCountPage('SCRAP', ['Not Licence Zero', 'The mass stays', 'North writes it']);
+    plinthScrap.position.set(1.65, 0.62, -4.85);
+    plinthScrap.rotation.y = -0.45;
+    plinthScrap.rotation.x = -0.35;
+    plinthScrap.scale.set(0.5, 0.5, 1);
+    g.add(plinthScrap);
+    const claimBase = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.42, 0.58, 0.28, 7),
+      new THREE.MeshPhongMaterial({ color: 0x3a2824, shininess: 8 })
+    );
+    claimBase.position.set(4.55, 0.14, -0.75);
+    claimBase.rotation.z = 0.16;
+    g.add(claimBase);
+    const claimDrift = new THREE.Mesh(
+      new THREE.SphereGeometry(0.4, 6, 5),
+      new THREE.MeshLambertMaterial({ color: 0x1a1210 })
+    );
+    claimDrift.scale.y = 0.26;
+    claimDrift.position.set(3.15, 0.06, 3.55);
+    g.add(claimDrift);
+    [-3.35, -2.9].forEach((x) => {
+      const stub = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.04, 0.055, 0.18, 5),
+        new THREE.MeshLambertMaterial({ color: 0x3a3532 })
+      );
+      stub.position.set(x, 0.09, 3.15);
+      g.add(stub);
+    });
     const watcher = makeSilhouette(-3.4, -5.6);
     watcher.visible = true;
     watcher.position.y = 0.2;
@@ -4369,6 +4443,25 @@
     sheen.position.y = 0.1;
     g.add(sheen);
 
+    const cleanMat = new THREE.MeshBasicMaterial({
+      color: elColor.clone(), transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false, fog: false,
+    });
+    const cleanRing = new THREE.Mesh(new THREE.RingGeometry(2.55, 2.95, 28), cleanMat);
+    cleanRing.rotation.x = -Math.PI / 2;
+    cleanRing.position.y = 0.14;
+    cleanRing.visible = false;
+    g.add(cleanRing);
+    const embers = [];
+    for (let i = 0; i < 8; i++) {
+      const ember = new THREE.Mesh(
+        new THREE.SphereGeometry(0.09, 5, 4),
+        new THREE.MeshBasicMaterial({ color: elColor.clone(), transparent: true, opacity: 0, depthWrite: false, fog: false })
+      );
+      ember.visible = false;
+      g.add(ember);
+      embers.push(ember);
+    }
+
     let figure = null;
     if (def.vesper) {
       figure = makeCharacter(0x1a121c, 1.2);
@@ -4452,7 +4545,7 @@
       interior: def.interior || null,
       region: def.region || 'verdant-isle',
       rotMat, rotColor, healColor, elColor, lifeMat, coreMat, core, beamMat, neck,
-      spikes, flowers, motes, ripple, rippleMat, sheen, figure, seal, sealRing, rim, rimMat, watchers, cork, phase: Math.random() * 6,
+      spikes, flowers, motes, ripple, rippleMat, sheen, cleanRing, cleanMat, embers, figure, seal, sealRing, rim, rimMat, watchers, cork, phase: Math.random() * 6,
       group: g,
     };
     pools.push(pool);
@@ -4557,6 +4650,26 @@
       if (pool.sheen) {
         pool.sheen.rotation.z = t * 0.35 + pool.phase;
         pool.sheen.material.opacity = (0.16 + Math.sin(t * 2.2 + pool.phase) * 0.06 + cue * 0.2) * (1 - h);
+      }
+      if (pool.cleanRing) {
+        const show = burst > 0.02;
+        pool.cleanRing.visible = show;
+        if (show) {
+          pool.cleanRing.scale.setScalar(1 + (1 - burst) * 1.35);
+          pool.cleanMat.opacity = burst * 0.9;
+        }
+      }
+      if (pool.embers) {
+        pool.embers.forEach((ember, i) => {
+          const show = burst > 0.02;
+          ember.visible = show;
+          if (!show) return;
+          const a = pool.phase + i * (Math.PI * 2 / pool.embers.length);
+          const rad = 0.7 + (1 - burst) * 2.6;
+          ember.position.set(Math.cos(a) * rad, 0.4 + (1 - burst) * 1.2, Math.sin(a) * rad);
+          ember.material.opacity = burst * 0.95;
+          ember.scale.setScalar(0.55 + burst * 0.8);
+        });
       }
       if (pool.figure) {
         pool.figure.position.y = -2.3 * h;
@@ -6184,7 +6297,7 @@
     if (locale === 'harbor-vault' && !seenBeats['bottle-hall']) return 'The bottle-hall is north of the count.';
     if (locale === 'field' && regionId === 'stormreach' && !seenBeats['vault-face']) return 'The harbor vault is in the cliff.';
     if (locale === 'leaf-village' && !seenBeats['furrow-letter']) return 'A letter sits in the basket by the furrow. It is not the road. South is the isle.';
-    if (locale === 'field' && regionId === 'verdant-isle' && !seenBeats.village) return 'The leaf-village is on the isle. The argument is inside.';
+    if (locale === 'field' && regionId === 'verdant-isle' && !seenBeats.village) return 'North-west is the leaf-village. A letter is in the basket inside. Walk to it. It is not the road.';
     if (locale === 'root-cellar' && !seenBeats.kiln) return 'The kiln is north. It still has a tenant.';
     if (!seenBeats['waystone-wake']) return 'The kiln, then the scar. The waystone stays shut until both.';
     if (!seenBeats.marrowStep) return 'The inland road starts in the bottle-hall.';
@@ -12097,7 +12210,12 @@
   }
 
   function knownPlaces() {
-    const rows = [{ name: 'Verdant Isle', note: 'Where she woke.' }];
+    const rows = [{
+      name: 'Verdant Isle',
+      note: seenBeats.village
+        ? 'Where she woke.'
+        : 'Where she woke. North-west is the leaf-village. A letter is inside. It is not the road.',
+    }];
     if (seenBeats.village) rows.push({ name: 'Leaf-village', note: 'The argument about the seal.' });
     if (seenBeats.cellar || seenBeats.kiln) rows.push({ name: 'Root-cellar', note: 'The kiln under the arch.' });
     if (seenBeats.coastRoute || seenBeats['vault-face'] || regionId === 'stormreach') rows.push({ name: 'Stormreach Coast', note: 'Shale, lightning, the harbor vault.' });

@@ -104,6 +104,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The coast water has buoys, a hull, and a net past the walk. The counting room is denser off the aisle. The remnant mass has a plinth and a column. After the scrap is read, the quest names the clerk and the shut nave. A tally clerk names spire salt, and Vesper names it on the ash. She does not enter. The pack shows stacks. Plasma, Steam, and Storm show colour, and that colour is not a cue.
 - The leaf-village and the buried kiln are denser off the walk. The ash shelf has a plank and stakes. A fight frames both ranks. A Concord coat names the corked cup and does not open the vault. In the aftermath, Torren and Nima speak for the claim flag if they came. A fight’s Use 1 takes one from the stack. Places shows the quest, and the lines wrap.
 - The harbor board has crates, rope, lanterns, a gull perch, and wet cobble off the door, the clerk, and the roost. The bottle-hall has a side shelf of bottles and a slate. The crypt has a tally slate and a grate shadow. A telegraph draws a ring at the feet. Magma and Glass already wash. The eight cues stay the full set.
+- The ash nave, the first breach, and the remnant claim carry more fallen wood, ash, and iron off the south steps. Before the village, the quest names the leaf-village and the letter inside. Drinking a pool throws a ring and a short burst of embers. That burst is not a cue.
 
 ## Play on your phone
 
