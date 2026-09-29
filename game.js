@@ -1944,12 +1944,14 @@
     const showGate = idle && locale === 'field' && nearGate && !showAbsorb && !showDoor;
     const showReturn = idle && locale === 'field' && nearReturn && !showAbsorb && !showDoor && !showGate;
     const showLook = idle && nearMarrow && !showAbsorb && !atExit;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook);
+    const showTalk = idle && nearWorker && !showAbsorb && !atExit && !showLook;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showTalk);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
     else if (showGate) absorbBtn.textContent = 'Land';
     else if (showLook) absorbBtn.textContent = 'Enter';
+    else if (showTalk) absorbBtn.textContent = 'Speak';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
   }
 
