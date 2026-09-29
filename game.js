@@ -1358,17 +1358,17 @@
     g.add(hallClerk);
     const shelfMat = new THREE.MeshLambertMaterial({ color: 0x2a3038 });
     const corkMat = new THREE.MeshLambertMaterial({ color: 0xc4a46a, emissive: new THREE.Color(0x3a2c10) });
-    [-2.85, 2.85].forEach((x) => {
-      [-9.2, -11.1, -13.0].forEach((z) => {
+    [-1.05, 1.05].forEach((x) => {
+      [-9.8, -11.5, -13.2].forEach((z) => {
         const post = new THREE.Mesh(new THREE.BoxGeometry(0.16, 2.15, 0.16), shelfMat);
         post.position.set(x, 1.08, z);
         g.add(post);
       });
-      const lintel = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.12, 4.2), shelfMat);
-      lintel.position.set(x, 2.15, -11.1);
+      const lintel = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.1, 3.6), shelfMat);
+      lintel.position.set(x, 2.05, -11.5);
       g.add(lintel);
     });
-    [[-2.15, -10.4], [2.15, -10.6], [-2.15, -12.3], [2.15, -12.5]].forEach((spot, i) => {
+    [[-0.72, -10.5], [0.78, -10.7], [-0.7, -12.4], [0.82, -12.6]].forEach((spot, i) => {
       const vial = new THREE.Mesh(
         new THREE.CylinderGeometry(0.08, 0.1, 0.36, 6),
         new THREE.MeshLambertMaterial({
@@ -2388,7 +2388,7 @@
     g.add(rib);
     const urnMat = new THREE.MeshPhongMaterial({ color: 0x3a3028, shininess: 8, specular: new THREE.Color(0x2a2018) });
     const brassUrn = new THREE.MeshBasicMaterial({ color: 0xc4a46a, fog: false });
-    [[-1.62, -0.15], [1.62, -0.35], [-1.55, 0.72], [1.58, 0.55]].forEach((spot, i) => {
+    [[-1.05, -0.55], [1.02, -0.25], [-0.98, 0.95], [1.08, 0.48]].forEach((spot, i) => {
       const urn = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.2, 0.42, 6), urnMat);
       urn.position.set(spot[0], 0.22, spot[1]);
       g.add(urn);
@@ -2403,8 +2403,8 @@
         g.add(ashCap);
       }
     });
-    [-1.85, 1.85].forEach((x) => {
-      [-0.85, 0.35].forEach((z) => {
+    [-1.18, 1.18].forEach((x) => {
+      [-1.05, 0.2].forEach((z) => {
         const post = new THREE.Mesh(new THREE.BoxGeometry(0.16, 1.35, 0.16), urnMat);
         post.position.set(x, 0.68, z);
         g.add(post);
@@ -2415,7 +2415,7 @@
       brassUrn
     );
     tally.rotation.x = -Math.PI / 2;
-    tally.position.set(-1.15, 0.045, -0.55);
+    tally.position.set(-0.45, 0.045, -0.85);
     g.add(tally);
     cryptGroup = g;
     scene.add(g);
