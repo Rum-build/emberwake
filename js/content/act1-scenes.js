@@ -290,6 +290,23 @@
     return true;
   });
 
+  Emberwake.registerScene('stone-grit', function () {
+    var torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    Emberwake.present({
+      lines: [
+        { where: 'Sleeping waystone', speaker: 'Lira', text: 'Grit on the south stones. Concord counted the ring and left it cold.' },
+        torren
+          ? { speaker: 'Torren', text: 'I stamped rings like this. The stamp held the count. It did not warm the stone.' }
+          : { speaker: 'The spark', text: 'They stamped the ring. The count held. The stone did not warm.' },
+        { speaker: 'The spark', text: 'Vesper farms the rot off this ridge. She does not take the host. The stones stay cold.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteGrit) Emberwake.noteGrit();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('waystone-tease', function () {
     if (Emberwake.stoneReady && Emberwake.stoneReady()) return false;
     Emberwake.present({
