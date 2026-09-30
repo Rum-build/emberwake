@@ -185,6 +185,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - At the waystone, carved faces, lichen, and crack lines sit on the ring, with grit at the footing and a worn path edge. The south stones and the wake stay readable. No new cue.
 - At the harbor vault, iron bands, rivets, a seal etch, and hinge wear sit on the door, with an ash wash on the face. The threshold and the count stay readable. No new cue.
 - At the counting-room desk, timber grain, an ink-stained ledge, drawer seams, and brass fittings sit on the body, with a paper stack on the top. The clerk and the ledger floor stay readable. No new cue.
+- At the root-cellar door, weathered plank grain, iron straps, hinge rust, and latch wear sit on the face, with a damp ash wash. The threshold and the mouth stay readable. No new cue.
 
 ## Play on your phone
 
