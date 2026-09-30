@@ -446,6 +446,13 @@ Playable on the Verdant Isle field:
 - The harbor roost keeps a rope, a lamp, and a mist rim off the roost, the door, the clerk, and the south walk.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Wake host, and the Concord patrol (this branch)
+
+- Before the village, the field and Places say the spark is in Lira and the mouth stays hers. The letter, the kiln, and the leaf-cup stay where they were.
+- The Concord patrol fight names the Concord. Ash sits on that floor, and the coats wear a pale rim. The blow is unchanged.
+- On a phone, Lira’s ribbon chip and the strike names Warrior, Mage, or Ranged one notch clearer. Assist chips stay.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

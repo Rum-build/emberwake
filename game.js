@@ -578,7 +578,7 @@
     if (locLabel) locLabel.textContent = 'Verdant Isle';
     const dialoguePanel = $('#dialogue');
     if (dialoguePanel) dialoguePanel.classList.add('hidden');
-    rumor = 'The leaf-villages pretend the Concord’s seals are mercy.';
+    rumor = 'You are the spark in Lira. The mouth stays hers.';
     if (playerMesh) {
       playerMesh.position.set(0, 0, 0);
       playerMesh.rotation.set(0, 0, 0);
@@ -6423,7 +6423,27 @@
     });
     grit.visible = false;
     combatGroup.add(grit);
-    combatGroup.userData.light = { floorMat, hillMat, backMat, ambient, sun, warm, cold, grit };
+    const patrolAsh = new THREE.Group();
+    const ashDisc = new THREE.MeshBasicMaterial({
+      color: 0xd8d0c4, transparent: true, opacity: 0.78, depthWrite: false, fog: false, side: THREE.DoubleSide,
+    });
+    [[-2.15, -0.35, 0.62], [-0.55, -1.15, 0.48], [-3.15, -1.85, 0.4], [0.35, 0.85, 0.34], [-1.4, 0.95, 0.28]].forEach((spec) => {
+      const disc = new THREE.Mesh(new THREE.CircleGeometry(spec[2], 8), ashDisc);
+      disc.rotation.x = -Math.PI / 2;
+      disc.position.set(spec[0], 0.06, spec[1]);
+      patrolAsh.add(disc);
+    });
+    const wispMat = new THREE.MeshBasicMaterial({
+      color: 0xe7e0d4, transparent: true, opacity: 0.62, depthWrite: false, fog: false, side: THREE.DoubleSide,
+    });
+    [[-1.7, 0.85, -1.05], [-0.35, 1.05, -0.45], [-2.7, 0.7, -1.7]].forEach((spec) => {
+      const wisp = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 0.95), wispMat);
+      wisp.position.set(spec[0], spec[1], spec[2]);
+      patrolAsh.add(wisp);
+    });
+    patrolAsh.visible = false;
+    combatGroup.add(patrolAsh);
+    combatGroup.userData.light = { floorMat, hillMat, backMat, ambient, sun, warm, cold, grit, patrolAsh };
   }
 
   function combatMood() {
@@ -6473,12 +6493,25 @@
     }
     renderer.setClearColor(tone.fog);
     if (pack.grit) pack.grit.visible = locale === 'first-breach' || locale === 'ash-nave';
+    if (pack.patrolAsh) pack.patrolAsh.visible = victoryTag === 'leaf-patrol';
     const ui = $('#combat-ui');
     if (ui) ui.classList.toggle('dusk-fight', combatMood() === 'dusk');
   }
 
   function breachFightOpen() {
     return locale === 'first-breach' || locale === 'ash-nave';
+  }
+
+  function addPatrolRim(figure) {
+    if (victoryTag !== 'leaf-patrol' || !figure) return;
+    const rim = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.34, 2.02),
+      new THREE.MeshBasicMaterial({
+        color: 0xe7e0d4, transparent: true, opacity: 0.82, depthWrite: false, side: THREE.DoubleSide, fog: false,
+      })
+    );
+    rim.position.set(0, 0.98, -0.36);
+    figure.add(rim);
   }
 
   function addFoeRim(figure) {
@@ -6577,6 +6610,7 @@
     if (enemy.shape === 'human') {
       const figure = makeCharacter(enemy.color, 0.9, concord ? 'concord' : undefined);
       addFoeRim(figure);
+      addPatrolRim(figure);
       return figure;
     }
     if (enemy.shape === 'rite') {
@@ -7077,6 +7111,8 @@
       rumor = 'A waystone sleeps on the north ridge. The road to Stormreach is shut.';
     } else if (seenBeats.village) {
       rumor = 'Inside the leaf-village the argument is still unfinished. Sera wants the seal. Joss wants the furrow.';
+    } else if (locale === 'field' && regionId === 'verdant-isle') {
+      rumor = 'You are the spark in Lira. The mouth stays hers.';
     }
     syncSilhouette();
     const el = $('#hud-rumor');
@@ -11063,6 +11099,8 @@
           ? 'The coast grew a thing with too many legs. It wets the stone. The splash is a nick, not a second full bite.'
       : enemies.some((e) => e.id === 'echo')
       ? 'Vesper farms the rot. She is not on this field. Something that remembers her mouth is.'
+      : victoryTag === 'leaf-patrol'
+        ? 'The Concord patrol is on the cup. Ash sits in the grass. Torren’s coat is still on him. The seal is not mercy.'
       : enemies.some((e) => e.id === 'warden') && enemies.some((e) => e.id === 'clerk')
         ? 'Licence. The coast warden lifts the seal. The next blow costs more life. A shoulder in front tears it.'
       : enemies.some((e) => e.id === 'warden') && party.some((p) => p.id === 'torren' && p.hp > 0)
@@ -12149,9 +12187,11 @@
         if (dead) return;
         const who = t.type === 'party' ? party[t.index].id : '';
         const side = t.type === 'party' ? ' ally' : ' foe';
+        const job = who === 'lira' && spark && spark.path ? ' ' + spark.path : '';
         const mark = who === 'nima' ? ' nima' : who === 'torren' ? ' torren' : '';
         const now = i === combatTurnIndex;
-        chips.push(`<span class="turn-chip${side}${mark}${now ? ' now' : ''}">${now ? 'Now · ' : ''}${esc(name)}</span>`);
+        const jobWord = who === 'lira' && spark && spark.path ? ' · ' + PATH_LABEL[spark.path] : '';
+        chips.push(`<span class="turn-chip${side}${mark}${job}${now ? ' now' : ''}">${now ? 'Now · ' : ''}${esc(name)}${jobWord}</span>`);
       });
       if (assistCue) chips.unshift('<span class="turn-chip assist">' + esc(assistCue) + '</span>');
       order.innerHTML = '<span class="turn-label">Order</span>' + chips.join('<span class="turn-sep" aria-hidden="true">›</span>');
@@ -12552,6 +12592,7 @@
     camera.position.set(playerMesh.position.x, CAMERA_HEIGHT, playerMesh.position.z + CAMERA_DIST);
     runLive = true;
     ensureBed();
+    refreshRumor();
     updateHUD();
     if (!(opts && opts.skipSave)) saveGame();
     if (!introToastShown) {
@@ -12861,7 +12902,7 @@
     const rows = [{
       name: 'Verdant Isle',
       note: !seenBeats.village
-        ? 'Where she woke. North-west is the leaf-village. A letter is inside. It is not the road.'
+        ? 'The spark is in Lira. The mouth stays hers. North-west is the leaf-village. A letter is inside. It is not the road.'
         : !seenBeats['furrow-letter']
           ? (party.some((p) => p.id === 'nima')
             ? 'Where she woke. Nima walks with her. The letter is still in the basket.'
