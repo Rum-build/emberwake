@@ -4304,6 +4304,7 @@
     g.add(makeCairn(4.2, 8.8));
     g.add(makeRationStall(-8.6, 3.2));
     dressHarbor(g);
+    dressRoostRim(g);
     dressCoastMist(g);
     g.userData.gusts = makeGusts(g, 5, 0xd0e4f0);
   }
@@ -4402,6 +4403,51 @@
     perch.add(bird);
     perch.position.set(8.8, 0, 7.2);
     g.add(perch);
+  }
+
+  function dressRoostRim(g) {
+    const rig = new THREE.Group();
+    rig.position.set(2.95, 0, 7.45);
+    const rope = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.04, 0.04, 1.1, 6),
+      new THREE.MeshLambertMaterial({ color: 0xd2b07a })
+    );
+    rope.rotation.z = Math.PI / 2;
+    rope.position.y = 1.42;
+    rig.add(rope);
+    const post = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.045, 0.06, 1.65, 5),
+      new THREE.MeshLambertMaterial({ color: 0x2e2a28 })
+    );
+    post.position.set(0.62, 0.82, 0.12);
+    rig.add(post);
+    const lamp = new THREE.Mesh(
+      new THREE.BoxGeometry(0.24, 0.28, 0.24),
+      new THREE.MeshBasicMaterial({ color: 0xffd08a, fog: false })
+    );
+    lamp.position.set(0.62, 1.72, 0.12);
+    rig.add(lamp);
+    const glow = new THREE.PointLight(0xffc878, 0.45, 3.4);
+    glow.position.set(0.62, 1.62, 0.12);
+    rig.add(glow);
+    const mist = new THREE.Mesh(
+      new THREE.RingGeometry(0.34, 0.58, 22),
+      new THREE.MeshBasicMaterial({
+        color: 0xd5e4f0, transparent: true, opacity: 0.62, depthWrite: false, side: THREE.DoubleSide, fog: false,
+      })
+    );
+    mist.rotation.x = -Math.PI / 2;
+    mist.position.set(0.08, 0.07, 0.02);
+    rig.add(mist);
+    const veil = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.15, 0.72),
+      new THREE.MeshBasicMaterial({
+        color: 0xe7f1f8, transparent: true, opacity: 0.5, depthWrite: false, side: THREE.DoubleSide, fog: false,
+      })
+    );
+    veil.position.set(-0.04, 1.05, -0.22);
+    rig.add(veil);
+    g.add(rig);
   }
 
   function buildCoast() {
@@ -4668,6 +4714,14 @@
     cleanRing.position.y = 0.14;
     cleanRing.visible = false;
     g.add(cleanRing);
+    const readyMat = new THREE.MeshBasicMaterial({
+      color: elColor.clone(), transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false, fog: false,
+    });
+    const readyRing = new THREE.Mesh(new THREE.RingGeometry(3.85, 4.22, 32), readyMat);
+    readyRing.rotation.x = -Math.PI / 2;
+    readyRing.position.y = 0.2;
+    readyRing.visible = false;
+    g.add(readyRing);
     const embers = [];
     for (let i = 0; i < 8; i++) {
       const ember = new THREE.Mesh(
@@ -4762,7 +4816,7 @@
       interior: def.interior || null,
       region: def.region || 'verdant-isle',
       rotMat, rotColor, healColor, elColor, lifeMat, coreMat, core, beamMat, neck,
-      spikes, flowers, motes, ripple, rippleMat, sheen, cleanRing, cleanMat, embers, figure, seal, sealRing, rim, rimMat, watchers, cork, phase: Math.random() * 6,
+      spikes, flowers, motes, ripple, rippleMat, sheen, cleanRing, cleanMat, readyRing, readyMat, embers, figure, seal, sealRing, rim, rimMat, watchers, cork, phase: Math.random() * 6,
       group: g,
     };
     pools.push(pool);
@@ -4807,6 +4861,7 @@
     }
     if (pool.sealRing) pool.sealRing.visible = !pool.patrol;
     if (pool.cork) pool.cork.visible = false;
+    if (pool.readyRing) pool.readyRing.visible = false;
     if (pool.watchers) pool.watchers.forEach((fig) => { fig.visible = true; });
   }
 
@@ -4874,6 +4929,15 @@
         if (show) {
           pool.cleanRing.scale.setScalar(1 + (1 - burst) * 1.35);
           pool.cleanMat.opacity = burst * 0.9;
+        }
+      }
+      if (pool.readyRing) {
+        const show = poolDrinkable(pool) && pool === nearPool;
+        pool.readyRing.visible = show;
+        if (show) {
+          const pulse = motionWanted ? 1 + Math.sin(t * 3.4) * 0.035 : 1;
+          pool.readyRing.scale.setScalar(pulse);
+          pool.readyMat.opacity = 0.88;
         }
       }
       if (pool.embers) {
@@ -7125,8 +7189,13 @@
     absorbBtn.classList.toggle('is-ready', !!showAbsorb);
   }
 
+  function poolDrinkable(pool) {
+    return !!(pool && !pool.absorbed && !pool.bottled && !pool.withheld && !(pool.id === 'kiln' && !seenBeats.kiln));
+  }
+
   function updatePrompt() {
     const atExit = atInteriorExit();
+    interactPrompt.classList.remove('ready');
     if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearScrap && !nearCompany && !nearPorter && !nearLetter && !nearChest && !nearSpare && !nearJournal && !nearNotice && !nearCord && !nearPost && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
@@ -7134,6 +7203,7 @@
     interactPrompt.classList.remove('hidden');
     if (locale !== 'field' && nearPool && !atInteriorExit()) {
       const guarded = nearPool.id === 'kiln' && !seenBeats.kiln && !nearPool.absorbed;
+      interactPrompt.classList.toggle('ready', poolDrinkable(nearPool));
       $('#interact-title').textContent = nearPool.name;
       $('#interact-detail').textContent = guarded
         ? 'Something in the kiln is still feeding. It will not share until it is beaten.'
@@ -7365,6 +7435,7 @@
       $('#interact-detail').textContent = approachPool.name + ' is near. Step into the mouth. Absorb appears when you are standing in it.';
       return;
     }
+    interactPrompt.classList.toggle('ready', poolDrinkable(nearPool));
     $('#interact-title').textContent = nearPool.name;
     $('#interact-detail').textContent = nearPool.bottled
       ? 'A Concord seal sits on the mouth. They called this safety while you watched.'
@@ -7579,7 +7650,7 @@
         : def.field
           ? `<button class="btn btn-small" type="button" data-act="use" data-id="${esc(s.id)}">Use${gain ? ' · ' + gain : ''}</button>`
           : '';
-      return `<li class="inv-card"><div class="row"><span class="name">${esc(def.name)} · stack ${s.count}</span>${use}</div><div class="desc">${esc(def.desc)}${gain ? ' Restores up to ' + gain + '.' : ''}</div></li>`;
+      return `<li class="inv-card"><div class="row"><span class="name">${esc(def.name)}</span><span class="stack">stack ${s.count}</span>${use}</div><div class="desc">${esc(def.desc)}${gain ? ' Restores up to ' + gain + '.' : ''}</div></li>`;
     }).join('') || '<li class="empty-line">No consumables. Stacks stay together.</li>';
 
     const shardRows = shards.slice().sort((a, b) => {
@@ -7640,6 +7711,7 @@
     if (open && gameState !== State.OVERWORLD) return;
     inventoryOpen = open;
     inventoryPanel.classList.toggle('hidden', !open);
+    document.body.classList.toggle('pack-open', open);
     if (open) {
       closePlaces();
       joy.active = false;

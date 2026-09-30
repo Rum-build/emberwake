@@ -439,6 +439,13 @@ Playable on the Verdant Isle field:
 - The claim bed sits a little under the field so the low tones read. The aftermath seat stays quieter. That is the same cue.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Pack, absorb, and the roost (this branch)
+
+- On a phone, the pack’s item rows keep the stack apart from the name, and Close sits across the top so it does not cover the stick or Places.
+- A pool in range wears one brighter ring. The prompt puts Absorb in front of the pool’s own name. The drink, the radius, and the scar stay as they were.
+- The harbor roost keeps a rope, a lamp, and a mist rim off the roost, the door, the clerk, and the south walk.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
