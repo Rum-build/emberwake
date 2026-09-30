@@ -1025,6 +1025,7 @@
     dressIsleGround();
     dressPathAir();
     dressIslePath();
+    dressVillagePath();
     dressWakeCover();
 
     overworldGroup.add(new THREE.AmbientLight(0xfff4e4, 0.36));
@@ -7696,6 +7697,100 @@
     const pathLamp = new THREE.PointLight(0xc5d6ee, 0.42, 5.5);
     pathLamp.position.set(-8.1, 1.35, -7.7);
     overworldGroup.add(pathLamp);
+  }
+
+  function dressVillagePath() {
+    const dirt = new THREE.MeshPhongMaterial({
+      color: 0x6a4e32, shininess: 6, specular: new THREE.Color(0xc4a070),
+    });
+    const dirtDark = new THREE.MeshPhongMaterial({
+      color: 0x3e2c1c, shininess: 4, specular: new THREE.Color(0x8a6848),
+    });
+    const leaf = new THREE.MeshPhongMaterial({
+      color: 0x6a8a3a, shininess: 8, specular: new THREE.Color(0xd8e890), side: THREE.DoubleSide,
+    });
+    const litter = new THREE.MeshPhongMaterial({
+      color: 0x8a5a32, shininess: 5, specular: new THREE.Color(0xe0c090), side: THREE.DoubleSide,
+    });
+    const chipMat = new THREE.MeshPhongMaterial({
+      color: 0x7a7268, shininess: 20, specular: new THREE.Color(0xe4dcc8),
+    });
+    const ash = new THREE.MeshPhongMaterial({
+      color: 0xc4b0a0, shininess: 10, specular: new THREE.Color(0xf4ece4),
+    });
+    function plate(x, z, rot) {
+      const group = new THREE.Group();
+      const disc = new THREE.Mesh(new THREE.CircleGeometry(0.48, 8), dirt);
+      disc.rotation.x = -Math.PI / 2;
+      disc.position.y = 0.028;
+      disc.receiveShadow = true;
+      group.add(disc);
+      const inner = new THREE.Mesh(new THREE.CircleGeometry(0.2, 6), dirtDark);
+      inner.rotation.x = -Math.PI / 2;
+      inner.position.set(0.08, 0.034, -0.04);
+      group.add(inner);
+      const crack = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.012, 0.025), ash);
+      crack.position.y = 0.04;
+      crack.rotation.y = 0.4;
+      group.add(crack);
+      const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.05, 0), chipMat);
+      chip.position.set(0.22, 0.05, 0.08);
+      chip.scale.y = 0.45;
+      group.add(chip);
+      group.position.set(x, 0, z);
+      group.rotation.y = rot;
+      overworldGroup.add(group);
+    }
+    [[-7.15, -6.85, 0.2], [-8.55, -5.95, -0.15], [-7.4, -6.15, 0.35], [-9.55, -7.15, 0.5], [-6.25, -7.25, -0.3]].forEach((spot) => {
+      plate(spot[0], spot[1], spot[2]);
+    });
+    [[-7.35, -6.5], [-7.6, -5.7], [-9.4, -7.5], [-6.55, -6.95], [-7.85, -8.65]].forEach((spot, i) => {
+      for (let n = 0; n < 3; n++) {
+        const bit = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.07), n === 1 ? litter : leaf);
+        bit.rotation.x = -Math.PI / 2;
+        bit.rotation.z = i * 0.4 + n * 0.7;
+        bit.position.set(spot[0] + (n - 1) * 0.06, 0.045 + n * 0.004, spot[1] + n * 0.03);
+        overworldGroup.add(bit);
+      }
+    });
+    [[-7.05, -7.15], [-9.25, -6.95], [-6.85, -6.35]].forEach((spot) => {
+      const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(0.07, 0), chipMat);
+      rock.position.set(spot[0], 0.04, spot[1]);
+      rock.scale.y = 0.45;
+      rock.castShadow = true;
+      overworldGroup.add(rock);
+    });
+    [[-8.15, -13.65], [-7.7, -13.5], [-8.45, -13.85]].forEach((spot) => {
+      const group = new THREE.Group();
+      [[0, 0, 0.04], [0.06, 0.02, 0.028], [-0.05, 0.03, 0.03]].forEach((bit) => {
+        const speck = new THREE.Mesh(new THREE.SphereGeometry(bit[2], 4, 3), ash);
+        speck.position.set(bit[0], bit[2] * 0.5, bit[1]);
+        group.add(speck);
+      });
+      group.position.set(spot[0], 0, spot[1]);
+      overworldGroup.add(group);
+    });
+    const wash = new THREE.Mesh(
+      new THREE.CircleGeometry(1.35, 12),
+      new THREE.MeshBasicMaterial({
+        color: 0xffc090, transparent: true, opacity: 0.05, depthWrite: false, fog: false,
+      })
+    );
+    wash.rotation.x = -Math.PI / 2;
+    wash.position.set(-8.3, 0.022, -6.4);
+    overworldGroup.add(wash);
+    const cool = new THREE.Mesh(
+      new THREE.CircleGeometry(0.9, 10),
+      new THREE.MeshBasicMaterial({
+        color: 0xc5b8e0, transparent: true, opacity: 0.04, depthWrite: false, fog: false,
+      })
+    );
+    cool.rotation.x = -Math.PI / 2;
+    cool.position.set(-7.4, 0.024, -6.9);
+    overworldGroup.add(cool);
+    const dusk = new THREE.PointLight(0xffb090, 0.14, 6);
+    dusk.position.set(-8.4, 1.25, -6.3);
+    overworldGroup.add(dusk);
   }
 
   function dressPathAir() {

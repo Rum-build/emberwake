@@ -749,6 +749,10 @@ At the messenger roost, the perch and the rope walk now carry grit, rope grain w
 
 South of the sleeping waystone, the approach now carries layered flagstone plates, lichen grit, moss in the joints, a soft dusk wash, and worn edge chips. The waystone ring, the rim grit, and the south-stone look stay where they were. The roost ground, the pier boards, the yard cobbles, the scar approach, the leaf-cup bank, the wake ground, and the kiln are unchanged. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the village path pass
+
+On the village path, the ground now carries packed dirt plates, layered leaf litter, small stone chips, and a soft dusk wash. Ash grit sits beyond the door wreath. The dusk flagstones, the path look, and the wreath stay where they were. The waystone approach, the roost ground, the pier boards, the yard cobbles, the scar approach, the leaf-cup bank, the wake ground, and the kiln are unchanged. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
