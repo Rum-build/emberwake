@@ -897,6 +897,10 @@ Around the wake, the ground now carries layered grass tufts, soil grit, a soft s
 
 The walk from the wake to the leaf-village now carries worn flagstone grain, moss in the joints, a dusk shadow wash, and edge chips. The village door and the path look stay where they were. No new cue.
 
+## Shipped in the scar soil pass
+
+Under the farm marker, the ground now carries cracked rot soil, ash grit, a sickly moss fringe, and darker fissure lines. The marker, the smoke look, and the scar drink stay where they were. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
