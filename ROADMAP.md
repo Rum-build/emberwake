@@ -583,6 +583,12 @@ Playable on the Verdant Isle field:
 - Places names that lintel only after the claim is walked. It does not say what the ending will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Breach dust, and the near stones (this branch)
+
+- The first breach keeps mortar grain on the near stones, cooler dust beside them, and a cooler catch on the open rib. The shafts, the bar, and the piles stay. The south step stays.
+- Places names that dust only after the breach is walked. It does not say what the claim will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
