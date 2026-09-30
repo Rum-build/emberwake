@@ -172,6 +172,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - Beside the counting-room clerk desk, worn ledger-side planks, ink grit, a cooler lamp wash, and standing scuffs sit under a soft shadow on the desk lip. The clerk, the ledger lamp, and the rug stay readable. No new cue.
 - At the cellar door, worn mouth stones, damp grit, a cooler ash wash, and threshold scuffs sit under a soft shadow on the sill. The door and the mouth floor stay readable. No new cue.
 - Lira’s face keeps a softer cheek and jaw, finer hair with a parting catch, clearer eye lights, and a tunic fold where the gear sits. Equipped gear stays readable. Vesper stays a dark cloth with a hair lock. No new cue.
+- Torren’s face keeps a softer cheek and jaw, finer crop strands with a parting catch, clearer eye lights, and a tunic fold where the coat sits. His cudgel and seal coat stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 
 ## Play on your phone
 

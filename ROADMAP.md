@@ -789,6 +789,10 @@ At the root-cellar door, the threshold now carries worn mouth stones, damp grit 
 
 Lira’s face now carries softer cheek and jaw volume, finer hair strands with a parting catchlight, clearer eye catchlights, and a subtle cloth fold on the base tunic where it meets the gear. Equipped clothes, armour, and weapons stay on the body and stay readable. The cellar door, the clerk desk, the vault sill, and the earlier ground passes are unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the Torren face pass
+
+Torren’s face now carries softer cheek and jaw volume, finer crop strands with a parting catchlight, clearer eye catchlights, and a subtle cloth fold on the base tunic where it meets the coat. His ledger cudgel and seal coat stay on the body and stay readable. Lira’s face, the cellar door, and the earlier ground passes are unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
