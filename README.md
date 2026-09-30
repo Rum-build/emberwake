@@ -167,6 +167,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - In the bottle-hall, cork grit, a seal-dust wash, worn tile plates, shelf-shadow fill, and scuff marks sit on the floor toward the cork racks. The near corks and the seal grit stay readable. No new cue.
 - At the cellar mouth, ash grit plates, damp stone courses, a mouth-ash wash, and threshold scuffs sit under a cooler lamp rim. The mouth ash and the door stay readable. No new cue.
 - In the counting room, worn ledger boards, chalk grit, a lamp-warm wash, desk-shadow fill, and scuff marks sit on the floor toward the clerk desk. The ledger lamp and the rug stay readable. No new cue.
+- On the telegraph approach, packed dirt plates, wire-pole grit, and sparse grass tufts sit under a soft dusk wash. Scuff marks run under the wire. The tick and the post stay readable. No new cue.
 
 ## Play on your phone
 

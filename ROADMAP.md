@@ -769,6 +769,10 @@ At the cellar mouth, the floor now carries ash grit plates, damp stone courses, 
 
 In the counting room, the floor now carries worn ledger-board grain, chalk grit, a lamp-warm wash on the boards, desk-shadow fill, and scuff marks toward the clerk desk. The ledger lamp, the rug, and the salt shafts stay where they were. The cellar mouth, the bottle-hall floor, the nave floor, the village path, the waystone approach, the roost ground, the pier boards, the yard cobbles, the scar approach, the leaf-cup bank, the wake ground, and the kiln are unchanged. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the telegraph approach pass
+
+On the walk up to the harbor telegraph, the ground now carries packed dirt plates, wire-pole grit, sparse grass tufts, a soft dusk wash, and scuff marks under the wire. The tick, the post, and the cooler lamp stay where they were. The counting room, the cellar mouth, the bottle-hall floor, the nave floor, the village path, the waystone approach, the roost ground, the pier boards, the yard cobbles, the scar approach, the leaf-cup bank, the wake ground, and the kiln are unchanged. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
