@@ -214,6 +214,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The Pack panel keeps an ember rim, a soft shadow, clearer slot borders, and a richer parchment fill. Open and close stay the same. No new cue.
 - The leaf-village house walls keep plank grain, plaster patches, moss at the base, and window-sill wear. The door and the well stay readable. No new cue.
 - The kiln yard keeps denser ash drift, charcoal flecks, heat-scorch near the mouth, and worn footpath grit. The drink and the throat stay readable. No new cue.
+- The talk panel keeps an ember rim, a soft shadow, a warmer parchment fill, and clearer choice borders. Open, close, and the lines stay the same. No new cue.
 
 ## Play on your phone
 

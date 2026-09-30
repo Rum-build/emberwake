@@ -1750,9 +1750,21 @@ body.pack-open .places-panel {
   transform: translateX(-50%);
   width: min(640px, calc(100% - 48px));
   z-index: 90;
-  background: rgba(12, 10, 9, 0.96);
-  border: 2px solid rgba(212, 176, 112, 0.78);
-  box-shadow: inset 0 0 0 1px rgba(255, 224, 160, 0.22), 0 16px 40px rgba(0, 0, 0, 0.45);
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 214, 160, 0.05) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(0deg, rgba(90, 48, 24, 0.08) 0 1px, transparent 1px 12px),
+    linear-gradient(180deg, rgba(255, 214, 168, 0.22), rgba(255, 168, 88, 0.05) 22%, transparent 42%),
+    linear-gradient(168deg, #4a3426 0%, #2c1e16 48%, #16100c 100%);
+  border: 2px solid rgba(255, 186, 110, 0.94);
+  border-radius: 12px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 214, 0.55),
+    inset 0 0 0 1px rgba(120, 58, 22, 0.55),
+    inset 0 0 28px rgba(255, 120, 48, 0.12),
+    0 0 0 1px rgba(255, 140, 60, 0.42),
+    0 0 22px rgba(255, 120, 48, 0.4),
+    0 18px 36px rgba(0, 0, 0, 0.5),
+    0 -14px 28px rgba(0, 0, 0, 0.32);
   padding: 14px 16px 12px;
   pointer-events: auto;
 }
@@ -1808,6 +1820,14 @@ body.pack-open .places-panel {
   min-height: 48px;
   font-size: 1rem;
   padding: 12px 16px;
+  border: 2px solid rgba(255, 196, 130, 0.9);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 214, 168, 0.18), rgba(42, 26, 16, 0.94));
+  color: #fff1dc;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 214, 0.38),
+    0 6px 14px rgba(0, 0, 0, 0.32);
 }
 
 .dialogue-advance {
@@ -1815,6 +1835,13 @@ body.pack-open .places-panel {
   font-size: 1.05rem;
   padding: 12px 20px;
   align-self: stretch;
+  border: 2px solid rgba(255, 214, 160, 0.95);
+  border-radius: 8px;
+  background: linear-gradient(180deg, #a86838, #4a2818);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 214, 0.48),
+    0 0 14px rgba(255, 120, 48, 0.3),
+    0 6px 14px rgba(0, 0, 0, 0.32);
 }
 
 .dialogue-keys {
