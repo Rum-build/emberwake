@@ -193,6 +193,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - Lira’s starter stick keeps bark grain, a worn grip wrap, and tip scuffs, and it sits in the hand when the scout knife is equipped. The knife, the other weapons, and the move stick stay readable. No new cue.
 - The field bed and the existing stings are loud enough to hear. The first tap on Start, Continue, or a move resumes the sound, and Silent still stops it. The eight cues stay the set. No new cue.
 - Lira’s pack keeps canvas weave, strap buckles, and worn seams, and it sits on her back. The pack panel, the move stick, and the eight cues stay readable. No new cue.
+- The aftermath south steps keep worn stone grain, edge chips, moss in the joints, and a soft ash wash. The step back and Vesper’s absence stay. No new cue.
 
 ## Play on your phone
 
