@@ -16,7 +16,7 @@ Add a row before a file is referenced by the game. Leave the row in place if a c
 |-------|--------|---------|--------|----------|
 | Field bed | Emberwake (original, this repository) | CC0 | Procedural. No recording. `game.js` loops filtered noise and two slow tones. | Quiet ambient after Wake or Continue, until Silent is pressed |
 | Coast bed | Emberwake (original, this repository) | CC0 | Procedural. No recording. The field bed retuned: higher filter, tones at 92 and 138. | Stormreach Coast, until Silent is pressed |
-| Claim bed | Emberwake (original, this repository) | CC0 | Procedural. No recording. The field bed retuned: lower filter, tones at 55 and 82. | Remnant claim and the aftermath, until Silent is pressed |
+| Claim bed | Emberwake (original, this repository) | CC0 | Procedural. No recording. The field bed retuned: lower filter, tones at 55 and 82. In the aftermath the same loop sits quieter. It is not a new cue. | Remnant claim and the aftermath, until Silent is pressed |
 | Absorb sting | Emberwake (original, this repository) | CC0 | Procedural. No recording. Two short triangle tones and a soft sine in `game.js`. | Plays when a pool is absorbed, if Sound is on |
 | Ration bite | Emberwake (original, this repository) | CC0 | Procedural. No recording. Two short sine tones in `game.js`. | Plays when a Concord ration is taken or traded, if Sound is on |
 | Merge sting | Emberwake (original, this repository) | CC0 | Procedural. No recording. Three short triangle tones in `game.js`. | Plays when a merge is spent in a fight, if Sound is on |

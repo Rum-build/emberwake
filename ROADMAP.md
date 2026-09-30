@@ -404,6 +404,13 @@ Playable on the Verdant Isle field:
 - Lira’s coat keeps a cooler scarf and a clearer face so she reads on the dusk boards. Concord coats and Vesper stay as they were.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Aftermath boards and the credits (this branch)
+
+- Each ending keeps a short closing line. Claim: she still wears it. Refuse: her name stayed and the number stayed. Share: she stands beside the mass and does not enter. Burn: the scar is the echo.
+- The room wears a side board, a rim, and a few stones off the credits and the south step. On Share, Vesper stays beside the mass.
+- Credits names the browser engine and thanks the walk. The claim bed sits quieter in that room. That quieter seat is the same cue.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

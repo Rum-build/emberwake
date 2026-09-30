@@ -280,6 +280,12 @@ body.still-motion .encounter-flash.active {
   font-size: 0.92rem;
 }
 
+.credits-thanks {
+  color: #e6d7bc !important;
+  border-top: 1px solid rgba(212, 176, 112, 0.4);
+  padding-top: 12px;
+}
+
 .path-content {
   width: min(920px, 100%);
 }
@@ -1714,6 +1720,8 @@ body:not(.still-motion) .btn-absorb.is-ready {
     max-width: none;
     text-align: left;
   }
+  .credits-content p { font-size: 0.92rem; }
+  .credits-thanks { font-size: 0.9rem; }
 }
 
 @media (max-width: 520px) {
