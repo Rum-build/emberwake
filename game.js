@@ -5550,6 +5550,7 @@
     dressCoastMist(g);
     dressCoastShore(g);
     dressHarborWire(g);
+    dressWireApproach(g);
     g.userData.gusts = makeGusts(g, 5, 0xd0e4f0);
   }
 
@@ -5740,6 +5741,103 @@
     cool.position.set(0, 1.7, 0.2);
     post.add(cool);
     g.add(post);
+  }
+
+  function dressWireApproach(g) {
+    function shelfHeight(x, z) {
+      const y = 6 - z;
+      return Math.sin(x * 0.42) * Math.cos(y * 0.36) * 0.46 + Math.sin(x * 1.25 + y * 0.5) * 0.12;
+    }
+    const dirt = new THREE.MeshPhongMaterial({
+      color: 0x6a5340, shininess: 8, specular: new THREE.Color(0xc4a888),
+    });
+    const worn = new THREE.MeshPhongMaterial({
+      color: 0x3a2c22, shininess: 4, specular: new THREE.Color(0x8a7058),
+    });
+    const pale = new THREE.MeshPhongMaterial({
+      color: 0x9a8468, shininess: 14, specular: new THREE.Color(0xe8d4b8),
+    });
+    const gritMat = new THREE.MeshPhongMaterial({
+      color: 0x8a9098, shininess: 28, specular: new THREE.Color(0xd5e4f2),
+    });
+    const grassMat = new THREE.MeshPhongMaterial({
+      color: 0x6a7a52, shininess: 8, specular: new THREE.Color(0xc8d8a0),
+    });
+    function plate(x, z, rot) {
+      const group = new THREE.Group();
+      const slab = new THREE.Mesh(new THREE.CircleGeometry(0.46, 7), dirt);
+      slab.rotation.x = -Math.PI / 2;
+      slab.position.y = 0.03;
+      slab.receiveShadow = true;
+      group.add(slab);
+      const cap = new THREE.Mesh(new THREE.CircleGeometry(0.18, 5), worn);
+      cap.rotation.x = -Math.PI / 2;
+      cap.position.set(0.08, 0.04, -0.04);
+      group.add(cap);
+      const lip = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.022, 4, 8, Math.PI * 1.1), pale);
+      lip.rotation.x = Math.PI / 2;
+      lip.position.y = 0.045;
+      group.add(lip);
+      const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.04, 0), worn);
+      chip.position.set(-0.22, 0.05, 0.06);
+      chip.scale.y = 0.35;
+      group.add(chip);
+      group.position.set(x, shelfHeight(x, z), z);
+      group.rotation.y = rot;
+      g.add(group);
+    }
+    [
+      [-3.15, 2.55, 0.2], [-2.35, 2.85, -0.25], [-4.7, 2.85, 0.35],
+      [-4.55, 3.7, -0.1], [-5.3, 2.55, 0.15], [-2.4, 1.9, -0.3], [-5.5, 3.6, 0.08],
+    ].forEach((spot) => {
+      plate(spot[0], spot[1], spot[2]);
+    });
+    function grit(x, z) {
+      const group = new THREE.Group();
+      [[0, 0, 0.034], [0.06, 0.02, 0.022], [-0.05, 0.03, 0.026], [0.02, -0.05, 0.018]].forEach((spot) => {
+        const speck = new THREE.Mesh(new THREE.DodecahedronGeometry(spot[2], 0), gritMat);
+        speck.position.set(spot[0], spot[2] * 0.6, spot[1]);
+        group.add(speck);
+      });
+      group.position.set(x, shelfHeight(x, z) + 0.02, z);
+      g.add(group);
+    }
+    [[-3.2, 2.15], [-4.75, 2.1], [-3.55, 3.15]].forEach((spot) => {
+      grit(spot[0], spot[1]);
+    });
+    function tuft(x, z, rot) {
+      const group = new THREE.Group();
+      [[0, 0, 0.22], [0.06, 0.02, 0.16], [-0.05, 0.03, 0.18]].forEach((spot) => {
+        const blade = new THREE.Mesh(new THREE.ConeGeometry(0.022, spot[2], 4), grassMat);
+        blade.position.set(spot[0], spot[2] * 0.5, spot[1]);
+        blade.rotation.z = spot[0] * 1.4;
+        group.add(blade);
+      });
+      group.position.set(x, shelfHeight(x, z), z);
+      group.rotation.y = rot;
+      g.add(group);
+    }
+    [[-2.9, 2.9, 0.2], [-4.4, 3.5, -0.4], [-5.2, 3.9, 0.5], [-5.0, 3.4, 0.1]].forEach((spot) => {
+      tuft(spot[0], spot[1], spot[2]);
+    });
+    const washMat = new THREE.MeshBasicMaterial({
+      color: 0xc4b49a, transparent: true, opacity: 0.07, depthWrite: false, fog: false,
+    });
+    [[-4.2, 2.6, 0.9], [-2.3, 2.7, 0.65]].forEach((spot) => {
+      const wash = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 10), washMat);
+      wash.rotation.x = -Math.PI / 2;
+      wash.position.set(spot[0], shelfHeight(spot[0], spot[1]) + 0.02, spot[1]);
+      g.add(wash);
+    });
+    const scuffMat = new THREE.MeshPhongMaterial({
+      color: 0x2a2018, shininess: 3, specular: new THREE.Color(0x6a5840),
+    });
+    [[-3.3, 2.7, 0.35], [-2.7, 2.4, -0.2], [-4.2, 3.0, 0.15]].forEach((spot) => {
+      const scuff = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.012, 0.52), scuffMat);
+      scuff.position.set(spot[0], shelfHeight(spot[0], spot[1]) + 0.04, spot[1]);
+      scuff.rotation.y = spot[2];
+      g.add(scuff);
+    });
   }
 
   function dressRoostRim(g) {
