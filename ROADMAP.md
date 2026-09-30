@@ -425,6 +425,13 @@ Playable on the Verdant Isle field:
 - A fight that remembers her mouth says she farms the rot. The blow is unchanged.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Breach grit and company faces (this branch)
+
+- A fight in the first breach or the ash nave opens on ember grit. The foe wears a clearer rim. The breach fight names the breach. The blow is unchanged.
+- Torren keeps a scar and a red scarf. Nima keeps a herb scarf. Their chips on the ribbon match. Lira’s scarf stays as it was. Assist chips stay.
+- Before the breach is walked, Places names it north of the widened crack. The letter, the kiln, and the leaf-cup stay as they were.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

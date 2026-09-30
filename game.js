@@ -4968,6 +4968,8 @@
     const concord = kind === 'concord';
     const vesper = kind === 'vesper';
     const lira = kind === 'lira';
+    const nima = kind === 'nima';
+    const torren = kind === 'torren';
     const clothMat = new THREE.MeshPhongMaterial({
       color,
       emissive: new THREE.Color(vesper ? 0x12080c : concord ? 0x10141c : 0x1a100c),
@@ -5018,23 +5020,23 @@
     buckle.position.set(0, 0.42 * scale, 0.16 * scale);
     g.add(buckle);
     const skin = new THREE.MeshPhongMaterial({
-      color: vesper ? 0x6a4038 : lira ? 0xf2c8aa : 0xe8b090,
-      emissive: new THREE.Color(vesper ? 0x1a0c0c : lira ? 0x5c3424 : 0x3a2018),
+      color: vesper ? 0x6a4038 : lira ? 0xf2c8aa : nima ? 0xf6d2b6 : torren ? 0xc47a58 : 0xe8b090,
+      emissive: new THREE.Color(vesper ? 0x1a0c0c : lira ? 0x5c3424 : nima ? 0x4a3024 : torren ? 0x3a1810 : 0x3a2018),
       shininess: 9,
-      specular: new THREE.Color(vesper ? 0x3a2018 : lira ? 0x8a5040 : 0x6a4030),
+      specular: new THREE.Color(vesper ? 0x3a2018 : lira ? 0x8a5040 : nima ? 0x8a5840 : torren ? 0x5a3020 : 0x6a4030),
     });
     const head = new THREE.Mesh(new THREE.SphereGeometry(0.2 * scale, 8, 7), skin);
     head.position.y = 1.08 * scale;
     g.add(head);
     const hairMat = new THREE.MeshPhongMaterial({
-      color: vesper ? 0x14080c : concord ? 0x161410 : 0x24160e,
+      color: vesper ? 0x14080c : concord ? 0x161410 : nima ? 0x1a2820 : torren ? 0x140e0c : 0x24160e,
       emissive: new THREE.Color(vesper ? 0x100608 : 0x0c0806),
       shininess: concord ? 4 : 12,
       specular: new THREE.Color(vesper ? 0x3a2018 : 0x5a4030),
     });
     const hair = new THREE.Group();
     const cap = new THREE.Mesh(new THREE.SphereGeometry(0.21 * scale, 8, 6), hairMat);
-    cap.scale.set(1.08, vesper ? 0.58 : concord ? 0.4 : 0.52, 1.05);
+    cap.scale.set(1.08, vesper ? 0.58 : concord || torren ? 0.4 : nima ? 0.62 : 0.52, 1.05);
     cap.position.y = 1.2 * scale;
     hair.add(cap);
     const bang = new THREE.Mesh(
@@ -5043,7 +5045,7 @@
     );
     bang.position.set(0, 1.15 * scale, 0.155 * scale);
     hair.add(bang);
-    const lockDrop = vesper ? 0.46 : concord ? 0.07 : 0.24;
+    const lockDrop = vesper ? 0.46 : concord || torren ? 0.08 : nima ? 0.34 : 0.24;
     [-1, 1].forEach((side) => {
       const lock = new THREE.Mesh(
         new THREE.BoxGeometry(0.07 * scale, lockDrop * scale, 0.07 * scale),
@@ -5052,7 +5054,7 @@
       lock.position.set(side * 0.15 * scale, (1.14 - lockDrop * 0.42) * scale, vesper ? -0.02 * scale : 0.02 * scale);
       hair.add(lock);
     });
-    if (!concord) {
+    if (!concord && !torren) {
       const tail = new THREE.Mesh(
         new THREE.BoxGeometry(0.11 * scale, (vesper ? 0.38 : 0.2) * scale, 0.07 * scale),
         hairMat
@@ -5075,7 +5077,7 @@
     g.add(rim);
     [-0.07, 0.07].forEach((x) => {
       const eye = new THREE.Mesh(
-        new THREE.SphereGeometry((lira ? 0.04 : 0.032) * scale, 5, 4),
+        new THREE.SphereGeometry((lira ? 0.04 : nima || torren ? 0.046 : 0.032) * scale, 5, 4),
         new THREE.MeshBasicMaterial({ color: 0x140c0a, fog: false })
       );
       eye.position.set(x * scale, 1.1 * scale, 0.17 * scale);
@@ -5113,6 +5115,54 @@
       );
       cheek.position.set(0, 1.045 * scale, 0.19 * scale);
       g.add(cheek);
+    }
+    if (nima) {
+      const scarfMat = new THREE.MeshPhongMaterial({
+        color: 0xd4e07a,
+        emissive: new THREE.Color(0x3a4010),
+        shininess: 8,
+        specular: new THREE.Color(0xf4f8d0),
+      });
+      const scarf = new THREE.Mesh(
+        new THREE.BoxGeometry(0.5 * scale, 0.1 * scale, 0.26 * scale),
+        scarfMat
+      );
+      scarf.position.set(0, 0.95 * scale, 0.04 * scale);
+      g.add(scarf);
+      const scarfTail = new THREE.Mesh(
+        new THREE.BoxGeometry(0.09 * scale, 0.28 * scale, 0.06 * scale),
+        scarfMat
+      );
+      scarfTail.position.set(0.2 * scale, 0.78 * scale, 0.08 * scale);
+      g.add(scarfTail);
+      const leaf = new THREE.Mesh(
+        new THREE.BoxGeometry(0.1 * scale, 0.05 * scale, 0.04 * scale),
+        new THREE.MeshBasicMaterial({ color: 0x8fbf62, fog: false })
+      );
+      leaf.position.set(0.12 * scale, 1.0 * scale, 0.16 * scale);
+      leaf.rotation.z = 0.5;
+      g.add(leaf);
+    }
+    if (torren) {
+      const scarfMat = new THREE.MeshPhongMaterial({
+        color: 0x8c3830,
+        emissive: new THREE.Color(0x2a100c),
+        shininess: 6,
+        specular: new THREE.Color(0xe8c8b0),
+      });
+      const scarf = new THREE.Mesh(
+        new THREE.BoxGeometry(0.52 * scale, 0.11 * scale, 0.24 * scale),
+        scarfMat
+      );
+      scarf.position.set(0, 0.94 * scale, 0.05 * scale);
+      g.add(scarf);
+      const scar = new THREE.Mesh(
+        new THREE.BoxGeometry(0.16 * scale, 0.02 * scale, 0.02 * scale),
+        new THREE.MeshBasicMaterial({ color: 0xf3e6dc, fog: false })
+      );
+      scar.position.set(0.06 * scale, 1.08 * scale, 0.19 * scale);
+      scar.rotation.z = -0.45;
+      g.add(scar);
     }
     if (concord) {
       const plate = new THREE.Mesh(
@@ -5162,7 +5212,7 @@
     g.userData.emberMotes = emberMotes;
     const nose = new THREE.Mesh(
       new THREE.BoxGeometry(0.06 * scale, 0.06 * scale, 0.08 * scale),
-      new THREE.MeshLambertMaterial({ color: lira ? 0xf6c8a8 : 0xe0a080 })
+      new THREE.MeshLambertMaterial({ color: lira ? 0xf6c8a8 : nima ? 0xf6d0b8 : torren ? 0xc48a68 : 0xe0a080 })
     );
     nose.position.set(0, 1.06 * scale, 0.18 * scale);
     g.add(nose);
@@ -6280,7 +6330,18 @@
     const cold = new THREE.PointLight(0x7aa0d8, 1.05, 16);
     cold.position.set(-3.4, 3.2, -1.4);
     combatGroup.add(cold);
-    combatGroup.userData.light = { floorMat, hillMat, backMat, ambient, sun, warm, cold };
+    const grit = new THREE.Group();
+    const emberChip = new THREE.MeshBasicMaterial({ color: 0xff6a28, fog: false });
+    const ashChip = new THREE.MeshBasicMaterial({ color: 0x3a2418, fog: false });
+    [[-2.4, 2.6, 0.18, true], [1.6, 2.35, 0.14, true], [0.2, 3.05, 0.22, true], [-1.1, 1.7, 0.12, false], [2.8, 1.55, 0.16, true], [-3.1, -2.6, 0.2, true], [2.2, -2.8, 0.15, false], [0.5, -3.15, 0.18, true]].forEach((spec) => {
+      const chip = new THREE.Mesh(new THREE.CircleGeometry(spec[2], 6), spec[3] ? emberChip : ashChip);
+      chip.rotation.x = -Math.PI / 2;
+      chip.position.set(spec[0], 0.055, spec[1]);
+      grit.add(chip);
+    });
+    grit.visible = false;
+    combatGroup.add(grit);
+    combatGroup.userData.light = { floorMat, hillMat, backMat, ambient, sun, warm, cold, grit };
   }
 
   function combatMood() {
@@ -6329,8 +6390,25 @@
       scene.fog.far = 64;
     }
     renderer.setClearColor(tone.fog);
+    if (pack.grit) pack.grit.visible = locale === 'first-breach' || locale === 'ash-nave';
     const ui = $('#combat-ui');
     if (ui) ui.classList.toggle('dusk-fight', combatMood() === 'dusk');
+  }
+
+  function breachFightOpen() {
+    return locale === 'first-breach' || locale === 'ash-nave';
+  }
+
+  function addFoeRim(figure) {
+    if (!breachFightOpen() || !figure) return;
+    const rim = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.28, 1.95),
+      new THREE.MeshBasicMaterial({
+        color: 0xffc090, transparent: true, opacity: 0.74, depthWrite: false, side: THREE.DoubleSide, fog: false,
+      })
+    );
+    rim.position.set(0, 0.98, -0.36);
+    figure.add(rim);
   }
 
   function combatMats(color, concord) {
@@ -6414,7 +6492,11 @@
 
   function makeEnemyMesh(enemy) {
     const concord = enemyConcord(enemy);
-    if (enemy.shape === 'human') return makeCharacter(enemy.color, 0.9, concord ? 'concord' : undefined);
+    if (enemy.shape === 'human') {
+      const figure = makeCharacter(enemy.color, 0.9, concord ? 'concord' : undefined);
+      addFoeRim(figure);
+      return figure;
+    }
     if (enemy.shape === 'rite') {
       const figure = makeCharacter(enemy.color, 1.12, concord ? 'concord' : undefined);
       const ring = new THREE.Mesh(
@@ -6434,6 +6516,7 @@
       );
       cloth.position.set(0.15, 1.15, 0.28);
       figure.add(cloth);
+      addFoeRim(figure);
       return figure;
     }
     if (enemy.shape === 'ledger') {
@@ -6460,6 +6543,7 @@
       );
       ash.position.set(0.28, 0.7, 0.12);
       figure.add(ash);
+      addFoeRim(figure);
       return figure;
     }
     if (enemy.shape === 'wing') {
@@ -10848,7 +10932,7 @@
       combatEnemyMeshes.push(mesh);
     });
     party.forEach((p, i) => {
-      const mesh = makeCharacter(p.color, 0.85, p.id === 'lira' ? 'lira' : undefined);
+      const mesh = makeCharacter(p.color, 0.85, p.id === 'lira' || p.id === 'nima' || p.id === 'torren' ? p.id : undefined);
       if (p.id === 'lira' && mesh.userData.ember) mesh.userData.ember.visible = true;
       mesh.position.set(3.6, 0, -1.7 + i * 1.55);
       mesh.rotation.y = Math.PI / 2;
@@ -10874,7 +10958,9 @@
       : enemies.some((e) => e.id === 'celebrant')
       ? 'A Concord last rite. The ward drinks a knife. A merge on the list tears it. A shoulder still stands in front.'
       : enemies.some((e) => e.id === 'captain')
-      ? 'A Concord last stand. The captain’s licence hits once, hard, unless a shoulder is already in front. Nima’s steady keeps the line.'
+      ? (locale === 'first-breach'
+        ? 'The first breach is open. The captain’s licence hits once, hard, unless a shoulder is already in front. Nima’s steady keeps the line.'
+        : 'A Concord last stand. The captain’s licence hits once, hard, unless a shoulder is already in front. Nima’s steady keeps the line.')
       : enemies.some((e) => e.id === 'stoker')
       ? 'Corked iron. A knife spends itself on the coat. Magma stays on them. Glass looks for the seam.'
       : enemies.some((e) => e.id === 'cinder')
@@ -11971,9 +12057,11 @@
         const name = t.type === 'party' ? party[t.index].name : enemies[t.index].name;
         const dead = t.type === 'party' ? party[t.index].hp <= 0 : !enemies[t.index].alive;
         if (dead) return;
+        const who = t.type === 'party' ? party[t.index].id : '';
         const side = t.type === 'party' ? ' ally' : ' foe';
+        const mark = who === 'nima' ? ' nima' : who === 'torren' ? ' torren' : '';
         const now = i === combatTurnIndex;
-        chips.push(`<span class="turn-chip${side}${now ? ' now' : ''}">${now ? 'Now · ' : ''}${esc(name)}</span>`);
+        chips.push(`<span class="turn-chip${side}${mark}${now ? ' now' : ''}">${now ? 'Now · ' : ''}${esc(name)}</span>`);
       });
       if (assistCue) chips.unshift('<span class="turn-chip assist">' + esc(assistCue) + '</span>');
       order.innerHTML = '<span class="turn-label">Order</span>' + chips.join('<span class="turn-sep" aria-hidden="true">›</span>');
@@ -12809,7 +12897,7 @@
             : 'Walked. The last stand or the light is still ahead.';
       rows.push({ name: 'First breach', note: breachNote });
     } else if (cryptWord === 'digit') {
-      rows.push({ name: 'First breach', note: 'Not walked yet. North of the widened crack. The list does not carry you.' });
+      rows.push({ name: 'First breach', note: 'North of the widened crack. That is the first breach. The list does not carry you.' });
     }
     if (seenBeats.claimStep || claimWord) {
       const claimNote = seenBeats.aftermath
