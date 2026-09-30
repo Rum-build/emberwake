@@ -182,6 +182,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - At the harbor telegraph, timber grain, iron bands, a taut wire, glass insulators, and a stone footing sit on the post, with packed dirt at the base. The tick and the approach stay readable. No new cue.
 - At the scar farm, weathered timber, iron fittings, an ash-rot stain, and footing grit sit on the marker, with a crop edge at the base. The smoke and the blister stay readable. No new cue.
 - At the cliff roost, weathered timber beams, rope lashings, nest bedding, and iron pegs sit on the perch, with grit at the footing. The climb and the wing stay readable. No new cue.
+- At the waystone, carved faces, lichen, and crack lines sit on the ring, with grit at the footing and a worn path edge. The south stones and the wake stay readable. No new cue.
 
 ## Play on your phone
 

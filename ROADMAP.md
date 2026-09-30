@@ -829,6 +829,10 @@ The scar farm now carries weathered timber on the marker, iron fittings, an ash-
 
 The cliff roost now carries weathered timber beams, rope lashings, nest bedding, iron pegs, and grit at the footing. The climb and the wing stay where they were. The scar farm, the harbor telegraph, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the waystone face pass
+
+The waystone now carries carved faces on the ring, lichen, crack lines, grit at the footing, and a worn path edge. The south stones and the wake stay where they were. The cliff roost, the scar farm, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

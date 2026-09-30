@@ -972,6 +972,7 @@
     if (stonePin) {
       waystoneGroup = makeWaystone(stonePin.x, stonePin.z);
       dressWaystoneRim(waystoneGroup);
+      dressWaystoneFace(waystoneGroup);
       dressWaystoneSouth();
       overworldGroup.add(waystoneGroup);
     }
@@ -5516,6 +5517,88 @@
     const cool = new THREE.PointLight(0xc5d6ee, 0.7, 8);
     cool.position.set(0, 1.8, 2.2);
     g.add(cool);
+  }
+
+  function dressWaystoneFace(g) {
+    const face = new THREE.Group();
+    face.userData.waystoneFace = true;
+    const stone = new THREE.MeshPhongMaterial({
+      color: 0x8e8a82, emissive: new THREE.Color(0x1a1c20), shininess: 24, specular: new THREE.Color(0xe8e4dc),
+    });
+    const cut = new THREE.MeshPhongMaterial({
+      color: 0x3a3e44, shininess: 10, specular: new THREE.Color(0x9aa4b0),
+    });
+    const lichen = new THREE.MeshPhongMaterial({
+      color: 0x7a8a52, emissive: new THREE.Color(0x1a2410), shininess: 8, specular: new THREE.Color(0xd8e8a8),
+    });
+    const pale = new THREE.MeshPhongMaterial({
+      color: 0xc6d0a4, shininess: 12, specular: new THREE.Color(0xf4f8e0),
+    });
+    for (let i = 0; i < 3; i++) {
+      const a = (i / 3) * Math.PI * 2;
+      const panel = new THREE.Group();
+      const slab = new THREE.Mesh(new THREE.BoxGeometry(0.52, 1.58, 0.04), stone);
+      panel.add(slab);
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.15, 0.016, 6, 14), cut);
+      ring.position.set(0, 0.32, 0.028);
+      panel.add(ring);
+      const notch = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.1, 0.016), cut);
+      notch.position.set(0, 0.32, 0.034);
+      panel.add(notch);
+      const split = new THREE.Mesh(new THREE.BoxGeometry(0.016, 1.05, 0.018), cut);
+      split.position.set(0.08, -0.12, 0.026);
+      split.rotation.z = 0.06;
+      panel.add(split);
+      const hair = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.012, 0.014), cut);
+      hair.position.set(-0.04, 0.48, 0.026);
+      hair.rotation.z = -0.4;
+      panel.add(hair);
+      [[-0.14, -0.48, 0.07, lichen], [0.1, -0.58, 0.05, pale], [-0.06, 0.52, 0.045, lichen]].forEach((spot) => {
+        const pad = new THREE.Mesh(new THREE.SphereGeometry(spot[2], 6, 4), spot[3]);
+        pad.scale.set(1.3, 0.45, 0.7);
+        pad.position.set(spot[0], spot[1], 0.03);
+        panel.add(pad);
+      });
+      panel.rotation.y = Math.PI / 2 - a;
+      panel.position.set(Math.cos(a) * 1.5, 1.14, Math.sin(a) * 1.5);
+      face.add(panel);
+    }
+    const gritMat = new THREE.MeshPhongMaterial({
+      color: 0x6a6860, shininess: 16, specular: new THREE.Color(0xd0ccc4),
+    });
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2 + 0.2;
+      const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(i % 2 ? 0.055 : 0.038, 0), gritMat);
+      chip.scale.y = 0.4;
+      chip.position.set(Math.cos(a) * 1.62, 0.04, Math.sin(a) * 1.62);
+      face.add(chip);
+    }
+    const lip = new THREE.Mesh(
+      new THREE.TorusGeometry(1.72, 0.03, 4, 16, Math.PI),
+      new THREE.MeshPhongMaterial({ color: 0x5c5850, shininess: 8, specular: new THREE.Color(0xb0a898) })
+    );
+    lip.rotation.x = Math.PI / 2;
+    lip.rotation.z = Math.PI;
+    lip.position.set(0, 0.03, 0.15);
+    face.add(lip);
+    [[0.35, 2.05, 0.22], [-0.4, 2.15, -0.2], [0.9, 1.95, 0.15]].forEach((spot) => {
+      const scuff = new THREE.Mesh(
+        new THREE.BoxGeometry(0.06, 0.01, 0.28),
+        new THREE.MeshPhongMaterial({ color: 0x2a2824, shininess: 3, specular: new THREE.Color(0x6a6860) })
+      );
+      scuff.position.set(spot[0], 0.03, spot[1]);
+      scuff.rotation.y = spot[2];
+      face.add(scuff);
+    });
+    const shade = new THREE.Mesh(
+      new THREE.CircleGeometry(0.55, 8),
+      new THREE.MeshBasicMaterial({ color: 0x121418, transparent: true, opacity: 0.22, depthWrite: false, fog: false })
+    );
+    shade.rotation.x = -Math.PI / 2;
+    shade.scale.set(1.6, 0.4, 1);
+    shade.position.set(0, 0.02, 1.35);
+    face.add(shade);
+    g.add(face);
   }
 
   function dressWaystoneSouth() {
