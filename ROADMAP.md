@@ -933,6 +933,10 @@ The ground and sill under the waystone’s carved face now carry worn stone grai
 
 The stone under the harbor vault’s iron door now carries worn threshold grain, an iron grit stain, moss in the seam, and shallow chips. The vault door, the quiet stand, and the vault beat stay where they were. No new cue.
 
+## Shipped in the clerk boards pass
+
+The timber under the counting-room clerk desk now carries plank grain, nail heads, scuff wear near the stool, and a faint ink stain. The desk, the clerk, and the clerk beat stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
