@@ -8076,13 +8076,13 @@
     const showNotice = idle && nearNotice && !showAbsorb && !showDoor && !showGate && !showReturn && !showPorter && !showChest;
     const showCord = idle && nearCord && !showAbsorb && !showDoor && !showChest;
     const showPost = idle && nearPost && !showAbsorb && !showDoor && !showChest && !showCord;
-    const showPier = idle && nearPier && !showAbsorb && !showDoor && !showGate && !showReturn && !showClerk && !showPatrol;
     const showRing = idle && nearRing && !showAbsorb && !showDoor && !showChest && !showCord && !showPost;
     const showClerk = idle && nearClerk && !showAbsorb && !showDoor && !showGate && !showReturn && !showPorter && !showNotice && !showChest;
     const showPatrol = idle && nearPatrol && !showAbsorb && !showDoor && !showGate && !showReturn && !showPorter && !showNotice && !showChest && !showClerk;
     const showRation = idle && nearRation && !showAbsorb && !showDoor && !showGate && !showReturn && !showPorter && !showNotice && !showClerk && !showChest;
     const showAside = idle && nearAside && !showAbsorb && !atExit && !showTalk && !showMark && !showCamp;
     const showNima = idle && nearNima && !showAbsorb && !atExit && !showTalk && !showMark && !showCamp && !showAside;
+    const showPier = idle && nearPier && !showAbsorb && !showDoor && !showGate && !showReturn && !showClerk && !showPatrol;
     absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showScrap && !showCompany && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showSpare && !showJournal && !showNotice && !showCord && !showPost && !showPier && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
