@@ -5336,7 +5336,7 @@
           const a = pool.phase + i * (Math.PI * 2 / pool.embers.length);
           const rad = extra ? 0.95 + (1 - burst) * 3.15 : 0.7 + (1 - burst) * 2.6;
           ember.position.set(Math.cos(a) * rad, extra ? 0.55 + (1 - burst) * 1.65 : 0.4 + (1 - burst) * 1.2, Math.sin(a) * rad);
-          ember.material.opacity = burst * (extra ? 1 : 0.95);
+          ember.material.opacity = extra ? Math.max(0.88, burst) : burst * 0.95;
           ember.scale.setScalar((extra ? 0.7 : 0.55) + burst * 0.8);
         });
       }
@@ -6002,16 +6002,18 @@
 
   function dressYardAir(g) {
     const highMat = new THREE.MeshBasicMaterial({
-      color: 0xc5d6ee, transparent: true, opacity: 0.55, side: THREE.DoubleSide, depthWrite: false, fog: false,
+      color: 0xc5d6ee, transparent: true, opacity: 0.78, side: THREE.DoubleSide, depthWrite: false, depthTest: false, fog: false,
     });
-    const high = new THREE.Mesh(new THREE.PlaneGeometry(8.4, 1.65), highMat);
-    high.position.set(0.15, 2.62, -3.35);
+    const high = new THREE.Mesh(new THREE.PlaneGeometry(7.2, 1.35), highMat);
+    high.position.set(-0.2, 2.15, 0.35);
+    high.renderOrder = 2;
     g.add(high);
     const bankMat = new THREE.MeshBasicMaterial({
-      color: 0xd5e4f2, transparent: true, opacity: 0.4, side: THREE.DoubleSide, depthWrite: false, fog: false,
+      color: 0xd5e4f2, transparent: true, opacity: 0.7, side: THREE.DoubleSide, depthWrite: false, depthTest: false, fog: false,
     });
-    const bank = new THREE.Mesh(new THREE.PlaneGeometry(5.6, 1.05), bankMat);
-    bank.position.set(-0.85, 1.72, -2.55);
+    const bank = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 0.55), bankMat);
+    bank.position.set(0.2, 1.95, 1.7);
+    bank.renderOrder = 2;
     g.add(bank);
     const dustMat = new THREE.MeshBasicMaterial({ color: 0xd6e8ff, fog: false });
     [[-2.38, 1.58, 1.32], [-2.98, 1.74, 0.88], [-2.46, 1.96, 0.98], [-2.86, 1.46, 1.34], [-2.58, 1.82, 1.22]].forEach((spot, i) => {
