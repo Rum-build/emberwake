@@ -1126,6 +1126,7 @@
     );
     basket.position.set(-1.35, 0.16, 1.15);
     villageRoom.add(basket);
+    dressLetterFold(villageRoom);
     const beamMat = new THREE.MeshLambertMaterial({ color: 0x4a3428 });
     const beam = new THREE.Mesh(new THREE.BoxGeometry(8.4, 0.22, 0.28), beamMat);
     beam.position.set(0, 2.42, 0.4);
@@ -3836,6 +3837,66 @@
       rim.add(mote);
     });
     room.add(rim);
+  }
+
+  function dressLetterFold(room) {
+    const letter = new THREE.Group();
+    letter.position.set(-1.35, 0.32, 1.15);
+    letter.userData.letterFold = true;
+    const cream = new THREE.MeshPhongMaterial({
+      color: 0xf3e6c8, emissive: new THREE.Color(0x3a2c18), shininess: 8, specular: new THREE.Color(0xfff8e8),
+    });
+    const creamDark = new THREE.MeshPhongMaterial({
+      color: 0xd8c4a0, shininess: 4, specular: new THREE.Color(0xf0e0c0),
+    });
+    const ink = new THREE.MeshPhongMaterial({
+      color: 0x1a140c, shininess: 4, specular: new THREE.Color(0x6a5848),
+    });
+    const wax = new THREE.MeshPhongMaterial({
+      color: 0x8a1c18, emissive: new THREE.Color(0x3a0808), shininess: 42, specular: new THREE.Color(0xffc0b0),
+    });
+    const shade = new THREE.Mesh(
+      new THREE.CircleGeometry(0.16, 8),
+      new THREE.MeshBasicMaterial({
+        color: 0x1a1008, transparent: true, opacity: 0.32, depthWrite: false, fog: false,
+      })
+    );
+    shade.rotation.x = -Math.PI / 2;
+    shade.position.y = -0.015;
+    letter.add(shade);
+    const under = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.01, 0.16), creamDark);
+    under.position.set(0.018, 0.004, -0.008);
+    under.rotation.y = 0.08;
+    letter.add(under);
+    const sheet = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.012, 0.18), cream);
+    sheet.position.set(0, 0.012, 0);
+    sheet.rotation.y = 0.12;
+    letter.add(sheet);
+    const crease = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.008, 0.15), ink);
+    crease.position.set(0.004, 0.022, 0);
+    crease.rotation.y = 0.12;
+    letter.add(crease);
+    [-0.07, 0.05].forEach((x) => {
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.006, 0.11), creamDark);
+      line.position.set(x, 0.022, 0.004);
+      line.rotation.y = 0.12;
+      letter.add(line);
+    });
+    const blot = new THREE.Mesh(new THREE.SphereGeometry(0.026, 6, 4), ink);
+    blot.scale.set(1.5, 0.22, 0.85);
+    blot.position.set(-0.06, 0.024, 0.02);
+    letter.add(blot);
+    const stroke = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.006, 0.012), ink);
+    stroke.position.set(0.03, 0.024, -0.02);
+    stroke.rotation.y = 0.28;
+    letter.add(stroke);
+    const seal = new THREE.Mesh(new THREE.CylinderGeometry(0.034, 0.038, 0.016, 8), wax);
+    seal.position.set(0.07, 0.03, 0.018);
+    letter.add(seal);
+    const stamp = new THREE.Mesh(new THREE.BoxGeometry(0.016, 0.008, 0.016), cream);
+    stamp.position.set(0.07, 0.04, 0.018);
+    letter.add(stamp);
+    room.add(letter);
   }
 
   function buildCrypt() {
