@@ -12569,17 +12569,74 @@
   }
 
   function attachTell(mesh) {
-    const ring = new THREE.Mesh(
-      new THREE.TorusGeometry(0.68, 0.05, 6, 18),
-      new THREE.MeshBasicMaterial({
-        color: 0xffe6c0, transparent: true, opacity: 0, depthWrite: false, fog: false,
-      })
-    );
-    ring.rotation.x = Math.PI / 2;
-    ring.position.y = 0.06;
-    ring.visible = false;
-    mesh.add(ring);
-    mesh.userData.tell = ring;
+    const tell = new THREE.Group();
+    tell.position.y = 0.06;
+    tell.visible = false;
+    const scorchMat = new THREE.MeshBasicMaterial({
+      color: 0x6a3014, transparent: true, opacity: 0.92, depthWrite: false, fog: false, side: THREE.DoubleSide,
+    });
+    const charMat = new THREE.MeshBasicMaterial({
+      color: 0x160e0a, transparent: true, opacity: 0.9, depthWrite: false, fog: false, side: THREE.DoubleSide,
+    });
+    const fleckMat = new THREE.MeshBasicMaterial({
+      color: 0x2a140c, transparent: true, opacity: 0.95, depthWrite: false, fog: false,
+    });
+    const char = new THREE.Mesh(new THREE.CircleGeometry(0.32, 16), charMat);
+    char.rotation.x = -Math.PI / 2;
+    char.position.y = 0.001;
+    tell.add(char);
+    const scorch = new THREE.Mesh(new THREE.RingGeometry(0.3, 0.6, 24), scorchMat);
+    scorch.rotation.x = -Math.PI / 2;
+    scorch.position.y = 0.004;
+    tell.add(scorch);
+    [[0.22, 0.18], [-0.28, 0.08], [0.06, -0.26], [-0.12, 0.3], [0.34, -0.16]].forEach((spot, i) => {
+      const fleck = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.02, 0.05), fleckMat);
+      fleck.position.set(spot[0], 0.012, spot[1]);
+      fleck.rotation.y = i * 0.7;
+      tell.add(fleck);
+    });
+    const grainMat = new THREE.MeshBasicMaterial({
+      color: 0xffe6c0, transparent: true, opacity: 0, depthWrite: false, fog: false,
+    });
+    for (let i = 0; i < 12; i++) {
+      const bit = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.03, 0.042), grainMat);
+      const a = (i / 12) * Math.PI * 2 + 0.18;
+      const r = 0.44 + (i % 3) * 0.045;
+      bit.position.set(Math.cos(a) * r, 0.022, Math.sin(a) * r);
+      bit.rotation.y = -a + (i % 2 ? 0.22 : -0.12);
+      tell.add(bit);
+    }
+    for (let i = 0; i < 6; i++) {
+      const chip = new THREE.Mesh(new THREE.OctahedronGeometry(0.038, 0), grainMat);
+      const a = (i / 6) * Math.PI * 2 + 0.45;
+      chip.position.set(Math.cos(a) * 0.36, 0.03, Math.sin(a) * 0.36);
+      tell.add(chip);
+    }
+    const rimMat = new THREE.MeshBasicMaterial({
+      color: 0xffe6c0, transparent: true, opacity: 0, depthWrite: false, fog: false, side: THREE.DoubleSide,
+    });
+    const rimDisc = new THREE.Mesh(new THREE.RingGeometry(0.66, 0.8, 32), rimMat);
+    rimDisc.rotation.x = -Math.PI / 2;
+    rimDisc.position.y = 0.016;
+    tell.add(rimDisc);
+    const rim = new THREE.Mesh(new THREE.TorusGeometry(0.74, 0.042, 8, 32), rimMat);
+    rim.rotation.x = Math.PI / 2;
+    rim.position.y = 0.028;
+    tell.add(rim);
+    const glowMat = new THREE.MeshBasicMaterial({
+      color: 0xffe6c0, transparent: true, opacity: 0, depthWrite: false, fog: false,
+    });
+    const glow = new THREE.Mesh(new THREE.TorusGeometry(0.74, 0.1, 8, 28), glowMat);
+    glow.rotation.x = Math.PI / 2;
+    glow.position.y = 0.01;
+    tell.add(glow);
+    tell.userData.paint = [
+      { mat: grainMat, opacity: 0.96 },
+      { mat: rimMat, opacity: 0.98 },
+      { mat: glowMat, opacity: 0.4 },
+    ];
+    mesh.add(tell);
+    mesh.userData.tell = tell;
   }
 
   function tellColor(enemy) {
@@ -12601,12 +12658,15 @@
   function paintTelegraphs() {
     enemies.forEach((enemy, i) => {
       const mesh = combatEnemyMeshes[i];
-      const ring = mesh && mesh.userData && mesh.userData.tell;
-      if (!ring) return;
+      const tell = mesh && mesh.userData && mesh.userData.tell;
+      if (!tell) return;
       const color = tellColor(enemy);
-      ring.visible = !!color;
-      ring.material.opacity = color ? 0.95 : 0;
-      if (color) ring.material.color.setHex(color);
+      tell.visible = !!color;
+      const paint = tell.userData.paint || [];
+      paint.forEach((entry) => {
+        entry.mat.opacity = color ? entry.opacity : 0;
+        if (color) entry.mat.color.setHex(color);
+      });
     });
   }
 
