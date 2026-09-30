@@ -8661,27 +8661,35 @@
       put(gear, new THREE.SphereGeometry(0.028 * s, 6, 5), phong(0xb8a090, 0x2a2018, 50, 0xfff0e0), -0.145 * s, 0.36 * s, 0.07 * s);
       const held = new THREE.Group();
       held.userData.liraStick = true;
-      held.position.set(0.03 * s, -0.36 * s, 0.07 * s);
-      held.rotation.z = -0.2;
-      held.rotation.x = -0.14;
+      held.position.set(0, -0.36 * s, 0.02 * s);
+      held.rotation.z = -0.16;
+      held.rotation.x = -0.1;
       const bark = phong(0x6a4228, 0x1a1008, 14, 0xd4b090);
       const barkDark = phong(0x3a2416, 0x100804, 8, 0x8a6848);
       const wrapMat = phong(0x8a5434, 0x2a140c, 18, 0xe8c8a0);
       const scuff = phong(0xc8b498, 0x3a2c18, 22, 0xfff0d8);
-      put(held, new THREE.CylinderGeometry(0.02 * s, 0.028 * s, 1.02 * s, 10), bark, 0, 0.14 * s, 0);
+      const palm = phong(0xf2c8aa, 0x5c3424, 9, 0x8a5040);
+      put(held, new THREE.CylinderGeometry(0.02 * s, 0.028 * s, 1.02 * s, 10), bark, 0.01 * s, 0.14 * s, 0.02 * s);
       [-0.16, 0.06, 0.28].forEach((y, i) => {
-        put(held, new THREE.BoxGeometry(0.008 * s, 0.12 * s, 0.01 * s), barkDark, (i === 1 ? -0.022 : 0.024) * s, y * s, 0.012 * s);
+        put(held, new THREE.BoxGeometry(0.008 * s, 0.12 * s, 0.01 * s), barkDark, (i === 1 ? -0.014 : 0.034) * s, y * s, 0.032 * s);
       });
-      put(held, new THREE.BoxGeometry(0.01 * s, 0.18 * s, 0.008 * s), barkDark, -0.008 * s, 0.18 * s, 0.026 * s);
-      put(held, new THREE.CylinderGeometry(0.036 * s, 0.038 * s, 0.15 * s, 10), wrapMat, 0, 0, 0.004 * s);
-      [-0.055, 0, 0.055].forEach((y) => {
-        const band = put(held, new THREE.TorusGeometry(0.039 * s, 0.0055 * s, 6, 12), barkDark, 0, y * s, 0.004 * s);
+      put(held, new THREE.BoxGeometry(0.01 * s, 0.18 * s, 0.008 * s), barkDark, 0.002 * s, 0.18 * s, 0.046 * s);
+      put(held, new THREE.CylinderGeometry(0.046 * s, 0.048 * s, 0.16 * s, 10), wrapMat, 0.01 * s, 0, 0.02 * s);
+      [-0.06, 0, 0.06].forEach((y) => {
+        const band = put(held, new THREE.TorusGeometry(0.05 * s, 0.006 * s, 6, 12), barkDark, 0.01 * s, y * s, 0.02 * s);
         band.rotation.x = Math.PI / 2;
       });
-      put(held, new THREE.BoxGeometry(0.05 * s, 0.028 * s, 0.022 * s), wrapMat, 0.01 * s, 0.01 * s, 0.03 * s);
-      put(held, new THREE.CylinderGeometry(0.034 * s, 0.016 * s, 0.08 * s, 7), scuff, 0, -0.4 * s, 0);
-      put(held, new THREE.BoxGeometry(0.014 * s, 0.05 * s, 0.012 * s), barkDark, 0.02 * s, -0.38 * s, 0.012 * s);
-      put(held, new THREE.SphereGeometry(0.018 * s, 6, 5), barkDark, 0.01 * s, 0.66 * s, 0.01 * s);
+      put(held, new THREE.BoxGeometry(0.055 * s, 0.03 * s, 0.02 * s), wrapMat, 0.02 * s, 0.01 * s, 0.05 * s);
+      [-0.03, 0, 0.03].forEach((y) => {
+        const finger = put(held, new THREE.CylinderGeometry(0.011 * s, 0.013 * s, 0.072 * s, 6), palm, 0.012 * s, y * s, 0.046 * s);
+        finger.rotation.x = Math.PI / 2 + y * 6;
+      });
+      const thumb = put(held, new THREE.CylinderGeometry(0.012 * s, 0.014 * s, 0.055 * s, 6), palm, -0.028 * s, 0.012 * s, 0.028 * s);
+      thumb.rotation.z = 1.15;
+      thumb.rotation.x = -0.35;
+      put(held, new THREE.CylinderGeometry(0.034 * s, 0.016 * s, 0.08 * s, 7), scuff, 0.01 * s, -0.4 * s, 0.02 * s);
+      put(held, new THREE.BoxGeometry(0.016 * s, 0.05 * s, 0.012 * s), barkDark, 0.032 * s, -0.38 * s, 0.032 * s);
+      put(held, new THREE.SphereGeometry(0.018 * s, 6, 5), barkDark, 0.02 * s, 0.66 * s, 0.028 * s);
       const arm = mesh.userData.arms && mesh.userData.arms[1];
       (arm || gear).add(held);
       mesh.userData.held = held;
