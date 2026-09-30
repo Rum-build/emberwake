@@ -6566,6 +6566,7 @@
     dressWirePost(g);
     dressWireApproach(g);
     dressVaultSill(g);
+    dressVaultThreshold(g);
     g.userData.gusts = makeGusts(g, 5, 0xd0e4f0);
   }
 
@@ -7121,6 +7122,78 @@
     shade.scale.set(2.1, 0.38, 1);
     shade.position.set(0.2, shelfHeight(0.2, 1.28) + 0.015, 1.28);
     g.add(shade);
+  }
+
+  function dressVaultThreshold(g) {
+    function shelfHeight(x, z) {
+      const y = 6 - z;
+      return Math.sin(x * 0.42) * Math.cos(y * 0.36) * 0.46 + Math.sin(x * 1.25 + y * 0.5) * 0.12;
+    }
+    const stone = new THREE.MeshPhongMaterial({
+      color: 0x7a6e62, shininess: 14, specular: new THREE.Color(0xe4d8c8),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0xe4d2b0, shininess: 22, specular: new THREE.Color(0xfff4e0),
+    });
+    const iron = new THREE.MeshPhongMaterial({
+      color: 0x2a3138, shininess: 36, specular: new THREE.Color(0xb8c4d0),
+    });
+    const stain = new THREE.MeshBasicMaterial({
+      color: 0x14181c, transparent: true, opacity: 0.62, depthWrite: false, fog: false,
+    });
+    const moss = new THREE.MeshPhongMaterial({
+      color: 0x3f6a34, shininess: 6, specular: new THREE.Color(0xc6e070), side: THREE.DoubleSide,
+    });
+    const chipMat = new THREE.MeshPhongMaterial({
+      color: 0xd4c8b4, shininess: 18, specular: new THREE.Color(0xfff6e8),
+    });
+    [[-0.72, 1.28], [0.12, 1.26], [0.92, 1.3]].forEach((spot, i) => {
+      const slab = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.07, 0.46), stone);
+      const y = shelfHeight(spot[0], spot[1]) + 0.06;
+      slab.position.set(spot[0], y, spot[1]);
+      slab.rotation.y = (i - 1) * 0.04;
+      slab.receiveShadow = true;
+      g.add(slab);
+      [-0.18, 0.08].forEach((dx) => {
+        const line = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.012, 0.03), grain);
+        line.position.set(spot[0] + dx, y + 0.042, spot[1] + 0.02);
+        line.rotation.y = (i - 1) * 0.04;
+        g.add(line);
+      });
+      [[-0.32, 0.16], [0.3, -0.14]].forEach((chip) => {
+        const bit = new THREE.Mesh(new THREE.DodecahedronGeometry(0.05, 0), chipMat);
+        bit.scale.y = 0.4;
+        bit.position.set(spot[0] + chip[0], y + 0.04, spot[1] + chip[1]);
+        g.add(bit);
+      });
+    });
+    [[-0.3, 1.22], [0.52, 1.2]].forEach((spot) => {
+      const clump = new THREE.Mesh(new THREE.SphereGeometry(0.06, 5, 4), moss);
+      clump.scale.y = 0.38;
+      clump.position.set(spot[0], shelfHeight(spot[0], spot[1]) + 0.1, spot[1]);
+      g.add(clump);
+      const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.05, 0.11), moss);
+      blade.position.set(spot[0] + 0.04, shelfHeight(spot[0], spot[1]) + 0.16, spot[1]);
+      blade.rotation.y = 0.5;
+      g.add(blade);
+    });
+    const seam = new THREE.Mesh(new THREE.BoxGeometry(2.15, 0.012, 0.06), stain);
+    seam.position.set(0.18, shelfHeight(0.18, 1.05) + 0.09, 1.05);
+    g.add(seam);
+    [[-0.15, 1.08], [0.22, 1.12], [0.48, 1.06]].forEach((spot) => {
+      const pad = new THREE.Mesh(new THREE.SphereGeometry(0.045, 5, 4), moss);
+      pad.scale.set(1.4, 0.35, 0.8);
+      pad.position.set(spot[0], shelfHeight(spot[0], spot[1]) + 0.1, spot[1]);
+      g.add(pad);
+    });
+    const drip = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.014, 0.7), stain);
+    drip.position.set(0.16, shelfHeight(0.16, 1.32) + 0.1, 1.32);
+    g.add(drip);
+    [[-0.08, 1.18, 0.03], [0.2, 1.34, 0.022], [0.34, 1.22, 0.018], [0.08, 1.46, 0.02]].forEach((spot) => {
+      const speck = new THREE.Mesh(new THREE.SphereGeometry(spot[2], 5, 4), iron);
+      speck.position.set(spot[0], shelfHeight(spot[0], spot[1]) + 0.11, spot[1]);
+      g.add(speck);
+    });
   }
 
   function dressRoostRim(g) {
