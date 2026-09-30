@@ -1801,6 +1801,7 @@
     dressHallAir(g);
     dressHallFloor(g);
     dressCountAir(g);
+    dressCountFloor(g);
     g.visible = false;
     return g;
   }
@@ -1945,6 +1946,86 @@
       const mote = new THREE.Mesh(new THREE.SphereGeometry(i === 0 ? 0.065 : 0.05, 6, 4), sealMat);
       mote.position.set(spot[0], spot[1], spot[2]);
       g.add(mote);
+    });
+  }
+
+  function dressCountFloor(g) {
+    const oak = new THREE.MeshPhongMaterial({
+      color: 0x8a6844, shininess: 16, specular: new THREE.Color(0xe8d0a8),
+    });
+    const worn = new THREE.MeshPhongMaterial({
+      color: 0x3a2c22, shininess: 6, specular: new THREE.Color(0x8a7058),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0xc4a46a, shininess: 22, specular: new THREE.Color(0xfff0d0),
+    });
+    const chalk = new THREE.MeshPhongMaterial({
+      color: 0xe8e0d0, shininess: 8, specular: new THREE.Color(0xfff8ee),
+    });
+    function board(x, z, rot) {
+      const group = new THREE.Group();
+      const plank = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.035, 0.22), oak);
+      plank.position.y = 0.07;
+      plank.receiveShadow = true;
+      group.add(plank);
+      const seam = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.012, 0.035), worn);
+      seam.position.set(0, 0.092, 0.04);
+      group.add(seam);
+      const ridge = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.01, 0.02), grain);
+      ridge.position.set(0.06, 0.098, -0.05);
+      group.add(ridge);
+      const end = new THREE.Mesh(new THREE.DodecahedronGeometry(0.04, 0), worn);
+      end.position.set(-0.32, 0.09, 0.02);
+      end.scale.y = 0.35;
+      group.add(end);
+      group.position.set(x, 0, z);
+      group.rotation.y = rot;
+      g.add(group);
+    }
+    [
+      [0.15, 3.55, 0.12], [-0.65, 3.75, -0.2], [0.95, 3.5, 0.28],
+      [0.55, -1.7, -0.15], [-0.25, -2.45, 0.35], [1.55, -2.35, -0.4], [0.1, -3.15, 0.08],
+    ].forEach((spot) => {
+      board(spot[0], spot[1], spot[2]);
+    });
+    function grit(x, z) {
+      const group = new THREE.Group();
+      [[0, 0, 0.032], [0.05, 0.03, 0.02], [-0.04, 0.03, 0.024], [0.02, -0.04, 0.016]].forEach((spot) => {
+        const speck = new THREE.Mesh(new THREE.SphereGeometry(spot[2], 4, 3), chalk);
+        speck.position.set(spot[0], 0.08 + spot[2] * 0.4, spot[1]);
+        group.add(speck);
+      });
+      group.position.set(x, 0, z);
+      g.add(group);
+    }
+    [[0.4, 3.6], [-0.3, 3.4], [0.7, -2.0], [1.2, -2.6]].forEach((spot) => {
+      grit(spot[0], spot[1]);
+    });
+    const washMat = new THREE.MeshBasicMaterial({
+      color: 0xe2c878, transparent: true, opacity: 0.08, depthWrite: false, fog: false,
+    });
+    [[0.15, 3.4, 0.75], [0.2, -2.0, 0.65]].forEach((spot) => {
+      const wash = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 10), washMat);
+      wash.rotation.x = -Math.PI / 2;
+      wash.position.set(spot[0], 0.055, spot[1]);
+      g.add(wash);
+    });
+    const shadeMat = new THREE.MeshBasicMaterial({
+      color: 0x0c0a08, transparent: true, opacity: 0.26, depthWrite: false, fog: false,
+    });
+    const shade = new THREE.Mesh(new THREE.CircleGeometry(0.42, 8), shadeMat);
+    shade.rotation.x = -Math.PI / 2;
+    shade.scale.set(1.15, 0.38, 1);
+    shade.position.set(-1.9, 0.05, 0.18);
+    g.add(shade);
+    const scuffMat = new THREE.MeshPhongMaterial({
+      color: 0x1a1410, shininess: 3, specular: new THREE.Color(0x6a5840),
+    });
+    [[0.2, 3.4, 0.1], [0.4, -2.05, -0.25], [-0.15, -2.7, 0.4]].forEach((spot) => {
+      const scuff = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.012, 0.55), scuffMat);
+      scuff.position.set(spot[0], 0.095, spot[1]);
+      scuff.rotation.y = spot[2];
+      g.add(scuff);
     });
   }
 
