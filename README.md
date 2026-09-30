@@ -209,6 +209,8 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The waystone plinth keeps worn sill grain, moss in the joints, ash grit, and shallow edge chips. The carved face and the south stones stay readable. No new cue.
 - The vault threshold under the iron door keeps worn grain, an iron grit stain, moss in the seam, and shallow chips. The door and the count stay readable. No new cue.
 
+- The timber under the counting-room clerk desk keeps plank grain, nail heads, scuff wear near the stool, and a faint ink stain. The desk and the clerk stay readable. No new cue.
+
 ## Play on your phone
 
 Open **https://rum-build.github.io/emberwake/** in Safari or Chrome. Use the on-screen MOVE stick, Pack, and Absorb.

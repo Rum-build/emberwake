@@ -2143,6 +2143,7 @@
     dressCountFloor(g);
     dressClerkDesk(g);
     dressClerkBody(g);
+    dressClerkBoards(g);
     g.visible = false;
     return g;
   }
@@ -2624,6 +2625,67 @@
     clip.position.set(0.66, 0.41, 0.04);
     desk.add(clip);
     g.add(desk);
+  }
+
+  function dressClerkBoards(g) {
+    const oak = new THREE.MeshPhongMaterial({
+      color: 0x8a6240, shininess: 18, specular: new THREE.Color(0xf0d8b0),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0xf2d7a4, shininess: 26, specular: new THREE.Color(0xfff6e0),
+    });
+    const nail = new THREE.MeshPhongMaterial({
+      color: 0x241c16, shininess: 68, specular: new THREE.Color(0xf0e8dc),
+    });
+    const scuffMat = new THREE.MeshPhongMaterial({
+      color: 0x1a120c, shininess: 4, specular: new THREE.Color(0x6a5840),
+    });
+    const ink = new THREE.MeshBasicMaterial({
+      color: 0x1a2844, transparent: true, opacity: 0.66, depthWrite: false, fog: false,
+    });
+    [[-1.7, 0.14], [-0.82, 0.12], [-1.26, 0.44]].forEach((spot, i) => {
+      const plank = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.05, 0.34), oak);
+      plank.position.set(spot[0], 0.1, spot[1]);
+      plank.rotation.y = (i - 1) * 0.04;
+      plank.receiveShadow = true;
+      g.add(plank);
+      [-0.07, 0.07].forEach((dz) => {
+        const line = new THREE.Mesh(new THREE.BoxGeometry(0.64, 0.016, 0.03), grain);
+        line.position.set(spot[0], 0.132, spot[1] + dz);
+        g.add(line);
+      });
+      [[-0.32, -0.1], [0.32, -0.1], [-0.32, 0.12], [0.32, 0.12]].forEach((n) => {
+        const head = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.014, 6), nail);
+        head.position.set(spot[0] + n[0], 0.132, spot[1] + n[1]);
+        g.add(head);
+      });
+    });
+    const blot = new THREE.Mesh(new THREE.CircleGeometry(0.18, 8), ink);
+    blot.rotation.x = -Math.PI / 2;
+    blot.scale.set(1.45, 0.72, 1);
+    blot.position.set(-0.92, 0.14, 0.22);
+    g.add(blot);
+    const drip = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.012, 0.32), ink);
+    drip.position.set(-0.74, 0.14, 0.34);
+    g.add(drip);
+    const pad = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.045, 0.32), oak);
+    pad.position.set(1.42, 0.095, 0.48);
+    pad.receiveShadow = true;
+    g.add(pad);
+    const padLine = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.014, 0.028), grain);
+    padLine.position.set(1.42, 0.124, 0.48);
+    g.add(padLine);
+    [[1.14, 0.38], [1.7, 0.56]].forEach((spot) => {
+      const head = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.012, 6), nail);
+      head.position.set(spot[0], 0.124, spot[1]);
+      g.add(head);
+    });
+    [[1.12, 0.0, 0.4], [1.78, 0.34, -0.25], [1.36, -0.16, 0.85]].forEach((spot) => {
+      const scuff = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.016, 0.46), scuffMat);
+      scuff.position.set(spot[0], 0.11, spot[1]);
+      scuff.rotation.y = spot[2];
+      g.add(scuff);
+    });
   }
 
   function dressHallMonopoly(g) {
