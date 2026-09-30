@@ -2629,45 +2629,49 @@
 
   function dressClerkBoards(g) {
     const oak = new THREE.MeshPhongMaterial({
-      color: 0x8a6240, shininess: 18, specular: new THREE.Color(0xf0d8b0),
+      color: 0xa87448, shininess: 22, specular: new THREE.Color(0xffe8c4),
     });
     const grain = new THREE.MeshPhongMaterial({
-      color: 0xf2d7a4, shininess: 26, specular: new THREE.Color(0xfff6e0),
+      color: 0xffe2b0, shininess: 30, specular: new THREE.Color(0xfff8e8),
     });
     const nail = new THREE.MeshPhongMaterial({
-      color: 0x241c16, shininess: 68, specular: new THREE.Color(0xf0e8dc),
+      color: 0xd8d2c6, shininess: 80, specular: new THREE.Color(0xffffff),
     });
     const scuffMat = new THREE.MeshPhongMaterial({
-      color: 0x1a120c, shininess: 4, specular: new THREE.Color(0x6a5840),
+      color: 0x140e0a, shininess: 4, specular: new THREE.Color(0x6a5840),
     });
     const ink = new THREE.MeshBasicMaterial({
-      color: 0x1a2844, transparent: true, opacity: 0.66, depthWrite: false, fog: false,
+      color: 0x243868, transparent: true, opacity: 0.82, depthWrite: false, fog: false,
     });
-    [[-1.7, 0.14], [-0.82, 0.12], [-1.26, 0.44]].forEach((spot, i) => {
-      const plank = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.05, 0.34), oak);
-      plank.position.set(spot[0], 0.1, spot[1]);
-      plank.rotation.y = (i - 1) * 0.04;
+    [[-1.68, 0.2], [-0.8, 0.18], [-1.24, 0.56]].forEach((spot, i) => {
+      const plank = new THREE.Mesh(new THREE.BoxGeometry(0.84, 0.055, 0.4), oak);
+      plank.position.set(spot[0], 0.11, spot[1]);
+      plank.rotation.y = (i - 1) * 0.03;
       plank.receiveShadow = true;
       g.add(plank);
-      [-0.07, 0.07].forEach((dz) => {
-        const line = new THREE.Mesh(new THREE.BoxGeometry(0.64, 0.016, 0.03), grain);
-        line.position.set(spot[0], 0.132, spot[1] + dz);
+      [-0.1, 0, 0.1].forEach((dz) => {
+        const line = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.018, 0.036), grain);
+        line.position.set(spot[0], 0.146, spot[1] + dz);
         g.add(line);
       });
-      [[-0.32, -0.1], [0.32, -0.1], [-0.32, 0.12], [0.32, 0.12]].forEach((n) => {
-        const head = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.014, 6), nail);
-        head.position.set(spot[0] + n[0], 0.132, spot[1] + n[1]);
+      [[-0.32, -0.12], [0.32, -0.12], [-0.32, 0.14], [0.32, 0.14]].forEach((n) => {
+        const head = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.042, 0.016, 8), nail);
+        head.position.set(spot[0] + n[0], 0.148, spot[1] + n[1]);
         g.add(head);
       });
     });
-    const blot = new THREE.Mesh(new THREE.CircleGeometry(0.18, 8), ink);
+    const blot = new THREE.Mesh(new THREE.CircleGeometry(0.22, 10), ink);
     blot.rotation.x = -Math.PI / 2;
-    blot.scale.set(1.45, 0.72, 1);
-    blot.position.set(-0.92, 0.14, 0.22);
+    blot.scale.set(1.5, 0.8, 1);
+    blot.position.set(-0.95, 0.16, 0.28);
     g.add(blot);
-    const drip = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.012, 0.32), ink);
-    drip.position.set(-0.74, 0.14, 0.34);
+    const drip = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.014, 0.4), ink);
+    drip.position.set(-0.72, 0.16, 0.42);
     g.add(drip);
+    const lipScuff = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.016, 0.52), scuffMat);
+    lipScuff.position.set(-0.42, 0.15, 0.34);
+    lipScuff.rotation.y = 0.35;
+    g.add(lipScuff);
     const pad = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.045, 0.32), oak);
     pad.position.set(1.42, 0.095, 0.48);
     pad.receiveShadow = true;
