@@ -10118,6 +10118,7 @@
     overworldGroup.add(makeScarVeil());
     dressScarFarm();
     dressScarMarker();
+    dressScarSoil();
     dressScarGround();
     dressLeafCup();
     dressLeafGrove();
@@ -10374,6 +10375,59 @@
     shade.scale.set(1.8, 0.45, 1);
     shade.position.set(0, 0.015, 0.08);
     g.add(shade);
+    overworldGroup.add(g);
+  }
+
+  function dressScarSoil() {
+    const rot = new THREE.MeshPhongMaterial({
+      color: 0x4a2a1c, shininess: 6, specular: new THREE.Color(0xa06040),
+    });
+    const crack = new THREE.MeshPhongMaterial({
+      color: 0x120c0a, shininess: 3, specular: new THREE.Color(0x3a2018),
+    });
+    const ash = new THREE.MeshPhongMaterial({
+      color: 0xc4b0a0, shininess: 10, specular: new THREE.Color(0xf4ece4),
+    });
+    const moss = new THREE.MeshPhongMaterial({
+      color: 0x6a7030, shininess: 5, specular: new THREE.Color(0xd4d080), side: THREE.DoubleSide,
+    });
+    const sick = new THREE.MeshPhongMaterial({
+      color: 0x8a8640, shininess: 4, specular: new THREE.Color(0xe8e0a0), side: THREE.DoubleSide,
+    });
+    const g = new THREE.Group();
+    g.position.set(14.2, 0, -2.85);
+    const bed = new THREE.Mesh(new THREE.CircleGeometry(1.35, 10), rot);
+    bed.rotation.x = -Math.PI / 2;
+    bed.position.y = 0.032;
+    bed.receiveShadow = true;
+    g.add(bed);
+    const pit = new THREE.Mesh(new THREE.CircleGeometry(0.52, 8), crack);
+    pit.rotation.x = -Math.PI / 2;
+    pit.position.set(0.06, 0.04, 0.1);
+    g.add(pit);
+    [[1.55, 0.03, 0.25], [0.95, 0.022, -0.75], [1.1, 0.02, 1.35], [0.5, 0.016, 2.15]].forEach((spec) => {
+      const line = new THREE.Mesh(new THREE.BoxGeometry(spec[0], 0.014, spec[1]), crack);
+      line.position.y = 0.05;
+      line.rotation.y = spec[2];
+      g.add(line);
+    });
+    [[0.18, 0.12, 0.04], [-0.32, 0.22, 0.028], [0.48, -0.22, 0.032], [-0.12, -0.38, 0.022], [0.68, 0.32, 0.026], [-0.58, -0.08, 0.03]].forEach((spot) => {
+      const speck = new THREE.Mesh(new THREE.SphereGeometry(spot[2], 4, 3), ash);
+      speck.position.set(spot[0], 0.042 + spot[2] * 0.4, spot[1]);
+      g.add(speck);
+    });
+    for (let i = 0; i < 10; i++) {
+      const a = i * 0.62;
+      const r = 1.12 + (i % 3) * 0.08;
+      const clump = new THREE.Mesh(new THREE.SphereGeometry(0.08, 5, 4), i % 2 ? sick : moss);
+      clump.scale.y = 0.32;
+      clump.position.set(Math.cos(a) * r, 0.046, Math.sin(a) * r);
+      g.add(clump);
+      const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.06, 0.14), i % 2 ? moss : sick);
+      blade.position.set(Math.cos(a) * (r + 0.04), 0.1, Math.sin(a) * (r + 0.04));
+      blade.rotation.y = a;
+      g.add(blade);
+    }
     overworldGroup.add(g);
   }
 
