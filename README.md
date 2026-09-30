@@ -151,6 +151,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - Lira, Nima, Torren, and Vesper’s silhouette keep hands, cuffs, and boots. Lira wears a hip blade, Nima a rod, Torren a cudgel, and Vesper a dark shard. The village approach keeps dusk flagstones and grass tufts. The door, the quiet stand, and the path look stay. No new cue.
 - The buried kiln keeps a varied brick floor, a hearth lip, back-wall courses, ash heaps, and a warm fill. The drink stays the kiln. The cellar mouth stays. No new cue.
 - Lira, Nima, and Torren keep a jaw, brow, and eye glint. Lira’s hair sweeps, Nima wears a braid, and Torren keeps a beard and a coat seam. Scarf cloth folds on each. Vesper stays a dark cloth shape. No new cue.
+- Lira, Nima, and Torren keep a nose bridge and a cheek plane on each side. The scarf hems hang, and the hair is a little fuller: Lira’s sweep, Nima’s braid, Torren’s crop and beard. Vesper stays a dark cloth shape. No new cue.
 
 ## Play on your phone
 

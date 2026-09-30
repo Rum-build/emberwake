@@ -692,6 +692,13 @@ Playable on the Verdant Isle field:
 - Vesper’s silhouette keeps a darker cloth mass and a hair lock. She does not take a lit face. She does not enter Aftermath.
 - The hands, boots, and hip kits stay. The walk stays. No new cue.
 
+## Party faces, the nearer read (this branch)
+
+- Lira, Nima, and Torren keep a nose bridge and a cheek plane on each side, in the field and in a fight. Scarf cloth has another fold and a hanging hem. Lira’s sweep, Nima’s braid, and Torren’s crop and beard sit a little fuller.
+- Hands, boots, hip kits, and the leather and metal seams stay.
+- Vesper stays a darker cloth mass and a hair lock. She does not take a lit face. She does not enter Aftermath.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
