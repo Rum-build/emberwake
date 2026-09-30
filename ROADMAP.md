@@ -853,6 +853,10 @@ The leaf-village houses now carry timber posts, a lit window, thatch courses, st
 
 The buried kiln now carries exterior brick courses, a heat wash, an ash shelf rim, and mouth soot on the approach, with ash plates on the path. The drink and the throat stay where they were. The leaf-village houses, the root-cellar door, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the pier frame pass
+
+The harbor pier now carries weathered plank grain, iron cleats, rope wraps, wet-dark pilings, and spray grit on the frame. The salt boards and the pier ground stay where they were. The buried kiln, the leaf-village houses, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

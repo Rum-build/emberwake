@@ -6129,6 +6129,7 @@
     dressHarbor(g);
     dressHarborPier(g);
     dressPierBoards(g);
+    dressPierFrame(g);
     dressRoostRim(g);
     dressRoostNight(g);
     dressRoostGround(g);
@@ -7080,6 +7081,80 @@
     const lampWash = new THREE.PointLight(0xc5d6ee, 0.28, 6.5);
     lampWash.position.set(5.8, 1.45, 9.15);
     g.add(lampWash);
+  }
+
+  function dressPierFrame(g) {
+    const pier = new THREE.Group();
+    pier.position.set(6.35, 0, 8.15);
+    pier.userData.pierFrame = true;
+    const timber = new THREE.MeshPhongMaterial({
+      color: 0x6a4e34, emissive: new THREE.Color(0x1a120c), shininess: 14, specular: new THREE.Color(0xd4c0a0),
+    });
+    const pale = new THREE.MeshPhongMaterial({
+      color: 0x8a6844, shininess: 18, specular: new THREE.Color(0xf0e0c8),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0x3a2818, shininess: 6, specular: new THREE.Color(0xa08058),
+    });
+    const wet = new THREE.MeshPhongMaterial({
+      color: 0x24343c, emissive: new THREE.Color(0x0c1418), shininess: 48, specular: new THREE.Color(0xb8d8e8),
+    });
+    const iron = new THREE.MeshPhongMaterial({
+      color: 0x4a4038, emissive: new THREE.Color(0x14100c), shininess: 52, specular: new THREE.Color(0xd0c8b8),
+    });
+    const rope = new THREE.MeshPhongMaterial({
+      color: 0xc4a46a, shininess: 8, specular: new THREE.Color(0xf0e0b8),
+    });
+    const grit = new THREE.MeshPhongMaterial({
+      color: 0xd8e4ea, shininess: 40, specular: new THREE.Color(0xffffff),
+    });
+    [-0.36, -0.12, 0.12, 0.36].forEach((z, i) => {
+      const plank = new THREE.Mesh(new THREE.BoxGeometry(2.15, 0.06, 0.2), i % 2 ? pale : timber);
+      plank.position.set(0, 0.56, z);
+      pier.add(plank);
+      const line = new THREE.Mesh(new THREE.BoxGeometry(1.65, 0.012, 0.018), grain);
+      line.position.set(0.05, 0.596, z);
+      pier.add(line);
+    });
+    [[-0.9, -0.28], [0.9, -0.28], [-0.9, 0.28], [0.9, 0.28]].forEach((spot) => {
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 0.62, 8), wet);
+      post.position.set(spot[0], 0.28, spot[1]);
+      pier.add(post);
+      const band = new THREE.Mesh(new THREE.TorusGeometry(0.09, 0.012, 5, 10), iron);
+      band.rotation.x = Math.PI / 2;
+      band.position.set(spot[0], 0.4, spot[1]);
+      pier.add(band);
+      const wrap = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.014, 6, 12), rope);
+      wrap.rotation.x = Math.PI / 2;
+      wrap.position.set(spot[0], 0.5, spot[1]);
+      pier.add(wrap);
+    });
+    [-0.42, 0.48].forEach((x) => {
+      const base = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.028, 0.08), iron);
+      base.position.set(x, 0.62, 0.4);
+      pier.add(base);
+      [-0.05, 0.05].forEach((dx) => {
+        const horn = new THREE.Mesh(new THREE.BoxGeometry(0.028, 0.07, 0.028), iron);
+        horn.position.set(x + dx, 0.66, 0.4);
+        horn.rotation.z = dx > 0 ? -0.45 : 0.45;
+        pier.add(horn);
+      });
+    });
+    const run = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.82, 6), rope);
+    run.rotation.z = Math.PI / 2;
+    run.position.set(0.03, 0.64, 0.42);
+    pier.add(run);
+    const coil = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.016, 6, 12), rope);
+    coil.rotation.x = Math.PI / 2;
+    coil.position.set(-0.55, 0.62, 0.08);
+    pier.add(coil);
+    [[-0.72, 0.5], [-0.22, 0.52], [0.18, 0.5], [0.62, 0.52], [0.95, 0.36], [-0.95, 0.34]].forEach((spot, i) => {
+      const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.03 + (i % 3) * 0.01, 0), grit);
+      chip.scale.y = 0.45;
+      chip.position.set(spot[0], 0.64, spot[1]);
+      pier.add(chip);
+    });
+    g.add(pier);
   }
 
   function buildCoast() {

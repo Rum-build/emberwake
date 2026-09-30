@@ -188,6 +188,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - At the root-cellar door, weathered plank grain, iron straps, hinge rust, and latch wear sit on the face, with a damp ash wash. The threshold and the mouth stay readable. No new cue.
 - At the leaf-village, timber posts, a lit window, thatch courses, and stone footing sit on each house, with soot under the eave. The door and the path stay readable. No new cue.
 - At the buried kiln, exterior brick courses, a heat wash, an ash shelf rim, and mouth soot sit on the approach, with ash plates on the path. The drink and the throat stay readable. No new cue.
+- At the harbor pier, weathered plank grain, iron cleats, rope wraps, and wet-dark pilings sit on the frame, with spray grit at the feet. The salt boards and the pier ground stay readable. No new cue.
 
 ## Play on your phone
 
