@@ -979,6 +979,7 @@
     dressVillage(village);
     dressVillageDoor(village);
     dressVillageHouses(village);
+    dressVillageRoofs(village);
     dressVillageWalls(village);
     dressVillageWell(village);
     overworldGroup.add(village);
@@ -12306,6 +12307,111 @@
       houses.add(house);
     });
     g.add(houses);
+  }
+
+  function dressVillageRoofs(g) {
+    const boardMats = [
+      new THREE.MeshPhongMaterial({
+        color: 0xc48848, emissive: new THREE.Color(0x3a2010), shininess: 10, specular: new THREE.Color(0xf0d0a8),
+      }),
+      new THREE.MeshPhongMaterial({
+        color: 0x6a3c22, emissive: new THREE.Color(0x1a0c06), shininess: 6, specular: new THREE.Color(0xc4a070),
+      }),
+    ];
+    const strandPale = new THREE.MeshBasicMaterial({ color: 0xf2d6a4, fog: false });
+    const strandDark = new THREE.MeshBasicMaterial({ color: 0x2a160c, fog: false });
+    const moss = new THREE.MeshBasicMaterial({ color: 0x3f9a36, fog: false });
+    const mossDark = new THREE.MeshBasicMaterial({ color: 0x1e5a22, fog: false });
+    const wearPale = new THREE.MeshBasicMaterial({ color: 0xf0e0c0, fog: false });
+    const wearDark = new THREE.MeshBasicMaterial({ color: 0x140e0a, fog: false });
+    const chimneyMat = new THREE.MeshPhongMaterial({
+      color: 0x7a6a58, shininess: 14, specular: new THREE.Color(0xe8e0d4),
+    });
+    const soot = new THREE.MeshBasicMaterial({ color: 0x0c0a08, fog: false });
+    [[-2.2, 0], [0, 1.5], [2.2, 0]].forEach((spot, i) => {
+      const roof = new THREE.Group();
+      roof.position.set(spot[0], 0, spot[1]);
+      [1.32, 1.5, 1.68, 1.86].forEach((y, row) => {
+        const t = (y - 1.2) / 0.9;
+        const zFace = 0.92 * (1 - t);
+        const half = 0.92 * (1 - t);
+        const width = Math.max(0.34, half * 1.55);
+        const board = new THREE.Mesh(
+          new THREE.BoxGeometry(width, 0.09, 0.14),
+          boardMats[row % 2]
+        );
+        board.position.set(0, y, zFace + 0.1);
+        board.rotation.x = -0.74;
+        board.castShadow = true;
+        roof.add(board);
+        for (let s = 0; s < 5; s++) {
+          const strand = new THREE.Mesh(
+            new THREE.BoxGeometry(width * 0.94, 0.028, 0.03),
+            (s + row + i) % 2 ? strandDark : strandPale
+          );
+          const lift = (s - 2) * 0.018;
+          strand.position.set(lift * 0.4, y + 0.045 + lift, zFace + 0.16);
+          strand.rotation.x = -0.74;
+          roof.add(strand);
+        }
+        [-0.42, 0.08, 0.38].forEach((fx, n) => {
+          const fiber = new THREE.Mesh(
+            new THREE.BoxGeometry(0.22, 0.02, 0.06),
+            n % 2 ? strandPale : strandDark
+          );
+          fiber.position.set(fx * half, y + 0.06, zFace + 0.2);
+          fiber.rotation.z = (n - 1) * 0.4;
+          fiber.rotation.x = -0.45;
+          roof.add(fiber);
+        });
+      });
+      [[-0.32, 1.36], [0.26, 1.46], [-0.08, 1.64], [0.36, 1.34]].forEach((m, n) => {
+        const t = (m[1] - 1.2) / 0.9;
+        const zFace = 0.92 * (1 - t);
+        const clump = new THREE.Mesh(new THREE.SphereGeometry(0.11, 6, 4), n % 2 ? moss : mossDark);
+        clump.scale.set(1.55, 0.42, 0.85);
+        clump.position.set(m[0] + (i - 1) * 0.04, m[1], zFace + 0.18);
+        roof.add(clump);
+        const tuft = new THREE.Mesh(new THREE.PlaneGeometry(0.1, 0.16), moss);
+        tuft.position.set(m[0] + 0.06, m[1] + 0.08, zFace + 0.22);
+        tuft.rotation.y = n * 0.5;
+        roof.add(tuft);
+      });
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.09, 0.18), wearPale);
+      cap.position.set(0, 2.2, 0.16);
+      roof.add(cap);
+      const capDark = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.03, 0.08), wearDark);
+      capDark.position.set(0, 2.16, 0.22);
+      roof.add(capDark);
+      [-0.32, -0.06, 0.22].forEach((x, n) => {
+        const gap = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.07, 0.16), wearDark);
+        gap.position.set(x, 2.22, 0.18);
+        roof.add(gap);
+        const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.045, 0), n % 2 ? wearPale : wearDark);
+        chip.position.set(x + 0.12, 2.26, 0.2);
+        chip.scale.y = 0.45;
+        roof.add(chip);
+      });
+      const cx = i === 1 ? -0.34 : 0.36;
+      const stack = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.72, 0.26), chimneyMat);
+      stack.position.set(cx, 2.32, 0.02);
+      stack.castShadow = true;
+      roof.add(stack);
+      const lip = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.08, 0.34), chimneyMat);
+      lip.position.set(cx, 2.7, 0.02);
+      roof.add(lip);
+      const streak = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.58, 0.04), soot);
+      streak.position.set(cx, 2.22, 0.16);
+      roof.add(streak);
+      const drip = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.05, 0.42), soot);
+      drip.position.set(cx, 1.92, 0.28);
+      drip.rotation.x = -0.5;
+      roof.add(drip);
+      const smudge = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.08, 0.16), soot);
+      smudge.position.set(cx + 0.02, 2.66, 0.16);
+      roof.add(smudge);
+      g.add(roof);
+    });
   }
 
   function dressVillageWalls(g) {

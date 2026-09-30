@@ -981,6 +981,10 @@ The wake screen now carries an ember rim, a warmer parchment field, a softer glo
 
 The buried kiln pool now carries denser swirl, ember-rot grain, a clearer surface sheen, and a stronger absorb glow. The drink, the kiln beat, and the eight cues stay where they were. No new cue.
 
+## Shipped in the village roof pass
+
+The leaf-village house roofs now carry thatch strand grain, moss patches, ridge wear, and chimney soot. The village door, the walls, the well, and the leaf-village beat stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
