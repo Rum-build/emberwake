@@ -921,6 +921,10 @@ The stone well in the leaf-village square now carries rim grain, moss on the lip
 
 The water beside the harbor pier now carries a soft ripple sheen, a darker depth wash near the pilings, foam flecks at the pier edge, and a faint dusk reflection. The pier, the salt look, and the harbor beat stay where they were. No new cue.
 
+## Shipped in the roost pad pass
+
+The ground under the roost perch beam now carries packed dirt grain, feather litter flecks, an ash wash, and sparse weed tufts. The perch, the wing look, and the roost beat stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

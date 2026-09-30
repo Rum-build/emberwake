@@ -205,6 +205,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The Concord yard under the gate keeps packed gravel grain, an ash wash, cart-rut scuffs, and sparse moss. The gate cork and the yard beat stay readable. No new cue.
 - The leaf-village well keeps rim grain, moss on the lip, a damp stain, and a dark water sheen. The door and the path stay readable. No new cue.
 - The harbor water beside the pier keeps a soft ripple sheen, a darker depth wash near the pilings, foam flecks at the edge, and a faint dusk reflection. The pier and the salt look stay readable. No new cue.
+- The roost pad under the perch beam keeps packed dirt grain, feather litter, an ash wash, and sparse weed tufts. The perch and the wing look stay readable. No new cue.
 
 ## Play on your phone
 
