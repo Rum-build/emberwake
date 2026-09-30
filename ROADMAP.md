@@ -509,6 +509,13 @@ Playable on the Verdant Isle field:
 - A line from her side reads cool. A line from theirs reads warm. The words stay as they were.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Title buttons, and the cousin’s letter (this branch)
+
+- Wake, Continue, Motion, and Ash wear an ash frame. Motion and Ash read lit while they are on. On a phone the taps sit a little taller. Continue still glows when a save is there. The buttons do the same work.
+- The cousin’s letter keeps a cooler ash rim and a little ember grit on the paper. The body reads a notch clearer. The words and the quest stay as they were.
+- Before it is read, Places names the letter in the basket. It does not say what the letter says. South still leaves the village.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

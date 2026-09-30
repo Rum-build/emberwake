@@ -683,6 +683,28 @@ body.still-motion .encounter-flash.active {
   box-shadow: inset 0 0 0 1px rgba(255, 231, 194, 0.7), 0 0 0 2px #ffe1a8, 0 0 22px rgba(255, 176, 80, 0.72);
   border-color: #ffe7c2;
 }
+#title-screen #btn-motion,
+#title-screen #btn-ash,
+#title-screen #btn-start,
+#title-screen #btn-continue:not(.is-saved) {
+  border-width: 2px;
+  border-color: #d4c8b4;
+  box-shadow: inset 0 0 0 2px rgba(58, 46, 38, 0.95), 0 0 0 1px rgba(180, 160, 140, 0.62);
+}
+#title-screen #btn-motion[aria-pressed="true"],
+#title-screen #btn-ash[aria-pressed="true"] {
+  color: #ffe7c2;
+  background: rgba(48, 32, 18, 0.92);
+  box-shadow: inset 5px 0 0 #ffe1a8, inset 0 0 0 1px rgba(255, 224, 160, 0.45), 0 0 0 2px rgba(58, 46, 38, 0.95);
+}
+#title-screen #btn-motion[aria-pressed="false"] {
+  color: #a89880;
+  background: rgba(16, 12, 10, 0.45);
+  box-shadow: inset 0 0 0 2px rgba(42, 36, 30, 0.9), 0 0 0 1px rgba(120, 108, 96, 0.45);
+}
+#title-screen #btn-start {
+  box-shadow: inset 0 0 0 1px #ffe0a0, inset 0 0 0 3px rgba(58, 46, 38, 0.95), 0 0 0 1px rgba(180, 160, 140, 0.7);
+}
 .inv-quest {
   grid-column: 1 / -1;
   margin: 4px 0 8px;
@@ -1628,6 +1650,21 @@ body.pack-open .places-panel {
   color: #f0e6d2;
   min-height: 2.8em;
 }
+.dialogue.letter-paper {
+  border-color: #d5e4f2;
+  background:
+    radial-gradient(circle at 10px 12px, rgba(255, 90, 24, 0.7) 0 1.15px, transparent 1.7px),
+    radial-gradient(circle at calc(100% - 12px) 16px, rgba(255, 90, 24, 0.5) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 14px calc(100% - 14px), rgba(255, 138, 58, 0.45) 0 1px, transparent 1.5px),
+    radial-gradient(circle at calc(100% - 16px) calc(100% - 18px), rgba(255, 90, 24, 0.55) 0 1px, transparent 1.6px),
+    rgba(12, 10, 9, 0.96);
+  box-shadow: inset 0 0 0 1px rgba(213, 228, 242, 0.55), 0 0 0 3px rgba(58, 46, 38, 0.72), 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+.dialogue.letter-paper .dialogue-line {
+  font-size: 1.06rem;
+  line-height: 1.58;
+  color: #f7f1e6;
+}
 
 .dialogue-actions {
   display: flex;
@@ -1736,6 +1773,10 @@ body.pack-open .places-panel {
   .btn-menu { font-size: 1rem; min-height: 52px; }
   .dialogue-advance, .dialogue-choice { min-height: 52px; }
   .btn-pace, .btn-pack-motion, #btn-motion, #btn-ash, #btn-pack-ash { min-height: 48px; min-width: 120px; }
+  #title-screen #btn-motion,
+  #title-screen #btn-ash { min-height: 56px; min-width: 148px; }
+  #title-screen #btn-start,
+  #title-screen #btn-continue { min-height: 64px; }
 
   .status-icon { font-size: 0.92rem; padding: 5px 10px; line-height: 1.45; letter-spacing: 0.01em; border-width: 2px; }
   .status-row { gap: 6px; }
@@ -1882,6 +1923,7 @@ body.pack-open .places-panel {
     padding-bottom: max(14px, env(safe-area-inset-bottom));
   }
   .dialogue-line { font-size: 1.02rem; }
+  .dialogue.letter-paper .dialogue-line { font-size: 1.08rem; }
   .dialogue-keys { display: none; }
 
   .screen > .title-content { padding: 14px 14px 18px; margin: 8px; }
