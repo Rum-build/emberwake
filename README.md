@@ -141,6 +141,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - South of the scar farm, a look lets Lira say Concord named the cough mercy. Vesper farms the rot and does not take the host. The drink stays the blister. No new cue.
 - West of the Concord yard’s quiet stand, a look at the south gate lets Lira say Concord licensed the leak. Vesper farms the rot and does not take the host. The slag stays the drink. The rest and the south step stay. No new cue.
 - On the ash nave’s east pews, a look lets Lira say Concord numbered the host and left the door shut. Vesper is on the roof and does not take the host. The chalk, the gallery, and the south step stay. No new cue.
+- In the counting room, a look at the ledger lamp lets Lira say Concord called the shortage a courtesy. Vesper farms the rot inland and does not take the host. The quiet stand and the south step stay. No new cue.
 
 ## Play on your phone
 

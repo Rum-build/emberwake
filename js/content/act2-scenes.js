@@ -307,6 +307,23 @@
     return true;
   });
 
+  Emberwake.registerScene('count-lamp', function () {
+    var torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    Emberwake.present({
+      lines: [
+        { where: 'Counting room', speaker: 'Lira', text: 'Salt on the ledger lamp. Concord called the shortage a courtesy. The book stayed dry.' },
+        torren
+          ? { speaker: 'Torren', text: 'I stamped courtesies like this. The stamp held the page. It did not stop the leak.' }
+          : { speaker: 'The spark', text: 'They stamped the courtesy. The page held. The leak did not.' },
+        { speaker: 'The spark', text: 'Vesper farms the rot inland. She does not take the host. The lamp is not a drink.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteLamp) Emberwake.noteLamp();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('vault-ledger', function () {
     var torren = Emberwake.companyHas && Emberwake.companyHas('torren');
     Emberwake.present({
