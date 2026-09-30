@@ -136,6 +136,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The harbor pier keeps plank grain and salt on the near boards, and cooler spray beside the lamp. The sheen stays. Places names the pier. No new cue.
 - The claim’s south mouth keeps lintel grain, sill ash, and a cooler catch on the open post. The approach ring stays. The south step stays. Places names the lintel after the claim is walked. No new cue.
 - The first breach keeps mortar grain, cooler dust, and a cooler catch on the open rib. The shafts and the bar stay. The south step stays. Places names the dust after the breach is walked. No new cue.
+- The marrow crypt keeps bone grain, cooler sill grit, and a cooler catch on the open rib. The lamp and the rim stay. The south step stays. Places names the sill once the marrow is walked. No new cue.
 
 ## Play on your phone
 
