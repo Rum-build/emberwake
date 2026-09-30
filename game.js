@@ -948,6 +948,14 @@
     const ridgePin = landmark('vesper-ridge');
     if (ridgePin) {
       vesperFigure = makeSilhouette(ridgePin.x, ridgePin.z);
+      const coolRim = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.05, 1.65),
+        new THREE.MeshBasicMaterial({
+          color: 0x9ec4d4, transparent: true, opacity: 0.28, side: THREE.DoubleSide, depthWrite: false, fog: false,
+        })
+      );
+      coolRim.position.set(-0.08, 0.92, -0.16);
+      vesperFigure.add(coolRim);
       overworldGroup.add(vesperFigure);
     }
 
@@ -2037,6 +2045,8 @@
     yardDrift.scale.y = 0.28;
     yardDrift.position.set(-2.55, 0.06, 3.25);
     g.add(yardDrift);
+    g.add(makeYardLantern(-2.7, 1.1));
+    g.add(makeSealStake(2.8, -0.2));
     yardGroup = g;
     scene.add(g);
   }
@@ -5391,6 +5401,86 @@
     return g;
   }
 
+  function makeScarVeil() {
+    const g = new THREE.Group();
+    g.position.set(14.2, 0, -5.5);
+    const cloth = new THREE.MeshBasicMaterial({
+      color: 0xd5e4ee, transparent: true, opacity: 0.86, side: THREE.DoubleSide, depthWrite: false, fog: false,
+    });
+    [[4.15, 0.35, 0.15], [-4.15, 0.2, -0.2]].forEach((spec) => {
+      const veil = new THREE.Mesh(new THREE.PlaneGeometry(1.35, 2.45), cloth);
+      veil.position.set(spec[0], 1.35, spec[1]);
+      veil.rotation.y = spec[2];
+      g.add(veil);
+      const ash = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.18, 2.05),
+        new THREE.MeshBasicMaterial({
+          color: 0x7eb0c8, transparent: true, opacity: 0.9, side: THREE.DoubleSide, depthWrite: false, fog: false,
+        })
+      );
+      ash.position.set(spec[0] + (spec[0] > 0 ? 0.55 : -0.55), 1.2, spec[1]);
+      ash.rotation.y = spec[2];
+      g.add(ash);
+    });
+    makeMotes(g, 26, 0xc5d6e4, { x: 6.4, y: 2.1, z: 6.4 }, { fall: true });
+    return g;
+  }
+
+  function makeYardLantern(x, z) {
+    const g = new THREE.Group();
+    const post = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.045, 0.06, 1.28, 5),
+      new THREE.MeshLambertMaterial({ color: 0x2a2420 })
+    );
+    post.position.y = 0.64;
+    g.add(post);
+    const cage = new THREE.Mesh(
+      new THREE.BoxGeometry(0.22, 0.28, 0.22),
+      new THREE.MeshBasicMaterial({ color: 0xffb060, fog: false })
+    );
+    cage.position.y = 1.36;
+    g.add(cage);
+    const flame = new THREE.PointLight(0xff7a30, 0.65, 5);
+    flame.position.set(0, 1.36, 0);
+    g.add(flame);
+    [[0.04, 1.82, 0.32, 0.62], [-0.08, 2.22, 0.48, 0.48], [0.1, 2.68, 0.62, 0.34]].forEach((spec) => {
+      const puff = new THREE.Mesh(
+        new THREE.SphereGeometry(spec[2], 6, 5),
+        new THREE.MeshBasicMaterial({
+          color: 0xc8c2ba, transparent: true, opacity: spec[3], depthWrite: false, fog: false,
+        })
+      );
+      puff.position.set(spec[0], spec[1], 0);
+      g.add(puff);
+    });
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeSealStake(x, z) {
+    const g = new THREE.Group();
+    const post = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.05, 0.07, 1.22, 5),
+      new THREE.MeshLambertMaterial({ color: 0x4a4038 })
+    );
+    post.position.y = 0.61;
+    g.add(post);
+    const plate = new THREE.Mesh(
+      new THREE.BoxGeometry(0.32, 0.2, 0.04),
+      new THREE.MeshBasicMaterial({ color: 0xc4a15a, fog: false })
+    );
+    plate.position.set(0, 0.92, 0.07);
+    g.add(plate);
+    const seal = new THREE.Mesh(
+      new THREE.OctahedronGeometry(0.13, 0),
+      new THREE.MeshBasicMaterial({ color: 0xe0c878, fog: false })
+    );
+    seal.position.y = 1.28;
+    g.add(seal);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
   function dressIsleGround() {
     overworldGroup.add(makeLicenceStake(0.15, 8, 0.5));
     overworldGroup.add(makeLicenceStake(-8.15, 7.4, -0.4));
@@ -5398,6 +5488,7 @@
     overworldGroup.add(makeAshPile(18.2, -6.4));
     overworldGroup.add(makeScarPost(10.4, -7.1, 0.22));
     overworldGroup.add(makeScarPost(11.2, -8.6, -0.16));
+    overworldGroup.add(makeScarVeil());
   }
 
   function makeSaltCord(x, z) {
@@ -6596,7 +6687,7 @@
         return 'North of the yard, a stone opens the Remnant Mark.';
       }
       if (!seenBeats.markStep && slag && !slag.absorbed && !slag.bottled) {
-        return 'The slag is in the yard. North, a stone opens the Remnant Mark.';
+        return 'The slag is in the yard, and Vesper farms the rot. North, a stone opens the Remnant Mark.';
       }
       if (seenBeats.markStep && weep && weep.absorbed) return 'The weep is digested. South is the ash. North is the mark.';
       if (slag && slag.absorbed) return 'The slag is in the spark. North is the Remnant Mark.';
@@ -6629,6 +6720,7 @@
     }
     if (locale === 'field' && regionId === 'verdant-isle' && seenBeats['furrow-letter'] && !seenBeats.patrol) return 'South-west of the wake, the leaf-cup. A licence is already there. Torren has not left the coat.';
     if (locale === 'root-cellar' && !seenBeats.kiln) return 'The kiln is north. It still has a tenant.';
+    if (!seenBeats['waystone-wake'] && scarVerdict) return 'Vesper farms the rot at the scar. The waystone stays shut.';
     if (!seenBeats['waystone-wake']) return 'The kiln, then the scar. The waystone stays shut until both.';
     if (!seenBeats.marrowStep && !seenBeats['bottle-hall'] && !seenBeats['vault-face']) return 'The waystone is open. The harbor vault is on the shale. A tally clerk stands east of the door.';
     if (!seenBeats.marrowStep && !seenBeats['bottle-hall'] && !seenBeats['clerk-tally']) return 'The tally clerk is east of the vault. Speak to him before the hall.';
@@ -10794,7 +10886,7 @@
       : enemies.some((e) => e.id === 'brine')
           ? 'The coast grew a thing with too many legs. It wets the stone. The splash is a nick, not a second full bite.'
       : enemies.some((e) => e.id === 'echo')
-      ? 'Vesper is not on this field. Something that remembers her mouth is.'
+      ? 'Vesper farms the rot. She is not on this field. Something that remembers her mouth is.'
       : enemies.some((e) => e.id === 'warden') && enemies.some((e) => e.id === 'clerk')
         ? 'Licence. The coast warden lifts the seal. The next blow costs more life. A shoulder in front tears it.'
       : enemies.some((e) => e.id === 'warden') && party.some((p) => p.id === 'torren' && p.hp > 0)
@@ -12591,7 +12683,9 @@
             : 'Where she woke. The letter is still in the basket.')
           : !seenBeats.patrol
             ? 'Where she woke. South-west, the leaf-cup. A licence is already there.'
-            : 'Where she woke.',
+            : scarVerdict && !seenBeats['waystone-wake']
+              ? 'Where she woke. Vesper farms the rot at the scar.'
+              : 'Where she woke.',
     }];
     if (seenBeats.village) {
       rows.push({
@@ -12604,6 +12698,14 @@
       });
     }
     if (seenBeats.cellar || seenBeats.kiln) rows.push({ name: 'Root-cellar', note: 'The kiln under the arch.' });
+    if (seenBeats.scar || scarVerdict) {
+      rows.push({
+        name: 'Vesper’s Scar',
+        note: scarVerdict
+          ? 'She farms the rot there. She does not enter.'
+          : 'East of the wake. The witnesses have not spoken.',
+      });
+    }
     if (seenBeats.coastRoute || seenBeats['vault-face'] || regionId === 'stormreach') {
       const coastNote = !seenBeats['vault-face'] && !seenBeats['bottle-hall']
         ? 'The harbor vault is in the cliff. A tally clerk stands east of the door.'
@@ -12632,7 +12734,7 @@
     if (seenBeats.yardStep) {
       const slag = pools.find((p) => p.id === 'yard-slag');
       const yardNote = slag && !slag.absorbed && !slag.bottled
-        ? 'Walked. The slag is still a mouth.'
+        ? 'Walked. The slag is still a mouth. Vesper farms the rot.'
         : 'Through the stone west of the engine. Kestrel did not carry you.';
       rows.push({ name: 'Concord yard', note: yardNote });
     } else if (seenBeats.marrowStep) rows.push({ name: 'Concord yard', note: 'Not walked yet. The stone is west of the engine.' });

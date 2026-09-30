@@ -418,6 +418,13 @@ Playable on the Verdant Isle field:
 - A dusk fight’s enemy bar and the foe chip on the ribbon read one notch clearer. The numbers stay where they were.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Vesper at the scar, and the yard (this branch)
+
+- After the scar verdict, and before the waystone, the quest and Places say Vesper farms the rot. An ash veil hangs off that mouth. The absorb there still answers. She does not enter the aftermath.
+- The Concord yard keeps a lantern’s smoke and a seal stake off the slag, the warden, the mark stone, and the south step. The dusk rim that was already there stays.
+- A fight that remembers her mouth says she farms the rot. The blow is unchanged.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
