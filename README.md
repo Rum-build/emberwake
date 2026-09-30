@@ -129,6 +129,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The root-cellar arch keeps an ash lintel, a few embers, and a cooler lamp. The crawl keeps wax on the jars and a small lamp. The step in, the mites, and the drink stay. Places names the mouth. No new cue.
 - The ash nave keeps cooler dust shafts, ash on the near pews, and a few ember motes in the colonnade. The step back to the mark keeps a small catch-light. The doors stay. Places names the colonnade. No new cue.
 - The counting room keeps cooler salt dust, a rim on the ledger lamp, and ash on the counter. The vault door keeps a little seal-dust. The clerk and the door stay. Places names the counting room. No new cue.
+- The eagle roost keeps cooler night haze, rope grain, and ember grit on the perch beam. The harbor pier keeps a wet sheen and a cooler lamp. The climb stays. Places names the roost. No new cue.
 
 ## Play on your phone
 

@@ -4722,7 +4722,9 @@
     g.add(makeCairn(4.2, 8.8));
     g.add(makeRationStall(-8.6, 3.2));
     dressHarbor(g);
+    dressHarborPier(g);
     dressRoostRim(g);
+    dressRoostNight(g);
     dressCoastMist(g);
     dressCoastShore(g);
     dressHarborWire(g);
@@ -4962,6 +4964,55 @@
     veil.position.set(-0.04, 1.05, -0.22);
     rig.add(veil);
     g.add(rig);
+  }
+
+  function dressRoostNight(g) {
+    const hazeMat = new THREE.MeshBasicMaterial({ color: 0xb9cce4, fog: false });
+    [[1.5, 1.9, 7.2], [4.4, 1.8, 7.15], [2.15, 2.25, 6.95], [3.85, 2.15, 6.9]].forEach((spot) => {
+      const shaft = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 1.7), hazeMat);
+      shaft.position.set(spot[0], spot[1], spot[2]);
+      g.add(shaft);
+    });
+    const band = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 0.42), hazeMat);
+    band.position.set(3.0, 2.45, 6.85);
+    g.add(band);
+    const grainMat = new THREE.MeshBasicMaterial({ color: 0xf0d8b0, fog: false });
+    [2.62, 2.92, 3.22, 3.5].forEach((x) => {
+      const twist = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.22, 0.05), grainMat);
+      twist.position.set(x, 1.48, 7.56);
+      g.add(twist);
+    });
+    const gritMat = new THREE.MeshBasicMaterial({ color: 0xff5a18, fog: false });
+    [[2.75, 1.58, 7.5], [3.15, 1.6, 7.48], [3.42, 1.56, 7.52]].forEach((spot, i) => {
+      const grit = new THREE.Mesh(new THREE.SphereGeometry(i === 1 ? 0.07 : 0.055, 6, 4), gritMat);
+      grit.position.set(spot[0], spot[1], spot[2]);
+      g.add(grit);
+    });
+  }
+
+  function dressHarborPier(g) {
+    const sheenMat = new THREE.MeshBasicMaterial({ color: 0x9ec6de, fog: false });
+    [[5.15, 7.55, 0.55], [6.05, 6.85, 0.48]].forEach((spot) => {
+      const wet = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 16), sheenMat);
+      wet.rotation.x = -Math.PI / 2;
+      wet.position.set(spot[0], 0.07, spot[1]);
+      g.add(wet);
+    });
+    const pole = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.045, 0.06, 1.2, 5),
+      new THREE.MeshLambertMaterial({ color: 0x3a3532 })
+    );
+    pole.position.set(5.55, 0.6, 6.95);
+    g.add(pole);
+    const lamp = new THREE.Mesh(
+      new THREE.BoxGeometry(0.26, 0.22, 0.18),
+      new THREE.MeshBasicMaterial({ color: 0xe8f6ff, fog: false })
+    );
+    lamp.position.set(5.55, 1.42, 6.95);
+    g.add(lamp);
+    const cool = new THREE.PointLight(0xc5d6ee, 0.45, 3.2);
+    cool.position.set(5.55, 1.28, 7.15);
+    g.add(cool);
   }
 
   function buildCoast() {
@@ -13614,6 +13665,7 @@
             : 'Shale, lightning, the harbor vault.';
       rows.push({ name: 'Stormreach Coast', note: coastNote });
       rows.push({ name: 'Harbor telegraph', note: 'A wire and a cooler lamp on the shale. The tick stays on the post.' });
+      rows.push({ name: 'Eagle roost', note: 'Cooler night on the perch. The climb is still the way home.' });
     }
     if (seenBeats['vault-ledger'] || seenBeats['bottle-hall']) {
       rows.push({
