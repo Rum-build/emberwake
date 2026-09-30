@@ -849,6 +849,10 @@ The root-cellar door now carries weathered plank grain, iron straps, hinge rust,
 
 The leaf-village houses now carry timber posts, a lit window, thatch courses, stone footing, and soot under the eave. The door and the path stay where they were. The root-cellar door, the counting-room desk, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the kiln exterior pass
+
+The buried kiln now carries exterior brick courses, a heat wash, an ash shelf rim, and mouth soot on the approach, with ash plates on the path. The drink and the throat stay where they were. The leaf-village houses, the root-cellar door, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
