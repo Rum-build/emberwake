@@ -530,6 +530,13 @@ Playable on the Verdant Isle field:
 - Places names the cellar mouth. It does not say what the kiln will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Nave dust, and the mark catch-light (this branch)
+
+- The ash nave keeps cooler dust shafts, ash on the near pews, and a few ember motes in the colonnade. The doors and the south step stay where they were.
+- The step back toward the Remnant Mark keeps a small carved rim and a catch-light. It does not open a new door.
+- Places names the colonnade. It does not say what the claim will do. South still steps back to the mark.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

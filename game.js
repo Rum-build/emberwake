@@ -2609,8 +2609,49 @@
       stub.position.set(x, 0.09, 1.82);
       g.add(stub);
     });
+    dressNaveAir(g);
     naveGroup = g;
     scene.add(g);
+  }
+
+  function dressNaveAir(g) {
+    const shaftMat = new THREE.MeshBasicMaterial({ color: 0xc5d6ee, fog: false });
+    const veilMat = new THREE.MeshBasicMaterial({
+      color: 0xc5d6ee, transparent: true, opacity: 0.38, side: THREE.DoubleSide, depthWrite: false, fog: false,
+    });
+    [[-2.08, 0.58], [2.08, 0.64], [-2.22, -0.12], [2.22, -0.02]].forEach((spot) => {
+      const shaft = new THREE.Mesh(new THREE.PlaneGeometry(0.1, 2.05), shaftMat);
+      shaft.position.set(spot[0], 1.55, spot[1]);
+      g.add(shaft);
+      const veil = new THREE.Mesh(new THREE.PlaneGeometry(0.42, 2.2), veilMat);
+      veil.position.set(spot[0], 1.55, spot[1] + 0.04);
+      g.add(veil);
+    });
+    const gritMat = new THREE.MeshBasicMaterial({ color: 0xd4c8b4, fog: false });
+    [[-1.95, 2.15], [1.95, 2.15], [-1.95, 1.15], [1.95, 1.15]].forEach((spot) => {
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.04, 0.12), gritMat);
+      cap.position.set(spot[0], 0.42, spot[1]);
+      g.add(cap);
+    });
+    const emberMat = new THREE.MeshBasicMaterial({ color: 0xff5a18, fog: false });
+    [[-2.18, 1.32, 0.82], [2.16, 1.18, 0.46], [-1.72, 1.55, 0.22], [1.78, 1.42, 1.02]].forEach((spot, i) => {
+      const mote = new THREE.Mesh(new THREE.SphereGeometry(i % 2 ? 0.055 : 0.042, 6, 4), emberMat);
+      mote.position.set(spot[0], spot[1], spot[2]);
+      g.add(mote);
+    });
+    const rim = new THREE.Mesh(
+      new THREE.TorusGeometry(0.36, 0.04, 8, 22),
+      new THREE.MeshBasicMaterial({ color: 0xd4e2ee, fog: false })
+    );
+    rim.rotation.x = Math.PI / 2;
+    rim.position.set(0.05, 0.06, 2.68);
+    g.add(rim);
+    const catchLight = new THREE.Mesh(
+      new THREE.BoxGeometry(0.32, 0.08, 0.16),
+      new THREE.MeshBasicMaterial({ color: 0xf2f7ff, fog: false })
+    );
+    catchLight.position.set(-0.52, 0.2, 2.82);
+    g.add(catchLight);
   }
 
   function tuckCathedral() {
@@ -13587,6 +13628,7 @@
           ? 'The seal was left. The cathedral stayed.'
           : 'Walked. The door is still a choice.';
       rows.push({ name: 'Ash nave', note: note });
+      rows.push({ name: 'Nave colonnade', note: 'Cooler dust in the aisle. South still steps back to the mark.' });
     } else if (seenBeats.markFight) {
       rows.push({ name: 'Ash nave', note: 'Not walked yet. North of the pillar. The list does not carry you.' });
     }
