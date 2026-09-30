@@ -1437,8 +1437,8 @@ body.pack-open .places-panel {
 }
 .combat-ui.dusk-fight .enemy-card .bar-hp {
   background:
-    repeating-linear-gradient(90deg, rgba(255, 244, 220, 0.34) 0 2px, transparent 2px 6px),
-    linear-gradient(180deg, rgba(255, 236, 210, 0.4), transparent 55%),
+    repeating-linear-gradient(90deg, rgba(255, 244, 220, 0.75) 0 1px, rgba(60, 16, 6, 0.4) 1px 3px, transparent 3px 7px),
+    linear-gradient(180deg, rgba(255, 236, 210, 0.45), rgba(0, 0, 0, 0.12)),
     linear-gradient(90deg, #ff6a28, #ffe0a0);
 }
 
@@ -1521,7 +1521,7 @@ body.pack-open .places-panel {
 
 .enemy-card .bar-wrap,
 .bar-row .bar-wrap {
-  height: 8px;
+  height: 10px;
   background: linear-gradient(180deg, #100e14, #2a2630);
   border: 1px solid rgba(255, 210, 160, 0.28);
   border-radius: 4px;
@@ -1532,8 +1532,8 @@ body.pack-open .places-panel {
 .enemy-card .bar-hp {
   height: 100%;
   background:
-    repeating-linear-gradient(90deg, rgba(255, 236, 200, 0.32) 0 2px, transparent 2px 6px),
-    linear-gradient(180deg, rgba(255, 244, 220, 0.38), transparent 52%),
+    repeating-linear-gradient(90deg, rgba(255, 236, 200, 0.7) 0 1px, rgba(40, 12, 6, 0.45) 1px 3px, transparent 3px 7px),
+    linear-gradient(180deg, rgba(255, 244, 220, 0.42), rgba(0, 0, 0, 0.18)),
     linear-gradient(90deg, #9a3412, #e0a04a);
 }
 
@@ -1593,19 +1593,19 @@ body.pack-open .places-panel {
   flex-shrink: 0;
 }
 
-.bar-row .bar-wrap { flex: 1; height: 7px; }
+.bar-row .bar-wrap { flex: 1; height: 10px; }
 .bar-row .bar-hp {
   height: 100%;
   background:
-    repeating-linear-gradient(90deg, rgba(255, 248, 230, 0.34) 0 2px, transparent 2px 6px),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.32), transparent 55%),
+    repeating-linear-gradient(90deg, rgba(255, 248, 230, 0.72) 0 1px, rgba(8, 28, 16, 0.42) 1px 3px, transparent 3px 7px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.36), rgba(0, 0, 0, 0.16)),
     linear-gradient(90deg, #1e6b45, #8ed07a);
 }
 .bar-row .bar-mp {
   height: 100%;
   background:
-    repeating-linear-gradient(90deg, rgba(232, 246, 255, 0.36) 0 2px, transparent 2px 6px),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.28), transparent 55%),
+    repeating-linear-gradient(90deg, rgba(232, 246, 255, 0.75) 0 1px, rgba(8, 20, 36, 0.42) 1px 3px, transparent 3px 7px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(0, 0, 0, 0.16)),
     linear-gradient(90deg, #245a78, #8ec4e4);
 }
 .bar-row .nums {
