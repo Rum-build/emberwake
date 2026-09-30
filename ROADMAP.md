@@ -873,6 +873,10 @@ The field bed and the existing stings were nearly silent: the loop sat under a 0
 
 Lira’s pack now carries canvas weave, strap buckles, and worn seams, and it sits on her back. The pack panel and the move stick stay where they were. The bed, the stings, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the aftermath step pass
+
+The aftermath south steps now carry worn stone grain, edge chips, moss in the joints, and a soft ash wash. The step back stays where it was. Vesper stays out of the company. The pack, the bed, and the equipped gear stay readable. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

@@ -4904,6 +4904,7 @@
     g.userData.boards = boards;
     g.userData.beside = beside;
     dressAftermathBoards(g);
+    dressAftermathSteps(g);
     aftermathGroup = g;
     scene.add(g);
   }
@@ -4983,6 +4984,59 @@
       share: pin('share'),
       burn: pin('burn'),
     };
+  }
+
+  function dressAftermathSteps(g) {
+    const steps = new THREE.Group();
+    steps.userData.aftermathSteps = true;
+    function phong(color, emissive, shininess, specular) {
+      return new THREE.MeshPhongMaterial({
+        color,
+        emissive: new THREE.Color(emissive),
+        shininess,
+        specular: new THREE.Color(specular),
+      });
+    }
+    const stone = phong(0x6a5a4c, 0x1a120e, 14, 0xd4c4b0);
+    const grain = phong(0x3a3028, 0x100c08, 8, 0xa09080);
+    const chip = phong(0x8a7868, 0x2a2018, 18, 0xf0e4d4);
+    const moss = phong(0x3a5a38, 0x102010, 6, 0x8ab880);
+    const ash = new THREE.MeshBasicMaterial({
+      color: 0x2a201c, transparent: true, opacity: 0.28, depthWrite: false, fog: false,
+    });
+    [
+      { z: 4.52, y: 0.06, w: 2.35, d: 0.32, x: -0.04 },
+      { z: 4.78, y: 0.1, w: 2.12, d: 0.28, x: 0.05 },
+      { z: 5.0, y: 0.14, w: 1.86, d: 0.24, x: -0.02 },
+    ].forEach((tread) => {
+      const block = new THREE.Mesh(new THREE.BoxGeometry(tread.w, 0.1, tread.d), stone);
+      block.position.set(tread.x, tread.y, tread.z);
+      block.castShadow = true;
+      steps.add(block);
+      const line = new THREE.Mesh(new THREE.BoxGeometry(tread.w * 0.7, 0.012, 0.018), grain);
+      line.position.set(tread.x + 0.04, tread.y + 0.052, tread.z - 0.04);
+      steps.add(line);
+      const seam = new THREE.Mesh(new THREE.BoxGeometry(0.016, 0.012, tread.d * 0.72), grain);
+      seam.position.set(tread.x - tread.w * 0.22, tread.y + 0.052, tread.z);
+      steps.add(seam);
+    });
+    [[-0.82, 4.62, 0.16], [0.58, 4.88, 0.18], [0.18, 4.46, 0.12]].forEach((spot, i) => {
+      const bit = new THREE.Mesh(new THREE.BoxGeometry(0.12 + (i % 2) * 0.05, 0.04, 0.08), chip);
+      bit.position.set(spot[0], spot[2], spot[1]);
+      bit.rotation.y = 0.35 + i * 0.45;
+      steps.add(bit);
+    });
+    [[-0.38, 4.66], [0.32, 4.9], [-0.12, 5.04]].forEach((spot, i) => {
+      const tuft = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.028, 0.06), moss);
+      tuft.position.set(spot[0], 0.17, spot[1]);
+      tuft.rotation.y = 0.25 + i * 0.4;
+      steps.add(tuft);
+    });
+    const wash = new THREE.Mesh(new THREE.CircleGeometry(1.15, 18), ash);
+    wash.rotation.x = -Math.PI / 2;
+    wash.position.set(0.04, 0.045, 4.32);
+    steps.add(wash);
+    g.add(steps);
   }
 
   function naveFits(x, z) {
