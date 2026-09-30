@@ -191,6 +191,7 @@
   let nearMouth = null;
   let nearRow = null;
   let nearWing = null;
+  let nearTick = null;
   let nearRing = null;
   let nearClerk = null;
   let nearRation = null;
@@ -4374,6 +4375,21 @@
     };
   }
 
+  function nearestTick() {
+    if (!playerMesh || locale !== 'field' || regionId !== 'stormreach' || skyPass) return null;
+    if (Math.hypot(-4.05 - playerMesh.position.x, 1.45 - playerMesh.position.z) > 0.85) return null;
+    if (seenBeats['wire-tick']) {
+      return {
+        title: 'Wire tick',
+        hint: 'Already heard. The tick stays on the post. Press E to hear it again.',
+      };
+    }
+    return {
+      title: 'Wire tick',
+      hint: 'Press E. Concord left the post counting. It is not the pier and not the door.',
+    };
+  }
+
   function nearestRing() {
     if (!playerMesh || locale !== 'field' || regionId !== 'verdant-isle' || skyPass) return null;
     if (Math.hypot(9.2 - playerMesh.position.x, -12.4 - playerMesh.position.z) > 1.1) return null;
@@ -8202,7 +8218,8 @@
     const showMouth = idle && nearMouth && !showAbsorb && !atExit;
     const showRow = idle && nearRow && !showAbsorb && !atExit;
     const showWing = idle && nearWing && !showAbsorb && !showDoor && !showGate && !showReturn && !showPier;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showScrap && !showCompany && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showSpare && !showJournal && !showNotice && !showCord && !showPost && !showPier && !showFarm && !showCork && !showDust && !showLamp && !showMouth && !showRow && !showWing && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol);
+    const showTick = idle && nearTick && !showAbsorb && !showDoor && !showGate && !showReturn && !showPier && !showWing && !showPorter && !showNotice && !showClerk;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showScrap && !showCompany && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showSpare && !showJournal && !showNotice && !showCord && !showPost && !showPier && !showFarm && !showCork && !showDust && !showLamp && !showMouth && !showRow && !showWing && !showTick && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
@@ -8220,7 +8237,7 @@
     else if (showChest) absorbBtn.textContent = seenBeats['wayside-chest'] ? 'Look' : 'Open';
     else if (showSpare) absorbBtn.textContent = seenBeats['spare-green'] ? 'Look' : 'Open';
     else if (showJournal) absorbBtn.textContent = 'Look';
-    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showPier || showFarm || showCork || showDust || showLamp || showMouth || showRow || showWing || showRing || showClerk || showRation || showAside || showNima || showPatrol) absorbBtn.textContent = 'Look';
+    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showPier || showFarm || showCork || showDust || showLamp || showMouth || showRow || showWing || showTick || showRing || showClerk || showRation || showAside || showNima || showPatrol) absorbBtn.textContent = 'Look';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
     absorbBtn.classList.toggle('is-ready', !!showAbsorb);
   }
@@ -8232,7 +8249,7 @@
   function updatePrompt() {
     const atExit = atInteriorExit();
     interactPrompt.classList.remove('ready');
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearScrap && !nearCompany && !nearPorter && !nearLetter && !nearChest && !nearSpare && !nearJournal && !nearNotice && !nearCord && !nearPost && !nearPier && !nearFarm && !nearCork && !nearDust && !nearLamp && !nearMouth && !nearRow && !nearWing && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearScrap && !nearCompany && !nearPorter && !nearLetter && !nearChest && !nearSpare && !nearJournal && !nearNotice && !nearCord && !nearPost && !nearPier && !nearFarm && !nearCork && !nearDust && !nearLamp && !nearMouth && !nearRow && !nearWing && !nearTick && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -8431,6 +8448,11 @@
       $('#interact-detail').textContent = nearWing.hint;
       return;
     }
+    if (nearTick && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
+      $('#interact-title').textContent = nearTick.title;
+      $('#interact-detail').textContent = nearTick.hint;
+      return;
+    }
     if (nearRing && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
       $('#interact-title').textContent = nearRing.title;
       $('#interact-detail').textContent = nearRing.hint;
@@ -8558,6 +8580,7 @@
       if (seenBeats['mouth-ash']) waiting.push('Ash on the cellar mouth. Concord left the heat under the jars. Vesper farms the rot and does not take the host.');
       if (seenBeats['hall-row']) waiting.push('Grain on the bottle-hall’s near corks. Concord gilded the shelf. Vesper farms the rot and does not take the host.');
       if (seenBeats['roost-wing']) waiting.push('Night on the eagle roost. Concord left the wing in the air. Vesper does not take the thermal.');
+      if (seenBeats['wire-tick']) waiting.push('A tick on the harbor wire. Concord left the post counting. Vesper does not stand there.');
       if (seenBeats['cold-ring']) waiting.push('A cold ring in the grass is not a pool and not the scar.');
       if (seenBeats['clerk-tally']) waiting.push('A tally clerk on the shale counted weather. The vault door did not change.');
       if (seenBeats['coast-brawl']) waiting.push('The west-shale patrol was provoked. They fought. The vault door did not change.');
@@ -9179,6 +9202,10 @@
     }
     if (nearWing) {
       talkWing();
+      return;
+    }
+    if (nearTick) {
+      talkTick();
       return;
     }
   }
@@ -11427,6 +11454,27 @@
     saveGame();
   }
 
+  function talkTick() {
+    if (locale !== 'field' || regionId !== 'stormreach' || dialogueOpen) return;
+    if (seenBeats['wire-tick']) {
+      showToast('The tick stays on the wire. She does not stand here. The post keeps counting.');
+      return;
+    }
+    const fn = EW.scenes['wire-tick'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'wire-tick';
+    }
+  }
+
+  function noteTick() {
+    seenBeats['wire-tick'] = true;
+    showToast('The tick stays on the wire. The post keeps counting.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
   function talkRing() {
     if (locale !== 'field' || regionId !== 'verdant-isle' || dialogueOpen) return;
     if (seenBeats['cold-ring']) {
@@ -11858,6 +11906,7 @@
       nearMouth = null;
       nearRow = null;
       nearWing = null;
+      nearTick = null;
       nearRing = null;
       nearClerk = null;
       nearRation = null;
@@ -11978,6 +12027,7 @@
         nearMouth = nearestMouth();
         nearRow = nearestRow();
         nearWing = nearestWing();
+        nearTick = nearestTick();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
         nearRation = nearestRation();
@@ -12039,6 +12089,7 @@
         nearMouth = nearestMouth();
         nearRow = nearestRow();
         nearWing = nearestWing();
+        nearTick = nearestTick();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
         nearRation = nearestRation();
@@ -12121,6 +12172,7 @@
         nearMouth = nearestMouth();
         nearRow = nearestRow();
         nearWing = nearestWing();
+        nearTick = nearestTick();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
         nearRation = nearestRation();
@@ -15557,6 +15609,7 @@
   EW.noteMouth = noteMouth;
   EW.noteRow = noteRow;
   EW.noteWing = noteWing;
+  EW.noteTick = noteTick;
   EW.noteRing = noteRing;
   EW.noteClerk = noteClerk;
   EW.noteRation = noteRation;

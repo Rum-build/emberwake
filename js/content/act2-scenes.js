@@ -53,6 +53,23 @@
     return true;
   });
 
+  Emberwake.registerScene('wire-tick', function () {
+    var torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    Emberwake.present({
+      lines: [
+        { where: 'Harbor telegraph', speaker: 'Lira', text: 'A tick on the wire. Concord sold the weather and left the post counting.' },
+        torren
+          ? { speaker: 'Torren', text: 'I stamped posts like this. The stamp held the count. It did not hold the storm.' }
+          : { speaker: 'The spark', text: 'They stamped the post. The count held. The storm did not.' },
+        { speaker: 'The spark', text: 'Vesper farms the rot inland. She does not stand at this wire. The tick stays.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteTick) Emberwake.noteTick();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('coast-landing', function () {
     Emberwake.present({
       lines: [
