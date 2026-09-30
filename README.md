@@ -121,6 +121,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The shale keeps a foam rim, wet sand, and a licence-post glow off the walk. The waystone keeps a carved rim, ash grit, and a cooler light off the mouth. Places names that stone. No new cue.
 - Ashen Marrow keeps bone ribs, cooler dust, and a marrow lamp off the south step. The leaf-village door keeps a lamp, a leaf wreath, and a dusk rim off the walk. Places names the bone-ash crypt. No new cue.
 - The Remnant Mark keeps a carved rim, ember grit, and cooler stones off the south step. The field bed opens its filter on the Verdant Isle and starts on the first touch of the title. That is the same cue. Places names the mark bed. No new cue.
+- Torren and Nima speak once when their assists fire. The heal stays 14. The harbor keeps a wire, a spark tick, and a cooler lamp off the walk. Places names that post. No new cue.
 
 ## Play on your phone
 

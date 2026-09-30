@@ -488,6 +488,13 @@ Playable on the Verdant Isle field:
 - After the mark is walked, Places names that carved rim. It does not repeat the Claim.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Assist lines, and the harbor telegraph (this branch)
+
+- When Torren’s shoulder fires, he says the coat stays on him. When Nima’s steady fires, she says to hold, and that the herb is not a door. The heal is still 14. The chips stay Torren · shoulder and Nima · steady.
+- The harbor keeps a signal post: a wire, a spark tick, and a cooler lamp, off the roost, the vault door, the clerk, and the pools. The telegraph ring in a fight stays as it was.
+- Places names that post. It does not repeat the roost or the corks.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
