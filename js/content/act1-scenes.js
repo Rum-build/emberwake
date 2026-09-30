@@ -97,6 +97,19 @@
     return true;
   });
 
+  Emberwake.registerScene('road-cloak', function () {
+    Emberwake.present({
+      lines: [
+        { where: 'Verdant Isle', speaker: 'Lira', text: 'A cloak on a stake, east of the wake. Wool, still damp. No seal.' },
+        { speaker: 'The spark', text: 'Wear it from the pack if you want the shape. It does not open the kiln. The road stays.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteCloak) Emberwake.noteCloak();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('salt-cord', function () {
     Emberwake.present({
       lines: [

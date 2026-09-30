@@ -706,6 +706,13 @@ Playable on the Verdant Isle field:
 - Hands, boots, faces, and the other hip kits stay. Nima’s rod and Torren’s cudgel stay. Vesper stays a darker cloth mass and a hair lock. She does not take a lit face. She does not enter Aftermath.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Road cloak, and the weapon grain (this branch)
+
+- East of the wake, a stake holds a road cloak. Take it. Equip it from the pack and Lira’s shoulders widen, with wool hanging past the hips and a clasp at the throat. Stow it and that shape leaves. The quilted jerkin can stay on under it.
+- The scout knife’s sheath shows grain and a strap. The ashwood blade keeps an ember glow. The wellwood staff’s gem is faceted. The reed bow’s quiver has straps. Nima’s rod and Torren’s cudgel stay.
+- Hands, boots, and faces stay. Vesper stays a darker cloth mass and a hair lock. She does not take a lit face. She does not enter Aftermath.
+- The stake is off the door, the quiet stand, and the path look. The kiln stays the road. Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

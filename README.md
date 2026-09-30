@@ -153,6 +153,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - Lira, Nima, and Torren keep a jaw, brow, and eye glint. Lira’s hair sweeps, Nima wears a braid, and Torren keeps a beard and a coat seam. Scarf cloth folds on each. Vesper stays a dark cloth shape. No new cue.
 - Lira, Nima, and Torren keep a nose bridge and a cheek plane on each side. The scarf hems hang, and the hair is a little fuller: Lira’s sweep, Nima’s braid, Torren’s crop and beard. Vesper stays a dark cloth shape. No new cue.
 - Lira’s equipped weapon sits on her body in the field and in a fight. The scout knife rides the hip, the ashwood blade is longer and warmer, the wellwood staff is in the hand, and the reed bow crosses the chest with a quiver. The quilted jerkin adds padded shoulders and a stitched chest; stowing it thins that silhouette. Nima’s rod, Torren’s cudgel, and Vesper’s dark shard stay. No new cue.
+- A road cloak hangs on a stake east of the wake. Take it into the pack and equip it, and the wool widens Lira’s shoulders and hangs past the hips. Stow it and that shape leaves. The knife sheath has grain, the ashwood edge glows, the staff gem is faceted, and the bow quiver has straps. The kiln stays the road. No new cue.
 
 ## Play on your phone
 
