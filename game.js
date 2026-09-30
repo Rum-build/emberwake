@@ -3677,13 +3677,19 @@
       frame.add(bar);
     });
     const lamp = new THREE.Mesh(
-      new THREE.BoxGeometry(0.18, 0.14, 0.12),
+      new THREE.BoxGeometry(0.34, 0.26, 0.18),
       new THREE.MeshBasicMaterial({ color: 0xd5e4f2, fog: false })
     );
-    lamp.position.set(0.15, 1.15, 0.22);
+    lamp.position.set(1.62, 0.62, 0.38);
     frame.add(lamp);
-    const cool = new THREE.PointLight(0xc5d6ee, 0.8, 4.8);
-    cool.position.set(0.15, 1.05, 0.4);
+    const pole = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.04, 0.05, 0.7, 5),
+      new THREE.MeshBasicMaterial({ color: 0xd5e4f2, fog: false })
+    );
+    pole.position.set(1.62, 0.22, 0.38);
+    frame.add(pole);
+    const cool = new THREE.PointLight(0xc5d6ee, 0.85, 5.2);
+    cool.position.set(1.62, 0.7, 0.55);
     frame.add(cool);
     function pin(kind) {
       const prop = new THREE.Group();
