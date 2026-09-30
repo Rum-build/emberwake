@@ -3508,6 +3508,24 @@
     approachRim.rotation.x = -Math.PI / 2;
     approachRim.position.set(0, 0.06, 4.2);
     g.add(approachRim);
+    const lintelGrain = new THREE.MeshBasicMaterial({ color: 0xf3e2c4, fog: false });
+    [[-1.15, 3.42, 6.88], [1.2, 3.38, 6.9]].forEach((spot) => {
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.18, 0.08), lintelGrain);
+      line.position.set(spot[0], spot[1], spot[2]);
+      g.add(line);
+    });
+    const sillAsh = new THREE.MeshBasicMaterial({ color: 0xb7a48c, fog: false });
+    [[-1.35, 0.72, 7.02], [1.45, 0.7, 7.05]].forEach((spot) => {
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.12, 0.22), sillAsh);
+      cap.position.set(spot[0], spot[1], spot[2]);
+      g.add(cap);
+    });
+    const catchLight = new THREE.Mesh(
+      new THREE.BoxGeometry(0.28, 0.16, 0.1),
+      new THREE.MeshBasicMaterial({ color: 0xd5e8f4, fog: false })
+    );
+    catchLight.position.set(-2.05, 1.9, 6.95);
+    g.add(catchLight);
     makeMotes(g, 120, 0xd0b8a4, { x: 16, y: 5.5, z: 18 }, { fall: true });
     claimGroup = g;
     scene.add(g);
@@ -13895,6 +13913,7 @@
                 ? 'Burned. The scar took the ash. North is the aftermath.'
                 : 'The Remnant Claim is walked. The choice is still ahead.';
       rows.push({ name: 'Remnant claim', note: claimNote });
+      rows.push({ name: 'Approach lintel', note: 'Grain on the south lintel. South still steps back.' });
     } else if (breachWord === 'hold') {
       rows.push({ name: 'Remnant claim', note: 'North, past the bar. That is the Remnant Claim. The list does not carry you.' });
     }
