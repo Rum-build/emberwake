@@ -833,6 +833,10 @@ The cliff roost now carries weathered timber beams, rope lashings, nest bedding,
 
 The waystone now carries carved faces on the ring, lichen, crack lines, grit at the footing, and a worn path edge. The south stones and the wake stay where they were. The cliff roost, the scar farm, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the vault door pass
+
+The harbor vault door now carries iron bands, rivets, a seal etch, hinge wear, and an ash wash on the face. The threshold and the count stay where they were. The waystone, the cliff roost, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
