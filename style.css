@@ -804,7 +804,7 @@ body:not(.still-motion) .btn-absorb.is-ready {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(circle at 50% 42%, rgba(255, 176, 96, 0.52), transparent 62%);
+  background: radial-gradient(circle at 50% 42%, rgba(255, 78, 24, 0.82), rgba(255, 36, 8, 0.34) 40%, transparent 64%);
   animation: hitwash 0.48s ease-out;
 }
 .combat-ui.hit:not(.juice-cleave):not(.juice-channel):not(.juice-aim):not(.juice-plasma):not(.juice-steam):not(.juice-storm):not(.juice-magma):not(.juice-glass) { animation: hitflash 0.32s ease-out; }

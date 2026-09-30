@@ -117,6 +117,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - On a phone, the pack’s item rows keep the stack apart from the name, and Close sits across the top. A pool in range wears one brighter ring, and the prompt puts Absorb in front of the pool’s own name. The harbor roost keeps a rope, a lamp, and a mist rim off the walk. The drink is unchanged. No new cue.
 - Before the village, the field says the spark is in Lira. The Concord patrol fight names the Concord, and ash sits on that floor. The blow is unchanged. No new cue.
 - The bottle-hall keeps a cork row, seal dust, and a cooler lamp off the walk. Continue glows when a save is there. No new cue.
+- The buried kiln keeps an ember glow, a soot rim, and a little smoke off the mouth. The leaf-cup keeps a cooler rim, a wax sheen, and a scatter of leaves off the mouth. A hit washes hotter. The drink and the blow are unchanged. No new cue.
 
 ## Play on your phone
 
