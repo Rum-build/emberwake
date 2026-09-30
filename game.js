@@ -1952,6 +1952,7 @@
     dressCountAir(g);
     dressCountFloor(g);
     dressClerkDesk(g);
+    dressClerkBody(g);
     g.visible = false;
     return g;
   }
@@ -2294,6 +2295,74 @@
     shade.scale.set(1.4, 0.2, 1);
     shade.position.set(-2.28, 0.045, 0.02);
     g.add(shade);
+  }
+
+  function dressClerkBody(g) {
+    const desk = new THREE.Group();
+    desk.position.set(-1.2, 0.35, -0.4);
+    desk.userData.clerkBody = true;
+    const timber = new THREE.MeshPhongMaterial({
+      color: 0x6a4e36, emissive: new THREE.Color(0x1c120c), shininess: 16, specular: new THREE.Color(0xd8c4a0),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0x3a2a1c, shininess: 8, specular: new THREE.Color(0xa08058),
+    });
+    const ink = new THREE.MeshPhongMaterial({
+      color: 0x1a2438, emissive: new THREE.Color(0x080c14), shininess: 22, specular: new THREE.Color(0x8aa4c8),
+    });
+    const brass = new THREE.MeshPhongMaterial({
+      color: 0xe2c878, emissive: new THREE.Color(0x4a3810), shininess: 64, specular: new THREE.Color(0xfff4d0),
+    });
+    const paper = new THREE.MeshPhongMaterial({
+      color: 0xf0e2c4, shininess: 6, specular: new THREE.Color(0xfff8e8),
+    });
+    const paperDark = new THREE.MeshPhongMaterial({
+      color: 0xd8c4a0, shininess: 4, specular: new THREE.Color(0xf0e0c0),
+    });
+    [[-0.28, 0.55], [0.08, 0.42], [0.34, 0.38]].forEach((spot) => {
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.016, spot[1], 0.01), grain);
+      line.position.set(spot[0], -0.02, 0.365);
+      desk.add(line);
+    });
+    const ledge = new THREE.Mesh(new THREE.BoxGeometry(1.55, 0.028, 0.07), timber);
+    ledge.position.set(0, 0.36, 0.3);
+    desk.add(ledge);
+    const stain = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.016, 0.05), ink);
+    stain.position.set(-0.22, 0.378, 0.31);
+    desk.add(stain);
+    const blot = new THREE.Mesh(new THREE.SphereGeometry(0.045, 6, 4), ink);
+    blot.scale.set(1.4, 0.25, 0.8);
+    blot.position.set(0.18, 0.378, 0.28);
+    desk.add(blot);
+    [-0.42, 0.42].forEach((x) => {
+      const drawer = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.22, 0.02), timber);
+      drawer.position.set(x, -0.02, 0.368);
+      desk.add(drawer);
+      const seam = new THREE.Mesh(new THREE.BoxGeometry(0.74, 0.012, 0.012), grain);
+      seam.position.set(x, 0.1, 0.372);
+      desk.add(seam);
+      const pull = new THREE.Mesh(new THREE.TorusGeometry(0.035, 0.008, 6, 10), brass);
+      pull.position.set(x, -0.02, 0.39);
+      desk.add(pull);
+    });
+    [[-0.82, 0.22], [0.82, 0.22], [-0.82, -0.22], [0.82, -0.22]].forEach((spot) => {
+      const plate = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, 0.012), brass);
+      plate.position.set(spot[0], spot[1], 0.374);
+      desk.add(plate);
+    });
+    [[0, 0.012], [0.012, 0.02], [-0.01, 0.028], [0.016, 0.036]].forEach((spot, i) => {
+      const sheet = new THREE.Mesh(
+        new THREE.BoxGeometry(0.28, 0.008, 0.2),
+        i % 2 ? paperDark : paper
+      );
+      sheet.position.set(0.58 + spot[0], 0.36 + spot[1], -0.02);
+      sheet.rotation.y = (i - 1) * 0.04;
+      desk.add(sheet);
+    });
+    const clip = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.012, 0.08), brass);
+    clip.position.set(0.66, 0.41, 0.04);
+    desk.add(clip);
+    g.add(desk);
   }
 
   function dressHallMonopoly(g) {
