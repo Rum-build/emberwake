@@ -128,6 +128,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The Concord yard keeps a cooler dusk haze, cork grain on the seal stake, and seal-dust near the lantern. The walks stay. On the scar, the leaf-cup, and the kiln, the pale ring pulses a little brighter and a few more sparks rise when the drink lands. The cost stays. Places names the stake. No new cue.
 - The root-cellar arch keeps an ash lintel, a few embers, and a cooler lamp. The crawl keeps wax on the jars and a small lamp. The step in, the mites, and the drink stay. Places names the mouth. No new cue.
 - The ash nave keeps cooler dust shafts, ash on the near pews, and a few ember motes in the colonnade. The step back to the mark keeps a small catch-light. The doors stay. Places names the colonnade. No new cue.
+- The counting room keeps cooler salt dust, a rim on the ledger lamp, and ash on the counter. The vault door keeps a little seal-dust. The clerk and the door stay. Places names the counting room. No new cue.
 
 ## Play on your phone
 
