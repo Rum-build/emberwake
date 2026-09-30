@@ -1024,6 +1024,7 @@
     dressIsleGround();
     dressPathAir();
     dressIslePath();
+    dressWakeCover();
 
     overworldGroup.add(new THREE.AmbientLight(0xfff4e4, 0.36));
     const sun = new THREE.DirectionalLight(0xfff6e0, 1.18);
@@ -7120,6 +7121,145 @@
       grain.add(line);
     });
     g.add(grain);
+  }
+
+  function dressWakeCover() {
+    const deep = new THREE.MeshPhongMaterial({
+      color: 0x2f6a32, shininess: 8, specular: new THREE.Color(0xc6e070), side: THREE.DoubleSide,
+    });
+    const mid = new THREE.MeshPhongMaterial({
+      color: 0x4e8a3c, shininess: 12, specular: new THREE.Color(0xe4f0a8), side: THREE.DoubleSide,
+    });
+    const dry = new THREE.MeshPhongMaterial({
+      color: 0x8aa84a, shininess: 6, specular: new THREE.Color(0xf4f8c8), side: THREE.DoubleSide,
+    });
+    const soil = new THREE.MeshPhongMaterial({
+      color: 0x6a4a2c, shininess: 4, specular: new THREE.Color(0xc4a070),
+    });
+    const soilDark = new THREE.MeshPhongMaterial({
+      color: 0x4a321c, shininess: 3, specular: new THREE.Color(0x8a6848),
+    });
+    const stoneA = new THREE.MeshPhongMaterial({
+      color: 0x8a8174, shininess: 28, specular: new THREE.Color(0xe8e0d0),
+    });
+    const stoneB = new THREE.MeshPhongMaterial({
+      color: 0x5c564e, shininess: 16, specular: new THREE.Color(0xb0a898),
+    });
+    const bark = new THREE.MeshPhongMaterial({
+      color: 0x5a3a28, shininess: 10, specular: new THREE.Color(0xd4b090),
+    });
+    const barkBreak = new THREE.MeshPhongMaterial({
+      color: 0xc4a080, shininess: 8, specular: new THREE.Color(0xfff0e0),
+    });
+    function clump(x, z, lean) {
+      const g = new THREE.Group();
+      const mound = new THREE.Mesh(new THREE.SphereGeometry(0.22, 6, 5), deep);
+      mound.scale.set(1.2, 0.34, 1.1);
+      mound.position.y = 0.04;
+      g.add(mound);
+      for (let i = 0; i < 7; i++) {
+        const h = 0.42 + (i % 3) * 0.16;
+        const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.08, h), i % 3 === 0 ? dry : i % 3 === 1 ? mid : deep);
+        const a = i * 0.9;
+        blade.position.set(Math.cos(a) * 0.07, h * 0.48, Math.sin(a) * 0.07);
+        blade.rotation.y = a;
+        blade.rotation.z = lean + (i - 3) * 0.07;
+        g.add(blade);
+      }
+      g.position.set(x, 0, z);
+      overworldGroup.add(g);
+    }
+    [[-2.4, 1.7, 0.12], [2.5, 1.15, -0.08], [-1.7, -2.05, 0.16], [3.15, -1.25, -0.1], [-3.55, 0.35, 0.05], [0.7, 3.15, -0.14], [-4.15, -1.45, 0.18], [-5.35, -3.45, 0.1], [1.55, 2.05, 0.08], [-0.55, 3.55, -0.12], [2.75, 2.85, 0.14]].forEach((spot) => {
+      clump(spot[0], spot[1], spot[2]);
+    });
+    function dirt(x, z, r) {
+      const g = new THREE.Group();
+      const disc = new THREE.Mesh(new THREE.CircleGeometry(r, 9), soil);
+      disc.rotation.x = -Math.PI / 2;
+      disc.position.y = 0.028;
+      disc.receiveShadow = true;
+      g.add(disc);
+      const inner = new THREE.Mesh(new THREE.CircleGeometry(r * 0.55, 7), soilDark);
+      inner.rotation.x = -Math.PI / 2;
+      inner.position.set(r * 0.12, 0.034, -r * 0.08);
+      g.add(inner);
+      const rim = new THREE.Mesh(new THREE.RingGeometry(r * 0.78, r * 1.02, 9), soilDark);
+      rim.rotation.x = -Math.PI / 2;
+      rim.position.y = 0.032;
+      g.add(rim);
+      const crack = new THREE.Mesh(new THREE.BoxGeometry(r * 0.9, 0.012, 0.03), barkBreak);
+      crack.position.set(0, 0.04, 0.02);
+      crack.rotation.y = 0.4;
+      g.add(crack);
+      g.position.set(x, 0, z);
+      overworldGroup.add(g);
+    }
+    [[-3.05, 2.25, 0.95], [2.15, -2.45, 0.78], [0.35, 2.65, 0.7], [-4.7, -2.7, 0.82]].forEach((spot) => {
+      dirt(spot[0], spot[1], spot[2]);
+    });
+    function stones(x, z) {
+      const g = new THREE.Group();
+      [[0, 0, 0.22, stoneA], [0.28, 0.08, 0.12, stoneB], [-0.2, 0.05, 0.1, stoneA]].forEach((spot, i) => {
+        const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(spot[2], 0), spot[3]);
+        rock.position.set(spot[0], spot[2] * 0.45, spot[1]);
+        rock.scale.y = 0.55;
+        rock.rotation.y = i * 0.7;
+        rock.castShadow = true;
+        rock.receiveShadow = true;
+        g.add(rock);
+      });
+      g.position.set(x, 0, z);
+      overworldGroup.add(g);
+    }
+    [[-1.15, 2.45], [3.35, 0.55], [-4.35, -0.35], [-4.55, -4.15]].forEach((spot) => {
+      stones(spot[0], spot[1]);
+    });
+    function root(x, z, rot) {
+      const g = new THREE.Group();
+      const ridge = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.13, 1.7, 6), bark);
+      ridge.rotation.z = Math.PI / 2;
+      ridge.scale.x = 0.45;
+      ridge.position.y = 0.05;
+      ridge.castShadow = true;
+      g.add(ridge);
+      const knot = new THREE.Mesh(new THREE.SphereGeometry(0.09, 6, 5), bark);
+      knot.scale.y = 0.55;
+      knot.position.set(-0.62, 0.06, 0.02);
+      g.add(knot);
+      const chip = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.04, 0.08), barkBreak);
+      chip.position.set(0.64, 0.07, 0);
+      g.add(chip);
+      g.position.set(x, 0, z);
+      g.rotation.y = rot;
+      overworldGroup.add(g);
+    }
+    [[-2.7, -0.55, 0.7], [1.05, 1.45, -0.4], [-5.6, -2.65, 0.85]].forEach((spot) => {
+      root(spot[0], spot[1], spot[2]);
+    });
+    const wash = new THREE.Mesh(
+      new THREE.CircleGeometry(5.4, 16),
+      new THREE.MeshBasicMaterial({
+        color: 0xc5d6ee, transparent: true, opacity: 0.07, depthWrite: false, fog: false,
+      })
+    );
+    wash.rotation.x = -Math.PI / 2;
+    wash.position.set(0.2, 0.022, 1.1);
+    overworldGroup.add(wash);
+    const warm = new THREE.Mesh(
+      new THREE.CircleGeometry(2.4, 12),
+      new THREE.MeshBasicMaterial({
+        color: 0xffc090, transparent: true, opacity: 0.05, depthWrite: false, fog: false,
+      })
+    );
+    warm.rotation.x = -Math.PI / 2;
+    warm.position.set(-1.4, 0.026, 1.8);
+    overworldGroup.add(warm);
+    const cool = new THREE.PointLight(0xb7cce4, 0.24, 12);
+    cool.position.set(1.2, 1.6, 0.4);
+    overworldGroup.add(cool);
+    const dusk = new THREE.PointLight(0xffb080, 0.22, 10);
+    dusk.position.set(-1.6, 1.7, 2.2);
+    overworldGroup.add(dusk);
   }
 
   function dressIslePath() {

@@ -721,6 +721,10 @@ Playable on the Verdant Isle field:
 - Faces, hands, boots, the cloak, the jerkin, and Lira’s weapons stay. Vesper stays a darker cloth mass and a hair lock. She does not take a lit face. She does not enter Aftermath.
 - The bracers sit off the cord, the cloak stake, the door, and the quiet stand. The kiln stays the road. Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Shipped in the wake ground pass
+
+Around the wake and the path approach, the ground now carries layered grass clumps, dirt patches, small stones, root ridges, and a soft dusk wash. The village path stones, the kiln, the cloak stake, and the bracers take spots are the same meshes as before. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
