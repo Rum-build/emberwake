@@ -114,6 +114,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - After the scar verdict, and before the waystone, the quest says Vesper farms the rot. An ash veil hangs off that mouth. The Concord yard keeps a lantern’s smoke and a seal stake off the walk. A fight that remembers her mouth says she farms the rot. The blow is unchanged. She does not enter. No new cue.
 - A fight in the first breach or the ash nave opens on ember grit, and the foe wears a clearer rim. The breach fight names the breach. Torren’s face keeps a scar and a red scarf. Nima’s face keeps a herb scarf. Before the breach is walked, Places names it. The blow is unchanged. No new cue.
 - The walk into the Remnant Claim wears an ash rim and a cooler light. Places names the Claim before it is walked. Lira speaks once before the choice. The four endings stay. The claim bed sits a little under the field. That is the same cue. No new cue.
+- On a phone, the pack’s item rows keep the stack apart from the name, and Close sits across the top. A pool in range wears one brighter ring, and the prompt puts Absorb in front of the pool’s own name. The harbor roost keeps a rope, a lamp, and a mist rim off the walk. The drink is unchanged. No new cue.
 
 ## Play on your phone
 
