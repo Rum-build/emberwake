@@ -12925,6 +12925,64 @@
     return enemy.id === 'scribe' || enemy.id === 'warden' || enemy.id === 'clerk' || enemy.id === 'stoker' || enemy.id === 'counter' || enemy.id === 'captain' || enemy.id === 'auditor' || enemy.id === 'celebrant';
   }
 
+  function dressCaptain(figure) {
+    const s = (figure.userData && figure.userData.scale) || 1.05;
+    function phong(color, emissive, shininess, specular) {
+      return new THREE.MeshPhongMaterial({
+        color,
+        emissive: new THREE.Color(emissive),
+        shininess,
+        specular: new THREE.Color(specular),
+      });
+    }
+    function put(parent, geo, mat, x, y, z, rz) {
+      const piece = new THREE.Mesh(geo, mat);
+      piece.position.set(x, y, z);
+      if (rz) piece.rotation.z = rz;
+      piece.castShadow = true;
+      parent.add(piece);
+      return piece;
+    }
+    const gold = phong(0xe4c878, 0x4a3810, 78, 0xfff2c8);
+    const goldDark = phong(0x8a6a32, 0x2a2008, 40, 0xd4b56a);
+    const trim = phong(0xfff0c0, 0x6a5018, 92, 0xffffff);
+    const under = phong(0x1a3048, 0x081018, 8, 0x9ab0c8);
+    const hem = phong(0x7a9ab8, 0x203040, 16, 0xeef6ff);
+    const stitch = phong(0xf0d8bc, 0x4a3420, 26, 0xfff4e8);
+    const scuff = new THREE.MeshBasicMaterial({ color: 0x100c08, fog: false });
+    const crest = phong(0x8a3028, 0x3a100c, 14, 0xf0c8b8);
+    put(figure, new THREE.BoxGeometry(0.4 * s, 0.26 * s, 0.055 * s), gold, -0.06 * s, 0.7 * s, 0.22 * s);
+    put(figure, new THREE.BoxGeometry(0.2 * s, 0.12 * s, 0.018 * s), goldDark, -0.08 * s, 0.7 * s, 0.252 * s);
+    put(figure, new THREE.BoxGeometry(0.42 * s, 0.02 * s, 0.018 * s), trim, -0.06 * s, 0.83 * s, 0.248 * s);
+    put(figure, new THREE.BoxGeometry(0.42 * s, 0.02 * s, 0.018 * s), trim, -0.06 * s, 0.57 * s, 0.248 * s);
+    [-1, 1].forEach((side) => {
+      put(figure, new THREE.BoxGeometry(0.16 * s, 0.07 * s, 0.16 * s), gold, side * 0.42 * s, 0.92 * s, 0.02 * s);
+      put(figure, new THREE.BoxGeometry(0.12 * s, 0.018 * s, 0.12 * s), trim, side * 0.42 * s, 0.96 * s, 0.04 * s);
+    });
+    put(figure, new THREE.BoxGeometry(0.28 * s, 0.08 * s, 0.04 * s), under, -0.04 * s, 0.96 * s, 0.2 * s);
+    put(figure, new THREE.BoxGeometry(0.34 * s, 0.16 * s, 0.05 * s), under, 0, 0.36 * s, 0.2 * s);
+    put(figure, new THREE.BoxGeometry(0.36 * s, 0.028 * s, 0.018 * s), hem, 0, 0.28 * s, 0.23 * s);
+    [-0.1, 0, 0.1].forEach((x) => {
+      put(figure, new THREE.BoxGeometry(0.012 * s, 0.14 * s, 0.012 * s), hem, x * s, 0.36 * s, 0.232 * s);
+    });
+    const helm = put(figure, new THREE.SphereGeometry(0.19 * s, 8, 6), gold, 0, 1.24 * s, 0.01 * s);
+    helm.scale.set(1.08, 0.5, 1.08);
+    put(figure, new THREE.BoxGeometry(0.26 * s, 0.035 * s, 0.05 * s), goldDark, 0, 1.16 * s, 0.16 * s);
+    put(figure, new THREE.BoxGeometry(0.045 * s, 0.4 * s, 0.04 * s), crest, -0.02 * s, 1.58 * s, 0.02 * s);
+    put(figure, new THREE.BoxGeometry(0.016 * s, 0.32 * s, 0.016 * s), trim, 0.02 * s, 1.56 * s, 0.03 * s);
+    [-0.11, 0.11].forEach((x) => {
+      [0.038, 0.066].forEach((y) => {
+        put(figure, new THREE.BoxGeometry(0.11 * s, 0.014 * s, 0.018 * s), stitch, x * s, y * s, 0.14 * s);
+      });
+      put(figure, new THREE.BoxGeometry(0.07 * s, 0.018 * s, 0.014 * s), scuff, x * s, 0.084 * s, 0.148 * s);
+    });
+    (figure.userData.arms || []).forEach((arm) => {
+      put(arm, new THREE.BoxGeometry(0.09 * s, 0.07 * s, 0.08 * s), gold, 0, -0.34 * s, 0.03 * s);
+      put(arm, new THREE.BoxGeometry(0.07 * s, 0.012 * s, 0.012 * s), stitch, 0, -0.32 * s, 0.076 * s);
+      put(arm, new THREE.BoxGeometry(0.05 * s, 0.012 * s, 0.01 * s), goldDark, 0, -0.36 * s, 0.078 * s);
+    });
+  }
+
   function makeEnemyMesh(enemy) {
     const concord = enemyConcord(enemy);
     if (enemy.shape === 'human') {
@@ -12952,6 +13010,7 @@
       );
       cloth.position.set(0.15, 1.15, 0.28);
       figure.add(cloth);
+      dressCaptain(figure);
       addFoeRim(figure);
       return figure;
     }
