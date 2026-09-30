@@ -1627,8 +1627,41 @@
     hallShade.position.set(-2.15, 0.045, -12.15);
     g.add(hallShade);
     dressHallMonopoly(g);
+    dressCountAir(g);
     g.visible = false;
     return g;
+  }
+
+  function dressCountAir(g) {
+    const saltMat = new THREE.MeshBasicMaterial({ color: 0xc8e0f4, fog: false });
+    [[-1.55, 1.62, 0.72], [-0.82, 1.88, 1.08], [-1.85, 1.42, 0.28], [-0.45, 1.55, 0.42]].forEach((spot) => {
+      const shaft = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 1.55), saltMat);
+      shaft.position.set(spot[0], spot[1], spot[2]);
+      g.add(shaft);
+    });
+    [[-1.35, 1.95, 0.9], [-1.05, 1.28, 0.55], [-1.9, 1.72, 1.15]].forEach((spot, i) => {
+      const mote = new THREE.Mesh(new THREE.SphereGeometry(i % 2 ? 0.06 : 0.048, 6, 4), saltMat);
+      mote.position.set(spot[0], spot[1], spot[2]);
+      g.add(mote);
+    });
+    const rim = new THREE.Mesh(
+      new THREE.TorusGeometry(0.26, 0.055, 8, 22),
+      new THREE.MeshBasicMaterial({ color: 0xf4fbff, fog: false })
+    );
+    rim.position.set(-1.12, 1.48, -0.02);
+    g.add(rim);
+    const gritMat = new THREE.MeshBasicMaterial({ color: 0xd8cbb4, fog: false });
+    [[-1.72, -0.16], [-0.58, -0.2]].forEach((spot) => {
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.045, 0.16), gritMat);
+      cap.position.set(spot[0], 0.73, spot[1]);
+      g.add(cap);
+    });
+    const sealMat = new THREE.MeshBasicMaterial({ color: 0xd6e8ff, fog: false });
+    [[-2.15, 1.52, -1.55], [-2.55, 1.85, -1.85], [-1.85, 1.35, -1.95]].forEach((spot, i) => {
+      const mote = new THREE.Mesh(new THREE.SphereGeometry(i === 0 ? 0.065 : 0.05, 6, 4), sealMat);
+      mote.position.set(spot[0], spot[1], spot[2]);
+      g.add(mote);
+    });
   }
 
   function dressHallMonopoly(g) {
@@ -4631,6 +4664,7 @@
     );
     seal.position.set(0, 2.5, 0.9);
     vault.add(seal);
+    dressVaultDoor(vault);
     const lamp = new THREE.PointLight(0xd4c08a, 0.95, 16);
     lamp.position.set(0, 3.2, 2.4);
     vault.add(lamp);
@@ -4776,6 +4810,15 @@
     glow.position.set(0, 1.2, 0.2);
     post.add(glow);
     g.add(post);
+  }
+
+  function dressVaultDoor(vault) {
+    const sealMat = new THREE.MeshBasicMaterial({ color: 0xd6e8ff, fog: false });
+    [[-0.42, 2.72, 1.28], [0.48, 2.68, 1.32], [0.05, 2.98, 1.42], [-0.18, 2.42, 1.38]].forEach((spot, i) => {
+      const mote = new THREE.Mesh(new THREE.SphereGeometry(i % 2 ? 0.075 : 0.058, 6, 4), sealMat);
+      mote.position.set(spot[0], spot[1], spot[2]);
+      vault.add(mote);
+    });
   }
 
   function dressHarbor(g) {
@@ -13579,6 +13622,7 @@
           ? 'North, the hall of corks. That is the bottled monopoly.'
           : 'The bottled hall is north of the count. The corks stayed.',
       });
+      rows.push({ name: 'Counting room', note: 'Salt dust over the ledger. South still steps back to the shale.' });
     }
     if (seenBeats.marrowStep) {
       rows.push({ name: 'Ashen Marrow', note: 'The digest-engine and the ash shelf.' });

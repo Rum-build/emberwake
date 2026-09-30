@@ -537,6 +537,13 @@ Playable on the Verdant Isle field:
 - Places names the colonnade. It does not say what the claim will do. South still steps back to the mark.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Counting room, and the vault seal-dust (this branch)
+
+- The counting room keeps cooler salt dust, a clearer rim on the ledger lamp, and ash on the counter. The clerk and the door stay where they were.
+- The vault door keeps a little cooler seal-dust. It does not add a lock or a key.
+- Places names the counting room. It does not say what the claim will do. South still steps back to the shale.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
