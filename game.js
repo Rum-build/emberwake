@@ -965,6 +965,7 @@
     village.add(crystal);
     dressVillage(village);
     dressVillageDoor(village);
+    dressVillageHouses(village);
     overworldGroup.add(village);
     const bannerPin = landmark('concord-banner');
     overworldGroup.add(makeConcordBanner(bannerPin.x, bannerPin.z));
@@ -10418,6 +10419,96 @@
       cap.position.set(spot[0], spot[1], spot[2]);
       g.add(cap);
     });
+  }
+
+  function dressVillageHouses(g) {
+    const houses = new THREE.Group();
+    houses.userData.villageHouses = true;
+    const timber = new THREE.MeshPhongMaterial({
+      color: 0x5a3a24, emissive: new THREE.Color(0x1a1008), shininess: 16, specular: new THREE.Color(0xd4b898),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0x3a2418, shininess: 6, specular: new THREE.Color(0xa08060),
+    });
+    const thatch = new THREE.MeshPhongMaterial({
+      color: 0x8a6238, emissive: new THREE.Color(0x2a1808), shininess: 8, specular: new THREE.Color(0xe8c898),
+    });
+    const thatchDark = new THREE.MeshPhongMaterial({
+      color: 0x5a3c22, shininess: 4, specular: new THREE.Color(0xc4a070),
+    });
+    const stone = new THREE.MeshPhongMaterial({
+      color: 0x6a6258, shininess: 18, specular: new THREE.Color(0xd5d0c8),
+    });
+    const glass = new THREE.MeshPhongMaterial({
+      color: 0xffc888, emissive: new THREE.Color(0x8a4010), shininess: 64, specular: new THREE.Color(0xfff8e8),
+    });
+    const sootMat = new THREE.MeshBasicMaterial({
+      color: 0x1a1410, transparent: true, opacity: 0.22, depthWrite: false, fog: false,
+    });
+    [[-2.2, 0], [0, 1.5], [2.2, 0]].forEach((spot, i) => {
+      const house = new THREE.Group();
+      house.position.set(spot[0], 0, spot[1]);
+      [-0.72, 0.72].forEach((x) => {
+        const post = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.16, 0.08), timber);
+        post.position.set(x, 0.6, 0.76);
+        house.add(post);
+      });
+      const beam = new THREE.Mesh(new THREE.BoxGeometry(1.52, 0.07, 0.08), timber);
+      beam.position.set(0, 1.16, 0.76);
+      house.add(beam);
+      const plate = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.08, 0.06), timber);
+      plate.position.set(0, 0.22, 0.76);
+      house.add(plate);
+      [[-0.32, 0.74, 0.46], [0.24, 0.5, 0.3], [0.06, 0.96, 0.16]].forEach((line) => {
+        const crack = new THREE.Mesh(new THREE.BoxGeometry(0.014, line[2], 0.01), grain);
+        crack.position.set(line[0] + (i - 1) * 0.06, line[1], 0.785);
+        house.add(crack);
+      });
+      const wx = -0.16 + i * 0.1;
+      const frame = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.32, 0.04), timber);
+      frame.position.set(wx, 0.68, 0.785);
+      house.add(frame);
+      const pane = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.18, 0.016), glass);
+      pane.position.set(wx, 0.68, 0.808);
+      house.add(pane);
+      const mullion = new THREE.Mesh(new THREE.BoxGeometry(0.018, 0.18, 0.01), timber);
+      mullion.position.set(wx, 0.68, 0.818);
+      house.add(mullion);
+      const shutter = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.28, 0.02), thatchDark);
+      shutter.position.set(wx + 0.26, 0.68, 0.8);
+      shutter.rotation.y = 0.4;
+      house.add(shutter);
+      [0, 1, 2, 3].forEach((row) => {
+        const course = new THREE.Mesh(
+          new THREE.BoxGeometry(1.32 - row * 0.16, 0.055, 0.2),
+          row % 2 ? thatchDark : thatch
+        );
+        course.position.set(0, 1.34 + row * 0.15, 0.86 - row * 0.16);
+        course.rotation.x = -0.58;
+        house.add(course);
+        const strand = new THREE.Mesh(new THREE.BoxGeometry(1.05 - row * 0.12, 0.012, 0.01), grain);
+        strand.position.set(0.05, 1.36 + row * 0.15, 0.94 - row * 0.16);
+        strand.rotation.x = -0.58;
+        house.add(strand);
+      });
+      const ridge = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.07, 0.42), timber);
+      ridge.position.set(0, 2.02, 0.08);
+      house.add(ridge);
+      const foot = new THREE.Mesh(new THREE.BoxGeometry(1.62, 0.1, 0.16), stone);
+      foot.position.set(0, 0.06, 0.78);
+      house.add(foot);
+      [-0.48, 0.08, 0.52].forEach((x) => {
+        const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.045, 0), stone);
+        chip.position.set(x + i * 0.02, 0.08, 0.9);
+        chip.scale.y = 0.4;
+        house.add(chip);
+      });
+      const wash = new THREE.Mesh(new THREE.PlaneGeometry(1.15, 0.26), sootMat);
+      wash.position.set((i - 1) * 0.08, 1.02, 0.8);
+      house.add(wash);
+      houses.add(house);
+    });
+    g.add(houses);
   }
 
   function makeCoastPatrol(x, z) {
