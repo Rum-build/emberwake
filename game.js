@@ -5081,6 +5081,7 @@
     dressPierBoards(g);
     dressRoostRim(g);
     dressRoostNight(g);
+    dressRoostGround(g);
     dressCoastMist(g);
     dressCoastShore(g);
     dressHarborWire(g);
@@ -5344,6 +5345,100 @@
       grit.position.set(spot[0], spot[1], spot[2]);
       g.add(grit);
     });
+  }
+
+  function dressRoostGround(g) {
+    const stone = new THREE.MeshPhongMaterial({
+      color: 0x6a7278, shininess: 22, specular: new THREE.Color(0xd0e4f0),
+    });
+    const pale = new THREE.MeshPhongMaterial({
+      color: 0xc8d0d4, shininess: 14, specular: new THREE.Color(0xf4f8ff),
+    });
+    const board = new THREE.MeshPhongMaterial({
+      color: 0x5a5348, shininess: 12, specular: new THREE.Color(0xc8c0a8),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0x3a342c, shininess: 6, specular: new THREE.Color(0x8a8070),
+    });
+    const rope = new THREE.MeshPhongMaterial({
+      color: 0xb89868, shininess: 10, specular: new THREE.Color(0xe8d8b0),
+    });
+    const worn = new THREE.MeshPhongMaterial({
+      color: 0x6a5840, shininess: 5, specular: new THREE.Color(0xa09070),
+    });
+    const featherMat = new THREE.MeshPhongMaterial({
+      color: 0xe8e4dc, shininess: 8, specular: new THREE.Color(0xffffff), side: THREE.DoubleSide,
+    });
+    const featherDark = new THREE.MeshPhongMaterial({
+      color: 0x8a8680, shininess: 6, specular: new THREE.Color(0xd0d4d8), side: THREE.DoubleSide,
+    });
+    function grit(x, z) {
+      const group = new THREE.Group();
+      [[0, 0, 0.07, stone], [0.08, 0.03, 0.04, pale], [-0.06, 0.02, 0.035, stone], [0.02, -0.07, 0.028, pale]].forEach((spot, i) => {
+        const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(spot[2], 0), spot[3]);
+        chip.position.set(spot[0], spot[2] * 0.4, spot[1]);
+        chip.scale.y = 0.45;
+        chip.rotation.y = i * 0.7;
+        group.add(chip);
+      });
+      group.position.set(x, 0, z);
+      g.add(group);
+    }
+    [[1.05, 9.85], [-0.8, 10.0], [0.35, 10.15], [1.4, 8.55]].forEach((spot) => {
+      grit(spot[0], spot[1]);
+    });
+    [[1.55, 8.4, 0.18], [2.25, 8.1, -0.06], [2.55, 8.15, 0.1]].forEach((spot) => {
+      const plank = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.05, 0.22), board);
+      plank.position.set(spot[0], 0.08, spot[1]);
+      plank.rotation.y = spot[2];
+      plank.rotation.x = 0.03;
+      plank.receiveShadow = true;
+      g.add(plank);
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.012, 0.025), grain);
+      line.position.set(spot[0], 0.11, spot[1]);
+      line.rotation.y = spot[2];
+      g.add(line);
+    });
+    const lie = new THREE.Mesh(new THREE.CylinderGeometry(0.026, 0.026, 1.45, 6), rope);
+    lie.rotation.z = Math.PI / 2;
+    lie.rotation.y = 0.18;
+    lie.position.set(2.05, 0.07, 8.32);
+    g.add(lie);
+    const rub = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.36, 6), worn);
+    rub.rotation.z = Math.PI / 2;
+    rub.position.set(2.15, 0.078, 8.3);
+    g.add(rub);
+    [[1.4, 8.28], [2.7, 8.4]].forEach((spot) => {
+      const fray = new THREE.Mesh(new THREE.PlaneGeometry(0.07, 0.14), rope);
+      fray.position.set(spot[0], 0.12, spot[1]);
+      g.add(fray);
+    });
+    [[0.65, 10.1, 0.4, featherMat], [-0.35, 9.65, -0.3, featherDark], [1.15, 9.4, 0.7, featherMat], [1.95, 8.65, -0.2, featherDark]].forEach((spot) => {
+      const feather = new THREE.Mesh(new THREE.PlaneGeometry(0.14, 0.045), spot[3]);
+      feather.rotation.x = -Math.PI / 2;
+      feather.rotation.z = spot[2];
+      feather.position.set(spot[0], 0.05, spot[1]);
+      g.add(feather);
+    });
+    const hazeMat = new THREE.MeshBasicMaterial({
+      color: 0xb9cce4, transparent: true, opacity: 0.08, depthWrite: false, fog: false,
+    });
+    [[1.7, 8.45, 0.65], [2.55, 8.12, 0.5], [0.25, 10.05, 0.55]].forEach((spot) => {
+      const haze = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 10), hazeMat);
+      haze.rotation.x = -Math.PI / 2;
+      haze.position.set(spot[0], 0.04, spot[1]);
+      g.add(haze);
+    });
+    const rim = new THREE.Mesh(
+      new THREE.TorusGeometry(0.28, 0.02, 4, 10, Math.PI * 1.3),
+      new THREE.MeshPhongMaterial({ color: 0xb7d4ee, shininess: 30, specular: new THREE.Color(0xf0f8ff) })
+    );
+    rim.rotation.x = Math.PI / 2;
+    rim.position.set(3.35, 0.06, 8.2);
+    g.add(rim);
+    const cool = new THREE.PointLight(0xb7d4ee, 0.22, 5.5);
+    cool.position.set(2.35, 1.15, 8.35);
+    g.add(cool);
   }
 
   function dressHarborPier(g) {
