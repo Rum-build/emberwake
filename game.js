@@ -1019,6 +1019,7 @@
       dungeon.add(flame);
     });
     dressCellarMouth(dungeon);
+    dressCellarDoorSill(dungeon);
     overworldGroup.add(dungeon);
 
     POOL_DEFS.forEach((def) => makePool(def));
@@ -1421,6 +1422,89 @@
     const light = new THREE.PointLight(0xc5d6ee, 0.75, 4.4);
     light.position.set(2.05, 1.78, 1.4);
     g.add(light);
+  }
+
+  function dressCellarDoorSill(g) {
+    const stone = new THREE.MeshPhongMaterial({
+      color: 0x6a6258, shininess: 16, specular: new THREE.Color(0xd5e4f2),
+    });
+    const worn = new THREE.MeshPhongMaterial({
+      color: 0x3a342c, shininess: 6, specular: new THREE.Color(0x8a8078),
+    });
+    const pale = new THREE.MeshPhongMaterial({
+      color: 0xb4aea4, shininess: 24, specular: new THREE.Color(0xf4fbff),
+    });
+    const damp = new THREE.MeshPhongMaterial({
+      color: 0x3e4e5c, shininess: 30, specular: new THREE.Color(0xd5e8f8),
+    });
+    function course(x, z, rot) {
+      const group = new THREE.Group();
+      const slab = new THREE.Mesh(new THREE.CircleGeometry(0.42, 7), stone);
+      slab.rotation.x = -Math.PI / 2;
+      slab.position.y = 0.04;
+      slab.receiveShadow = true;
+      group.add(slab);
+      const cap = new THREE.Mesh(new THREE.CircleGeometry(0.15, 5), worn);
+      cap.rotation.x = -Math.PI / 2;
+      cap.position.set(-0.08, 0.05, 0.04);
+      group.add(cap);
+      const lip = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.018, 4, 8, Math.PI * 1.1), pale);
+      lip.rotation.x = Math.PI / 2;
+      lip.position.y = 0.056;
+      group.add(lip);
+      const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.036, 0), worn);
+      chip.position.set(0.18, 0.06, -0.05);
+      chip.scale.y = 0.35;
+      group.add(chip);
+      group.position.set(x, 0, z);
+      group.rotation.y = rot;
+      g.add(group);
+    }
+    [
+      [-0.7, 1.35, 0.2], [0.55, 1.55, -0.22], [-0.2, 2.05, 0.12],
+      [1.15, 2.25, 0.28], [-1.25, 1.85, -0.1], [0.25, 2.65, 0.05],
+    ].forEach((spot) => {
+      course(spot[0], spot[1], spot[2]);
+    });
+    function grit(x, z) {
+      const group = new THREE.Group();
+      [[0, 0, 0.03], [0.05, 0.02, 0.02], [-0.04, 0.03, 0.022], [0.02, -0.04, 0.016]].forEach((spot) => {
+        const speck = new THREE.Mesh(new THREE.SphereGeometry(spot[2], 4, 3), damp);
+        speck.position.set(spot[0], 0.05 + spot[2] * 0.45, spot[1]);
+        group.add(speck);
+      });
+      group.position.set(x, 0, z);
+      g.add(group);
+    }
+    [[-0.35, 1.05], [0.45, 1.12], [-0.9, 1.28]].forEach((spot) => {
+      grit(spot[0], spot[1]);
+    });
+    const washMat = new THREE.MeshBasicMaterial({
+      color: 0xc5d0d6, transparent: true, opacity: 0.07, depthWrite: false, fog: false,
+    });
+    [[0.05, 1.7, 0.65], [-0.35, 2.35, 0.48]].forEach((spot) => {
+      const wash = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 10), washMat);
+      wash.rotation.x = -Math.PI / 2;
+      wash.position.set(spot[0], 0.03, spot[1]);
+      g.add(wash);
+    });
+    const scuffMat = new THREE.MeshPhongMaterial({
+      color: 0x1a1612, shininess: 3, specular: new THREE.Color(0x6a6058),
+    });
+    [[0.1, 1.6, 0.08], [-0.45, 2.0, -0.12], [0.6, 2.35, 0.18]].forEach((spot) => {
+      const scuff = new THREE.Mesh(new THREE.BoxGeometry(0.065, 0.012, 0.48), scuffMat);
+      scuff.position.set(spot[0], 0.055, spot[1]);
+      scuff.rotation.y = spot[2];
+      g.add(scuff);
+    });
+    const shadeMat = new THREE.MeshBasicMaterial({
+      color: 0x0c1014, transparent: true, opacity: 0.24, depthWrite: false, fog: false,
+    });
+    const shade = new THREE.Mesh(new THREE.CircleGeometry(0.68, 8), shadeMat);
+    shade.rotation.x = -Math.PI / 2;
+    shade.scale.set(1.85, 0.28, 1);
+    shade.position.set(0.02, 0.025, 1.02);
+    g.add(shade);
   }
 
   function dressCellarCrawl(g) {
