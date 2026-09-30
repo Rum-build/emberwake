@@ -988,6 +988,7 @@
       waystoneGroup = makeWaystone(stonePin.x, stonePin.z);
       dressWaystoneRim(waystoneGroup);
       dressWaystoneFace(waystoneGroup);
+      dressWaystonePlinth(waystoneGroup);
       dressWaystoneSouth();
       overworldGroup.add(waystoneGroup);
     }
@@ -6178,6 +6179,84 @@
     shade.position.set(0, 0.02, 1.35);
     face.add(shade);
     g.add(face);
+  }
+
+  function dressWaystonePlinth(g) {
+    const plinth = new THREE.Group();
+    const stone = new THREE.MeshPhongMaterial({
+      color: 0x8a8074, shininess: 16, specular: new THREE.Color(0xe8e0d4),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0xd8c4a0, shininess: 20, specular: new THREE.Color(0xfff2d8),
+    });
+    const moss = new THREE.MeshPhongMaterial({
+      color: 0x3f6a34, shininess: 6, specular: new THREE.Color(0xc6e070), side: THREE.DoubleSide,
+    });
+    const ashMat = new THREE.MeshBasicMaterial({
+      color: 0x241c14, transparent: true, opacity: 0.58, depthWrite: false, fog: false,
+    });
+    const chipMat = new THREE.MeshPhongMaterial({
+      color: 0xd4c2a4, shininess: 22, specular: new THREE.Color(0xfff6e4),
+    });
+    for (let i = 0; i < 3; i++) {
+      const a = (i / 3) * Math.PI * 2;
+      const sill = new THREE.Group();
+      const block = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.16, 0.28), stone);
+      block.position.y = 0.1;
+      block.receiveShadow = true;
+      sill.add(block);
+      [-0.24, 0.02, 0.26].forEach((x, n) => {
+        const line = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.014, 0.032), grain);
+        line.position.set(x, 0.188, n === 1 ? -0.02 : 0.04);
+        sill.add(line);
+      });
+      [[-0.44, 0.1], [0.42, -0.08]].forEach((spot) => {
+        const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.06, 0), chipMat);
+        chip.scale.y = 0.42;
+        chip.position.set(spot[0], 0.16, spot[1]);
+        sill.add(chip);
+      });
+      [[-0.12, 0.04, 0.028], [0.16, -0.02, 0.02], [0.02, 0.08, 0.016]].forEach((spot) => {
+        const speck = new THREE.Mesh(new THREE.SphereGeometry(spot[2], 5, 4), ashMat);
+        speck.position.set(spot[0], 0.2, spot[1]);
+        sill.add(speck);
+      });
+      sill.position.set(Math.cos(a) * 1.5, 0, Math.sin(a) * 1.5);
+      sill.rotation.y = Math.PI / 2 - a;
+      plinth.add(sill);
+      const j = a + Math.PI / 3;
+      const joint = new THREE.Group();
+      const clump = new THREE.Mesh(new THREE.SphereGeometry(0.07, 5, 4), moss);
+      clump.scale.y = 0.38;
+      clump.position.y = 0.06;
+      joint.add(clump);
+      const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.055, 0.12), moss);
+      blade.position.set(0.04, 0.12, 0);
+      blade.rotation.y = 0.4;
+      joint.add(blade);
+      joint.position.set(Math.cos(j) * 1.46, 0, Math.sin(j) * 1.46);
+      plinth.add(joint);
+      const gx = Math.cos(a) * 1.98;
+      const gz = Math.sin(a) * 1.98;
+      const ground = new THREE.Mesh(new THREE.BoxGeometry(0.74, 0.05, 0.4), stone);
+      ground.position.set(gx, 0.045, gz);
+      ground.rotation.y = Math.PI / 2 - a;
+      ground.receiveShadow = true;
+      plinth.add(ground);
+      const gline = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.012, 0.03), grain);
+      gline.position.set(gx, 0.076, gz);
+      gline.rotation.y = Math.PI / 2 - a;
+      plinth.add(gline);
+      const wash = new THREE.Mesh(new THREE.CircleGeometry(0.18, 8), ashMat);
+      wash.rotation.x = -Math.PI / 2;
+      wash.position.set(Math.cos(a) * 1.78, 0.06, Math.sin(a) * 1.78);
+      plinth.add(wash);
+      const edge = new THREE.Mesh(new THREE.DodecahedronGeometry(0.055, 0), chipMat);
+      edge.scale.y = 0.4;
+      edge.position.set(Math.cos(a) * 2.18, 0.07, Math.sin(a) * 2.18);
+      plinth.add(edge);
+    }
+    g.add(plinth);
   }
 
   function dressWaystoneSouth() {
