@@ -825,6 +825,10 @@ The harbor telegraph now carries timber grain on the post, iron bands, a taut wi
 
 The scar farm now carries weathered timber on the marker, iron fittings, an ash-rot stain, footing grit, and a crop edge at the base. The smoke and the blister stay where they were. The harbor telegraph, the leaf-cup, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the roost perch pass
+
+The cliff roost now carries weathered timber beams, rope lashings, nest bedding, iron pegs, and grit at the footing. The climb and the wing stay where they were. The scar farm, the harbor telegraph, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
