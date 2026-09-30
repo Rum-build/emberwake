@@ -6343,6 +6343,131 @@
       shard.castShadow = true;
       g.add(shard);
     }
+    if (lira || nima || torren) {
+      const jaw = new THREE.Mesh(
+        new THREE.BoxGeometry((torren ? 0.18 : 0.15) * scale, 0.055 * scale, 0.09 * scale),
+        skin
+      );
+      jaw.position.set(0, 0.995 * scale, 0.13 * scale);
+      g.add(jaw);
+      [-1, 1].forEach((side) => {
+        const glint = new THREE.Mesh(
+          new THREE.SphereGeometry(0.012 * scale, 4, 3),
+          new THREE.MeshBasicMaterial({ color: 0xfff6ea, fog: false })
+        );
+        glint.position.set(side * 0.055 * scale, 1.112 * scale, 0.198 * scale);
+        g.add(glint);
+        const brow = new THREE.Mesh(
+          new THREE.BoxGeometry(0.07 * scale, 0.016 * scale, 0.02 * scale),
+          hairMat
+        );
+        brow.position.set(side * 0.07 * scale, 1.155 * scale, 0.185 * scale);
+        brow.rotation.z = side * -0.15;
+        g.add(brow);
+      });
+    }
+    if (lira) {
+      const sweep = new THREE.Mesh(
+        new THREE.BoxGeometry(0.08 * scale, 0.28 * scale, 0.06 * scale),
+        new THREE.MeshPhongMaterial({
+          color: 0x3a2416, emissive: new THREE.Color(0x140c08), shininess: 22, specular: new THREE.Color(0xc4a080),
+        })
+      );
+      sweep.position.set(0.16 * scale, 1.02 * scale, 0.04 * scale);
+      sweep.rotation.z = -0.35;
+      g.add(sweep);
+      const crease = new THREE.Mesh(
+        new THREE.BoxGeometry(0.08 * scale, 0.22 * scale, 0.04 * scale),
+        new THREE.MeshPhongMaterial({
+          color: 0x9ec8dc, emissive: new THREE.Color(0x1a3848), shininess: 14, specular: new THREE.Color(0xf4fbff),
+        })
+      );
+      crease.position.set(0.16 * scale, 0.82 * scale, 0.12 * scale);
+      crease.rotation.z = 0.4;
+      g.add(crease);
+      const seam = new THREE.Mesh(
+        new THREE.BoxGeometry(0.02 * scale, 0.28 * scale, 0.02 * scale),
+        leather
+      );
+      seam.position.set(0.08 * scale, 0.62 * scale, 0.3 * scale);
+      g.add(seam);
+    }
+    if (nima) {
+      const braidMat = new THREE.MeshPhongMaterial({
+        color: 0x243028, emissive: new THREE.Color(0x0c1410), shininess: 16, specular: new THREE.Color(0x8fbf62),
+      });
+      [1.02, 0.9, 0.78].forEach((y, i) => {
+        const bead = new THREE.Mesh(new THREE.SphereGeometry((0.045 - i * 0.006) * scale, 6, 5), braidMat);
+        bead.position.set(-0.02 * scale, y * scale, -0.16 * scale);
+        g.add(bead);
+      });
+      const tie = new THREE.Mesh(
+        new THREE.BoxGeometry(0.06 * scale, 0.03 * scale, 0.04 * scale),
+        new THREE.MeshBasicMaterial({ color: 0xd4e07a, fog: false })
+      );
+      tie.position.set(-0.02 * scale, 0.7 * scale, -0.16 * scale);
+      g.add(tie);
+      const fold = new THREE.Mesh(
+        new THREE.BoxGeometry(0.1 * scale, 0.2 * scale, 0.04 * scale),
+        new THREE.MeshPhongMaterial({
+          color: 0xe4ee9a, emissive: new THREE.Color(0x3a4010), shininess: 10, specular: new THREE.Color(0xf4f8d0),
+        })
+      );
+      fold.position.set(-0.14 * scale, 0.84 * scale, 0.12 * scale);
+      fold.rotation.z = -0.35;
+      g.add(fold);
+      const placket = new THREE.Mesh(
+        new THREE.BoxGeometry(0.04 * scale, 0.26 * scale, 0.02 * scale),
+        new THREE.MeshPhongMaterial({ color: 0xc6d86a, shininess: 8, specular: new THREE.Color(0xf4f8d0) })
+      );
+      placket.position.set(0, 0.64 * scale, 0.3 * scale);
+      g.add(placket);
+    }
+    if (torren) {
+      const beard = new THREE.Mesh(
+        new THREE.BoxGeometry(0.12 * scale, 0.05 * scale, 0.04 * scale),
+        hairMat
+      );
+      beard.position.set(0, 0.97 * scale, 0.17 * scale);
+      g.add(beard);
+      const crop = new THREE.Mesh(
+        new THREE.BoxGeometry(0.28 * scale, 0.04 * scale, 0.08 * scale),
+        new THREE.MeshPhongMaterial({
+          color: 0x2a1810, shininess: 18, specular: new THREE.Color(0x8a6040),
+        })
+      );
+      crop.position.set(0, 1.22 * scale, 0.08 * scale);
+      g.add(crop);
+      const hang = new THREE.Mesh(
+        new THREE.BoxGeometry(0.1 * scale, 0.18 * scale, 0.04 * scale),
+        new THREE.MeshPhongMaterial({
+          color: 0xa84840, emissive: new THREE.Color(0x2a100c), shininess: 8, specular: new THREE.Color(0xe8c8b0),
+        })
+      );
+      hang.position.set(-0.18 * scale, 0.82 * scale, 0.1 * scale);
+      hang.rotation.z = 0.25;
+      g.add(hang);
+      const seam = new THREE.Mesh(
+        new THREE.BoxGeometry(0.018 * scale, 0.32 * scale, 0.02 * scale),
+        metal
+      );
+      seam.position.set(-0.1 * scale, 0.64 * scale, 0.3 * scale);
+      g.add(seam);
+    }
+    if (vesper) {
+      const cloth = new THREE.Mesh(
+        new THREE.BoxGeometry(0.52 * scale, 0.72 * scale, 0.05 * scale),
+        new THREE.MeshPhongMaterial({ color: 0x0c080c, shininess: 3, specular: new THREE.Color(0x2a1814) })
+      );
+      cloth.position.set(0, 0.68 * scale, -0.24 * scale);
+      g.add(cloth);
+      const lock = new THREE.Mesh(
+        new THREE.BoxGeometry(0.06 * scale, 0.4 * scale, 0.05 * scale),
+        hairMat
+      );
+      lock.position.set(0.12 * scale, 0.95 * scale, -0.02 * scale);
+      g.add(lock);
+    }
     g.userData.cloth = clothMat;
     return g;
   }

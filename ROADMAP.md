@@ -686,6 +686,12 @@ Playable on the Verdant Isle field:
 - Places still names the cellar mouth. It does not say what the ending will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Party faces, the cloth read (this branch)
+
+- Lira, Nima, and Torren keep a jaw, a brow, and an eye glint. Lira’s hair sweeps to one side. Nima wears a braid and a cloth placket. Torren keeps a beard, a crop, and a metal coat seam. Each scarf has a hanging fold.
+- Vesper’s silhouette keeps a darker cloth mass and a hair lock. She does not take a lit face. She does not enter Aftermath.
+- The hands, boots, and hip kits stay. The walk stays. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
