@@ -845,6 +845,10 @@ The counting-room desk now carries timber grain, an ink-stained ledge, drawer se
 
 The root-cellar door now carries weathered plank grain, iron straps, hinge rust, latch wear, and a damp ash wash on the face. The threshold and the mouth stay where they were. The counting-room desk, the vault door, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the leaf house pass
+
+The leaf-village houses now carry timber posts, a lit window, thatch courses, stone footing, and soot under the eave. The door and the path stay where they were. The root-cellar door, the counting-room desk, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
