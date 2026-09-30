@@ -5787,8 +5787,8 @@
       g.add(group);
     }
     [
-      [-3.15, 2.55, 0.2], [-2.55, 3.35, -0.25], [-4.7, 2.85, 0.35],
-      [-3.6, 4.05, -0.1], [-5.3, 2.55, 0.15], [-2.4, 1.9, -0.3], [-3.0, 4.7, 0.08],
+      [-3.15, 2.55, 0.2], [-2.35, 2.85, -0.25], [-4.7, 2.85, 0.35],
+      [-4.55, 3.7, -0.1], [-5.3, 2.55, 0.15], [-2.4, 1.9, -0.3], [-5.5, 3.6, 0.08],
     ].forEach((spot) => {
       plate(spot[0], spot[1], spot[2]);
     });
@@ -5817,13 +5817,13 @@
       group.rotation.y = rot;
       g.add(group);
     }
-    [[-2.9, 2.9, 0.2], [-4.4, 3.5, -0.4], [-3.8, 4.4, 0.5], [-5.0, 3.4, 0.1]].forEach((spot) => {
+    [[-2.9, 2.9, 0.2], [-4.4, 3.5, -0.4], [-5.2, 3.9, 0.5], [-5.0, 3.4, 0.1]].forEach((spot) => {
       tuft(spot[0], spot[1], spot[2]);
     });
     const washMat = new THREE.MeshBasicMaterial({
       color: 0xc4b49a, transparent: true, opacity: 0.07, depthWrite: false, fog: false,
     });
-    [[-3.4, 3.2, 1.05], [-2.7, 3.6, 0.7]].forEach((spot) => {
+    [[-4.2, 2.6, 0.9], [-2.3, 2.7, 0.65]].forEach((spot) => {
       const wash = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 10), washMat);
       wash.rotation.x = -Math.PI / 2;
       wash.position.set(spot[0], shelfHeight(spot[0], spot[1]) + 0.02, spot[1]);
