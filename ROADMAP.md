@@ -861,6 +861,10 @@ The harbor pier now carries weathered plank grain, iron cleats, rope wraps, wet-
 
 The leaf-village letter now carries cream paper grain, ink bleed, a wax seal, a folded crease, and a soft shadow in the basket. The step in and the furrow stay where they were. The harbor pier, the buried kiln, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the starter stick pass
+
+Lira’s starter stick now carries bark grain, a worn grip wrap, and tip scuffs, and it sits in the hand beside the scout knife. The knife, the other weapons, and the move stick stay where they were. The letter, the harbor pier, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
