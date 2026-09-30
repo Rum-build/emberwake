@@ -184,6 +184,23 @@
     return true;
   });
 
+  Emberwake.registerScene('mouth-ash', function () {
+    var torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    Emberwake.present({
+      lines: [
+        { where: 'Root-cellar', speaker: 'Lira', text: 'Ash on the arch. Concord left the heat under the jars and called the field safe.' },
+        torren
+          ? { speaker: 'Torren', text: 'I stamped arches like this. The stamp held the licence. It did not hold the heat.' }
+          : { speaker: 'The spark', text: 'They stamped the arch. The licence held. The heat did not.' },
+        { speaker: 'The spark', text: 'Vesper farms the rot above this mouth. She does not take the host. The kiln is still the drink.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteMouth) Emberwake.noteMouth();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('scar-witnesses', function () {
     Emberwake.present({
       lines: [

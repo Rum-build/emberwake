@@ -630,6 +630,13 @@ Playable on the Verdant Isle field:
 - Places still names the counting room. It does not say what the ending will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Cellar mouth, the arch ash (this branch)
+
+- In the mouth room, a look at the arch lets Lira say Concord left the heat under the jars and called the field safe. Torren, when he walks with her, says the stamp held the licence and did not hold the heat. The spark says Vesper farms the rot above the mouth and does not take the host. The kiln stays the drink.
+- The kiln, the crawl, and the field door stay where they were. The south step stays.
+- Places still names the cellar mouth. It does not say what the ending will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
