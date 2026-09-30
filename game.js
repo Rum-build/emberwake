@@ -1316,10 +1316,10 @@
       new THREE.BoxGeometry(0.2, 0.14, 0.12),
       new THREE.MeshBasicMaterial({ color: 0xd5e4f2, fog: false })
     );
-    lamp.position.set(-2.55, 1.52, -11.35);
+    lamp.position.set(0.72, 1.28, -10.42);
     g.add(lamp);
     const light = new THREE.PointLight(0xc5d6ee, 0.6, 4.6);
-    light.position.set(-2.55, 1.68, -11.15);
+    light.position.set(0.72, 1.42, -10.28);
     g.add(light);
   }
 
