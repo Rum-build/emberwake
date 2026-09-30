@@ -637,6 +637,13 @@ Playable on the Verdant Isle field:
 - Places still names the cellar mouth. It does not say what the ending will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Bottle-hall, the near corks (this branch)
+
+- On the near row, a look lets Lira say Concord gilded the shelf and left the dark bottle corked. Torren, when he walks with her, says the stamp held the show and did not hold the leak. The spark says Vesper farms the rot past the hall and does not take the host. The corks are not a drink.
+- The quiet stand stays empty. The inland step stays.
+- Places still names the bottle-hall. It does not say what the ending will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

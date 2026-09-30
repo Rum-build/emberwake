@@ -391,6 +391,23 @@
     return true;
   });
 
+  Emberwake.registerScene('hall-row', function () {
+    var torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    Emberwake.present({
+      lines: [
+        { where: 'Bottle-hall', speaker: 'Lira', text: 'Grain on the near corks. Concord gilded the shelf and left the dark bottle corked.' },
+        torren
+          ? { speaker: 'Torren', text: 'I stamped gold on shelves like this. The stamp held the show. It did not hold the leak.' }
+          : { speaker: 'The spark', text: 'They stamped the gold. The show held. The leak did not.' },
+        { speaker: 'The spark', text: 'Vesper farms the rot past this hall. She does not take the host. The corks are not a drink.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteRow) Emberwake.noteRow();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('bottle-hall', function () {
     var torren = Emberwake.companyHas && Emberwake.companyHas('torren');
     Emberwake.present({

@@ -143,6 +143,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - On the ash nave’s east pews, a look lets Lira say Concord numbered the host and left the door shut. Vesper is on the roof and does not take the host. The chalk, the gallery, and the south step stay. No new cue.
 - In the counting room, a look at the ledger lamp lets Lira say Concord called the shortage a courtesy. Vesper farms the rot inland and does not take the host. The quiet stand and the south step stay. No new cue.
 - At the cellar mouth, a look at the arch lets Lira say Concord left the heat under the jars. Vesper farms the rot above the mouth and does not take the host. The kiln and the south step stay. No new cue.
+- In the bottle-hall, a look at the near corks lets Lira say Concord gilded the shelf and left the dark bottle corked. Vesper farms the rot past the hall and does not take the host. The quiet stand stays. No new cue.
 
 ## Play on your phone
 
