@@ -729,6 +729,10 @@ Around the wake and the path approach, the ground now carries layered grass clum
 
 Around the leaf-cup, the bank now carries layered moss, damp dirt, small stones, root curls, and a soft green wash at the water edge. The drink, the licence stakes, and the wax cloth are the same. The wake ground, the path stones, and the kiln are unchanged. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the scar-farm ground pass
+
+On the approach to Vesper’s scar, the ground now carries cracked earth plates, ash grit, weed tufts, scorched stones, and a soft smoke tint. The farm-smoke columns, the ash caps, and the drink are the same meshes as before. Wake ground, the leaf-cup bank, the path stones, and the kiln are unchanged. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
