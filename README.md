@@ -118,6 +118,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - Before the village, the field says the spark is in Lira. The Concord patrol fight names the Concord, and ash sits on that floor. The blow is unchanged. No new cue.
 - The bottle-hall keeps a cork row, seal dust, and a cooler lamp off the walk. Continue glows when a save is there. No new cue.
 - The buried kiln keeps an ember glow, a soot rim, and a little smoke off the mouth. The leaf-cup keeps a cooler rim, a wax sheen, and a scatter of leaves off the mouth. A hit washes hotter. The drink and the blow are unchanged. No new cue.
+- The shale keeps a foam rim, wet sand, and a licence-post glow off the walk. The waystone keeps a carved rim, ash grit, and a cooler light off the mouth. Places names that stone. No new cue.
 
 ## Play on your phone
 

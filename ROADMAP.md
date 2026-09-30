@@ -467,6 +467,13 @@ Playable on the Verdant Isle field:
 - A hit washes hotter. The numbers of the blows stay where they were. The wash is not a cue.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Coast shore, and the waystone (this branch)
+
+- The shale keeps a foam rim, wet sand, and a licence-post glow off the roost, the door, the clerk, and the pools. The mist and the licence fight stay as they were.
+- The waystone keeps a carved rim, ash grit, and a cooler light off the mouth. Vesper’s lines stay as they were.
+- After the scar, Places names the north ridge stone. It does not repeat that she farms the rot.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
