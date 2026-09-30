@@ -1082,6 +1082,7 @@
     furrow.position.set(-2.15, 1.05, 1.12);
     furrow.rotation.x = -0.38;
     villageRoom.add(furrow);
+    dressLetterPaper(villageRoom, furrow);
     const basket = new THREE.Mesh(
       new THREE.CylinderGeometry(0.22, 0.16, 0.28, 7),
       new THREE.MeshLambertMaterial({ color: 0x8a6a38 })
@@ -2685,6 +2686,33 @@
       paintCountPage(ctx, tex, nextTitle, nextLines);
     };
     return page;
+  }
+
+  function dressLetterPaper(room, page) {
+    const rim = new THREE.Group();
+    rim.position.copy(page.position);
+    rim.rotation.copy(page.rotation);
+    const ash = new THREE.MeshBasicMaterial({ color: 0xd5e4f2, fog: false });
+    const w = 1.98;
+    const h = 1.28;
+    const t = 0.04;
+    [
+      [w, t, t, 0, h / 2, 0.02],
+      [w, t, t, 0, -h / 2, 0.02],
+      [t, h, t, -w / 2, 0, 0.02],
+      [t, h, t, w / 2, 0, 0.02],
+    ].forEach((spec) => {
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(spec[0], spec[1], spec[2]), ash);
+      bar.position.set(spec[3], spec[4], spec[5]);
+      rim.add(bar);
+    });
+    const grit = new THREE.MeshBasicMaterial({ color: 0xff5a18, fog: false });
+    [[-0.9, 0.56], [0.88, 0.5], [-0.86, -0.52], [0.84, -0.48]].forEach((spot, i) => {
+      const mote = new THREE.Mesh(new THREE.SphereGeometry(i % 2 ? 0.035 : 0.028, 6, 4), grit);
+      mote.position.set(spot[0], spot[1], 0.04);
+      rim.add(mote);
+    });
+    room.add(rim);
   }
 
   function buildCrypt() {
@@ -12825,6 +12853,7 @@
     whereEl.classList.toggle('hidden', !dialogueWhere);
     $('#dialogue-speaker').textContent = line.speaker || '';
     $('#dialogue-line').textContent = line.text || '';
+    $('#dialogue').classList.toggle('letter-paper', line.speaker === 'A cousin’s letter');
     const actions = $('#dialogue-actions');
     actions.innerHTML = '';
     if (line.choices && line.choices.length) {
@@ -13283,6 +13312,7 @@
       btn.textContent = 'Ash fall · ' + word;
       btn.title = 'Ash fall density, ' + word + ', ' + hint + '. Click to change.';
       btn.setAttribute('aria-label', 'Ash fall density ' + word + ', ' + hint);
+      btn.setAttribute('aria-pressed', 'true');
     });
   }
 
@@ -13359,6 +13389,9 @@
             ? 'The letter is in the pack. The leaf-cup is south-west of the wake.'
             : 'The argument about the seal.',
       });
+      if (!seenBeats['furrow-letter']) {
+        rows.push({ name: 'Cousin\'s letter', note: 'In the basket. It is not the road.' });
+      }
     }
     if (seenBeats.cellar || seenBeats.kiln) rows.push({ name: 'Root-cellar', note: 'The kiln under the arch.' });
     if (seenBeats.scar || scarVerdict) {

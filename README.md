@@ -124,6 +124,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - Torren and Nima speak once when their assists fire. The heal stays 14. The harbor keeps a wire, a spark tick, and a cooler lamp off the walk. Places names that post. No new cue.
 - Each aftermath board wears an ash frame and a cooler lamp, and one prop for the flag. The four closing lines stay. Credits sits further apart, with a clearer thank-you and a little ember grit. Places names that scroll. South still steps back. No new cue.
 - On a phone, Fight and the three strikes sit on taller buttons. Warrior, Mage, and Ranged stay named. The blows are unchanged. The debt number reads clearer, with an ash rim, and Places names that debt. A battle line from her side reads cool, and a line from theirs reads warm. No new cue.
+- Wake, Continue, Motion, and Ash wear an ash frame, and the lit ones read clearer. On a phone the taps sit a little taller. Continue still glows when a save is there. The cousin’s letter keeps a cooler rim and a little ember grit. The words stay. Places names the basket before the letter is read. No new cue.
 
 ## Play on your phone
 
