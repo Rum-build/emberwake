@@ -198,6 +198,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The bottle-hall shelves keep timber grain, glass catchlights, dust on the lips, and iron brackets. The near corks and the walk stay readable. No new cue.
 - The Places list keeps a parchment card, an ember mark on the place underfoot, and softer ink. Open and close stay the same. No new cue.
 - The wake field keeps layered grass, soil grit, a soft shadow under the blades, and warmer ground colour. The spawn, the letter, and the village door stay readable. No new cue.
+- The village path keeps worn flagstone grain, moss in the joints, a dusk shadow, and edge chips. The door and the path look stay readable. No new cue.
 
 ## Play on your phone
 
