@@ -595,6 +595,13 @@ Playable on the Verdant Isle field:
 - Places names that sill once the marrow is walked. It does not say what the claim will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Harbor pier, the salt line (this branch)
+
+- On the near boards, Lira says Concord counted the weather and left the tide. Torren, when he walks with her, names the short bottle they called a licence. The spark says Vesper farms the rot inland and does not stand on the pier. The telegraph stays.
+- The look is on the salt. The quiet stand off the boards stays quiet. The walk stays.
+- Places still names the pier. It does not say what the claim will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
