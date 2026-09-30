@@ -623,6 +623,13 @@ Playable on the Verdant Isle field:
 - Places still names the colonnade. It does not say what the ending will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Counting room, the ledger lamp (this branch)
+
+- West of the quiet stand, a look at the ledger lamp lets Lira say Concord called the shortage a courtesy and the book stayed dry. Torren, when he walks with her, says the stamp held the page and did not stop the leak. The spark says Vesper farms the rot inland and does not take the host. The lamp is not a drink.
+- The quiet stand stays empty. The south step stays.
+- Places still names the counting room. It does not say what the ending will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

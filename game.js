@@ -187,6 +187,7 @@
   let nearFarm = null;
   let nearCork = null;
   let nearDust = null;
+  let nearLamp = null;
   let nearRing = null;
   let nearClerk = null;
   let nearRation = null;
@@ -4310,6 +4311,21 @@
     };
   }
 
+  function nearestLamp() {
+    if (!playerMesh || locale !== 'harbor-vault' || skyPass) return null;
+    if (Math.hypot(-1.8 - playerMesh.position.x, 1.35 - playerMesh.position.z) > 0.85) return null;
+    if (seenBeats['count-lamp']) {
+      return {
+        title: 'Ledger lamp',
+        hint: 'Already heard. The book stays dry. Press E to hear it again.',
+      };
+    }
+    return {
+      title: 'Ledger lamp',
+      hint: 'Press E. Concord called the shortage a courtesy. It is not the door and not the hall.',
+    };
+  }
+
   function nearestRing() {
     if (!playerMesh || locale !== 'field' || regionId !== 'verdant-isle' || skyPass) return null;
     if (Math.hypot(9.2 - playerMesh.position.x, -12.4 - playerMesh.position.z) > 1.1) return null;
@@ -8134,7 +8150,8 @@
     const showFarm = idle && nearFarm && !showAbsorb && !showDoor && !showPier;
     const showCork = idle && nearCork && !showAbsorb && !atExit && !showTalk && !showMark && !showCamp && !showAside && !showNima;
     const showDust = idle && nearDust && !showAbsorb && !atExit && !showGallery && !showKestrel && !showChalk;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showScrap && !showCompany && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showSpare && !showJournal && !showNotice && !showCord && !showPost && !showPier && !showFarm && !showCork && !showDust && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol);
+    const showLamp = idle && nearLamp && !showAbsorb && !atExit;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showScrap && !showCompany && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showSpare && !showJournal && !showNotice && !showCord && !showPost && !showPier && !showFarm && !showCork && !showDust && !showLamp && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
@@ -8152,7 +8169,7 @@
     else if (showChest) absorbBtn.textContent = seenBeats['wayside-chest'] ? 'Look' : 'Open';
     else if (showSpare) absorbBtn.textContent = seenBeats['spare-green'] ? 'Look' : 'Open';
     else if (showJournal) absorbBtn.textContent = 'Look';
-    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showPier || showFarm || showCork || showDust || showRing || showClerk || showRation || showAside || showNima || showPatrol) absorbBtn.textContent = 'Look';
+    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showPier || showFarm || showCork || showDust || showLamp || showRing || showClerk || showRation || showAside || showNima || showPatrol) absorbBtn.textContent = 'Look';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
     absorbBtn.classList.toggle('is-ready', !!showAbsorb);
   }
@@ -8164,7 +8181,7 @@
   function updatePrompt() {
     const atExit = atInteriorExit();
     interactPrompt.classList.remove('ready');
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearScrap && !nearCompany && !nearPorter && !nearLetter && !nearChest && !nearSpare && !nearJournal && !nearNotice && !nearCord && !nearPost && !nearPier && !nearFarm && !nearCork && !nearDust && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearScrap && !nearCompany && !nearPorter && !nearLetter && !nearChest && !nearSpare && !nearJournal && !nearNotice && !nearCord && !nearPost && !nearPier && !nearFarm && !nearCork && !nearDust && !nearLamp && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -8343,6 +8360,11 @@
       $('#interact-detail').textContent = nearDust.hint;
       return;
     }
+    if (nearLamp && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
+      $('#interact-title').textContent = nearLamp.title;
+      $('#interact-detail').textContent = nearLamp.hint;
+      return;
+    }
     if (nearRing && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
       $('#interact-title').textContent = nearRing.title;
       $('#interact-detail').textContent = nearRing.hint;
@@ -8466,6 +8488,7 @@
       if (seenBeats['farm-smoke']) waiting.push('Smoke on the scar farm. Concord named the cough mercy. Vesper farms the rot and does not take the host.');
       if (seenBeats['yard-cork']) waiting.push('A cork on the yard’s south gate. Concord licensed the leak. Vesper farms the rot and does not take the host.');
       if (seenBeats['nave-dust']) waiting.push('Dust on the nave’s east pews. Concord numbered the host. Vesper is on the roof and does not take the host.');
+      if (seenBeats['count-lamp']) waiting.push('Salt on the counting-room lamp. Concord called the shortage a courtesy. Vesper farms the rot and does not take the host.');
       if (seenBeats['cold-ring']) waiting.push('A cold ring in the grass is not a pool and not the scar.');
       if (seenBeats['clerk-tally']) waiting.push('A tally clerk on the shale counted weather. The vault door did not change.');
       if (seenBeats['coast-brawl']) waiting.push('The west-shale patrol was provoked. They fought. The vault door did not change.');
@@ -8984,6 +9007,10 @@
       }
       if (nearDust && locale === 'ash-nave' && !atMouth) {
         talkDust();
+        return;
+      }
+      if (nearLamp && locale === 'harbor-vault' && !atMouth) {
+        talkLamp();
         return;
       }
       if (nearWorker && !atMouth) {
@@ -11232,6 +11259,27 @@
     saveGame();
   }
 
+  function talkLamp() {
+    if (locale !== 'harbor-vault' || dialogueOpen) return;
+    if (seenBeats['count-lamp']) {
+      showToast('The salt stays on the lamp. She does not take the host. The book stays dry.');
+      return;
+    }
+    const fn = EW.scenes['count-lamp'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'count-lamp';
+    }
+  }
+
+  function noteLamp() {
+    seenBeats['count-lamp'] = true;
+    showToast('The salt stays on the lamp. The book stays dry.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
   function talkRing() {
     if (locale !== 'field' || regionId !== 'verdant-isle' || dialogueOpen) return;
     if (seenBeats['cold-ring']) {
@@ -11659,6 +11707,7 @@
       nearFarm = null;
       nearCork = null;
       nearDust = null;
+      nearLamp = null;
       nearRing = null;
       nearClerk = null;
       nearRation = null;
@@ -11775,6 +11824,7 @@
         nearFarm = nearestFarm();
         nearCork = nearestCork();
         nearDust = nearestDust();
+        nearLamp = nearestLamp();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
         nearRation = nearestRation();
@@ -11832,6 +11882,7 @@
         nearFarm = nearestFarm();
         nearCork = nearestCork();
         nearDust = nearestDust();
+        nearLamp = nearestLamp();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
         nearRation = nearestRation();
@@ -11910,6 +11961,7 @@
         nearFarm = nearestFarm();
         nearCork = nearestCork();
         nearDust = nearestDust();
+        nearLamp = nearestLamp();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
         nearRation = nearestRation();
@@ -15342,6 +15394,7 @@
   EW.noteFarm = noteFarm;
   EW.noteCork = noteCork;
   EW.noteDust = noteDust;
+  EW.noteLamp = noteLamp;
   EW.noteRing = noteRing;
   EW.noteClerk = noteClerk;
   EW.noteRation = noteRation;
