@@ -965,6 +965,10 @@ The ground marker under an enemy now carries ember glow grain, a scorched dirt r
 
 Lira’s default host mesh now carries richer cloth folds, longer hair strands, boot and leather grain, and a clearer face. Equipped sword, armour, cloak, and bracers still change the body. No new cue.
 
+## Shipped in the Torren mesh pass
+
+Torren’s party mesh now carries richer cloth folds, temple and beard hair, boot and leather grain, and a clearer face. Equipped cudgel and coat still change the body. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
