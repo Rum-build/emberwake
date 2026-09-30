@@ -159,6 +159,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - Around the leaf-cup, moss, damp dirt, small stones, and root curls sit in a soft green wash at the water edge. The drink, the licence stakes, and the wax cloth stay. The wake ground is unchanged. No new cue.
 - On the scar-farm approach, cracked earth, ash grit, weed tufts, and scorched stones sit in a soft smoke tint. The smoke columns and the drink stay readable. No new cue.
 - Inside the Concord yard’s south gate, worn cobbles, chalk grit, and weeds in the joints sit under a gate shadow and a soft dusk wash. The gate, the cork look, and the seal stake stay readable. No new cue.
+- On the harbor pier, warped planks, salt crystals, wet puddles, and a rope-worn edge sit under a cooler lamp wash. The salt markers and the pier lamp stay readable. No new cue.
 
 ## Play on your phone
 

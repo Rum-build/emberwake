@@ -5078,6 +5078,7 @@
     g.add(makeRationStall(-8.6, 3.2));
     dressHarbor(g);
     dressHarborPier(g);
+    dressPierBoards(g);
     dressRoostRim(g);
     dressRoostNight(g);
     dressCoastMist(g);
@@ -5387,6 +5388,90 @@
       spray.position.set(spot[0], spot[1], spot[2]);
       g.add(spray);
     });
+  }
+
+  function dressPierBoards(g) {
+    const wood = new THREE.MeshPhongMaterial({
+      color: 0x6a4a30, shininess: 16, specular: new THREE.Color(0xc4a070),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0x3a2818, shininess: 8, specular: new THREE.Color(0x8a6840),
+    });
+    const salt = new THREE.MeshPhongMaterial({
+      color: 0xf4f0e8, shininess: 72, specular: new THREE.Color(0xffffff),
+    });
+    const rope = new THREE.MeshPhongMaterial({
+      color: 0xc4a878, shininess: 10, specular: new THREE.Color(0xe8d8b0),
+    });
+    const worn = new THREE.MeshPhongMaterial({
+      color: 0x6a5840, shininess: 6, specular: new THREE.Color(0xa09070),
+    });
+    const wet = new THREE.MeshPhongMaterial({
+      color: 0x2a6480, shininess: 80, specular: new THREE.Color(0xd8f4ff), transparent: true, opacity: 0.62,
+    });
+    [[5.4, 9.15, 0.08, 0.04], [6.3, 9.35, -0.06, -0.035], [7.3, 9.4, 0.1, 0.045], [5.9, 9.72, 0.02, -0.05], [6.85, 9.9, -0.08, 0.04], [4.95, 9.55, 0.14, 0.03]].forEach((spot) => {
+      const plank = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.055, 0.26), wood);
+      plank.position.set(spot[0], 0.1, spot[1]);
+      plank.rotation.y = spot[2];
+      plank.rotation.x = spot[3];
+      plank.castShadow = true;
+      plank.receiveShadow = true;
+      g.add(plank);
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.012, 0.03), grain);
+      line.position.set(spot[0], 0.132, spot[1]);
+      line.rotation.y = spot[2];
+      line.rotation.x = spot[3];
+      g.add(line);
+    });
+    function crystals(x, z) {
+      const group = new THREE.Group();
+      [[0, 0, 0.045], [0.07, 0.03, 0.03], [-0.05, 0.02, 0.028], [0.02, -0.06, 0.022]].forEach((spot, i) => {
+        const chip = new THREE.Mesh(new THREE.OctahedronGeometry(spot[2], 0), salt);
+        chip.position.set(spot[0], spot[2] * 0.7, spot[1]);
+        chip.rotation.y = i * 0.6;
+        group.add(chip);
+      });
+      group.position.set(x, 0.12, z);
+      g.add(group);
+    }
+    [[5.7, 9.5], [6.9, 9.6], [6.35, 10.05], [5.15, 8.75]].forEach((spot) => {
+      crystals(spot[0], spot[1]);
+    });
+    [[5.6, 9.95, 0.28], [6.7, 10.15, 0.32], [7.05, 9.25, 0.2]].forEach((spot) => {
+      const puddle = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 8), wet);
+      puddle.rotation.x = -Math.PI / 2;
+      puddle.position.set(spot[0], 0.14, spot[1]);
+      g.add(puddle);
+    });
+    const line = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 1.7, 6), rope);
+    line.rotation.z = Math.PI / 2;
+    line.rotation.y = 0.12;
+    line.position.set(6.15, 0.09, 10.2);
+    g.add(line);
+    const rub = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.032, 0.42, 6), worn);
+    rub.rotation.z = Math.PI / 2;
+    rub.position.set(6.35, 0.095, 10.18);
+    g.add(rub);
+    [[5.4, 10.12], [6.9, 10.28]].forEach((spot) => {
+      const fray = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.08, 0.16),
+        new THREE.MeshPhongMaterial({ color: 0xd8c090, shininess: 6, side: THREE.DoubleSide })
+      );
+      fray.position.set(spot[0], 0.14, spot[1]);
+      g.add(fray);
+    });
+    const wash = new THREE.Mesh(
+      new THREE.CircleGeometry(1.25, 12),
+      new THREE.MeshBasicMaterial({
+        color: 0xb7d4ee, transparent: true, opacity: 0.07, depthWrite: false, fog: false,
+      })
+    );
+    wash.rotation.x = -Math.PI / 2;
+    wash.position.set(6.05, 0.08, 9.15);
+    g.add(wash);
+    const lampWash = new THREE.PointLight(0xc5d6ee, 0.28, 6.5);
+    lampWash.position.set(5.8, 1.45, 9.15);
+    g.add(lampWash);
   }
 
   function buildCoast() {
