@@ -977,6 +977,10 @@ The Concord captain now carries richer armour plates, cloth under the plate, a h
 
 The wake screen now carries an ember rim, a warmer parchment field, a softer glow on Wake and Continue, and clearer button borders. Sound, the save glow, and the eight cues stay where they were. No new cue.
 
+## Shipped in the kiln pool pass
+
+The buried kiln pool now carries denser swirl, ember-rot grain, a clearer surface sheen, and a stronger absorb glow. The drink, the kiln beat, and the eight cues stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

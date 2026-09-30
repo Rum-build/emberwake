@@ -8126,6 +8126,107 @@
     return g;
   }
 
+  function dressKilnPool(g) {
+    const swirl = new THREE.Group();
+    const swirlMats = [
+      new THREE.MeshBasicMaterial({ color: 0xff3c0c, transparent: true, opacity: 0.96, depthWrite: false, fog: false }),
+      new THREE.MeshBasicMaterial({ color: 0xff8a28, transparent: true, opacity: 0.94, depthWrite: false, fog: false }),
+      new THREE.MeshBasicMaterial({ color: 0xffe4a4, transparent: true, opacity: 0.98, depthWrite: false, fog: false }),
+    ];
+    swirlMats.forEach((mat) => { mat.userData.rest = mat.opacity; });
+    const swirlBits = [];
+    for (let arm = 0; arm < 2; arm++) {
+      for (let i = 0; i < 10; i++) {
+        const a = arm * Math.PI + (i / 9) * Math.PI * 2.2;
+        const rad = 0.85 + (i / 9) * 2.05;
+        const mat = swirlMats[(arm + i) % 3];
+        const bit = new THREE.Mesh(
+          i % 3 === 2 ? new THREE.SphereGeometry(0.16, 6, 5) : new THREE.BoxGeometry(0.2, 0.07, 0.52),
+          mat
+        );
+        bit.position.set(Math.cos(a) * rad, 0.22, Math.sin(a) * rad);
+        bit.rotation.y = -a + 0.35;
+        swirl.add(bit);
+        swirlBits.push(bit);
+      }
+    }
+    g.add(swirl);
+
+    const grainMats = [
+      new THREE.MeshBasicMaterial({ color: 0x10080c, transparent: true, opacity: 1, depthWrite: false, fog: false }),
+      new THREE.MeshBasicMaterial({ color: 0x7a3858, transparent: true, opacity: 1, depthWrite: false, fog: false }),
+      new THREE.MeshBasicMaterial({ color: 0xff4a12, transparent: true, opacity: 1, depthWrite: false, fog: false }),
+      new THREE.MeshBasicMaterial({ color: 0xffe8b0, transparent: true, opacity: 1, depthWrite: false, fog: false }),
+    ];
+    const rotGrain = [];
+    const flecks = [
+      [1.15, 0.42, 0], [1.55, -0.35, 0], [-0.95, 0.85, 0], [-1.4, -0.55, 1],
+      [0.55, 1.35, 1], [-0.4, -1.25, 1], [1.85, 0.95, 0], [-1.9, 0.25, 1],
+      [0.2, -1.85, 0], [2.15, -0.7, 1], [-0.7, 1.7, 0], [1.05, -1.55, 1],
+    ];
+    flecks.forEach((spot) => {
+      const chip = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.05, 0.12), grainMats[spot[2]]);
+      chip.position.set(spot[0], 0.18, spot[1]);
+      chip.rotation.y = spot[0] * 0.7;
+      g.add(chip);
+      rotGrain.push(chip);
+    });
+    const embers = [
+      [1.35, 0.15, 2], [-1.15, 0.35, 3], [0.35, -0.95, 2], [-0.55, -0.7, 3],
+      [1.75, -1.15, 2], [-1.65, -1.05, 3], [0.85, 1.65, 2], [-0.15, 1.15, 3],
+      [2.05, 0.45, 2], [-2.05, 0.85, 3],
+    ];
+    embers.forEach((spot) => {
+      const chip = new THREE.Mesh(
+        spot[2] === 3 ? new THREE.OctahedronGeometry(0.11, 0) : new THREE.BoxGeometry(0.18, 0.06, 0.18),
+        grainMats[spot[2]]
+      );
+      chip.position.set(spot[0], 0.19, spot[1]);
+      chip.rotation.y = spot[1] * 0.4;
+      g.add(chip);
+      rotGrain.push(chip);
+    });
+
+    const kilnSheen = new THREE.Mesh(
+      new THREE.RingGeometry(1.55, 2.55, 36),
+      new THREE.MeshBasicMaterial({
+        color: 0xffc070, transparent: true, opacity: 0.62, side: THREE.DoubleSide, depthWrite: false, fog: false,
+      })
+    );
+    kilnSheen.rotation.x = -Math.PI / 2;
+    kilnSheen.position.y = 0.125;
+    g.add(kilnSheen);
+    const kilnCatch = new THREE.Mesh(
+      new THREE.RingGeometry(0.95, 1.32, 28),
+      new THREE.MeshBasicMaterial({
+        color: 0xfff6d4, transparent: true, opacity: 0.9, side: THREE.DoubleSide, depthWrite: false, fog: false,
+      })
+    );
+    kilnCatch.rotation.x = -Math.PI / 2;
+    kilnCatch.position.y = 0.155;
+    g.add(kilnCatch);
+    const absorbGlow = new THREE.Mesh(
+      new THREE.RingGeometry(1.95, 2.85, 32),
+      new THREE.MeshBasicMaterial({
+        color: 0xff4a10, transparent: true, opacity: 0.5, side: THREE.DoubleSide, depthWrite: false, fog: false,
+      })
+    );
+    absorbGlow.rotation.x = -Math.PI / 2;
+    absorbGlow.position.y = 0.11;
+    g.add(absorbGlow);
+    const absorbCore = new THREE.Mesh(
+      new THREE.CircleGeometry(0.78, 20),
+      new THREE.MeshBasicMaterial({
+        color: 0xfff1c2, transparent: true, opacity: 0.82, side: THREE.DoubleSide, depthWrite: false, fog: false,
+      })
+    );
+    absorbCore.rotation.x = -Math.PI / 2;
+    absorbCore.position.y = 0.14;
+    g.add(absorbCore);
+
+    return { swirl, swirlBits, swirlMats, rotGrain, kilnSheen, kilnCatch, absorbGlow, absorbCore };
+  }
+
   function makePool(def) {
     const g = new THREE.Group();
     g.position.set(def.x, 0, def.z);
@@ -8294,6 +8395,8 @@
       }
     }
 
+    const kilnDress = def.id === 'kiln' ? dressKilnPool(g) : null;
+
     let figure = null;
     if (def.vesper) {
       figure = makeCharacter(0x1a121c, 1.2);
@@ -8378,6 +8481,9 @@
       region: def.region || 'verdant-isle',
       rotMat, rotColor, healColor, elColor, lifeMat, coreMat, core, beamMat, neck,
       spikes, flowers, motes, ripple, rippleMat, sheen, cleanRing, cleanMat, readyRing, readyMat, embers, figure, seal, sealRing, rim, rimMat, watchers, cork, phase: Math.random() * 6,
+      swirl: kilnDress && kilnDress.swirl, swirlBits: kilnDress && kilnDress.swirlBits, swirlMats: kilnDress && kilnDress.swirlMats,
+      rotGrain: kilnDress && kilnDress.rotGrain, kilnSheen: kilnDress && kilnDress.kilnSheen, kilnCatch: kilnDress && kilnDress.kilnCatch,
+      absorbGlow: kilnDress && kilnDress.absorbGlow, absorbCore: kilnDress && kilnDress.absorbCore,
       group: g,
     };
     pools.push(pool);
@@ -8515,6 +8621,42 @@
           ember.material.opacity = extra ? Math.max(0.88, burst) : burst * 0.95;
           ember.scale.setScalar((extra ? 0.7 : 0.55) + burst * 0.8);
         });
+      }
+      if (pool.swirl) {
+        pool.swirl.rotation.y = t * 0.65;
+        const fade = 1 - h;
+        if (pool.swirlMats) {
+          pool.swirlMats.forEach((mat) => {
+            mat.opacity = (mat.userData.rest + burst * 0.04) * fade;
+          });
+        }
+        pool.swirl.visible = fade > 0.04;
+      }
+      if (pool.rotGrain) {
+        const fade = 1 - h * 0.92;
+        const seen = new Set();
+        pool.rotGrain.forEach((chip) => {
+          chip.visible = fade > 0.05;
+          if (chip.material && !seen.has(chip.material)) {
+            seen.add(chip.material);
+            chip.material.opacity = fade;
+          }
+        });
+      }
+      if (pool.kilnSheen) {
+        pool.kilnSheen.rotation.z = t * 0.22 + pool.phase;
+        pool.kilnSheen.material.opacity = (0.62 + cue * 0.22 + burst * 0.28) * (1 - h);
+      }
+      if (pool.kilnCatch) {
+        pool.kilnCatch.material.opacity = (0.9 + cue * 0.08 + burst * 0.1) * (1 - h);
+      }
+      if (pool.absorbGlow) {
+        pool.absorbGlow.material.opacity = (0.5 + cue * 0.22 + burst * 0.48) * (1 - h);
+        pool.absorbGlow.scale.setScalar(1 + burst * 0.65);
+      }
+      if (pool.absorbCore) {
+        pool.absorbCore.material.opacity = (0.82 + cue * 0.14 + burst * 0.18) * (1 - h);
+        pool.absorbCore.scale.setScalar(1 + burst * 0.85);
       }
       if (pool.figure) {
         pool.figure.position.y = -2.3 * h;
