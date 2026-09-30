@@ -1247,6 +1247,8 @@ body:not(.still-motion) .btn-absorb.is-ready {
 }
 
 .turn-chip.ally { border-color: rgba(126, 176, 208, 0.7); }
+.turn-chip.nima { border-color: #d4e07a; color: #f7f8d8; background: rgba(28, 36, 12, 0.94); }
+.turn-chip.torren { border-color: #e09078; color: #ffe4d8; background: rgba(42, 16, 12, 0.94); }
 .turn-chip.foe { border-color: rgba(176, 92, 72, 0.75); }
 
 .combat-ui.dusk-fight .turn-order {
