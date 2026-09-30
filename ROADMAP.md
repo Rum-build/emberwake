@@ -502,6 +502,13 @@ Playable on the Verdant Isle field:
 - After the ending is heard, Places names Credits north of the room. South still steps back to the claim.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Strike labels, and the debt number (this branch)
+
+- On a phone, Fight and the three strikes sit on taller buttons. Warrior, Mage, and Ranged stay named on their own row. The blows are unchanged. The stick stays clear once the fight is over.
+- The debt chip keeps its place. The number reads clearer, and an ash rim sits outside the chip. Places names the Concord debt. The cut per point stays 5.
+- A line from her side reads cool. A line from theirs reads warm. The words stay as they were.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

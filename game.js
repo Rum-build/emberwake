@@ -7215,6 +7215,11 @@
 
   function showLog(msg) {
     combatLog.textContent = msg;
+    const text = msg || '';
+    const foe = / hits | corks |The echo strikes |comes apart\.|lifts a |stamps the page|lifts the seal|wets the pen|wets the stone|opens the plate|The hare bolts|The gull cries|The penitent kneels|Ash in the teeth|The cry reaches the body|The cry is on /.test(text);
+    const ally = /cleaves |channels |aims |steadies |sets his shoulder|uses 1 |HP returns|lays digested|spends a held word|dump the |is the job/.test(text);
+    combatLog.classList.toggle('log-foe', foe && !ally);
+    combatLog.classList.toggle('log-ally', ally && !foe);
     combatLog.classList.add('show');
     clearTimeout(showLog._t);
     showLog._t = setTimeout(() => combatLog.classList.remove('show'), 1400);
@@ -7555,9 +7560,16 @@
       scarEl.classList.remove('hidden');
       scarEl.classList.toggle('quiet', scarDebt <= 0);
       scarEl.classList.toggle('owed', scarDebt > 0);
-      scarEl.textContent = scarDebt > 0
-        ? 'Debt ' + scarDebt + ' · −' + (scarDebt * SCAR_CUT) + ' HP'
-        : 'Debt 0';
+      scarEl.replaceChildren();
+      if (scarDebt > 0) {
+        scarEl.append('Debt ');
+        const num = document.createElement('span');
+        num.className = 'debt-num';
+        num.textContent = String(scarDebt);
+        scarEl.append(num, ' · −' + (scarDebt * SCAR_CUT) + ' HP');
+      } else {
+        scarEl.textContent = 'Debt 0';
+      }
     }
     const strainWord = spark.strain >= 70 ? 'tearing' : spark.strain >= 40 ? 'taxed' : 'steady';
     $('#strain-nums').textContent = spark.strain + '/100 · ' + strainWord;
@@ -13507,6 +13519,12 @@
       }
     } else if (claimWord) {
       rows.push({ name: 'Aftermath', note: 'Not walked yet. North of the mass, after the flag. The list does not carry you.' });
+    }
+    if (scarDebt > 0) {
+      rows.push({
+        name: 'Concord debt',
+        note: 'Debt ' + scarDebt + '. Each point cuts ' + SCAR_CUT + ' from her max HP. The number does not open a door.',
+      });
     }
     return rows;
   }
