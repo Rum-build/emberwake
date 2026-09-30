@@ -2647,10 +2647,10 @@
     rim.position.set(0.05, 0.06, 2.68);
     g.add(rim);
     const catchLight = new THREE.Mesh(
-      new THREE.BoxGeometry(0.2, 0.045, 0.07),
+      new THREE.BoxGeometry(0.32, 0.08, 0.16),
       new THREE.MeshBasicMaterial({ color: 0xf2f7ff, fog: false })
     );
-    catchLight.position.set(0.28, 0.16, 2.52);
+    catchLight.position.set(-0.52, 0.2, 2.82);
     g.add(catchLight);
   }
 
