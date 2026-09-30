@@ -797,6 +797,10 @@ Torren’s face now carries softer cheek and jaw volume, finer crop strands with
 
 The spark near Lira now carries a layered ember core, a softer outer haze, a faint heat rim, and denser motes. Her face, Torren’s face, and equipped gear stay readable. The cellar door and the earlier ground passes are unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the Lira gear grain pass
+
+Lira’s quilted jerkin now carries extra stitch rows and leather grain, the ashwood blade carries a fuller and an edge catch, and the road bracers carry straps and buckles. They stay on the body when equipped. Her face, Torren’s face, and the spark stay readable. The earlier ground passes are unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

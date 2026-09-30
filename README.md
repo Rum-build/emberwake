@@ -174,6 +174,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - Lira’s face keeps a softer cheek and jaw, finer hair with a parting catch, clearer eye lights, and a tunic fold where the gear sits. Equipped gear stays readable. Vesper stays a dark cloth with a hair lock. No new cue.
 - Torren’s face keeps a softer cheek and jaw, finer crop strands with a parting catch, clearer eye lights, and a tunic fold where the coat sits. His cudgel and seal coat stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 - The spark near Lira keeps a layered ember core, a softer outer haze, a faint heat rim, and denser motes. Her face and equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
+- Lira’s quilted jerkin keeps stitch rows and leather grain, the ashwood blade keeps a fuller and an edge catch, and the road bracers keep straps and buckles. They stay on the body when equipped. Her face and the spark stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 
 ## Play on your phone
 

@@ -7875,6 +7875,23 @@
       put(gear, new THREE.BoxGeometry(0.18 * s, 0.028 * s, 0.05 * s), wood, -0.2 * s, 0.46 * s, 0.09 * s, -0.42);
       put(gear, new THREE.BoxGeometry(0.034 * s, 0.12 * s, 0.03 * s), wood, -0.16 * s, 0.38 * s, 0.08 * s, -0.42);
       put(gear, new THREE.SphereGeometry(0.036 * s, 6, 5), ember, -0.13 * s, 0.3 * s, 0.07 * s);
+      const fuller = phong(0x1c242c, 0x080c10, 18, 0x6a7888);
+      const edge = new THREE.MeshBasicMaterial({ color: 0xfff4e8, fog: false });
+      const blade = new THREE.Group();
+      blade.position.set(-0.28 * s, 0.74 * s, 0.1 * s);
+      blade.rotation.z = -0.42;
+      put(blade, new THREE.BoxGeometry(0.01 * s, 0.5 * s, 0.007 * s), fuller, 0, 0.03 * s, 0.013 * s);
+      put(blade, new THREE.BoxGeometry(0.005 * s, 0.54 * s, 0.006 * s), edge, 0.018 * s, 0.04 * s, 0.015 * s);
+      put(blade, new THREE.BoxGeometry(0.004 * s, 0.46 * s, 0.005 * s), phong(0x9aa4b0, 0x141820, 64, 0xeef2f8), -0.016 * s, 0.02 * s, 0.014 * s);
+      gear.add(blade);
+      const grip = new THREE.Group();
+      grip.position.set(-0.16 * s, 0.38 * s, 0.08 * s);
+      grip.rotation.z = -0.42;
+      const gripGrain = phong(0x2a1c14, 0x100804, 8, 0x8a6848);
+      [-0.028, 0, 0.028].forEach((y) => {
+        put(grip, new THREE.BoxGeometry(0.028 * s, 0.006 * s, 0.008 * s), gripGrain, 0, y * s, 0.02 * s);
+      });
+      gear.add(grip);
     } else if (weapon === 'wellwood-staff') {
       const held = new THREE.Group();
       const shaft = phong(0x2f6a58, 0x0c2820, 22, 0xd4f4ea);
@@ -7922,6 +7939,25 @@
       put(gear, new THREE.BoxGeometry(0.4 * s, 0.07 * s, 0.14 * s), quilt, 0, 0.88 * s, 0.18 * s);
       put(gear, new THREE.BoxGeometry(0.09 * s, 0.3 * s, 0.18 * s), quilt, 0.3 * s, 0.56 * s, 0.06 * s);
       put(gear, new THREE.BoxGeometry(0.09 * s, 0.3 * s, 0.18 * s), quilt, -0.3 * s, 0.56 * s, 0.06 * s);
+      const puff = phong(0xf2e2c8, 0x5a4030, 16, 0xfff8ee);
+      const hide = phong(0x5a4030, 0x1a100c, 10, 0xc4a080);
+      [0.6, 0.72].forEach((y) => {
+        put(gear, new THREE.BoxGeometry(0.4 * s, 0.01 * s, 0.014 * s), stitch, 0, y * s, 0.372 * s);
+      });
+      [-0.14, 0, 0.14].forEach((x) => {
+        put(gear, new THREE.BoxGeometry(0.01 * s, 0.32 * s, 0.012 * s), stitch, x * s, 0.66 * s, 0.374 * s);
+      });
+      [-0.07, 0.07].forEach((x) => {
+        [0.57, 0.69].forEach((y) => {
+          put(gear, new THREE.BoxGeometry(0.08 * s, 0.045 * s, 0.014 * s), puff, x * s, y * s, 0.378 * s);
+        });
+      });
+      [-1, 1].forEach((side) => {
+        [0.48, 0.56, 0.64].forEach((y) => {
+          put(gear, new THREE.BoxGeometry(0.07 * s, 0.008 * s, 0.012 * s), hide, side * 0.3 * s, y * s, 0.162 * s);
+        });
+      });
+      put(gear, new THREE.BoxGeometry(0.26 * s, 0.01 * s, 0.012 * s), stitch, 0, 0.9 * s, 0.258 * s);
     }
     if (cloak === 'road-cloak') {
       const wool = phong(0x3a4a62, 0x101820, 10, 0xd0e0ee);
@@ -7945,6 +7981,14 @@
         put(brace, new THREE.CylinderGeometry(0.07 * s, 0.078 * s, 0.16 * s, 7), wrap, 0, -0.2 * s, 0.01 * s);
         put(brace, new THREE.CylinderGeometry(0.082 * s, 0.082 * s, 0.028 * s, 7), lip, 0, -0.14 * s, 0.01 * s);
         put(brace, new THREE.CylinderGeometry(0.08 * s, 0.08 * s, 0.02 * s, 7), lip, 0, -0.26 * s, 0.01 * s);
+        const strap = phong(0x4a3024, 0x140c08, 12, 0xb89878);
+        const buckle = phong(0xe4e8ee, 0x2a3038, 84, 0xffffff);
+        const grain = phong(0x3a2418, 0x100804, 8, 0xa08060);
+        put(brace, new THREE.BoxGeometry(0.12 * s, 0.028 * s, 0.018 * s), strap, 0, -0.2 * s, 0.09 * s);
+        put(brace, new THREE.BoxGeometry(0.036 * s, 0.044 * s, 0.014 * s), buckle, 0, -0.2 * s, 0.104 * s);
+        put(brace, new THREE.BoxGeometry(0.01 * s, 0.018 * s, 0.008 * s), phong(0x1c242c, 0x080c10, 30, 0x889098), 0, -0.2 * s, 0.114 * s);
+        put(brace, new THREE.BoxGeometry(0.1 * s, 0.006 * s, 0.01 * s), grain, 0, -0.155 * s, 0.086 * s);
+        put(brace, new THREE.BoxGeometry(0.1 * s, 0.006 * s, 0.01 * s), grain, 0, -0.245 * s, 0.086 * s);
         arm.add(brace);
         nodes.push(brace);
       });
