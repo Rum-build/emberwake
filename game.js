@@ -871,6 +871,17 @@
       const grit = groundGrain(x, y);
       if (grit > 0.45) c.lerp(soil, 0.22);
       else if (grit < -0.55) c.lerp(high, 0.18);
+      const wake = Math.hypot(x, y);
+      if (wake < 7) {
+        const falloff = 1 - wake / 7;
+        const soilWarm = new THREE.Color(0x8a5a32);
+        const moss = new THREE.Color(0x2f7a34);
+        const blade = new THREE.Color(0xd2e88a);
+        const n = Math.sin(x * 1.7) * Math.cos(y * 1.45);
+        if (n > 0.15) c.lerp(soilWarm, 0.42 * falloff);
+        else if (n < -0.2) c.lerp(blade, 0.34 * falloff);
+        else c.lerp(moss, 0.22 * falloff);
+      }
     });
     const ground = new THREE.Mesh(groundGeo, new THREE.MeshPhongMaterial({
       vertexColors: true, shininess: 18, specular: new THREE.Color(0x8aaa58),
@@ -1033,6 +1044,7 @@
     dressIslePath();
     dressVillagePath();
     dressWakeCover();
+    dressWakeField();
 
     overworldGroup.add(new THREE.AmbientLight(0xfff4e4, 0.36));
     const sun = new THREE.DirectionalLight(0xfff6e0, 1.18);
@@ -9782,6 +9794,85 @@
     const dusk = new THREE.PointLight(0xffb080, 0.22, 10);
     dusk.position.set(-1.6, 1.7, 2.2);
     overworldGroup.add(dusk);
+  }
+
+  function dressWakeField() {
+    const deep = new THREE.MeshPhongMaterial({
+      color: 0x1f5a28, shininess: 10, specular: new THREE.Color(0xb6d868), side: THREE.DoubleSide,
+    });
+    const mid = new THREE.MeshPhongMaterial({
+      color: 0x3e8a38, shininess: 14, specular: new THREE.Color(0xe4f0a0), side: THREE.DoubleSide,
+    });
+    const tip = new THREE.MeshPhongMaterial({
+      color: 0xc6de74, shininess: 8, specular: new THREE.Color(0xfff6c8), side: THREE.DoubleSide,
+    });
+    const soil = new THREE.MeshPhongMaterial({
+      color: 0x6a4a2c, shininess: 4, specular: new THREE.Color(0xc4a070),
+    });
+    const soilDark = new THREE.MeshPhongMaterial({
+      color: 0x3a2818, shininess: 3, specular: new THREE.Color(0x8a6840),
+    });
+    const shadeMat = new THREE.MeshBasicMaterial({
+      color: 0x102010, transparent: true, opacity: 0.28, depthWrite: false, fog: false,
+    });
+    function tuft(x, z, lean) {
+      const g = new THREE.Group();
+      const shade = new THREE.Mesh(new THREE.CircleGeometry(0.22, 8), shadeMat);
+      shade.rotation.x = -Math.PI / 2;
+      shade.position.y = 0.03;
+      shade.scale.set(1.15, 0.72, 1);
+      g.add(shade);
+      const pad = new THREE.Mesh(new THREE.SphereGeometry(0.1, 5, 4), soil);
+      pad.scale.set(1.3, 0.28, 1.05);
+      pad.position.y = 0.036;
+      g.add(pad);
+      [[5, 0.16, 0.046, deep, 0.05], [4, 0.28, 0.04, mid, 0.034], [3, 0.42, 0.03, tip, 0.018]].forEach((layer, li) => {
+        const count = layer[0];
+        for (let i = 0; i < count; i++) {
+          const h = layer[1] + (i % 2) * 0.05;
+          const blade = new THREE.Mesh(new THREE.PlaneGeometry(layer[2], h), layer[3]);
+          const a = i * (Math.PI * 2 / count) + li * 0.45;
+          blade.position.set(Math.cos(a) * layer[4], h * 0.48, Math.sin(a) * layer[4]);
+          blade.rotation.y = a;
+          blade.rotation.z = lean + (i - count * 0.5) * 0.06;
+          g.add(blade);
+        }
+      });
+      g.position.set(x, 0, z);
+      overworldGroup.add(g);
+    }
+    [
+      [0.85, 0.55, 0.08], [-0.7, 0.9, -0.1], [1.15, -0.45, 0.12],
+      [-1.05, -0.35, -0.06], [0.35, 1.35, 0.1], [-0.4, -1.2, 0.14],
+      [1.6, 1.05, -0.08], [-1.55, 0.65, 0.16], [0.2, -1.7, -0.1],
+      [-1.9, -1.15, 0.05], [2.05, -0.2, 0.12], [-0.15, 2.05, -0.14],
+      [1.35, 1.85, 0.07], [-2.15, 1.55, -0.05], [2.2, 1.55, 0.1],
+    ].forEach((spot) => tuft(spot[0], spot[1], spot[2]));
+    function grit(x, z) {
+      const g = new THREE.Group();
+      [[0, 0, 0.034, soilDark], [0.06, 0.03, 0.02, soil], [-0.05, 0.02, 0.026, soilDark], [0.02, -0.05, 0.016, soil], [-0.03, -0.02, 0.014, soilDark]].forEach((spot) => {
+        const speck = new THREE.Mesh(new THREE.SphereGeometry(spot[2], 4, 3), spot[3]);
+        speck.position.set(spot[0], 0.032 + spot[2] * 0.4, spot[1]);
+        g.add(speck);
+      });
+      g.position.set(x, 0, z);
+      overworldGroup.add(g);
+    }
+    [[0.45, 0.15], [-0.35, 0.4], [0.9, -0.85], [-1.2, 0.15], [0.55, 1.65], [-0.85, -0.85], [1.75, 0.45], [-1.65, -0.55]].forEach((spot) => {
+      grit(spot[0], spot[1]);
+    });
+    const mossWash = new THREE.MeshBasicMaterial({
+      color: 0x4e9a3c, transparent: true, opacity: 0.16, depthWrite: false, fog: false,
+    });
+    const soilWash = new THREE.MeshBasicMaterial({
+      color: 0x6a4428, transparent: true, opacity: 0.2, depthWrite: false, fog: false,
+    });
+    [[0.4, 0.8, 1.15, mossWash], [-1.1, -0.2, 0.9, soilWash], [1.2, -0.6, 0.85, soilWash], [-0.2, 1.6, 1.05, mossWash]].forEach((spot) => {
+      const wash = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 9), spot[3]);
+      wash.rotation.x = -Math.PI / 2;
+      wash.position.set(spot[0], 0.026, spot[1]);
+      overworldGroup.add(wash);
+    });
   }
 
   function dressIslePath() {
