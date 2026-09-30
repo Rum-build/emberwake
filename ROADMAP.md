@@ -551,6 +551,13 @@ Playable on the Verdant Isle field:
 - Places names the roost. It does not say what the claim will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Bottle-hall dust, and the crypt lamp (this branch)
+
+- The bottle-hall keeps cork grain on the near row, cooler dust shafts, and a little more seal grit on the floor. The walks stay.
+- The marrow crypt keeps cooler dust and a clearer rim on the lamp. The ribs stay. No new fight.
+- Places names the bottle-hall. It does not say what the claim will do. South still steps back to the count.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
