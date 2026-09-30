@@ -132,6 +132,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The eagle roost keeps cooler night haze, rope grain, and ember grit on the perch beam. The harbor pier keeps a wet sheen and a cooler lamp. The climb stays. Places names the roost. No new cue.
 - The bottle-hall keeps cork grain on the near row, cooler dust shafts, and seal grit on the floor. The crypt keeps cooler dust and a lamp rim. The walks stay. Places names the hall. No new cue.
 - The isle path keeps a few more near-field leaves and cooler dusk haze. The village door keeps wreath grain and ash on the sill. The walk and the step in stay. Places names the path. No new cue.
+- Vesper’s scar keeps smoke, ash, and a rot film on the blister. The pile, the posts, and the veil stay. The walk stays. Places names the farm. No new cue.
 
 ## Play on your phone
 

@@ -565,6 +565,12 @@ Playable on the Verdant Isle field:
 - Places names the village path. It does not say what the claim will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Scar farm, smoke and rot (this branch)
+
+- Vesper’s scar keeps a little smoke, ash on the near ground, and a rot film on the blister. The ash pile, the posts, and the veil stay. The walk stays.
+- Places names the scar farm. It does not say what the claim will do. She does not enter.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
