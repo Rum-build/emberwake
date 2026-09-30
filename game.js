@@ -2650,7 +2650,7 @@
       new THREE.BoxGeometry(0.2, 0.045, 0.07),
       new THREE.MeshBasicMaterial({ color: 0xf2f7ff, fog: false })
     );
-    catchLight.position.set(0.05, 0.1, 2.98);
+    catchLight.position.set(0.28, 0.16, 2.52);
     g.add(catchLight);
   }
 
