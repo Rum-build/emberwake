@@ -2157,6 +2157,24 @@
     );
     rim.position.set(0, 1.22, 0.14);
     lamp.add(rim);
+    const ribGrain = new THREE.MeshBasicMaterial({ color: 0xd8c0a4, fog: false });
+    [[-1.35, 1.58, 3.88], [1.48, 1.5, 3.78]].forEach((spot) => {
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.18, 0.1), ribGrain);
+      line.position.set(spot[0], spot[1], spot[2]);
+      g.add(line);
+    });
+    const sillGrit = new THREE.MeshBasicMaterial({ color: 0xb4c8d8, fog: false });
+    [[-1.55, 0.74, 3.72], [1.62, 0.7, 3.62]].forEach((spot) => {
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.14, 0.22), sillGrit);
+      cap.position.set(spot[0], spot[1], spot[2]);
+      g.add(cap);
+    });
+    const sillCatch = new THREE.Mesh(
+      new THREE.BoxGeometry(0.28, 0.16, 0.1),
+      new THREE.MeshBasicMaterial({ color: 0xe2f0f8, fog: false })
+    );
+    sillCatch.position.set(-1.9, 2.12, 3.58);
+    g.add(sillCatch);
   }
 
   function marrowFits(x, z) {
@@ -13828,6 +13846,7 @@
     if (seenBeats.marrowStep) {
       rows.push({ name: 'Ashen Marrow', note: 'The digest-engine and the ash shelf.' });
       rows.push({ name: 'Marrow crypt', note: 'Bone-ash undercroft inland of the vault.' });
+      rows.push({ name: 'Crypt sill', note: 'Grit on the near sill. South still steps back.' });
     }
     if (pipeWord || seenBeats['pipe-feed']) {
       rows.push({ name: 'Engine pipe', note: pipeWord === 'crack' ? 'The feed is cracked.' : pipeWord === 'leave' ? 'The feed stayed corked.' : 'The valve is a choice.' });

@@ -589,6 +589,12 @@ Playable on the Verdant Isle field:
 - Places names that dust only after the breach is walked. It does not say what the claim will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Crypt sill grit (this branch)
+
+- The marrow crypt keeps bone grain on the near ribs, cooler grit on the sill, and a cooler catch on the open rib. The lamp and the rim stay. The south step stays.
+- Places names that sill once the marrow is walked. It does not say what the claim will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
