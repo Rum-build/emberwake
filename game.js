@@ -183,6 +183,7 @@
   let nearNotice = null;
   let nearCord = null;
   let nearPost = null;
+  let nearPier = null;
   let nearRing = null;
   let nearClerk = null;
   let nearRation = null;
@@ -4246,6 +4247,21 @@
     };
   }
 
+  function nearestPier() {
+    if (!playerMesh || locale !== 'field' || regionId !== 'stormreach' || skyPass) return null;
+    if (Math.hypot(6.55 - playerMesh.position.x, 8.4 - playerMesh.position.z) > 1.05) return null;
+    if (seenBeats['pier-salt']) {
+      return {
+        title: 'Salt on the boards',
+        hint: 'Already heard. The telegraph stays. Press E to hear it again.',
+      };
+    }
+    return {
+      title: 'Salt on the boards',
+      hint: 'Press E. Concord counted the weather. It is not the telegraph and not the door.',
+    };
+  }
+
   function nearestRing() {
     if (!playerMesh || locale !== 'field' || regionId !== 'verdant-isle' || skyPass) return null;
     if (Math.hypot(9.2 - playerMesh.position.x, -12.4 - playerMesh.position.z) > 1.1) return null;
@@ -8066,7 +8082,8 @@
     const showRation = idle && nearRation && !showAbsorb && !showDoor && !showGate && !showReturn && !showPorter && !showNotice && !showClerk && !showChest;
     const showAside = idle && nearAside && !showAbsorb && !atExit && !showTalk && !showMark && !showCamp;
     const showNima = idle && nearNima && !showAbsorb && !atExit && !showTalk && !showMark && !showCamp && !showAside;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showScrap && !showCompany && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showSpare && !showJournal && !showNotice && !showCord && !showPost && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol);
+    const showPier = idle && nearPier && !showAbsorb && !showDoor && !showGate && !showReturn && !showClerk && !showPatrol;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showScrap && !showCompany && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showSpare && !showJournal && !showNotice && !showCord && !showPost && !showPier && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
@@ -8084,7 +8101,7 @@
     else if (showChest) absorbBtn.textContent = seenBeats['wayside-chest'] ? 'Look' : 'Open';
     else if (showSpare) absorbBtn.textContent = seenBeats['spare-green'] ? 'Look' : 'Open';
     else if (showJournal) absorbBtn.textContent = 'Look';
-    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showRing || showClerk || showRation || showAside || showNima || showPatrol) absorbBtn.textContent = 'Look';
+    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showPier || showRing || showClerk || showRation || showAside || showNima || showPatrol) absorbBtn.textContent = 'Look';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
     absorbBtn.classList.toggle('is-ready', !!showAbsorb);
   }
@@ -8096,7 +8113,7 @@
   function updatePrompt() {
     const atExit = atInteriorExit();
     interactPrompt.classList.remove('ready');
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearScrap && !nearCompany && !nearPorter && !nearLetter && !nearChest && !nearSpare && !nearJournal && !nearNotice && !nearCord && !nearPost && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearScrap && !nearCompany && !nearPorter && !nearLetter && !nearChest && !nearSpare && !nearJournal && !nearNotice && !nearCord && !nearPost && !nearPier && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -8255,6 +8272,11 @@
       $('#interact-detail').textContent = nearPost.hint;
       return;
     }
+    if (nearPier && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
+      $('#interact-title').textContent = nearPier.title;
+      $('#interact-detail').textContent = nearPier.hint;
+      return;
+    }
     if (nearRing && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
       $('#interact-title').textContent = nearRing.title;
       $('#interact-detail').textContent = nearRing.hint;
@@ -8374,6 +8396,7 @@
       else if (seenBeats['salt-cord']) waiting.push('A salt cord is in the pack. Bind it once. The vault does not count rope. The road did not change.');
       if (seenBeats['coast-notice']) waiting.push('A notice on the shale says mouths are numbered. It is not the vault door.');
       if (seenBeats['way-post']) waiting.push('A snapped mile post on the isle does not open the kiln.');
+      if (seenBeats['pier-salt']) waiting.push('Salt on the harbor pier. Concord counted the weather. Vesper does not stand there. The telegraph stays.');
       if (seenBeats['cold-ring']) waiting.push('A cold ring in the grass is not a pool and not the scar.');
       if (seenBeats['clerk-tally']) waiting.push('A tally clerk on the shale counted weather. The vault door did not change.');
       if (seenBeats['coast-brawl']) waiting.push('The west-shale patrol was provoked. They fought. The vault door did not change.');
@@ -8939,6 +8962,10 @@
     }
     if (nearPost) {
       talkPost();
+      return;
+    }
+    if (nearPier) {
+      talkPier();
       return;
     }
     if (nearRing) {
@@ -11040,6 +11067,27 @@
     saveGame();
   }
 
+  function talkPier() {
+    if (locale !== 'field' || regionId !== 'stormreach' || dialogueOpen) return;
+    if (seenBeats['pier-salt']) {
+      showToast('The salt stays on the boards. Vesper does not stand here. The telegraph stays.');
+      return;
+    }
+    const fn = EW.scenes['pier-salt'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'pier-salt';
+    }
+  }
+
+  function notePier() {
+    seenBeats['pier-salt'] = true;
+    showToast('The salt stays on the boards. The telegraph stays.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
   function talkRing() {
     if (locale !== 'field' || regionId !== 'verdant-isle' || dialogueOpen) return;
     if (seenBeats['cold-ring']) {
@@ -11463,6 +11511,7 @@
       nearNotice = null;
       nearCord = null;
       nearPost = null;
+      nearPier = null;
       nearRing = null;
       nearClerk = null;
       nearRation = null;
@@ -11575,6 +11624,7 @@
         nearNotice = nearestNotice();
         nearCord = nearestCord();
         nearPost = nearestPost();
+        nearPier = nearestPier();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
         nearRation = nearestRation();
@@ -11628,6 +11678,7 @@
         nearNotice = nearestNotice();
         nearCord = nearestCord();
         nearPost = nearestPost();
+        nearPier = nearestPier();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
         nearRation = nearestRation();
@@ -11702,6 +11753,7 @@
         nearNotice = nearestNotice();
         nearCord = nearestCord();
         nearPost = nearestPost();
+        nearPier = nearestPier();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
         nearRation = nearestRation();
@@ -15130,6 +15182,7 @@
   EW.leafWon = function () { return !!seenBeats['leaf-patrol']; };
   EW.noteLeafAfter = noteLeafAfter;
   EW.notePost = notePost;
+  EW.notePier = notePier;
   EW.noteRing = noteRing;
   EW.noteClerk = noteClerk;
   EW.noteRation = noteRation;

@@ -19,6 +19,23 @@
     return true;
   });
 
+  Emberwake.registerScene('pier-salt', function () {
+    var torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    Emberwake.present({
+      lines: [
+        { where: 'Harbor pier', speaker: 'Lira', text: 'Salt on the near boards. Concord counted the weather and left the tide.' },
+        torren
+          ? { speaker: 'Torren', text: 'I stamped harbors like this. The short bottle was the one they called a licence.' }
+          : { speaker: 'The spark', text: 'They called the short bottle a licence. The boards do not keep the stamp.' },
+        { speaker: 'The spark', text: 'Vesper farms the rot inland. She does not stand on this pier. The telegraph stays.' },
+      ],
+      onDone: function () {
+        if (Emberwake.notePier) Emberwake.notePier();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('coast-landing', function () {
     Emberwake.present({
       lines: [

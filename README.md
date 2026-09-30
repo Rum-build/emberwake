@@ -137,6 +137,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The claim’s south mouth keeps lintel grain, sill ash, and a cooler catch on the open post. The approach ring stays. The south step stays. Places names the lintel after the claim is walked. No new cue.
 - The first breach keeps mortar grain, cooler dust, and a cooler catch on the open rib. The shafts and the bar stay. The south step stays. Places names the dust after the breach is walked. No new cue.
 - The marrow crypt keeps bone grain, cooler sill grit, and a cooler catch on the open rib. The lamp and the rim stay. The south step stays. Places names the sill once the marrow is walked. No new cue.
+- On the harbor pier, a look at the salt lets Lira say Concord counted the weather and left the tide. Vesper does not stand there. The telegraph stays. The quiet stand stays quiet. No new cue.
 
 ## Play on your phone
 
