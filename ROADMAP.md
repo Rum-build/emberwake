@@ -917,6 +917,10 @@ The packed ground under the Concord yard gate now carries gravel grain, an ash w
 
 The stone well in the leaf-village square now carries rim grain, moss on the lip, a damp stain down the stones, and a dark water sheen. The village door, the path, and the leaf-village beat stay where they were. No new cue.
 
+## Shipped in the harbor water pass
+
+The water beside the harbor pier now carries a soft ripple sheen, a darker depth wash near the pilings, foam flecks at the pier edge, and a faint dusk reflection. The pier, the salt look, and the harbor beat stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

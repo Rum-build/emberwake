@@ -6475,6 +6475,7 @@
     dressHarborPier(g);
     dressPierBoards(g);
     dressPierFrame(g);
+    dressHarborWater(g);
     dressRoostRim(g);
     dressRoostNight(g);
     dressRoostGround(g);
@@ -7500,6 +7501,71 @@
       pier.add(chip);
     });
     g.add(pier);
+  }
+
+  function dressHarborWater(g) {
+    const water = new THREE.Group();
+    water.position.set(6.2, 0, 12.05);
+    const sheet = new THREE.Mesh(
+      new THREE.PlaneGeometry(4.2, 2.4, 14, 8),
+      seaMaterial(0x0c2230, 0.05)
+    );
+    sheet.rotation.x = -Math.PI / 2;
+    sheet.position.set(0.05, -0.16, 0.35);
+    water.add(sheet);
+    const ripple = new THREE.MeshPhongMaterial({
+      color: 0xd5e8f4, shininess: 110, specular: new THREE.Color(0xffffff),
+      transparent: true, opacity: 0.78, depthWrite: false, fog: false,
+    });
+    [[-1.15, 0.15, 1.7, 0.16], [0.15, 0.48, 1.45, -0.12], [1.15, 0.05, 1.25, 0.2], [-0.35, 0.85, 1.85, 0.05], [0.65, -0.15, 1.05, -0.1]].forEach((spot) => {
+      const line = new THREE.Mesh(new THREE.BoxGeometry(spot[2], 0.016, 0.07), ripple);
+      line.position.set(spot[0], 0.22, spot[1]);
+      line.rotation.y = spot[3];
+      water.add(line);
+    });
+    [[-0.9, 0.22, 0.55], [0.85, 0.12, 0.38], [0.05, 0.62, 0.46]].forEach((spot) => {
+      const ring = new THREE.Mesh(
+        new THREE.TorusGeometry(spot[2], 0.018, 4, 16, Math.PI * 0.9),
+        ripple
+      );
+      ring.rotation.x = Math.PI / 2;
+      ring.position.set(spot[0], 0.225, spot[1]);
+      water.add(ring);
+    });
+    const depthMat = new THREE.MeshBasicMaterial({
+      color: 0x04080c, transparent: true, opacity: 0.82, depthWrite: false, fog: false,
+    });
+    [[-1.05, 0.18, 0.72, 0.85], [1.25, 0.12, 0.64, 0.78], [0.1, 0.55, 0.95, 0.62]].forEach((spot) => {
+      const wash = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 12), depthMat);
+      wash.rotation.x = -Math.PI / 2;
+      wash.scale.set(1, spot[3], 1);
+      wash.position.set(spot[0], 0.2, spot[1]);
+      water.add(wash);
+    });
+    const foam = new THREE.MeshBasicMaterial({
+      color: 0xf7fbff, transparent: true, opacity: 0.92, depthWrite: false, fog: false, side: THREE.DoubleSide,
+    });
+    [[-1.55, -0.05], [-1.15, 0.12], [-0.75, -0.12], [1.05, 0.02], [1.45, 0.18], [1.7, -0.08], [0.35, 0.72], [-0.2, 0.95]].forEach((spot, i) => {
+      const fleck = new THREE.Mesh(new THREE.PlaneGeometry(i % 2 ? 0.42 : 0.28, 0.1), foam);
+      fleck.rotation.x = -Math.PI / 2;
+      fleck.rotation.z = i * 0.35;
+      fleck.position.set(spot[0], 0.23, spot[1]);
+      water.add(fleck);
+      const bead = new THREE.Mesh(new THREE.SphereGeometry(i % 2 ? 0.045 : 0.032, 5, 4), foam);
+      bead.position.set(spot[0] + 0.08, 0.25, spot[1] + 0.05);
+      water.add(bead);
+    });
+    const dusk = new THREE.Mesh(
+      new THREE.CircleGeometry(0.55, 12),
+      new THREE.MeshBasicMaterial({
+        color: 0xe7b48a, transparent: true, opacity: 0.5, depthWrite: false, fog: false,
+      })
+    );
+    dusk.rotation.x = -Math.PI / 2;
+    dusk.scale.set(0.55, 2.4, 1);
+    dusk.position.set(0.22, 0.21, 0.4);
+    water.add(dusk);
+    g.add(water);
   }
 
   function buildCoast() {
