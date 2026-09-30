@@ -945,6 +945,10 @@ The stone and timber under the root-cellar mouth now carry damp stone grain, gri
 
 The Pack overlay now carries an ember rim, a soft shadow under the panel, clearer slot borders, and a richer parchment fill. Open, close, and the eight cues stay where they were. No new cue.
 
+## Shipped in the village walls pass
+
+The timber and plaster faces around the leaf-village square now carry plank grain, plaster patches, moss at the base, and window-sill wear. The village door, the well, and the leaf-village beat stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

@@ -979,6 +979,7 @@
     dressVillage(village);
     dressVillageDoor(village);
     dressVillageHouses(village);
+    dressVillageWalls(village);
     dressVillageWell(village);
     overworldGroup.add(village);
     const bannerPin = landmark('concord-banner');
@@ -11859,6 +11860,59 @@
       houses.add(house);
     });
     g.add(houses);
+  }
+
+  function dressVillageWalls(g) {
+    const plaster = new THREE.MeshPhongMaterial({
+      color: 0xf4e6cc, shininess: 12, specular: new THREE.Color(0xfff8ee),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0x2c1810, shininess: 14, specular: new THREE.Color(0xd4b090),
+    });
+    const moss = new THREE.MeshPhongMaterial({
+      color: 0x3f9a36, shininess: 8, specular: new THREE.Color(0xd4f090), side: THREE.DoubleSide,
+    });
+    const sill = new THREE.MeshPhongMaterial({
+      color: 0xc49262, shininess: 18, specular: new THREE.Color(0xfff0d8),
+    });
+    const wear = new THREE.MeshPhongMaterial({
+      color: 0x140e0a, shininess: 4, specular: new THREE.Color(0x6a5840),
+    });
+    [[-2.2, 0], [0, 1.5], [2.2, 0]].forEach((spot, i) => {
+      const faceZ = spot[1] - 0.76;
+      [[-0.46, 0.72, 0.42, 0.32], [0.32, 0.46, 0.36, 0.26], [-0.02, 0.98, 0.28, 0.18]].forEach((p) => {
+        const patch = new THREE.Mesh(new THREE.BoxGeometry(p[2], p[3], 0.04), plaster);
+        patch.position.set(spot[0] + p[0], p[1], faceZ);
+        g.add(patch);
+      });
+      [0.32, 0.56, 0.82].forEach((y, n) => {
+        const line = new THREE.Mesh(new THREE.BoxGeometry(1.34, 0.05, 0.03), grain);
+        line.position.set(spot[0] + (n - 1) * 0.03, y, faceZ - 0.02);
+        g.add(line);
+      });
+      [[-0.52, 0.16], [-0.12, 0.2], [0.28, 0.14], [0.58, 0.18]].forEach((m, n) => {
+        const clump = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 4), moss);
+        clump.scale.set(1.25, 0.42, 0.7);
+        clump.position.set(spot[0] + m[0], m[1], faceZ - 0.03);
+        g.add(clump);
+        const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.08, 0.16), moss);
+        blade.position.set(spot[0] + m[0] + 0.04, m[1] + 0.1, faceZ - 0.04);
+        blade.rotation.y = n * 0.6;
+        g.add(blade);
+      });
+      const ledge = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.07, 0.1), sill);
+      ledge.position.set(spot[0] + (i - 1) * 0.05, 0.48, faceZ - 0.04);
+      g.add(ledge);
+      [[-0.2, 0.2], [0.02, -0.15], [0.22, 0.4]].forEach((w) => {
+        const scuff = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.022, 0.03), wear);
+        scuff.position.set(spot[0] + (i - 1) * 0.05 + w[0], 0.53, faceZ - 0.08);
+        scuff.rotation.y = w[1];
+        g.add(scuff);
+      });
+      const drip = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.16, 0.02), wear);
+      drip.position.set(spot[0] + (i - 1) * 0.05 + 0.16, 0.38, faceZ - 0.05);
+      g.add(drip);
+    });
   }
 
   function makeCoastPatrol(x, z) {
