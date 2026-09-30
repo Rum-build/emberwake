@@ -148,6 +148,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - At the harbor telegraph, a look at the wire lets Lira say Concord sold the weather and left the post counting. Vesper does not stand there. The tick stays. The pier and the door stay. No new cue.
 - South of the waystone, a look at the grit lets Lira say Concord counted the ring and left it cold. Vesper farms the rot off the ridge and does not take the host. The road through the ring stays. No new cue.
 - On the village path, a look at the dusk lets Lira say Concord licensed the wreath and left the door half shut. Vesper farms the rot past the door and does not take the host. The step in stays. No new cue.
+- Lira, Nima, Torren, and Vesper’s silhouette keep hands, cuffs, and boots. Lira wears a hip blade, Nima a rod, Torren a cudgel, and Vesper a dark shard. The village approach keeps dusk flagstones and grass tufts. The door, the quiet stand, and the path look stay. No new cue.
 
 ## Play on your phone
 
