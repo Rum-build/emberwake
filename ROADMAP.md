@@ -837,6 +837,10 @@ The waystone now carries carved faces on the ring, lichen, crack lines, grit at 
 
 The harbor vault door now carries iron bands, rivets, a seal etch, hinge wear, and an ash wash on the face. The threshold and the count stay where they were. The waystone, the cliff roost, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the clerk desk body pass
+
+The counting-room desk now carries timber grain, an ink-stained ledge, drawer seams, brass fittings, and a paper stack on the top. The clerk and the ledger-side floor stay where they were. The vault door, the waystone, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
