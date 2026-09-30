@@ -571,6 +571,12 @@ Playable on the Verdant Isle field:
 - Places names the scar farm. It does not say what the claim will do. She does not enter.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Harbor pier boards, and the salt (this branch)
+
+- The harbor pier keeps plank grain and salt on the near boards, and a little cooler spray beside the lamp. The wet sheen and the cooler lamp stay. No new person stands there.
+- Places names the pier. It does not say what the claim will do. The telegraph stays.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

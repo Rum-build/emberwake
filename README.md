@@ -133,6 +133,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The bottle-hall keeps cork grain on the near row, cooler dust shafts, and seal grit on the floor. The crypt keeps cooler dust and a lamp rim. The walks stay. Places names the hall. No new cue.
 - The isle path keeps a few more near-field leaves and cooler dusk haze. The village door keeps wreath grain and ash on the sill. The walk and the step in stay. Places names the path. No new cue.
 - Vesper’s scar keeps smoke, ash, and a rot film on the blister. The pile, the posts, and the veil stay. The walk stays. Places names the farm. No new cue.
+- The harbor pier keeps plank grain and salt on the near boards, and cooler spray beside the lamp. The sheen stays. Places names the pier. No new cue.
 
 ## Play on your phone
 
