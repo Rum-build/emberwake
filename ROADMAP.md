@@ -679,6 +679,13 @@ Playable on the Verdant Isle field:
 - Places still names the village path. It does not say what the ending will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Kiln floor, the hearth grain (this branch)
+
+- The buried kiln keeps a varied brick floor, a raised hearth lip, three courses on the back wall, ash heaps, and heat cracks. A warm fill sits over the back of the room.
+- The drink stays the kiln. The cellar mouth, the crawl, and the south step stay.
+- Places still names the cellar mouth. It does not say what the ending will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

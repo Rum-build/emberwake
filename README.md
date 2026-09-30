@@ -149,6 +149,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - South of the waystone, a look at the grit lets Lira say Concord counted the ring and left it cold. Vesper farms the rot off the ridge and does not take the host. The road through the ring stays. No new cue.
 - On the village path, a look at the dusk lets Lira say Concord licensed the wreath and left the door half shut. Vesper farms the rot past the door and does not take the host. The step in stays. No new cue.
 - Lira, Nima, Torren, and Vesper’s silhouette keep hands, cuffs, and boots. Lira wears a hip blade, Nima a rod, Torren a cudgel, and Vesper a dark shard. The village approach keeps dusk flagstones and grass tufts. The door, the quiet stand, and the path look stay. No new cue.
+- The buried kiln keeps a varied brick floor, a hearth lip, back-wall courses, ash heaps, and a warm fill. The drink stays the kiln. The cellar mouth stays. No new cue.
 
 ## Play on your phone
 

@@ -1235,12 +1235,9 @@
     crawlLight.position.set(0, 2.2, -13.6);
     g.add(crawlLight);
 
-    const kilnFloor = new THREE.Mesh(
-      new THREE.PlaneGeometry(7.2, 7.2),
-      new THREE.MeshLambertMaterial({ color: 0x241816 })
-    );
-    kilnFloor.rotation.x = -Math.PI / 2;
+    const kilnFloor = variedFloor(7.2, 7.2, 12, 12, 0x2a1814, 0x6a3024, 0.04, true);
     kilnFloor.position.set(0, 0.03, -20.3);
+    kilnFloor.receiveShadow = true;
     g.add(kilnFloor);
     box(2.3, 2.5, 0.35, -2.35, 1.25, -16.75, wallMat);
     box(2.3, 2.5, 0.35, 2.35, 1.25, -16.75, wallMat);
@@ -1277,6 +1274,7 @@
     });
     dressCellarCrawl(g);
     dressKilnHeat(g);
+    dressKilnGrain(g);
     return g;
   }
 
@@ -1373,6 +1371,49 @@
     const shelfEmber = new THREE.Mesh(new THREE.SphereGeometry(0.08, 6, 5), emberMat);
     shelfEmber.position.set(-2.15, 1.5, -1.22);
     g.add(shelfEmber);
+  }
+
+  function dressKilnGrain(g) {
+    const courses = [
+      new THREE.MeshPhongMaterial({ color: 0x7a3828, shininess: 18, specular: new THREE.Color(0xc47a58) }),
+      new THREE.MeshPhongMaterial({ color: 0x4e241c, shininess: 10, specular: new THREE.Color(0x8a5040) }),
+      new THREE.MeshPhongMaterial({ color: 0x8a4632, shininess: 26, specular: new THREE.Color(0xe8b090) }),
+    ];
+    for (let row = 0; row < 3; row++) {
+      for (let i = 0; i < 7; i++) {
+        const brick = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.16, 0.1), courses[(i + row) % 3]);
+        brick.position.set(-1.5 + i * 0.5, 0.28 + row * 0.22, -23.48);
+        brick.castShadow = true;
+        g.add(brick);
+      }
+    }
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2 + 0.2;
+      const lip = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.1, 0.18), courses[i % 3]);
+      lip.position.set(Math.cos(a) * 2.5, 0.08, -21 + Math.sin(a) * 2.5);
+      lip.rotation.y = -a;
+      lip.castShadow = true;
+      lip.receiveShadow = true;
+      g.add(lip);
+    }
+    const ashMat = new THREE.MeshPhongMaterial({ color: 0x3a302c, shininess: 6, specular: new THREE.Color(0x8a8078) });
+    [[2.15, -22.55], [-2.05, -22.7], [1.55, -23.05]].forEach((spot, i) => {
+      const heap = new THREE.Mesh(new THREE.SphereGeometry(0.22 + i * 0.04, 7, 5), ashMat);
+      heap.scale.y = 0.35;
+      heap.position.set(spot[0], 0.08, spot[1]);
+      heap.castShadow = true;
+      g.add(heap);
+    });
+    const crackMat = new THREE.MeshBasicMaterial({ color: 0x100806, fog: false });
+    [[0.4, -22.1, 0.9, 0.3], [-0.6, -22.4, 0.7, -0.5], [1.1, -21.8, 0.55, 0.8]].forEach((spot) => {
+      const crack = new THREE.Mesh(new THREE.BoxGeometry(spot[2], 0.015, 0.04), crackMat);
+      crack.position.set(spot[0], 0.05, spot[1]);
+      crack.rotation.y = spot[3];
+      g.add(crack);
+    });
+    const fill = new THREE.PointLight(0xff7a40, 0.55, 6.5);
+    fill.position.set(0, 1.15, -22.5);
+    g.add(fill);
   }
 
   function buildVaultRoom() {
