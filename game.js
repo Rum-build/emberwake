@@ -2390,6 +2390,7 @@
     g.add(makeYardLantern(-2.7, 1.1));
     g.add(makeSealStake(2.8, -0.2));
     dressYardAir(g);
+    dressYardGround(g);
     yardGroup = g;
     scene.add(g);
   }
@@ -7121,6 +7122,120 @@
       grain.add(line);
     });
     g.add(grain);
+  }
+
+  function dressYardGround(g) {
+    const cobble = new THREE.MeshPhongMaterial({
+      color: 0x6e675c, shininess: 18, specular: new THREE.Color(0xd8d0c4),
+    });
+    const worn = new THREE.MeshPhongMaterial({
+      color: 0x4e4840, shininess: 10, specular: new THREE.Color(0xa09888),
+    });
+    const pale = new THREE.MeshPhongMaterial({
+      color: 0x8a8274, shininess: 24, specular: new THREE.Color(0xf0e8dc),
+    });
+    const chalk = new THREE.MeshPhongMaterial({
+      color: 0xe4dcc8, shininess: 8, specular: new THREE.Color(0xfff8ee),
+    });
+    const weed = new THREE.MeshPhongMaterial({
+      color: 0x5a6a38, shininess: 6, specular: new THREE.Color(0xc8d890), side: THREE.DoubleSide,
+    });
+    const dry = new THREE.MeshPhongMaterial({
+      color: 0x8a7840, shininess: 4, specular: new THREE.Color(0xe8d8a0), side: THREE.DoubleSide,
+    });
+    function plate(x, z, rot) {
+      const group = new THREE.Group();
+      const disc = new THREE.Mesh(new THREE.CircleGeometry(0.52, 7), cobble);
+      disc.rotation.x = -Math.PI / 2;
+      disc.position.y = 0.03;
+      disc.receiveShadow = true;
+      group.add(disc);
+      const chip = new THREE.Mesh(new THREE.CircleGeometry(0.22, 6), worn);
+      chip.rotation.x = -Math.PI / 2;
+      chip.position.set(0.12, 0.036, -0.06);
+      group.add(chip);
+      const lip = new THREE.Mesh(new THREE.TorusGeometry(0.44, 0.035, 4, 8, Math.PI * 1.25), pale);
+      lip.rotation.x = Math.PI / 2;
+      lip.position.y = 0.045;
+      group.add(lip);
+      const joint = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.016, 0.028), chalk);
+      joint.position.y = 0.042;
+      joint.rotation.y = 0.5;
+      group.add(joint);
+      const miss = new THREE.Mesh(new THREE.CircleGeometry(0.1, 5), worn);
+      miss.rotation.x = -Math.PI / 2;
+      miss.position.set(-0.28, 0.04, 0.12);
+      group.add(miss);
+      group.position.set(x, 0, z);
+      group.rotation.y = rot;
+      g.add(group);
+    }
+    [[1.55, 3.65, 0.35], [0.15, 3.95, -0.2], [2.35, 2.55, 0.55], [-3.45, 4.0, 0.8]].forEach((spot) => {
+      plate(spot[0], spot[1], spot[2]);
+    });
+    function tuft(x, z, lean) {
+      const group = new THREE.Group();
+      for (let i = 0; i < 5; i++) {
+        const h = 0.16 + (i % 3) * 0.07;
+        const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.04, h), i % 2 ? dry : weed);
+        const a = i * 1.15;
+        blade.position.set(Math.cos(a) * 0.04, h * 0.48, Math.sin(a) * 0.04);
+        blade.rotation.y = a;
+        blade.rotation.z = lean + (i - 2) * 0.1;
+        group.add(blade);
+      }
+      group.position.set(x, 0, z);
+      g.add(group);
+    }
+    [[1.15, 3.82, 0.1], [0.55, 3.68, -0.08], [2.05, 2.92, 0.12], [-3.05, 3.68, -0.1], [1.85, 2.15, 0.06], [-1.15, 2.15, 0.14]].forEach((spot) => {
+      tuft(spot[0], spot[1], spot[2]);
+    });
+    function grit(x, z) {
+      const group = new THREE.Group();
+      [[0, 0, 0.04], [0.08, 0.03, 0.028], [-0.06, 0.04, 0.032], [0.03, -0.07, 0.024], [-0.02, 0.08, 0.02]].forEach((spot) => {
+        const speck = new THREE.Mesh(new THREE.SphereGeometry(spot[2], 4, 3), chalk);
+        speck.position.set(spot[0], spot[2] * 0.55, spot[1]);
+        group.add(speck);
+      });
+      group.position.set(x, 0, z);
+      g.add(group);
+    }
+    [[0.7, 4.15], [1.85, 3.3], [-0.35, 3.42], [2.65, 2.1]].forEach((spot) => {
+      grit(spot[0], spot[1]);
+    });
+    const shadeMat = new THREE.MeshBasicMaterial({
+      color: 0x1a1614, transparent: true, opacity: 0.16, depthWrite: false, fog: false,
+    });
+    const shade = new THREE.Mesh(new THREE.CircleGeometry(0.85, 10), shadeMat);
+    shade.rotation.x = -Math.PI / 2;
+    shade.scale.set(1.7, 0.55, 1);
+    shade.position.set(0.05, 0.02, 4.05);
+    g.add(shade);
+    const shadeWest = new THREE.Mesh(new THREE.CircleGeometry(0.45, 8), shadeMat);
+    shadeWest.rotation.x = -Math.PI / 2;
+    shadeWest.scale.set(1.4, 0.7, 1);
+    shadeWest.position.set(-1.15, 0.022, 3.82);
+    g.add(shadeWest);
+    const duskMat = new THREE.MeshBasicMaterial({
+      color: 0xffc090, transparent: true, opacity: 0.05, depthWrite: false, fog: false,
+    });
+    const dusk = new THREE.Mesh(new THREE.CircleGeometry(1.55, 12), duskMat);
+    dusk.rotation.x = -Math.PI / 2;
+    dusk.position.set(0.7, 0.024, 3.15);
+    g.add(dusk);
+    const coolMat = new THREE.MeshBasicMaterial({
+      color: 0xc5b8e0, transparent: true, opacity: 0.04, depthWrite: false, fog: false,
+    });
+    const cool = new THREE.Mesh(new THREE.CircleGeometry(1.05, 10), coolMat);
+    cool.rotation.x = -Math.PI / 2;
+    cool.position.set(-1.5, 0.026, 3.55);
+    g.add(cool);
+    const warm = new THREE.PointLight(0xffb070, 0.22, 7);
+    warm.position.set(0.4, 1.45, 3.35);
+    g.add(warm);
+    const fill = new THREE.PointLight(0x9eb0d0, 0.12, 5.5);
+    fill.position.set(-1.1, 1.25, 2.55);
+    g.add(fill);
   }
 
   function dressWakeCover() {

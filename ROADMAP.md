@@ -733,6 +733,10 @@ Around the leaf-cup, the bank now carries layered moss, damp dirt, small stones,
 
 On the approach to Vesper’s scar, the ground now carries cracked earth plates, ash grit, weed tufts, scorched stones, and a soft smoke tint. The farm-smoke columns, the ash caps, and the drink are the same meshes as before. Wake ground, the leaf-cup bank, the path stones, and the kiln are unchanged. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the yard approach pass
+
+Inside the Concord yard’s south gate, the ground now carries worn cobble plates, chalk grit, weeds in the joints, a gate shadow, and a soft dusk wash. The gate posts, the cork look, the seal stake, and the lantern haze are the same. Wake ground, the leaf-cup bank, the scar approach, the path stones, and the kiln are unchanged. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
