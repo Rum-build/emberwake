@@ -523,6 +523,13 @@ Playable on the Verdant Isle field:
 - Places names the Concord stake in the yard. It does not say what the slag will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Cellar mouth, and the jar crawl (this branch)
+
+- The root-cellar arch on the east grass keeps an ash lintel, a few embers, and a cooler lamp. The step in stays the same.
+- The crawl keeps an ash beam, cooler dust, wax on the jars, and a small lamp. The mites, the kiln, and the drink stay as they were.
+- Places names the cellar mouth. It does not say what the kiln will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
