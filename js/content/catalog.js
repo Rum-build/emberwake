@@ -26,6 +26,7 @@
     'reed-bow': { name: 'Reed Bow', slot: 'weapon', who: 'lira', atk: 5, path: 'ranged', affinity: 'lightning', desc: 'A spare string from an eagle-rider. It hums before storms.' },
     'quilt-jerkin': { name: 'Quilted Jerkin', slot: 'armor', who: 'lira', def: 3, desc: 'Village stitchwork. Stops a claw, not a verdict.' },
     'road-cloak': { name: 'Road Cloak', slot: 'cloak', who: 'lira', def: 1, desc: 'Isle wool, hem still damp. It changes the walk. It does not stop a verdict.' },
+    'road-bracers': { name: 'Road Bracers', slot: 'bracer', who: 'lira', def: 1, desc: 'Boiled leather on the forearms. They change the reach. They do not stop a verdict.' },
     'ledger-cudgel': { name: 'Ledger Cudgel', slot: 'weapon', who: 'torren', atk: 5, desc: 'Torren kept the weight and burned the insignia.' },
     'seal-coat': { name: 'Quartermaster Coat', slot: 'armor', who: 'torren', def: 5, desc: 'Concord cloth, insignia scorched off. It still remembers ranks.' },
     'herb-rod': { name: 'Herb Rod', slot: 'weapon', who: 'nima', atk: 2, mag: 3, desc: 'A walking stick that happens to be medicine.' },
