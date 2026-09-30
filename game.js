@@ -9065,7 +9065,7 @@
     g.userData.emberMotes = emberMotes;
     const nose = new THREE.Mesh(
       new THREE.BoxGeometry(0.06 * scale, 0.06 * scale, 0.08 * scale),
-      new THREE.MeshLambertMaterial({ color: lira ? 0xf6c8a8 : nima ? 0xf6d0b8 : torren ? 0xc48a68 : 0xe0a080 })
+      new THREE.MeshLambertMaterial({ color: vesper ? 0x4a2828 : lira ? 0xf6c8a8 : nima ? 0xf6d0b8 : torren ? 0xc48a68 : 0xe0a080 })
     );
     nose.position.set(0, 1.06 * scale, 0.18 * scale);
     g.add(nose);
@@ -9507,12 +9507,90 @@
       );
       lock.position.set(0.12 * scale, 0.95 * scale, -0.02 * scale);
       g.add(lock);
+      dressVesperHost(g, scale, skin);
     }
     g.userData.cloth = clothMat;
     g.userData.scale = scale;
     if (lira) wearLiraGear(g);
     if (nima || torren) wearCompanionGear(g, kind);
     return g;
+  }
+
+  function dressVesperHost(g, scale, skin) {
+    const shadow = new THREE.MeshPhongMaterial({
+      color: 0x0a0608, emissive: new THREE.Color(0x12080c), shininess: 4, specular: new THREE.Color(0x3a2028),
+    });
+    const fold = new THREE.MeshPhongMaterial({
+      color: 0x2a141c, emissive: new THREE.Color(0x10060a), shininess: 8, specular: new THREE.Color(0x6a3040),
+    });
+    const rot = new THREE.MeshBasicMaterial({ color: 0x8a3050, fog: false });
+    const rotDark = new THREE.MeshBasicMaterial({ color: 0x4a1830, fog: false });
+    const hair = new THREE.MeshPhongMaterial({
+      color: 0x1a0c10, emissive: new THREE.Color(0x2a1014), shininess: 16, specular: new THREE.Color(0x6a3848),
+    });
+    const hairTip = new THREE.MeshBasicMaterial({ color: 0x6a3040, fog: false });
+    const stitch = new THREE.MeshBasicMaterial({ color: 0xa05068, fog: false });
+    const scuff = new THREE.MeshPhongMaterial({
+      color: 0x3a2428, shininess: 10, specular: new THREE.Color(0x8a6070),
+    });
+    const hollow = new THREE.MeshBasicMaterial({ color: 0x2a1418, fog: false });
+    [-1, 1].forEach((side) => {
+      const panel = new THREE.Mesh(new THREE.BoxGeometry(0.11 * scale, 0.82 * scale, 0.18 * scale), shadow);
+      panel.position.set(side * 0.36 * scale, 0.62 * scale, 0.02 * scale);
+      panel.rotation.z = side * -0.1;
+      panel.castShadow = true;
+      g.add(panel);
+      const ridge = new THREE.Mesh(new THREE.BoxGeometry(0.03 * scale, 0.74 * scale, 0.025 * scale), fold);
+      ridge.position.set(side * 0.42 * scale, 0.64 * scale, 0.1 * scale);
+      g.add(ridge);
+    });
+    const hem = new THREE.Mesh(new THREE.BoxGeometry(0.5 * scale, 0.1 * scale, 0.07 * scale), fold);
+    hem.position.set(0, 0.26 * scale, 0.2 * scale);
+    g.add(hem);
+    const trim = new THREE.Mesh(new THREE.BoxGeometry(0.46 * scale, 0.03 * scale, 0.025 * scale), rot);
+    trim.position.set(0, 0.24 * scale, 0.25 * scale);
+    g.add(trim);
+    const back = new THREE.Mesh(new THREE.BoxGeometry(0.62 * scale, 0.92 * scale, 0.04 * scale), fold);
+    back.position.set(0, 0.7 * scale, -0.3 * scale);
+    g.add(back);
+    [[0.24, 0.72, 0.16], [-0.2, 0.56, 0.18], [0.06, 0.4, 0.22], [-0.28, 0.78, 0.1]].forEach((spot) => {
+      const fleck = new THREE.Mesh(new THREE.BoxGeometry(0.07 * scale, 0.045 * scale, 0.02 * scale), rotDark);
+      fleck.position.set(spot[0] * scale, spot[1] * scale, spot[2] * scale);
+      g.add(fleck);
+    });
+    [[0.1, 1.05, 0.08, 0.36], [0.17, 0.98, 0.12, 0.46], [0.22, 0.88, 0.05, 0.3]].forEach((spot, i) => {
+      const strand = new THREE.Mesh(
+        new THREE.BoxGeometry(0.028 * scale, spot[3] * scale, 0.03 * scale),
+        i === 2 ? hairTip : hair
+      );
+      strand.position.set(spot[0] * scale, spot[1] * scale, spot[2] * scale);
+      strand.rotation.z = (i - 1) * 0.14;
+      g.add(strand);
+    });
+    [-1, 1].forEach((side) => {
+      const cheek = new THREE.Mesh(new THREE.BoxGeometry(0.055 * scale, 0.045 * scale, 0.02 * scale), hollow);
+      cheek.position.set(side * 0.09 * scale, 1.03 * scale, 0.195 * scale);
+      g.add(cheek);
+      const ear = new THREE.Mesh(new THREE.BoxGeometry(0.035 * scale, 0.08 * scale, 0.025 * scale), skin);
+      ear.position.set(side * 0.19 * scale, 1.08 * scale, 0.06 * scale);
+      g.add(ear);
+    });
+    const lip = new THREE.Mesh(new THREE.BoxGeometry(0.09 * scale, 0.02 * scale, 0.02 * scale), rot);
+    lip.position.set(0, 0.99 * scale, 0.205 * scale);
+    g.add(lip);
+    const browShade = new THREE.Mesh(new THREE.BoxGeometry(0.2 * scale, 0.032 * scale, 0.02 * scale), hollow);
+    browShade.position.set(0, 1.16 * scale, 0.195 * scale);
+    g.add(browShade);
+    [-0.11, 0.11].forEach((x) => {
+      [0.045, 0.078].forEach((y) => {
+        const line = new THREE.Mesh(new THREE.BoxGeometry(0.11 * scale, 0.014 * scale, 0.02 * scale), stitch);
+        line.position.set(x * scale, y * scale, 0.125 * scale);
+        g.add(line);
+      });
+      const mark = new THREE.Mesh(new THREE.BoxGeometry(0.07 * scale, 0.02 * scale, 0.035 * scale), scuff);
+      mark.position.set(x * scale, 0.028 * scale, 0.135 * scale);
+      g.add(mark);
+    });
   }
 
   function dressLiraHost(g, scale, skin) {
