@@ -6288,7 +6288,29 @@
     overworldGroup.add(makeScarPost(10.4, -7.1, 0.22));
     overworldGroup.add(makeScarPost(11.2, -8.6, -0.16));
     overworldGroup.add(makeScarVeil());
+    dressScarFarm();
     dressLeafCup();
+  }
+
+  function dressScarFarm() {
+    const smokeMat = new THREE.MeshBasicMaterial({ color: 0xc4b8a6, fog: false, side: THREE.DoubleSide });
+    [[12.55, 1.72, -6.55], [15.85, 1.62, -6.35], [12.85, 2.18, -6.85], [15.55, 2.08, -6.7]].forEach((spot) => {
+      const col = new THREE.Mesh(new THREE.PlaneGeometry(0.22, 1.28), smokeMat);
+      col.position.set(spot[0], spot[1], spot[2]);
+      overworldGroup.add(col);
+    });
+    const rotMat = new THREE.MeshBasicMaterial({ color: 0x9cb84a, fog: false, side: THREE.DoubleSide });
+    [[12.9, 1.18, -6.15], [15.55, 1.28, -5.95], [13.15, 1.42, -6.45]].forEach((spot, i) => {
+      const film = new THREE.Mesh(new THREE.PlaneGeometry(i === 2 ? 0.38 : 0.52, 0.3), rotMat);
+      film.position.set(spot[0], spot[1], spot[2]);
+      overworldGroup.add(film);
+    });
+    const ashMat = new THREE.MeshBasicMaterial({ color: 0xa89078, fog: false });
+    [[12.7, 0.92, -5.15], [15.75, 0.96, -4.95]].forEach((spot) => {
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.12, 0.24), ashMat);
+      cap.position.set(spot[0], spot[1], spot[2]);
+      overworldGroup.add(cap);
+    });
   }
 
   function dressLeafCup() {
@@ -13714,6 +13736,7 @@
           ? 'She farms the rot there. She does not enter.'
           : 'East of the wake. The witnesses have not spoken.',
       });
+      rows.push({ name: 'Scar farm', note: 'Smoke and rot on the blister. She does not enter.' });
     }
     if (scarVerdict || seenBeats.waystone || seenBeats['waystone-wake']) {
       rows.push({
