@@ -8050,6 +8050,17 @@
       put(gear, new THREE.CylinderGeometry(0.052 * s, 0.052 * s, 0.035 * s, 7), metal, 0.22 * s, 0.36 * s, 0.09 * s, tilt);
       put(gear, new THREE.CylinderGeometry(0.04 * s, 0.042 * s, 0.1 * s, 7), leather, 0.2 * s, 0.3 * s, 0.08 * s, tilt);
       put(gear, new THREE.SphereGeometry(0.04 * s, 6, 5), phong(0x2a140c, 0x6a1808, 20, 0xffc090), 0.34 * s, 0.66 * s, 0.11 * s);
+      const shaft = new THREE.Group();
+      shaft.position.set(0.26 * s, 0.48 * s, 0.1 * s);
+      shaft.rotation.z = tilt;
+      const line = phong(0x2a1810, 0x100804, 8, 0xc4a080);
+      [-0.014, 0.014].forEach((x) => {
+        put(shaft, new THREE.BoxGeometry(0.008 * s, 0.3 * s, 0.008 * s), line, x * s, 0.02 * s, 0.05 * s);
+      });
+      put(shaft, new THREE.CylinderGeometry(0.058 * s, 0.058 * s, 0.026 * s, 8), metal, 0.01 * s, 0.1 * s, 0);
+      const bandCatch = new THREE.MeshBasicMaterial({ color: 0xf4f8ff, fog: false });
+      put(shaft, new THREE.BoxGeometry(0.014 * s, 0.018 * s, 0.012 * s), bandCatch, 0.01 * s, 0.1 * s, 0.052 * s);
+      gear.add(shaft);
     }
     if (id === 'torren' && eq.armor === 'seal-coat') {
       const cloth = phong(0x2a3038, 0x10141c, 12, 0xc8d0d8);
@@ -8059,6 +8070,19 @@
       put(gear, new THREE.BoxGeometry(0.22 * s, 0.62 * s, 0.07 * s), scorch, 0.34 * s, 0.52 * s, 0.1 * s, -0.08);
       put(gear, new THREE.BoxGeometry(0.62 * s, 0.5 * s, 0.06 * s), cloth, 0, 0.5 * s, -0.26 * s);
       put(gear, new THREE.BoxGeometry(0.08 * s, 0.16 * s, 0.03 * s), metal, 0.08 * s, 0.78 * s, 0.2 * s);
+      const seam = phong(0x12161c, 0x080a10, 6, 0x8a949e);
+      const collar = phong(0x3a4450, 0x141820, 14, 0xd0d8e0);
+      [-0.22, 0, 0.22].forEach((x) => {
+        put(gear, new THREE.BoxGeometry(0.012 * s, 0.1 * s, 0.018 * s), collar, x * s, 0.9 * s, 0.205 * s);
+      });
+      put(gear, new THREE.BoxGeometry(0.58 * s, 0.012 * s, 0.014 * s), seam, 0, 0.8 * s, 0.208 * s);
+      put(gear, new THREE.BoxGeometry(0.012 * s, 0.52 * s, 0.012 * s), seam, -0.28 * s, 0.5 * s, 0.168 * s);
+      put(gear, new THREE.BoxGeometry(0.012 * s, 0.46 * s, 0.012 * s), seam, 0.26 * s, 0.52 * s, 0.146 * s);
+      const stamp = new THREE.MeshBasicMaterial({ color: 0xfff4e0, fog: false });
+      const disc = put(gear, new THREE.CylinderGeometry(0.026 * s, 0.026 * s, 0.01 * s, 8), metal, 0.08 * s, 0.78 * s, 0.222 * s);
+      disc.rotation.x = Math.PI / 2;
+      put(gear, new THREE.BoxGeometry(0.02 * s, 0.006 * s, 0.006 * s), stamp, 0.08 * s, 0.78 * s, 0.23 * s);
+      put(gear, new THREE.BoxGeometry(0.006 * s, 0.02 * s, 0.006 * s), stamp, 0.08 * s, 0.78 * s, 0.23 * s);
     }
     mesh.add(gear);
     mesh.userData.gear = gear;
