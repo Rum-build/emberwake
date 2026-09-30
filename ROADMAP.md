@@ -741,6 +741,10 @@ Inside the Concord yard’s south gate, the ground now carries worn cobble plate
 
 On the harbor pier, the wet edge now carries warped plank grain, salt crystals, wet sheen puddles, a rope-worn edge, and a cooler lamp wash. The salt markers, the pier lamp, and the spray stay where they were. Wake ground, the leaf-cup bank, the scar approach, the yard cobbles, the path stones, and the kiln are unchanged. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the roost ground pass
+
+At the messenger roost, the perch and the rope walk now carry grit, rope grain wear, night haze on the boards, feather grit, and a cooler lamp rim. The hanging rope, the night shafts, and the wing look stay where they were. The pier boards, the yard cobbles, the scar approach, the leaf-cup bank, the wake ground, and the kiln are unchanged. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
