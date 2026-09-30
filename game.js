@@ -7329,8 +7329,138 @@
     overworldGroup.add(makeScarPost(11.2, -8.6, -0.16));
     overworldGroup.add(makeScarVeil());
     dressScarFarm();
+    dressScarGround();
     dressLeafCup();
     dressLeafGrove();
+  }
+
+  function dressScarGround() {
+    const earth = new THREE.MeshPhongMaterial({
+      color: 0x5a3828, shininess: 8, specular: new THREE.Color(0xc47848),
+    });
+    const char = new THREE.MeshPhongMaterial({
+      color: 0x2a1814, shininess: 5, specular: new THREE.Color(0x6a4030),
+    });
+    const ash = new THREE.MeshPhongMaterial({
+      color: 0xc4b0a0, shininess: 12, specular: new THREE.Color(0xf4ece4),
+    });
+    const weed = new THREE.MeshPhongMaterial({
+      color: 0x6a7030, shininess: 6, specular: new THREE.Color(0xd8d090), side: THREE.DoubleSide,
+    });
+    const burnt = new THREE.MeshPhongMaterial({
+      color: 0x3a2418, shininess: 4, specular: new THREE.Color(0x8a6040), side: THREE.DoubleSide,
+    });
+    const stone = new THREE.MeshPhongMaterial({
+      color: 0x3a302c, shininess: 18, specular: new THREE.Color(0xc08060),
+    });
+    const stoneHot = new THREE.MeshPhongMaterial({
+      color: 0x4a2820, shininess: 28, specular: new THREE.Color(0xffa070),
+    });
+    function plate(x, z, rot) {
+      const g = new THREE.Group();
+      const disc = new THREE.Mesh(new THREE.CircleGeometry(0.68, 7), earth);
+      disc.rotation.x = -Math.PI / 2;
+      disc.position.y = 0.028;
+      disc.receiveShadow = true;
+      g.add(disc);
+      const inner = new THREE.Mesh(new THREE.CircleGeometry(0.28, 6), char);
+      inner.rotation.x = -Math.PI / 2;
+      inner.position.set(0.08, 0.034, -0.05);
+      g.add(inner);
+      const lip = new THREE.Mesh(new THREE.TorusGeometry(0.58, 0.04, 4, 8, Math.PI * 1.35), char);
+      lip.rotation.x = Math.PI / 2;
+      lip.position.y = 0.05;
+      g.add(lip);
+      const crack = new THREE.Mesh(new THREE.BoxGeometry(0.86, 0.018, 0.03), ash);
+      crack.position.y = 0.042;
+      crack.rotation.y = 0.35;
+      g.add(crack);
+      const crackB = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.016, 0.024), ash);
+      crackB.position.set(0.08, 0.044, 0.1);
+      crackB.rotation.y = -0.85;
+      g.add(crackB);
+      const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.07, 0), char);
+      chip.position.set(0.26, 0.06, -0.12);
+      chip.scale.y = 0.45;
+      g.add(chip);
+      g.position.set(x, 0, z);
+      g.rotation.y = rot;
+      overworldGroup.add(g);
+    }
+    [[11.4, -2.4, 0.4], [17.0, -2.2, -0.3], [13.0, -0.55, 0.15], [10.2, -3.9, 0.7]].forEach((spot) => {
+      plate(spot[0], spot[1], spot[2]);
+    });
+    function tuft(x, z, lean) {
+      const g = new THREE.Group();
+      const pad = new THREE.Mesh(new THREE.SphereGeometry(0.12, 5, 4), burnt);
+      pad.scale.set(1.2, 0.3, 1);
+      pad.position.y = 0.03;
+      g.add(pad);
+      for (let i = 0; i < 6; i++) {
+        const h = 0.2 + (i % 3) * 0.08;
+        const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.05, h), i % 2 ? weed : burnt);
+        const a = i * 1.05;
+        blade.position.set(Math.cos(a) * 0.05, h * 0.48, Math.sin(a) * 0.05);
+        blade.rotation.y = a;
+        blade.rotation.z = lean + (i - 2) * 0.08;
+        g.add(blade);
+      }
+      g.position.set(x, 0, z);
+      overworldGroup.add(g);
+    }
+    [[12.2, -1.45, 0.1], [15.8, -1.25, -0.12], [9.6, -3.15, 0.16], [17.8, -3.15, -0.08], [12.8, 0.45, 0.06], [15.2, 0.85, -0.1], [8.8, -1.55, 0.14], [9.4, -7.35, 0.1]].forEach((spot) => {
+      tuft(spot[0], spot[1], spot[2]);
+    });
+    function rocks(x, z) {
+      const g = new THREE.Group();
+      [[0, 0, 0.16, stoneHot], [0.2, 0.05, 0.09, stone], [-0.14, 0.03, 0.08, stone]].forEach((spot, i) => {
+        const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(spot[2], 0), spot[3]);
+        rock.position.set(spot[0], spot[2] * 0.42, spot[1]);
+        rock.scale.y = 0.5;
+        rock.rotation.y = i * 0.7;
+        rock.castShadow = true;
+        g.add(rock);
+      });
+      const ember = new THREE.Mesh(
+        new THREE.SphereGeometry(0.035, 5, 4),
+        new THREE.MeshBasicMaterial({ color: 0xff6a28, fog: false })
+      );
+      ember.position.set(0.04, 0.1, 0.02);
+      g.add(ember);
+      g.position.set(x, 0, z);
+      overworldGroup.add(g);
+    }
+    [[10.8, -2.95], [16.4, -1.45], [13.6, 0.25], [8.4, -2.75]].forEach((spot) => {
+      rocks(spot[0], spot[1]);
+    });
+    function grit(x, z) {
+      const g = new THREE.Group();
+      [[0, 0, 0.05, ash], [0.1, 0.04, 0.035, char], [-0.08, 0.03, 0.04, ash], [0.04, -0.08, 0.03, char], [-0.02, 0.09, 0.028, ash]].forEach((spot) => {
+        const speck = new THREE.Mesh(new THREE.SphereGeometry(spot[2], 4, 3), spot[3]);
+        speck.position.set(spot[0], spot[2] * 0.6, spot[1]);
+        g.add(speck);
+      });
+      g.position.set(x, 0, z);
+      overworldGroup.add(g);
+    }
+    [[11.2, -2.75], [17.6, -1.55], [8.6, -4.35], [14.6, 1.05]].forEach((spot) => {
+      grit(spot[0], spot[1]);
+    });
+    const washMat = new THREE.MeshBasicMaterial({
+      color: 0xc4b8a6, transparent: true, opacity: 0.06, depthWrite: false, fog: false,
+    });
+    [[12.6, -1.7, 1.25], [16.2, -1.9, 1.05], [10.4, -1.15, 1.1], [14.8, 0.55, 0.95]].forEach((spot) => {
+      const wash = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 12), washMat);
+      wash.rotation.x = -Math.PI / 2;
+      wash.position.set(spot[0], 0.022, spot[1]);
+      overworldGroup.add(wash);
+    });
+    const haze = new THREE.PointLight(0xc8b4a0, 0.26, 9);
+    haze.position.set(13.6, 1.7, -1.5);
+    overworldGroup.add(haze);
+    const scorch = new THREE.PointLight(0xff8a48, 0.12, 6);
+    scorch.position.set(11.6, 1.15, -2.6);
+    overworldGroup.add(scorch);
   }
 
   function dressScarFarm() {

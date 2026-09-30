@@ -157,6 +157,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - Nima’s herb rod and Torren’s ledger cudgel show grain, wraps, and metal in the field and in a fight. Her shawl and his coat change that silhouette when equipped, and leave when stowed. Road bracers in the grass south of the wake widen Lira’s forearms without replacing the cloak, the jerkin, or the weapon. No new cue.
 - Around the wake and the path approach, layered grass clumps, dirt patches, small stones, and root ridges sit in a soft dusk wash. The village path stones, the cloak stake, and the bracers stay readable. Gear on the body is unchanged. No new cue.
 - Around the leaf-cup, moss, damp dirt, small stones, and root curls sit in a soft green wash at the water edge. The drink, the licence stakes, and the wax cloth stay. The wake ground is unchanged. No new cue.
+- On the scar-farm approach, cracked earth, ash grit, weed tufts, and scorched stones sit in a soft smoke tint. The smoke columns and the drink stay readable. No new cue.
 
 ## Play on your phone
 
