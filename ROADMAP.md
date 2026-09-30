@@ -957,6 +957,10 @@ The ground around the buried kiln’s exterior now carries denser ash drift, cha
 
 The dialogue panel now carries an ember rim, a soft shadow, a warmer parchment fill, and clearer borders on the choices and the advance button. Open, close, and the talk beats stay where they were. No new cue.
 
+## Shipped in the combat telegraph pass
+
+The ground marker under an enemy now carries ember glow grain, a scorched dirt ring, and a clearer rim. The fight, the soft-lock, and the fight panel stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
