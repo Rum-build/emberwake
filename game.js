@@ -11266,20 +11266,21 @@
     glint.scale.set(1.55, 0.42, 1);
     glint.position.set(0.05, 0.616, -0.04);
     well.add(glint);
-    [[0.5, 0.06], [-0.46, 0.16], [0.12, 0.5], [-0.18, -0.46]].forEach((spot, i) => {
-      const stain = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.42, 0.018), dampMat);
-      stain.position.set(spot[0], 0.34, spot[1]);
-      stain.rotation.y = i * 0.9;
+    [[0.545, 0.05], [-0.51, 0.18], [0.1, 0.53], [-0.2, -0.51]].forEach((spot, i) => {
+      const stain = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.46, 0.02), dampMat);
+      stain.position.set(spot[0], 0.32, spot[1]);
+      stain.rotation.y = Math.atan2(spot[0], spot[1]);
+      stain.rotation.z = (i - 1.5) * 0.08;
       well.add(stain);
     });
-    [[0.32, 0.26], [-0.28, 0.2], [0.4, -0.1], [-0.1, 0.38], [0.05, -0.36]].forEach((spot, i) => {
-      const clump = new THREE.Mesh(new THREE.SphereGeometry(0.05, 5, 4), moss);
-      clump.scale.y = 0.38;
-      clump.position.set(spot[0], 0.74, spot[1]);
+    [[0.44, 0.16], [-0.4, 0.22], [0.36, -0.3], [-0.16, 0.44], [0.1, -0.46]].forEach((spot, i) => {
+      const clump = new THREE.Mesh(new THREE.SphereGeometry(0.055, 5, 4), moss);
+      clump.scale.y = 0.42;
+      clump.position.set(spot[0], 0.73, spot[1]);
       well.add(clump);
-      const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.05, 0.09), moss);
-      blade.position.set(spot[0] + 0.03, 0.8, spot[1]);
-      blade.rotation.y = i * 0.6;
+      const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.055, 0.1), moss);
+      blade.position.set(spot[0] + 0.04, 0.8, spot[1]);
+      blade.rotation.y = i * 0.7;
       well.add(blade);
     });
     g.add(well);
