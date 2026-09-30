@@ -941,6 +941,10 @@ The timber under the counting-room clerk desk now carries plank grain, nail head
 
 The stone and timber under the root-cellar mouth now carry damp stone grain, grit in the joints, edge chips, and a dark moisture wash. The cellar door, the quiet stand, and the cellar beat stay where they were. No new cue.
 
+## Shipped in the pack chrome pass
+
+The Pack overlay now carries an ember rim, a soft shadow under the panel, clearer slot borders, and a richer parchment fill. Open, close, and the eight cues stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
