@@ -1693,6 +1693,12 @@ body.pack-open .places-panel {
   .status-icon { font-size: 0.92rem; padding: 5px 10px; line-height: 1.45; letter-spacing: 0.01em; border-width: 2px; }
   .status-row { gap: 6px; }
   .turn-chip { font-size: 0.84rem; padding: 4px 9px; }
+  .turn-chip.warrior, .turn-chip.mage, .turn-chip.ranged { font-size: 0.92rem; padding: 5px 11px; font-weight: 700; }
+  .turn-chip.warrior { border-color: #ffb067; color: #ffe7c4; background: rgba(48, 28, 12, 0.96); }
+  .turn-chip.mage { border-color: #9ec8ff; color: #e7f2ff; background: rgba(16, 28, 48, 0.96); }
+  .turn-chip.ranged { border-color: #c6e07a; color: #f4f8d8; background: rgba(28, 36, 12, 0.96); }
+  .party-card .role { font-size: 0.86rem; font-weight: 700; color: #e7f2f6; }
+  #path-menu .cost { font-size: 0.95rem; font-weight: 700; color: #ffe1a8; letter-spacing: 0.04em; }
 
   .path-choices { flex-direction: column; }
   .path-content { width: min(560px, 100%); }
