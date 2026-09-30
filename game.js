@@ -3213,6 +3213,24 @@
       stub.position.set(x, 0.08, 2.15);
       g.add(stub);
     });
+    const mortarGrain = new THREE.MeshBasicMaterial({ color: 0xe8d4b8, fog: false });
+    [[-1.85, 1.62, 3.55], [1.95, 1.55, 3.35]].forEach((spot) => {
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.2, 0.1), mortarGrain);
+      line.position.set(spot[0], spot[1], spot[2]);
+      g.add(line);
+    });
+    const breachDust = new THREE.MeshBasicMaterial({ color: 0x8fafc8, fog: false });
+    [[-2.25, 0.62, 3.95], [2.15, 0.58, 3.75]].forEach((spot) => {
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.14, 0.24), breachDust);
+      cap.position.set(spot[0], spot[1], spot[2]);
+      g.add(cap);
+    });
+    const ribCatch = new THREE.Mesh(
+      new THREE.BoxGeometry(0.3, 0.18, 0.12),
+      new THREE.MeshBasicMaterial({ color: 0xcfe6f2, fog: false })
+    );
+    ribCatch.position.set(-2.45, 2.25, 3.15);
+    g.add(ribCatch);
     makeMotes(g, 80, 0xc4b4a4, { x: 12, y: 4.2, z: 14 }, { fall: true });
     breachGroup = g;
     scene.add(g);
@@ -13897,6 +13915,7 @@
             ? 'You stepped back. The bar stayed shut.'
             : 'Walked. The last stand or the light is still ahead.';
       rows.push({ name: 'First breach', note: breachNote });
+      rows.push({ name: 'Breach dust', note: 'Mortar on the near stones. South still steps back.' });
     } else if (cryptWord === 'digit') {
       rows.push({ name: 'First breach', note: 'North of the widened crack. That is the first breach. The list does not carry you.' });
     }
