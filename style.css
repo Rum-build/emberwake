@@ -601,6 +601,14 @@ body.still-motion .encounter-flash.active {
   background: rgba(20, 14, 12, 0.45);
   font-weight: 600;
 }
+.hud-scar .debt-num {
+  font-variant-numeric: tabular-nums;
+  font-size: 1.22em;
+  color: #fff6ee;
+}
+.hud-scar.owed {
+  box-shadow: 0 0 0 1px rgba(212, 176, 140, 0.7), 0 0 0 3px rgba(42, 32, 26, 0.92);
+}
 
 .strain-wrap {
   width: 88px;
@@ -1530,6 +1538,16 @@ body.pack-open .places-panel {
 }
 
 .combat-log.show { opacity: 1; }
+.combat-log.log-ally {
+  color: #e7f3ff;
+  border-color: rgba(126, 184, 220, 0.9);
+  background: rgba(8, 16, 24, 0.88);
+}
+.combat-log.log-foe {
+  color: #ffe0d4;
+  border-color: rgba(255, 122, 78, 0.9);
+  background: rgba(28, 10, 8, 0.88);
+}
 
 .hit-float {
   position: absolute;
@@ -1728,6 +1746,13 @@ body.pack-open .places-panel {
   .turn-chip.ranged { border-color: #c6e07a; color: #f4f8d8; background: rgba(28, 36, 12, 0.96); }
   .party-card .role { font-size: 0.86rem; font-weight: 700; color: #e7f2f6; }
   #path-menu .cost { font-size: 0.95rem; font-weight: 700; color: #ffe1a8; letter-spacing: 0.04em; }
+  #main-menu .btn-menu { min-height: 60px; font-size: 1.08rem; font-weight: 700; }
+  #path-menu.menu-grid { grid-template-columns: 1fr; }
+  #path-menu .btn-menu[data-path] { min-height: 64px; font-size: 1.1rem; font-weight: 700; }
+  #path-menu [data-path="warrior"] { border-color: #ffb067; color: #ffe7c4; }
+  #path-menu [data-path="mage"] { border-color: #9ec8ff; color: #e7f2ff; }
+  #path-menu [data-path="ranged"] { border-color: #c6e07a; color: #f4f8d8; }
+  #path-menu .btn-menu.is-on { box-shadow: inset 5px 0 0 #ffe7c2; }
 
   .path-choices { flex-direction: column; }
   .path-content { width: min(560px, 100%); }
@@ -1775,7 +1800,7 @@ body.pack-open .places-panel {
     color: #ffe8e2;
     border-color: #ff8a68;
     background: rgba(110, 24, 16, 0.95);
-    box-shadow: 0 0 0 1px rgba(255, 150, 100, 0.45);
+    box-shadow: 0 0 0 1px rgba(255, 150, 100, 0.45), 0 0 0 4px rgba(58, 46, 38, 0.95);
   }
   .hud-row, .hud-elements { max-width: 100%; }
   .combat-held { max-width: calc(100vw - 24px); }
