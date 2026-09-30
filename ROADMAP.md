@@ -905,6 +905,10 @@ Under the farm marker, the ground now carries cracked rot soil, ash grit, a sick
 
 The bottle-hall aisle under the shelves now carries worn stone tile grain, ash wash in the joints, edge chips, and a faint bottle-drip stain. The shelves, the near corks, and the hall beat stay where they were. No new cue.
 
+## Shipped in the fight chrome pass
+
+The fight panel now carries an ember rim, a soft shadow under the chrome, grain in the meter fills, and a richer border. Fight, Magic, Item, and Flee stay where they were. The held charges still read Fire, Water, Bolt, and Earth. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

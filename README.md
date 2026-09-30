@@ -201,6 +201,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The village path keeps worn flagstone grain, moss in the joints, a dusk shadow, and edge chips. The door and the path look stay readable. No new cue.
 - The scar farm keeps cracked rot soil, ash grit, a sickly moss fringe, and darker fissures under the marker. The smoke look and the drink stay readable. No new cue.
 - The bottle-hall aisle keeps worn tile grain, ash in the joints, edge chips, and a faint bottle drip. The shelves and the near corks stay readable. No new cue.
+- The fight panel keeps an ember rim, a soft shadow, and grain in the charge meters. Fight, Magic, and the eight cues stay the same. No new cue.
 
 ## Play on your phone
 
