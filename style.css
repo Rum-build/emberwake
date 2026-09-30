@@ -1156,12 +1156,22 @@ body:not(.still-motion) .btn-absorb.is-ready {
   bottom: 18px;
   width: min(860px, calc(100% - 36px));
   z-index: 70;
-  background: rgba(14, 12, 11, 0.97);
-  border: 2px solid rgba(212, 176, 112, 0.78);
-  border-radius: 2px;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 214, 160, 0.05) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(0deg, rgba(90, 48, 24, 0.09) 0 1px, transparent 1px 12px),
+    linear-gradient(180deg, rgba(255, 214, 168, 0.2), rgba(255, 168, 88, 0.05) 16%, transparent 34%),
+    linear-gradient(168deg, #4a3426 0%, #2c1e16 46%, #16100c 100%);
+  border: 2px solid rgba(255, 186, 110, 0.94);
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
-  box-shadow: inset 0 0 0 1px rgba(255, 224, 160, 0.28), 0 18px 50px rgba(0, 0, 0, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 214, 0.58),
+    inset 0 0 0 1px rgba(120, 58, 22, 0.62),
+    inset 0 0 36px rgba(255, 120, 48, 0.14),
+    0 0 0 1px rgba(255, 140, 60, 0.48),
+    0 0 26px rgba(255, 120, 48, 0.42),
+    0 28px 46px rgba(0, 0, 0, 0.58);
 }
 
 .inv-header {
@@ -1222,10 +1232,14 @@ body:not(.still-motion) .btn-absorb.is-ready {
 }
 
 .inv-card, .equip-card {
-  background: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(212, 176, 112, 0.16);
-  border-radius: 2px;
-  padding: 6px 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 228, 196, 0.14), rgba(48, 28, 16, 0.42));
+  border: 2px solid rgba(255, 196, 130, 0.82);
+  border-radius: 8px;
+  padding: 8px 10px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 214, 0.32),
+    0 6px 14px rgba(0, 0, 0, 0.32);
 }
 
 .inv-card .name, .equip-card .who {
@@ -1978,7 +1992,8 @@ body.pack-open .places-panel {
     flex-direction: column-reverse;
     align-items: stretch;
     gap: 10px;
-    background: #120f0d;
+    background:
+      linear-gradient(180deg, #3c2a1e 0%, #241810 100%);
     padding-bottom: 12px;
   }
   #btn-inv-close {
@@ -1997,8 +2012,12 @@ body.pack-open .places-panel {
   }
   .inv-card, .equip-card { border-radius: 10px; padding: 12px 12px 12px 14px; }
   .inv-card {
-    border-left: 4px solid rgba(255, 176, 103, 0.88);
-    background: rgba(255, 214, 160, 0.06);
+    border-left: 4px solid rgba(255, 176, 103, 0.95);
+    background:
+      linear-gradient(180deg, rgba(255, 214, 160, 0.16), rgba(48, 28, 16, 0.5));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 236, 214, 0.32),
+      0 6px 14px rgba(0, 0, 0, 0.32);
   }
   .inv-card .name { font-size: 1.05rem; flex: 1 1 9rem; }
   .inv-card .desc { font-size: 0.88rem; margin-top: 6px; }
