@@ -7153,13 +7153,13 @@
     });
     function clump(x, z, lean) {
       const g = new THREE.Group();
-      const mound = new THREE.Mesh(new THREE.SphereGeometry(0.16, 6, 5), deep);
-      mound.scale.set(1.15, 0.32, 1.05);
-      mound.position.y = 0.03;
+      const mound = new THREE.Mesh(new THREE.SphereGeometry(0.22, 6, 5), deep);
+      mound.scale.set(1.2, 0.34, 1.1);
+      mound.position.y = 0.04;
       g.add(mound);
       for (let i = 0; i < 7; i++) {
-        const h = 0.26 + (i % 3) * 0.09;
-        const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.055, h), i % 3 === 0 ? dry : i % 3 === 1 ? mid : deep);
+        const h = 0.42 + (i % 3) * 0.16;
+        const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.08, h), i % 3 === 0 ? dry : i % 3 === 1 ? mid : deep);
         const a = i * 0.9;
         blade.position.set(Math.cos(a) * 0.07, h * 0.48, Math.sin(a) * 0.07);
         blade.rotation.y = a;
@@ -7169,7 +7169,7 @@
       g.position.set(x, 0, z);
       overworldGroup.add(g);
     }
-    [[-2.4, 1.7, 0.12], [2.5, 1.15, -0.08], [-1.7, -2.05, 0.16], [3.15, -1.25, -0.1], [-3.55, 0.35, 0.05], [0.7, 3.15, -0.14], [-4.15, -1.45, 0.18], [-5.35, -3.45, 0.1]].forEach((spot) => {
+    [[-2.4, 1.7, 0.12], [2.5, 1.15, -0.08], [-1.7, -2.05, 0.16], [3.15, -1.25, -0.1], [-3.55, 0.35, 0.05], [0.7, 3.15, -0.14], [-4.15, -1.45, 0.18], [-5.35, -3.45, 0.1], [1.55, 2.05, 0.08], [-0.55, 3.55, -0.12], [2.75, 2.85, 0.14]].forEach((spot) => {
       clump(spot[0], spot[1], spot[2]);
     });
     function dirt(x, z, r) {
@@ -7194,12 +7194,12 @@
       g.position.set(x, 0, z);
       overworldGroup.add(g);
     }
-    [[-3.05, 2.25, 0.72], [2.15, -2.45, 0.58], [0.35, 2.65, 0.5], [-4.7, -2.7, 0.64]].forEach((spot) => {
+    [[-3.05, 2.25, 0.95], [2.15, -2.45, 0.78], [0.35, 2.65, 0.7], [-4.7, -2.7, 0.82]].forEach((spot) => {
       dirt(spot[0], spot[1], spot[2]);
     });
     function stones(x, z) {
       const g = new THREE.Group();
-      [[0, 0, 0.14, stoneA], [0.2, 0.06, 0.08, stoneB], [-0.14, 0.04, 0.07, stoneA]].forEach((spot, i) => {
+      [[0, 0, 0.22, stoneA], [0.28, 0.08, 0.12, stoneB], [-0.2, 0.05, 0.1, stoneA]].forEach((spot, i) => {
         const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(spot[2], 0), spot[3]);
         rock.position.set(spot[0], spot[2] * 0.45, spot[1]);
         rock.scale.y = 0.55;
@@ -7216,7 +7216,7 @@
     });
     function root(x, z, rot) {
       const g = new THREE.Group();
-      const ridge = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.1, 1.35, 6), bark);
+      const ridge = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.13, 1.7, 6), bark);
       ridge.rotation.z = Math.PI / 2;
       ridge.scale.x = 0.45;
       ridge.position.y = 0.05;
