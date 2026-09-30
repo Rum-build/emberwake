@@ -18687,7 +18687,11 @@
     const panel = $('#places-panel');
     const list = $('#places-list');
     if (!panel || !list) return;
-    list.innerHTML = knownPlaces().map((place) => `<li><strong>${esc(place.name)}</strong><span>${esc(place.note)}</span></li>`).join('');
+    const here = (($('#hud-location') || {}).textContent || '').trim().toLowerCase();
+    list.innerHTML = knownPlaces().map((place) => {
+      const on = place.name.toLowerCase() === here ? ' class="is-here"' : '';
+      return `<li${on}><strong>${esc(place.name)}</strong><span>${esc(place.note)}</span></li>`;
+    }).join('');
     const quest = $('#places-quest');
     if (quest) quest.textContent = questLine();
     panel.classList.remove('hidden');

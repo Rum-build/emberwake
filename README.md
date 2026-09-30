@@ -196,6 +196,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The aftermath south steps keep worn stone grain, edge chips, moss in the joints, and a soft ash wash. The step back and Vesper’s absence stay. No new cue.
 - A saved Continue glows with an ember rim and a soft pulse. Still motion holds the rim steady. The same save and the same eight cues.
 - The bottle-hall shelves keep timber grain, glass catchlights, dust on the lips, and iron brackets. The near corks and the walk stay readable. No new cue.
+- The Places list keeps a parchment card, an ember mark on the place underfoot, and softer ink. Open and close stay the same. No new cue.
 
 ## Play on your phone
 

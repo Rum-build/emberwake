@@ -885,6 +885,10 @@ The aftermath south steps now carry worn stone grain, edge chips, moss in the jo
 
 The bottle-hall shelves now carry timber grain, glass catchlights, dust on the lips, and iron brackets. The near corks, the earth jar, and the walk stay where they were. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the Places card pass
+
+The Places list now sits on a parchment card with a clearer rim. The place underfoot wears an ember mark. Open, close, and the stick stay as they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
