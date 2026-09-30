@@ -4409,7 +4409,7 @@
 
   function nearestDusk() {
     if (!playerMesh || locale !== 'field' || regionId !== 'verdant-isle' || skyPass) return null;
-    if (Math.hypot(-8.15 - playerMesh.position.x, -6.4 - playerMesh.position.z) > 0.55) return null;
+    if (Math.hypot(-9.45 - playerMesh.position.x, -6.25 - playerMesh.position.z) > 0.5) return null;
     if (seenBeats['path-dusk']) {
       return {
         title: 'Path dusk',
