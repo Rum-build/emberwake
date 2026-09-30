@@ -1802,6 +1802,7 @@
     dressHallFloor(g);
     dressCountAir(g);
     dressCountFloor(g);
+    dressClerkDesk(g);
     g.visible = false;
     return g;
   }
@@ -2027,6 +2028,123 @@
       scuff.rotation.y = spot[2];
       g.add(scuff);
     });
+  }
+
+  function dressClerkDesk(g) {
+    const oak = new THREE.MeshPhongMaterial({
+      color: 0x6a4e32, shininess: 14, specular: new THREE.Color(0xd8c4a0),
+    });
+    const worn = new THREE.MeshPhongMaterial({
+      color: 0x2a2218, shininess: 6, specular: new THREE.Color(0x7a6858),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0xb89258, shininess: 20, specular: new THREE.Color(0xffe8c0),
+    });
+    const stone = new THREE.MeshPhongMaterial({
+      color: 0x6e6860, shininess: 16, specular: new THREE.Color(0xd5e4f2),
+    });
+    const pale = new THREE.MeshPhongMaterial({
+      color: 0xa39c92, shininess: 24, specular: new THREE.Color(0xf4fbff),
+    });
+    const ink = new THREE.MeshPhongMaterial({
+      color: 0x1a2438, shininess: 18, specular: new THREE.Color(0x8aa4c8),
+    });
+    function plank(x, z, rot) {
+      const group = new THREE.Group();
+      const board = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.032, 0.2), oak);
+      board.position.y = 0.072;
+      board.receiveShadow = true;
+      group.add(board);
+      const seam = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.01, 0.028), worn);
+      seam.position.set(0.04, 0.092, 0.03);
+      group.add(seam);
+      const ridge = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.008, 0.016), grain);
+      ridge.position.set(-0.06, 0.098, -0.04);
+      group.add(ridge);
+      const end = new THREE.Mesh(new THREE.DodecahedronGeometry(0.036, 0), worn);
+      end.position.set(0.3, 0.086, 0.02);
+      end.scale.y = 0.32;
+      group.add(end);
+      const lip = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.012, 4, 7, Math.PI * 0.8), pale);
+      lip.rotation.x = Math.PI / 2;
+      lip.position.set(-0.08, 0.09, 0);
+      group.add(lip);
+      group.position.set(x, 0, z);
+      group.rotation.y = rot;
+      g.add(group);
+    }
+    [
+      [-2.42, -0.28, 1.35], [-2.58, 0.22, 1.55], [-2.48, 0.68, 1.2], [-2.72, -0.78, 1.7],
+    ].forEach((spot) => {
+      plank(spot[0], spot[1], spot[2]);
+    });
+    function course(x, z, rot) {
+      const group = new THREE.Group();
+      const slab = new THREE.Mesh(new THREE.CircleGeometry(0.36, 7), stone);
+      slab.rotation.x = -Math.PI / 2;
+      slab.position.y = 0.06;
+      slab.receiveShadow = true;
+      group.add(slab);
+      const cap = new THREE.Mesh(new THREE.CircleGeometry(0.12, 5), worn);
+      cap.rotation.x = -Math.PI / 2;
+      cap.position.set(0.08, 0.072, -0.04);
+      group.add(cap);
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.016, 4, 8, Math.PI * 1.05), pale);
+      ring.rotation.x = Math.PI / 2;
+      ring.position.y = 0.078;
+      group.add(ring);
+      const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.032, 0), oak);
+      chip.position.set(-0.16, 0.08, 0.06);
+      chip.scale.y = 0.35;
+      group.add(chip);
+      group.position.set(x, 0, z);
+      group.rotation.y = rot;
+      g.add(group);
+    }
+    [
+      [-2.35, 0.48, 0.2], [-2.88, 0.08, -0.25], [-2.58, -0.9, 0.15], [-3.02, 1.22, 0.35],
+    ].forEach((spot) => {
+      course(spot[0], spot[1], spot[2]);
+    });
+    function grit(x, z) {
+      const group = new THREE.Group();
+      [[0, 0, 0.028], [0.045, 0.02, 0.018], [-0.04, 0.028, 0.02], [0.02, -0.038, 0.014]].forEach((spot) => {
+        const speck = new THREE.Mesh(new THREE.SphereGeometry(spot[2], 4, 3), ink);
+        speck.position.set(spot[0], 0.085 + spot[2] * 0.4, spot[1]);
+        group.add(speck);
+      });
+      group.position.set(x, 0, z);
+      g.add(group);
+    }
+    [[-2.18, -0.02], [-2.16, -0.58], [-1.55, 0.06], [-2.32, 0.14]].forEach((spot) => {
+      grit(spot[0], spot[1]);
+    });
+    const washMat = new THREE.MeshBasicMaterial({
+      color: 0xc5d6ee, transparent: true, opacity: 0.07, depthWrite: false, fog: false,
+    });
+    [[-2.65, 0.58, 0.55], [-2.85, -0.42, 0.38], [-2.95, 1.15, 0.42]].forEach((spot) => {
+      const wash = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 10), washMat);
+      wash.rotation.x = -Math.PI / 2;
+      wash.position.set(spot[0], 0.05, spot[1]);
+      g.add(wash);
+    });
+    const scuffMat = new THREE.MeshPhongMaterial({
+      color: 0x14110e, shininess: 3, specular: new THREE.Color(0x6a5848),
+    });
+    [[-2.38, 0.42, 0.1], [-2.08, 0.22, -0.2], [-2.72, -0.12, 0.35], [-2.88, 1.05, 0.05]].forEach((spot) => {
+      const scuff = new THREE.Mesh(new THREE.BoxGeometry(0.065, 0.012, 0.46), scuffMat);
+      scuff.position.set(spot[0], 0.09, spot[1]);
+      scuff.rotation.y = spot[2];
+      g.add(scuff);
+    });
+    const shadeMat = new THREE.MeshBasicMaterial({
+      color: 0x080a10, transparent: true, opacity: 0.24, depthWrite: false, fog: false,
+    });
+    const shade = new THREE.Mesh(new THREE.CircleGeometry(0.72, 8), shadeMat);
+    shade.rotation.x = -Math.PI / 2;
+    shade.scale.set(1.4, 0.2, 1);
+    shade.position.set(-2.28, 0.045, 0.02);
+    g.add(shade);
   }
 
   function dressHallMonopoly(g) {

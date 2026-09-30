@@ -777,6 +777,10 @@ On the walk up to the harbor telegraph, the ground now carries packed dirt plate
 
 At the harbor vault door, the threshold now carries worn stone courses, seal grit, a cooler lamp wash on the sill, threshold scuffs, and a soft shadow under the vault lip. The door, the seal, and the lamp stay where they were. The telegraph approach, the counting room, the cellar mouth, the bottle-hall floor, the nave floor, the village path, the waystone approach, the roost ground, the pier boards, the yard cobbles, the scar approach, the leaf-cup bank, the wake ground, and the kiln are unchanged. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the clerk desk pass
+
+Beside the counting-room clerk desk, the floor now carries worn ledger-side planks, stone courses, ink grit near the desk legs, a cooler lamp wash on the walk, scuff marks from standing, and a soft shadow under the desk lip. The clerk, the ledger lamp, and the rug stay where they were. The vault sill, the telegraph approach, the counting-room aisle, the cellar mouth, the bottle-hall floor, the nave floor, the village path, the waystone approach, the roost ground, the pier boards, the yard cobbles, the scar approach, the leaf-cup bank, the wake ground, and the kiln are unchanged. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
