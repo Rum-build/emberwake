@@ -176,6 +176,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The spark near Lira keeps a layered ember core, a softer outer haze, a faint heat rim, and denser motes. Her face and equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 - Lira’s quilted jerkin keeps stitch rows and leather grain, the ashwood blade keeps a fuller and an edge catch, and the road bracers keep straps and buckles. They stay on the body when equipped. Her face and the spark stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 - Torren’s seal coat keeps seam and collar grain and a seal stamp catch. His ledger cudgel keeps wood grain and an iron band. They stay on the body when equipped. Lira’s gear, both faces, and the spark stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
+- At the Concord yard gate, worn timber grain, iron hinge plates, a bolt catch, and a cooler dusk wash sit on the posts and the crossbar. The gate cork and the yard cobbles stay readable. No new cue.
 
 ## Play on your phone
 
