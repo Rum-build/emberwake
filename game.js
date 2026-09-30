@@ -1037,6 +1037,7 @@
     });
     dressCellarMouth(dungeon);
     dressCellarDoorSill(dungeon);
+    dressCellarThreshold(dungeon);
     dressCellarDoorFace(dungeon);
     overworldGroup.add(dungeon);
 
@@ -1528,6 +1529,74 @@
     shade.scale.set(1.85, 0.28, 1);
     shade.position.set(0.02, 0.025, 1.02);
     g.add(shade);
+  }
+
+  function dressCellarThreshold(g) {
+    const stone = new THREE.MeshPhongMaterial({
+      color: 0x6e8c98, shininess: 30, specular: new THREE.Color(0xd8eef8),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0xd6f4ec, shininess: 38, specular: new THREE.Color(0xf6fffc),
+    });
+    const gritMat = new THREE.MeshPhongMaterial({
+      color: 0x120e0c, shininess: 6, specular: new THREE.Color(0x8a7c68),
+    });
+    const chipMat = new THREE.MeshPhongMaterial({
+      color: 0xece4d6, shininess: 24, specular: new THREE.Color(0xfffaf2),
+    });
+    const wet = new THREE.MeshBasicMaterial({
+      color: 0x07141e, transparent: true, opacity: 0.84, depthWrite: false, fog: false,
+    });
+    const timber = new THREE.MeshPhongMaterial({
+      color: 0x8a5a34, shininess: 20, specular: new THREE.Color(0xf0d8b4),
+    });
+    const timberGrain = new THREE.MeshPhongMaterial({
+      color: 0xf2d4a6, shininess: 28, specular: new THREE.Color(0xfff6e4),
+    });
+    const nosing = new THREE.Mesh(new THREE.BoxGeometry(1.74, 0.06, 0.12), timber);
+    nosing.position.set(0.02, 0.15, 0.96);
+    nosing.receiveShadow = true;
+    g.add(nosing);
+    [-0.58, -0.06, 0.48].forEach((x) => {
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.016, 0.03), timberGrain);
+      line.position.set(x, 0.186, 0.96);
+      g.add(line);
+    });
+    [[-0.58, 1.02], [0.04, 0.99], [0.64, 1.04]].forEach((spot, i) => {
+      const slab = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.08, 0.36), stone);
+      slab.position.set(spot[0], 0.12, spot[1]);
+      slab.rotation.y = (i - 1) * 0.04;
+      slab.receiveShadow = true;
+      g.add(slab);
+      [-0.08, 0.07].forEach((dz) => {
+        const line = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.02, 0.042), grain);
+        line.position.set(spot[0], 0.168, spot[1] + dz);
+        line.rotation.y = (i - 1) * 0.04;
+        g.add(line);
+      });
+      [[-0.16, 0.18], [0.15, 0.17]].forEach((chip) => {
+        const bit = new THREE.Mesh(new THREE.DodecahedronGeometry(0.08, 0), chipMat);
+        bit.scale.set(1.15, 0.42, 0.85);
+        bit.position.set(spot[0] + chip[0], 0.16, spot[1] + chip[1]);
+        g.add(bit);
+      });
+    });
+    [[-0.28, 0.96], [-0.26, 1.1], [0.34, 0.98], [0.36, 1.12]].forEach((spot) => {
+      const speck = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 4), gritMat);
+      speck.position.set(spot[0], 0.175, spot[1]);
+      g.add(speck);
+    });
+    [[-0.28, 1.02], [0.34, 1.02]].forEach((spot) => {
+      const seam = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.02, 0.32), gritMat);
+      seam.position.set(spot[0], 0.168, spot[1]);
+      g.add(seam);
+    });
+    const wash = new THREE.Mesh(new THREE.BoxGeometry(1.62, 0.016, 0.24), wet);
+    wash.position.set(0.04, 0.182, 1.02);
+    g.add(wash);
+    const drip = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.014, 0.48), wet);
+    drip.position.set(0.16, 0.178, 1.26);
+    g.add(drip);
   }
 
   function dressCellarDoorFace(g) {
