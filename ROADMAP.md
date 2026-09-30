@@ -616,6 +616,13 @@ Playable on the Verdant Isle field:
 - Places still names the stake. It does not say what the ending will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Ash nave, the pew dust (this branch)
+
+- On the east pews, a look lets Lira say Concord numbered the host and left the door shut. Torren, when he walks with her, says the number held the book and did not open the bar. The spark says Vesper is on the roof and does not take the host. The dust is not a drink.
+- The west chalk, the gallery door, and the quiet stand stay where they were. The south step stays.
+- Places still names the colonnade. It does not say what the ending will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

@@ -734,6 +734,23 @@
     return true;
   });
 
+  Emberwake.registerScene('nave-dust', function () {
+    var torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    Emberwake.present({
+      lines: [
+        { where: 'Ash nave', speaker: 'Lira', text: 'Dust on the east pews. Concord numbered the host and left the door shut.' },
+        torren
+          ? { speaker: 'Torren', text: 'I stamped naves like this. The number held the book. It did not open the bar.' }
+          : { speaker: 'The spark', text: 'They numbered the host. The book held. The bar did not.' },
+        { speaker: 'The spark', text: 'Vesper is on the roof. She does not take the host. The dust is not a drink.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteDust) Emberwake.noteDust();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('nave-gate', function () {
     Emberwake.present({
       lines: [
