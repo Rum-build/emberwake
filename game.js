@@ -1299,6 +1299,7 @@
     dressKilnHeat(g);
     dressKilnGrain(g);
     dressKilnMouth(g);
+    dressKilnExterior(g);
     dressCellarMouthFloor(g);
     return g;
   }
@@ -1768,6 +1769,82 @@
     shade.position.set(0, 0.055, -16.32);
     mouth.add(shade);
     g.add(mouth);
+  }
+
+  function dressKilnExterior(g) {
+    const kiln = new THREE.Group();
+    kiln.userData.kilnExterior = true;
+    const fired = [
+      new THREE.MeshPhongMaterial({ color: 0x7a3428, emissive: new THREE.Color(0x241008), shininess: 16, specular: new THREE.Color(0xe0a080) }),
+      new THREE.MeshPhongMaterial({ color: 0x4a2018, emissive: new THREE.Color(0x140804), shininess: 8, specular: new THREE.Color(0xa06850) }),
+      new THREE.MeshPhongMaterial({ color: 0x9a4c34, emissive: new THREE.Color(0x301410), shininess: 22, specular: new THREE.Color(0xf0c0a0) }),
+    ];
+    const ash = new THREE.MeshPhongMaterial({ color: 0x3a3028, shininess: 6, specular: new THREE.Color(0xc4b4a4) });
+    const soot = new THREE.MeshPhongMaterial({ color: 0x14100e, shininess: 3, specular: new THREE.Color(0x6a5850) });
+    [-1, 1].forEach((side) => {
+      for (let row = 0; row < 8; row++) {
+        for (let i = 0; i < 4; i++) {
+          const brick = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.11, 0.05), fired[(i + row) % 3]);
+          const stagger = row % 2 ? 0.07 : 0;
+          brick.position.set(side * (2.42 + i * 0.3 + stagger), 0.2 + row * 0.26, -16.5);
+          kiln.add(brick);
+        }
+      }
+      const drip = new THREE.Mesh(new THREE.BoxGeometry(0.045, 1.28, 0.018), soot);
+      drip.position.set(side * 2.86, 0.92, -16.46);
+      kiln.add(drip);
+      const film = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.95, 0.48),
+        new THREE.MeshBasicMaterial({
+          color: 0x1a100c, transparent: true, opacity: 0.26, depthWrite: false, fog: false,
+        })
+      );
+      film.position.set(side * 2.72, 0.48, -16.45);
+      kiln.add(film);
+    });
+    for (let i = 0; i < 7; i++) {
+      const lip = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.08, 0.14), i % 2 ? ash : fired[1]);
+      lip.position.set(-0.96 + i * 0.32, 0.07, -15.82);
+      lip.rotation.y = (i - 3) * 0.04;
+      kiln.add(lip);
+      const crust = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.018, 0.07), soot);
+      crust.position.set(-0.96 + i * 0.32, 0.12, -15.78);
+      kiln.add(crust);
+    }
+    [
+      [0.15, -15.15, 0.52, 0.2],
+      [-0.28, -14.55, 0.4, -0.25],
+      [0.55, -14.72, 0.36, 0.15],
+      [0.05, -15.52, 0.46, 0.08],
+      [0.62, -15.32, 0.3, -0.18],
+    ].forEach((spot, i) => {
+      const plate = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 7), i % 2 ? ash : fired[1]);
+      plate.rotation.x = -Math.PI / 2;
+      plate.position.set(spot[0], 0.055, spot[1]);
+      kiln.add(plate);
+      const crack = new THREE.Mesh(new THREE.BoxGeometry(spot[2] * 1.15, 0.012, 0.028), soot);
+      crack.position.set(spot[0], 0.072, spot[1]);
+      crack.rotation.y = spot[3];
+      kiln.add(crack);
+    });
+    [[0.22, -14.95], [-0.12, -15.38], [0.48, -15.08], [0.08, -14.62]].forEach((spot) => {
+      const speck = new THREE.Mesh(new THREE.SphereGeometry(0.028, 5, 4), ash);
+      speck.position.set(spot[0], 0.07, spot[1]);
+      kiln.add(speck);
+    });
+    const wash = new THREE.Mesh(
+      new THREE.CircleGeometry(1.12, 12),
+      new THREE.MeshBasicMaterial({
+        color: 0xff7a40, transparent: true, opacity: 0.14, depthWrite: false, fog: false,
+      })
+    );
+    wash.rotation.x = -Math.PI / 2;
+    wash.position.set(0.1, 0.048, -15.35);
+    kiln.add(wash);
+    const glow = new THREE.PointLight(0xff6a30, 0.42, 4.4);
+    glow.position.set(0.15, 1.05, -15.7);
+    kiln.add(glow);
+    g.add(kiln);
   }
 
   function buildVaultRoom() {
