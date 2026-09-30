@@ -411,6 +411,13 @@ Playable on the Verdant Isle field:
 - Credits names the browser engine and thanks the walk. The claim bed sits quieter in that room. That quieter seat is the same cue.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Title dusk, isle leaves, and the fight bar (this branch)
+
+- The title sits in a cooler dusk, with a second ember on the mark and one short line under the spark. Continue still names the save. The phone buttons stay clear of each other.
+- The Verdant Isle field wears a light green haze and a leaf-fall. The leaves hang when Motion is off and drift when it is on. The letter, the village door, the ember, the leaf-cup, and the kiln stay clear.
+- A dusk fight’s enemy bar and the foe chip on the ribbon read one notch clearer. The numbers stay where they were.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
