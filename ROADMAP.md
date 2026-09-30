@@ -969,6 +969,10 @@ Lira’s default host mesh now carries richer cloth folds, longer hair strands, 
 
 Torren’s party mesh now carries richer cloth folds, temple and beard hair, boot and leather grain, and a clearer face. Equipped cudgel and coat still change the body. No new cue.
 
+## Shipped in the captain mesh pass
+
+The Concord captain now carries richer armour plates, cloth under the plate, a helm crest, and boot and gauntlet grain. The fight, the telegraph, and the fight panel stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

@@ -218,6 +218,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The combat telegraph under an enemy keeps ember glow grain, a scorched dirt ring, and a clearer rim. The fight and the eight cues stay the same. No new cue.
 - Lira’s host mesh keeps richer cloth folds, hair strands, boot grain, and a clearer face. Equipped sword, armour, and accessories still change the body. No new cue.
 - Torren’s party mesh keeps richer cloth folds, hair detail, boot grain, and a clearer face. Equipped cudgel and coat still change the body. No new cue.
+- The Concord captain keeps richer armour plates, cloth under the plate, a helm crest, and boot and gauntlet grain. The fight and the eight cues stay the same. No new cue.
 
 ## Play on your phone
 
