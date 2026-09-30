@@ -6,7 +6,7 @@ Every track and sound effect that ships is listed in this file and on the in-gam
 
 ## This slice
 
-The field bed is generated in the browser. No audio file is fetched. On the Verdant Isle the same loop opens its filter to 380 and starts on the first touch of the title. Motion does not stop it. On Stormreach the same loop is retuned higher (coast bed). In the remnant claim and the aftermath it is retuned lower (claim bed). Silent still stops it.
+The field bed is generated in the browser. No audio file is fetched. On the Verdant Isle the same loop opens its filter to 380 and starts on the first touch of the title. Motion does not stop it. On Stormreach the same loop is retuned higher (coast bed). In the remnant claim and the aftermath it is retuned lower (claim bed). Silent still stops it. The same loop and the same stings sit high enough to hear. A tap or a move resumes them if the browser had held the context.
 
 ## Cue log
 

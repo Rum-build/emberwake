@@ -218,6 +218,8 @@
   let bedGain = null;
   let bedFilter = null;
   let bedTones = null;
+  let bedNoise = null;
+  let bedLoopStarted = false;
   let bedPlace = 'field';
   let coughPuff = null;
   let marrowVesper = null;
@@ -17625,6 +17627,7 @@
       joystickKnob.style.transform = 'translate(-50%, -50%)';
     };
     const onDown = (e) => {
+      ensureBed();
       if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen) return;
       if (e.isPrimary === false) return;
       if (typeof e.button === 'number' && e.button !== 0) return;
@@ -17776,6 +17779,7 @@
 
   function setupKeyboard() {
     window.addEventListener('keydown', (e) => {
+      if (!e.repeat && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'KeyW', 'KeyA', 'KeyS', 'KeyD'].includes(e.code)) ensureBed();
       keys[e.code] = true;
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) e.preventDefault();
       if (e.repeat) return;
@@ -17927,9 +17931,7 @@
   }
 
   function playDraw() {
-    if (!bedWanted) return;
-    ensureBed();
-    if (!audioCtx) return;
+    withBed(() => {
     const now = audioCtx.currentTime;
     [196, 146].forEach((freq, i) => {
       const osc = audioCtx.createOscillator();
@@ -17938,19 +17940,18 @@
       osc.frequency.value = freq;
       const start = now + i * 0.06;
       gain.gain.setValueAtTime(0.0001, start);
-      gain.gain.exponentialRampToValueAtTime(0.04, start + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.16, start + 0.015);
       gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.18);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start(start);
       osc.stop(start + 0.2);
     });
+    });
   }
 
   function playSting() {
-    if (!bedWanted) return;
-    ensureBed();
-    if (!audioCtx) return;
+    withBed(() => {
     const now = audioCtx.currentTime;
     [392, 588].forEach((freq, i) => {
       const osc = audioCtx.createOscillator();
@@ -17959,7 +17960,7 @@
       osc.frequency.value = freq;
       const start = now + i * 0.07;
       gain.gain.setValueAtTime(0.0001, start);
-      gain.gain.exponentialRampToValueAtTime(0.055, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.18, start + 0.02);
       gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.32);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
@@ -17971,18 +17972,17 @@
     gulp.type = 'sine';
     gulp.frequency.value = 220;
     gulpGain.gain.setValueAtTime(0.0001, now);
-    gulpGain.gain.exponentialRampToValueAtTime(0.035, now + 0.02);
+    gulpGain.gain.exponentialRampToValueAtTime(0.1, now + 0.02);
     gulpGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
     gulp.connect(gulpGain);
     gulpGain.connect(audioCtx.destination);
     gulp.start(now);
     gulp.stop(now + 0.22);
+    });
   }
 
   function playRation() {
-    if (!bedWanted) return;
-    ensureBed();
-    if (!audioCtx) return;
+    withBed(() => {
     const now = audioCtx.currentTime;
     [520, 390].forEach((freq, i) => {
       const osc = audioCtx.createOscillator();
@@ -17991,12 +17991,13 @@
       osc.frequency.value = freq;
       const start = now + i * 0.045;
       gain.gain.setValueAtTime(0.0001, start);
-      gain.gain.exponentialRampToValueAtTime(0.04, start + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.14, start + 0.012);
       gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.11);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start(start);
       osc.stop(start + 0.13);
+    });
     });
   }
 
@@ -18012,9 +18013,7 @@
   }
 
   function playDoorSting() {
-    if (!bedWanted) return;
-    ensureBed();
-    if (!audioCtx) return;
+    withBed(() => {
     const now = audioCtx.currentTime;
     [196, 146].forEach((freq, i) => {
       const osc = audioCtx.createOscillator();
@@ -18023,12 +18022,13 @@
       osc.frequency.value = freq;
       const start = now + i * 0.045;
       gain.gain.setValueAtTime(0.0001, start);
-      gain.gain.exponentialRampToValueAtTime(0.04, start + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.14, start + 0.012);
       gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.16);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start(start);
       osc.stop(start + 0.18);
+    });
     });
   }
 
@@ -18040,9 +18040,7 @@
   }
 
   function playMergeSting() {
-    if (!bedWanted) return;
-    ensureBed();
-    if (!audioCtx) return;
+    withBed(() => {
     const now = audioCtx.currentTime;
     [311, 466, 622].forEach((freq, i) => {
       const osc = audioCtx.createOscillator();
@@ -18051,17 +18049,43 @@
       osc.frequency.value = freq;
       const start = now + i * 0.06;
       gain.gain.setValueAtTime(0.0001, start);
-      gain.gain.exponentialRampToValueAtTime(0.05, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.16, start + 0.02);
       gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.28);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start(start);
       osc.stop(start + 0.32);
     });
+    });
   }
 
   function readBedPref() {
     try { bedWanted = localStorage.getItem('emberwake.bed') !== 'off'; } catch (err) { bedWanted = true; }
+  }
+
+  function armBed() {
+    if (!audioCtx || audioCtx.state !== 'running') return;
+    if (!bedLoopStarted && bedNoise && bedTones) {
+      bedLoopStarted = true;
+      bedNoise.start();
+      bedTones.forEach((osc) => { osc.start(); });
+    }
+    if (bedGain) bedGain.gain.value = bedWanted ? bedLevel() : 0;
+  }
+
+  function withBed(fn) {
+    if (!bedWanted) return;
+    ensureBed();
+    if (!audioCtx) return;
+    const run = () => {
+      if (!bedWanted || !audioCtx || audioCtx.state !== 'running') return;
+      fn();
+    };
+    if (audioCtx.state === 'running') run();
+    else {
+      const pending = audioCtx.resume();
+      if (pending && typeof pending.then === 'function') pending.then(run, () => {});
+    }
   }
 
   function ensureBed() {
@@ -18074,7 +18098,7 @@
     if (!audioCtx) {
       audioCtx = new AC();
       bedGain = audioCtx.createGain();
-      bedGain.gain.value = 0.04;
+      bedGain.gain.value = 0;
       bedGain.connect(audioCtx.destination);
       const seconds = 2;
       const rate = audioCtx.sampleRate;
@@ -18098,22 +18122,24 @@
       noise.connect(filter);
       filter.connect(noiseGain);
       noiseGain.connect(bedGain);
-      noise.start();
+      bedNoise = noise;
       bedTones = [78, 117].map((freq, i) => {
         const osc = audioCtx.createOscillator();
         osc.type = 'sine';
         osc.frequency.value = freq;
         const tone = audioCtx.createGain();
-        tone.gain.value = i === 0 ? 0.07 : 0.035;
+        tone.gain.value = i === 0 ? 0.18 : 0.1;
         osc.connect(tone);
         tone.connect(bedGain);
-        osc.start();
         return osc;
       });
       tuneBed(bedPlace);
     }
-    if (bedWanted) bedGain.gain.value = bedLevel();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (audioCtx.state === 'running') armBed();
+    else {
+      const pending = audioCtx.resume();
+      if (pending && typeof pending.then === 'function') pending.then(armBed, () => {});
+    }
   }
 
   function tuneBed(place) {
@@ -18133,9 +18159,9 @@
 
   function bedLevel() {
     if (!bedWanted) return 0;
-    if (bedPlace === 'aftermath') return 0.026;
-    if (bedPlace === 'claim') return 0.032;
-    return 0.04;
+    if (bedPlace === 'aftermath') return 0.22;
+    if (bedPlace === 'claim') return 0.3;
+    return 0.4;
   }
 
   function syncMotion() {
@@ -18457,6 +18483,11 @@
 
   function setupUI() {
     readBedPref();
+    window.addEventListener('pointerdown', (ev) => {
+      const t = ev.target;
+      if (t && t.closest && t.closest('#btn-bed')) return;
+      ensureBed();
+    });
     function beginWake() {
       try { localStorage.removeItem(SAVE_KEY); } catch (err) { /* ignore */ }
       runLive = false;

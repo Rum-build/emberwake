@@ -865,6 +865,10 @@ The leaf-village letter now carries cream paper grain, ink bleed, a wax seal, a 
 
 Lira’s starter stick now carries bark grain, a worn grip wrap, and tip scuffs, and it sits in the hand beside the scout knife. The knife, the other weapons, and the move stick stay where they were. The letter, the harbor pier, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the hearable bed pass
+
+The field bed and the existing stings were nearly silent: the loop sat under a 0.04 gain, and the sources could start while the context was still suspended. The same loop and the same stings now sit high enough to hear, and the first tap or move resumes them. Silent still stops the bed. The eight cues stay the set. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
