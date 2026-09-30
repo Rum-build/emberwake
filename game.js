@@ -5835,6 +5835,7 @@
     seal.position.set(0, 2.5, 0.9);
     vault.add(seal);
     dressVaultDoor(vault);
+    dressVaultIron(vault);
     const lamp = new THREE.PointLight(0xd4c08a, 0.95, 16);
     lamp.position.set(0, 3.2, 2.4);
     vault.add(lamp);
@@ -5997,6 +5998,70 @@
       mote.position.set(spot[0], spot[1], spot[2]);
       vault.add(mote);
     });
+  }
+
+  function dressVaultIron(vault) {
+    const door = new THREE.Group();
+    door.userData.vaultIron = true;
+    const iron = new THREE.MeshPhongMaterial({
+      color: 0x3a424c, emissive: new THREE.Color(0x101418), shininess: 58, specular: new THREE.Color(0xd8e2ee),
+    });
+    const worn = new THREE.MeshPhongMaterial({
+      color: 0x2a241c, emissive: new THREE.Color(0x100c08), shininess: 16, specular: new THREE.Color(0xa09078),
+    });
+    const etch = new THREE.MeshPhongMaterial({
+      color: 0xd6e8ff, emissive: new THREE.Color(0x1a2838), shininess: 46, specular: new THREE.Color(0xffffff),
+    });
+    const plate = new THREE.Mesh(new THREE.BoxGeometry(2.28, 3.42, 0.07), iron);
+    plate.position.set(0, 2.12, 0.78);
+    door.add(plate);
+    [1.2, 2.15, 3.1].forEach((y) => {
+      const band = new THREE.Mesh(new THREE.BoxGeometry(2.16, 0.07, 0.018), iron);
+      band.position.set(0, y, 0.825);
+      door.add(band);
+      [-0.86, -0.43, 0, 0.43, 0.86].forEach((x) => {
+        const rivet = new THREE.Mesh(new THREE.SphereGeometry(0.024, 6, 4), iron);
+        rivet.position.set(x, y, 0.845);
+        door.add(rivet);
+      });
+    });
+    const strap = new THREE.Mesh(new THREE.BoxGeometry(0.07, 3.1, 0.016), iron);
+    strap.position.set(0, 2.12, 0.832);
+    door.add(strap);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.018, 6, 18), etch);
+    ring.position.set(0, 2.5, 0.838);
+    door.add(ring);
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2;
+      const tick = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.014, 0.012), etch);
+      tick.position.set(Math.cos(a) * 0.2, 2.5 + Math.sin(a) * 0.2, 0.842);
+      tick.rotation.z = a;
+      door.add(tick);
+    }
+    [-1.06, 1.06].forEach((x) => {
+      [1.35, 2.45, 3.3].forEach((y) => {
+        const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.042, 0.16, 8), worn);
+        barrel.position.set(x, y, 0.85);
+        door.add(barrel);
+      });
+      const rub = new THREE.Mesh(new THREE.BoxGeometry(0.05, 2.2, 0.012), worn);
+      rub.position.set(x, 2.25, 0.84);
+      door.add(rub);
+    });
+    const wash = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.7, 1.05),
+      new THREE.MeshBasicMaterial({
+        color: 0xb8a898, transparent: true, opacity: 0.16, depthWrite: false, fog: false,
+      })
+    );
+    wash.position.set(0.05, 1.15, 0.842);
+    door.add(wash);
+    [[-0.35, 1.35, 0.55], [0.22, 1.22, 0.4], [0.5, 1.48, 0.32]].forEach((spot) => {
+      const soot = new THREE.Mesh(new THREE.BoxGeometry(0.04, spot[2], 0.012), worn);
+      soot.position.set(spot[0], spot[1], 0.844);
+      door.add(soot);
+    });
+    vault.add(door);
   }
 
   function dressHarbor(g) {
