@@ -120,6 +120,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The buried kiln keeps an ember glow, a soot rim, and a little smoke off the mouth. The leaf-cup keeps a cooler rim, a wax sheen, and a scatter of leaves off the mouth. A hit washes hotter. The drink and the blow are unchanged. No new cue.
 - The shale keeps a foam rim, wet sand, and a licence-post glow off the walk. The waystone keeps a carved rim, ash grit, and a cooler light off the mouth. Places names that stone. No new cue.
 - Ashen Marrow keeps bone ribs, cooler dust, and a marrow lamp off the south step. The leaf-village door keeps a lamp, a leaf wreath, and a dusk rim off the walk. Places names the bone-ash crypt. No new cue.
+- The Remnant Mark keeps a carved rim, ember grit, and cooler stones off the south step. The field bed opens its filter on the Verdant Isle and starts on the first touch of the title. That is the same cue. Places names the mark bed. No new cue.
 
 ## Play on your phone
 

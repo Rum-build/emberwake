@@ -481,6 +481,13 @@ Playable on the Verdant Isle field:
 - After the marrow is walked, Places names the bone-ash crypt. It does not repeat the cork quest or the scrap.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Remnant Mark, and the isle bed (this branch)
+
+- The Remnant Mark keeps a carved rim, ember grit, and cooler stones on the night aisle, off the weep, the scrap, the perch, the nave stone, and the south step. The ash and the cooler light stay as they were. The Claim choice stays as it was.
+- The field bed is the same loop. On the Verdant Isle its filter opens to 380, and it starts on the first touch of the title. Coast, claim, and aftermath keep their own cuts. Motion does not stop it. Silent still does. No new cue.
+- After the mark is walked, Places names that carved rim. It does not repeat the Claim.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

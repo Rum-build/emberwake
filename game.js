@@ -2315,8 +2315,31 @@
       rock.rotation.y = 0.4 + i * 0.55;
       g.add(rock);
     });
+    dressMarkBed(g);
     markGroup = g;
     scene.add(g);
+  }
+
+  function dressMarkBed(g) {
+    const rim = new THREE.Mesh(
+      new THREE.TorusGeometry(0.92, 0.08, 8, 28),
+      new THREE.MeshBasicMaterial({ color: 0xd4e2ee, fog: false })
+    );
+    rim.rotation.x = Math.PI / 2;
+    rim.position.set(-0.4, 0.07, 2.7);
+    g.add(rim);
+    const gritMat = new THREE.MeshBasicMaterial({ color: 0xff5a18, fog: false });
+    [[0.55, 3.32, 0.11], [-1.15, 3.18, 0.1], [-0.15, 1.68, 0.1]].forEach((spot) => {
+      const grit = new THREE.Mesh(new THREE.DodecahedronGeometry(spot[2], 0), gritMat);
+      grit.position.set(spot[0], spot[2] * 0.7, spot[1]);
+      g.add(grit);
+    });
+    const coolMat = new THREE.MeshBasicMaterial({ color: 0xd5e4f2, fog: false });
+    [[2.2, 2.82, 0.42, 0.16, 0.28], [-2.45, 2.58, 0.36, 0.14, 0.24]].forEach((spot) => {
+      const slab = new THREE.Mesh(new THREE.BoxGeometry(spot[2], spot[3], spot[4]), coolMat);
+      slab.position.set(spot[0], spot[3] / 2, spot[1]);
+      g.add(slab);
+    });
   }
 
   function markFits(x, z) {
@@ -13086,7 +13109,7 @@
         ? { cut: 140, freqs: [55, 82] }
         : bedPlace === 'aftermath'
           ? { cut: 110, freqs: [55, 82] }
-          : { cut: 240, freqs: [78, 117] };
+          : { cut: 380, freqs: [78, 117] };
     bedFilter.frequency.value = spec.cut;
     bedTones.forEach((osc, i) => { osc.frequency.value = spec.freqs[i]; });
     if (bedGain) bedGain.gain.value = bedLevel();
@@ -13263,6 +13286,7 @@
       else if (weep && weep.bottled) note = 'The weep was numbered. The pillar stayed.';
       else note = 'Walked. The weep is still a mouth.';
       rows.push({ name: 'Remnant Mark', note: note });
+      rows.push({ name: 'Mark bed', note: 'The Remnant Mark keeps a carved rim and ember grit. The pillar stays numbered.' });
     } else if (seenBeats.yardStep) {
       rows.push({ name: 'Remnant Mark', note: 'Not walked yet. North of the yard. The list does not carry you.' });
     }
@@ -13422,6 +13446,13 @@
       ensureBed();
       continueRun();
     });
+    if (titleScreen) {
+      titleScreen.addEventListener('pointerdown', (ev) => {
+        const t = ev.target;
+        if (t && t.closest && t.closest('#btn-bed')) return;
+        ensureBed();
+      });
+    }
     const bedBtn = $('#btn-bed');
     if (bedBtn) bedBtn.addEventListener('click', () => setBed(!bedWanted));
     const motionBtn = $('#btn-motion');
