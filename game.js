@@ -1007,6 +1007,7 @@
     POOL_DEFS.forEach((def) => makePool(def));
     dressIsleGround();
     dressPathAir();
+    dressIslePath();
 
     overworldGroup.add(new THREE.AmbientLight(0xfff4e4, 0.36));
     const sun = new THREE.DirectionalLight(0xfff6e0, 1.18);
@@ -6199,6 +6200,108 @@
       arms.push(arm);
     });
     g.userData.arms = arms;
+    const bootMat = new THREE.MeshPhongMaterial({
+      color: vesper ? 0x140c0c : lira ? 0x3a2a22 : nima ? 0x2e3a28 : torren ? 0x241c18 : concord ? 0x1c2228 : 0x2a241c,
+      shininess: 28,
+      specular: new THREE.Color(vesper ? 0x4a2820 : 0x8a7060),
+    });
+    legs.forEach((leg) => {
+      const boot = new THREE.Mesh(
+        new THREE.BoxGeometry(0.13 * scale, 0.09 * scale, 0.18 * scale),
+        bootMat
+      );
+      boot.position.set(leg.position.x, 0.045 * scale, 0.03 * scale);
+      boot.castShadow = true;
+      g.add(boot);
+      const sole = new THREE.Mesh(
+        new THREE.BoxGeometry(0.14 * scale, 0.025 * scale, 0.2 * scale),
+        leather
+      );
+      sole.position.set(leg.position.x, 0.012 * scale, 0.04 * scale);
+      g.add(sole);
+    });
+    arms.forEach((arm) => {
+      const cuff = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.052 * scale, 0.058 * scale, 0.07 * scale, 6),
+        leather
+      );
+      cuff.position.set(0, -0.3 * scale, 0);
+      arm.add(cuff);
+      const hand = new THREE.Mesh(new THREE.SphereGeometry(0.048 * scale, 6, 5), skin);
+      hand.position.set(0, -0.36 * scale, 0.02 * scale);
+      hand.castShadow = true;
+      arm.add(hand);
+    });
+    const seam = new THREE.Mesh(
+      new THREE.BoxGeometry(0.028 * scale, 0.46 * scale, 0.02 * scale),
+      foldMat
+    );
+    seam.position.set(0.16 * scale, 0.64 * scale, 0.3 * scale);
+    g.add(seam);
+    if (lira) {
+      const blade = new THREE.Mesh(
+        new THREE.BoxGeometry(0.035 * scale, 0.46 * scale, 0.012 * scale),
+        metal
+      );
+      blade.position.set(-0.24 * scale, 0.5 * scale, 0.1 * scale);
+      blade.rotation.z = -0.35;
+      blade.castShadow = true;
+      g.add(blade);
+      const guard = new THREE.Mesh(
+        new THREE.BoxGeometry(0.12 * scale, 0.02 * scale, 0.04 * scale),
+        metal
+      );
+      guard.position.set(-0.2 * scale, 0.34 * scale, 0.12 * scale);
+      guard.rotation.z = -0.35;
+      g.add(guard);
+    }
+    if (nima) {
+      const rodMat = new THREE.MeshPhongMaterial({
+        color: 0x6a8a48, shininess: 16, specular: new THREE.Color(0xd4e8b0),
+      });
+      const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.018 * scale, 0.022 * scale, 0.62 * scale, 6), rodMat);
+      rod.position.set(0.26 * scale, 0.52 * scale, 0.08 * scale);
+      rod.rotation.z = 0.22;
+      rod.castShadow = true;
+      g.add(rod);
+      const tip = new THREE.Mesh(
+        new THREE.SphereGeometry(0.04 * scale, 6, 5),
+        new THREE.MeshPhongMaterial({
+          color: 0xc6e070, emissive: new THREE.Color(0x3a5010), shininess: 20, specular: new THREE.Color(0xf4f8d0),
+        })
+      );
+      tip.position.set(0.32 * scale, 0.82 * scale, 0.08 * scale);
+      g.add(tip);
+    }
+    if (torren) {
+      const cudgel = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.04 * scale, 0.045 * scale, 0.38 * scale, 6),
+        new THREE.MeshPhongMaterial({ color: 0x4a3428, shininess: 12, specular: new THREE.Color(0xc4a080) })
+      );
+      cudgel.position.set(0.26 * scale, 0.46 * scale, 0.1 * scale);
+      cudgel.rotation.z = 0.4;
+      cudgel.castShadow = true;
+      g.add(cudgel);
+      const band = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.048 * scale, 0.048 * scale, 0.04 * scale, 6),
+        metal
+      );
+      band.position.set(0.3 * scale, 0.58 * scale, 0.1 * scale);
+      band.rotation.z = 0.4;
+      g.add(band);
+    }
+    if (vesper) {
+      const shard = new THREE.Mesh(
+        new THREE.BoxGeometry(0.04 * scale, 0.34 * scale, 0.02 * scale),
+        new THREE.MeshPhongMaterial({
+          color: 0x2a1218, emissive: new THREE.Color(0x4a1810), shininess: 36, specular: new THREE.Color(0xc45a28),
+        })
+      );
+      shard.position.set(-0.22 * scale, 0.62 * scale, 0.14 * scale);
+      shard.rotation.z = 0.5;
+      shard.castShadow = true;
+      g.add(shard);
+    }
     g.userData.cloth = clothMat;
     return g;
   }
@@ -6507,6 +6610,45 @@
       grain.add(line);
     });
     g.add(grain);
+  }
+
+  function dressIslePath() {
+    const stoneMats = [
+      new THREE.MeshPhongMaterial({ color: 0x6e675c, shininess: 22, specular: new THREE.Color(0xc8c0b0) }),
+      new THREE.MeshPhongMaterial({ color: 0x5a534c, shininess: 14, specular: new THREE.Color(0x8a8478) }),
+      new THREE.MeshPhongMaterial({ color: 0x7a7268, shininess: 30, specular: new THREE.Color(0xe4dcc8) }),
+    ];
+    [[-8.55, -7.55, 0.2], [-7.85, -7.7, -0.15], [-8.2, -7.95, 0.05], [-7.55, -8.15, 0.28], [-8.7, -8.05, -0.22]].forEach((spot, i) => {
+      const slab = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.07, 0.4), stoneMats[i % 3]);
+      slab.position.set(spot[0], 0.045, spot[1]);
+      slab.rotation.y = spot[2];
+      slab.castShadow = true;
+      slab.receiveShadow = true;
+      overworldGroup.add(slab);
+      const grit = new THREE.Mesh(
+        new THREE.BoxGeometry(0.16, 0.02, 0.08),
+        new THREE.MeshBasicMaterial({ color: 0xc8b49a, fog: false })
+      );
+      grit.position.set(spot[0] + 0.12, 0.09, spot[1] + 0.06);
+      overworldGroup.add(grit);
+    });
+    const bladeMat = new THREE.MeshPhongMaterial({
+      color: 0x3f7a34, shininess: 10, specular: new THREE.Color(0xc6e070), side: THREE.DoubleSide,
+    });
+    const dryMat = new THREE.MeshPhongMaterial({
+      color: 0x6a8a3a, shininess: 6, specular: new THREE.Color(0xe4f0a0), side: THREE.DoubleSide,
+    });
+    [[-9.15, -7.85], [-6.85, -7.65], [-9.35, -8.35], [-6.65, -8.25], [-7.15, -8.55]].forEach((spot, i) => {
+      for (let b = 0; b < 3; b++) {
+        const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.07, 0.32 + (b % 2) * 0.08), i % 2 ? dryMat : bladeMat);
+        blade.position.set(spot[0] + (b - 1) * 0.07, 0.16, spot[1] + b * 0.03);
+        blade.rotation.y = b * 0.4;
+        overworldGroup.add(blade);
+      }
+    });
+    const pathLamp = new THREE.PointLight(0xc5d6ee, 0.42, 5.5);
+    pathLamp.position.set(-8.1, 1.35, -7.7);
+    overworldGroup.add(pathLamp);
   }
 
   function dressPathAir() {

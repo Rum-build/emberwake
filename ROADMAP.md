@@ -672,6 +672,13 @@ Playable on the Verdant Isle field:
 - Places still names the village path. It does not say what the ending will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Party kit, and the path stones (this branch)
+
+- Lira, Nima, Torren, and Vesper’s silhouette keep hands, leather cuffs, and boots. Lira wears a hip blade, Nima a green rod, Torren a cudgel, and Vesper a dark shard. The walk stays the same.
+- The village approach keeps dusk flagstones, grit, and grass tufts, with a small cool lamp. They sit off the door, the quiet stand, and the path look.
+- Places still names the village path. It does not say what the ending will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
