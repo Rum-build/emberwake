@@ -6480,6 +6480,7 @@
     dressRoostNight(g);
     dressRoostGround(g);
     dressRoostPerch(g);
+    dressRoostPad(g);
     dressCoastMist(g);
     dressCoastShore(g);
     dressHarborWire(g);
@@ -7299,6 +7300,88 @@
     shade.position.set(0, -0.24, 0.22);
     perch.add(shade);
     g.add(perch);
+  }
+
+  function dressRoostPad(g) {
+    const pad = new THREE.Group();
+    pad.position.set(0, 0, 9);
+    const dirt = new THREE.MeshPhongMaterial({
+      color: 0x6a4e34, shininess: 8, specular: new THREE.Color(0xc4a070),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0xc8a56a, shininess: 14, specular: new THREE.Color(0xffe6b8),
+    });
+    const ashMat = new THREE.MeshBasicMaterial({
+      color: 0x1a140e, transparent: true, opacity: 0.62, depthWrite: false, fog: false,
+    });
+    const feather = new THREE.MeshPhongMaterial({
+      color: 0xf4f0e6, shininess: 10, specular: new THREE.Color(0xffffff), side: THREE.DoubleSide,
+    });
+    const featherDark = new THREE.MeshPhongMaterial({
+      color: 0x6a6560, shininess: 6, specular: new THREE.Color(0xd0ccc4), side: THREE.DoubleSide,
+    });
+    const weed = new THREE.MeshPhongMaterial({
+      color: 0x4a6a32, shininess: 6, specular: new THREE.Color(0xc6e070), side: THREE.DoubleSide,
+    });
+    const cap = new THREE.Mesh(new THREE.CircleGeometry(0.58, 12), dirt);
+    cap.rotation.x = -Math.PI / 2;
+    cap.position.y = 0.4;
+    pad.add(cap);
+    [[-0.28, 0.08, 0.42], [0.06, -0.16, 0.5], [0.22, 0.18, 0.36]].forEach((spot) => {
+      const line = new THREE.Mesh(new THREE.BoxGeometry(spot[2], 0.012, 0.035), grain);
+      line.position.set(spot[0], 0.41, spot[1]);
+      line.rotation.y = spot[0];
+      pad.add(line);
+    });
+    const capAsh = new THREE.Mesh(new THREE.CircleGeometry(0.32, 10), ashMat);
+    capAsh.rotation.x = -Math.PI / 2;
+    capAsh.scale.set(1.2, 0.7, 1);
+    capAsh.position.set(0.06, 0.415, -0.04);
+    pad.add(capAsh);
+    [[-0.22, 0.2, 0.4, feather], [0.18, -0.14, -0.6, featherDark], [0.02, 0.22, 0.2, feather], [-0.12, -0.2, 1.1, featherDark]].forEach((spot) => {
+      const bit = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.05), spot[3]);
+      bit.rotation.x = -Math.PI / 2;
+      bit.rotation.z = spot[2];
+      bit.position.set(spot[0], 0.42, spot[1]);
+      pad.add(bit);
+    });
+    [[1.15, 0.15], [-1.05, -0.2], [0.2, 1.2], [-0.35, -1.15], [1.25, -0.85]].forEach((spot, i) => {
+      const plate = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.04, 0.4), dirt);
+      plate.position.set(spot[0], 0.05, spot[1]);
+      plate.rotation.y = i * 0.4;
+      plate.receiveShadow = true;
+      pad.add(plate);
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.012, 0.03), grain);
+      line.position.set(spot[0], 0.075, spot[1]);
+      line.rotation.y = i * 0.4;
+      pad.add(line);
+    });
+    [[0.95, 0.35, 0.42], [-0.85, 0.15, 0.36], [0.15, -1.05, 0.48]].forEach((spot) => {
+      const wash = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 10), ashMat);
+      wash.rotation.x = -Math.PI / 2;
+      wash.position.set(spot[0], 0.06, spot[1]);
+      pad.add(wash);
+    });
+    [[1.05, 0.55, feather], [-1.15, 0.25, featherDark], [0.45, 1.15, feather], [-0.55, -1.05, featherDark], [1.2, -0.7, feather]].forEach((spot, i) => {
+      const bit = new THREE.Mesh(new THREE.PlaneGeometry(i % 2 ? 0.18 : 0.12, 0.045), spot[2]);
+      bit.rotation.x = -Math.PI / 2;
+      bit.rotation.z = i * 0.7;
+      bit.position.set(spot[0], 0.08, spot[1]);
+      pad.add(bit);
+    });
+    [[0.48, 0.32], [-0.42, -0.28], [1.35, 0.05], [-1.2, 0.55], [0.15, -1.25]].forEach((spot, i) => {
+      const clump = new THREE.Group();
+      for (let b = 0; b < 3; b++) {
+        const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.04, 0.14 + (b % 2) * 0.04), weed);
+        blade.position.set((b - 1) * 0.03, 0.08, 0);
+        blade.rotation.y = b * 0.8;
+        blade.rotation.z = (b - 1) * 0.15;
+        clump.add(blade);
+      }
+      clump.position.set(spot[0], i < 2 ? 0.4 : 0.05, spot[1]);
+      pad.add(clump);
+    });
+    g.add(pad);
   }
 
   function dressHarborPier(g) {
