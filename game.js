@@ -990,6 +990,7 @@
       flame.position.set(x, 2.0, 0.9);
       dungeon.add(flame);
     });
+    dressCellarMouth(dungeon);
     overworldGroup.add(dungeon);
 
     POOL_DEFS.forEach((def) => makePool(def));
@@ -1261,8 +1262,65 @@
       bar.position.set(0.15, 0.16, -19.7 + dz);
       g.add(bar);
     });
+    dressCellarCrawl(g);
     dressKilnHeat(g);
     return g;
+  }
+
+  function dressCellarMouth(g) {
+    const ash = new THREE.MeshBasicMaterial({ color: 0xd4c8b4, fog: false });
+    const lintel = new THREE.Mesh(new THREE.BoxGeometry(3.15, 0.18, 0.16), ash);
+    lintel.position.set(0, 2.42, 0.98);
+    g.add(lintel);
+    const grit = new THREE.MeshBasicMaterial({ color: 0xff5a18, fog: false });
+    [[-1.2, 2.22, 1.1], [0.05, 2.18, 1.12], [1.18, 2.22, 1.1]].forEach((spot, i) => {
+      const ember = new THREE.Mesh(new THREE.SphereGeometry(i === 1 ? 0.08 : 0.06, 6, 4), grit);
+      ember.position.set(spot[0], spot[1], spot[2]);
+      g.add(ember);
+    });
+    const pole = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.04, 0.05, 0.72, 5),
+      new THREE.MeshLambertMaterial({ color: 0x3a3028 })
+    );
+    pole.position.set(2.05, 1.22, 1.22);
+    g.add(pole);
+    const lamp = new THREE.Mesh(
+      new THREE.BoxGeometry(0.24, 0.16, 0.14),
+      new THREE.MeshBasicMaterial({ color: 0xd5e4f2, fog: false })
+    );
+    lamp.position.set(2.05, 1.66, 1.22);
+    g.add(lamp);
+    const light = new THREE.PointLight(0xc5d6ee, 0.75, 4.4);
+    light.position.set(2.05, 1.78, 1.4);
+    g.add(light);
+  }
+
+  function dressCellarCrawl(g) {
+    const ash = new THREE.MeshBasicMaterial({ color: 0xd4c8b4, fog: false });
+    const lintel = new THREE.Mesh(new THREE.BoxGeometry(2.05, 0.14, 0.12), ash);
+    lintel.position.set(0, 2.02, -10.15);
+    g.add(lintel);
+    const dust = new THREE.MeshBasicMaterial({ color: 0xc5d6ee, fog: false });
+    [[-0.42, 1.48, -10.02], [0.36, 1.66, -10.18], [0.02, 1.22, -9.92]].forEach((spot, i) => {
+      const mote = new THREE.Mesh(new THREE.SphereGeometry(i === 1 ? 0.07 : 0.05, 6, 4), dust);
+      mote.position.set(spot[0], spot[1], spot[2]);
+      g.add(mote);
+    });
+    const wax = new THREE.MeshBasicMaterial({ color: 0xe8dcc0, fog: false });
+    [[-1.8, -12.2], [1.7, -14.1], [-1.3, -15.6], [2.1, -12.8]].forEach((spot) => {
+      const seal = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.15, 0.07, 6), wax);
+      seal.position.set(spot[0], 0.78, spot[1]);
+      g.add(seal);
+    });
+    const lamp = new THREE.Mesh(
+      new THREE.BoxGeometry(0.2, 0.14, 0.12),
+      new THREE.MeshBasicMaterial({ color: 0xd5e4f2, fog: false })
+    );
+    lamp.position.set(-2.55, 1.52, -11.35);
+    g.add(lamp);
+    const light = new THREE.PointLight(0xc5d6ee, 0.6, 4.6);
+    light.position.set(-2.55, 1.68, -11.15);
+    g.add(light);
   }
 
   function dressKilnHeat(g) {
@@ -13442,7 +13500,10 @@
         rows.push({ name: 'Cousin\'s letter', note: 'In the basket. It is not the road.' });
       }
     }
-    if (seenBeats.cellar || seenBeats.kiln) rows.push({ name: 'Root-cellar', note: 'The kiln under the arch.' });
+    if (seenBeats.cellar || seenBeats.kiln) {
+      rows.push({ name: 'Root-cellar', note: 'The kiln under the arch.' });
+      rows.push({ name: 'Cellar mouth', note: 'East of the wake. The arch is the step in. It is not the village.' });
+    }
     if (seenBeats.scar || scarVerdict) {
       rows.push({
         name: 'Vesper’s Scar',
