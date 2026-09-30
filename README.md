@@ -161,6 +161,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - Inside the Concord yard’s south gate, worn cobbles, chalk grit, and weeds in the joints sit under a gate shadow and a soft dusk wash. The gate, the cork look, and the seal stake stay readable. No new cue.
 - On the harbor pier, warped planks, salt crystals, wet puddles, and a rope-worn edge sit under a cooler lamp wash. The salt markers and the pier lamp stay readable. No new cue.
 - At the messenger roost, perch grit, a worn rope on the walk, night haze on the boards, and feather grit sit under a cooler lamp rim. The hanging rope and the wing look stay readable. No new cue.
+- South of the waystone, layered flagstones, lichen grit, and moss in the joints sit under a soft dusk wash. The ring and the south-stone look stay readable. No new cue.
 
 ## Play on your phone
 
