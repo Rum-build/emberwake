@@ -1525,8 +1525,53 @@
     hallShade.rotation.x = -Math.PI / 2;
     hallShade.position.set(-2.15, 0.045, -12.15);
     g.add(hallShade);
+    dressHallMonopoly(g);
     g.visible = false;
     return g;
+  }
+
+  function dressHallMonopoly(g) {
+    const rack = new THREE.Group();
+    rack.position.set(2.35, 0, -11.55);
+    const board = new THREE.Mesh(
+      new THREE.BoxGeometry(2.05, 1.28, 0.1),
+      new THREE.MeshLambertMaterial({ color: 0x241c16 })
+    );
+    board.position.set(0, 1.16, -0.02);
+    rack.add(board);
+    const corkMat = new THREE.MeshLambertMaterial({ color: 0xd7b56a, emissive: new THREE.Color(0x4a3410) });
+    const neckMat = new THREE.MeshLambertMaterial({ color: 0x15202c });
+    for (let i = 0; i < 8; i++) {
+      const x = -0.72 + (i % 4) * 0.48;
+      const y = i < 4 ? 0.9 : 1.42;
+      const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.08, 0.16, 6), neckMat);
+      neck.rotation.x = Math.PI / 2;
+      neck.position.set(x, y, 0.12);
+      rack.add(neck);
+      const cork = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.14, 6), corkMat);
+      cork.rotation.x = Math.PI / 2;
+      cork.position.set(x, y, 0.24);
+      rack.add(cork);
+    }
+    const dustMat = new THREE.MeshBasicMaterial({
+      color: 0xc5d0dc, transparent: true, opacity: 0.72, depthWrite: false, fog: false, side: THREE.DoubleSide,
+    });
+    [[-0.55, 0.42, 0.28], [0.08, 0.5, 0.22], [0.68, 0.38, 0.18]].forEach((spot) => {
+      const dust = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 8), dustMat);
+      dust.rotation.x = -Math.PI / 2;
+      dust.position.set(spot[0], 0.06, spot[1]);
+      rack.add(dust);
+    });
+    const lamp = new THREE.Mesh(
+      new THREE.BoxGeometry(0.22, 0.28, 0.22),
+      new THREE.MeshBasicMaterial({ color: 0xd5e4f2, fog: false })
+    );
+    lamp.position.set(0.78, 1.82, 0.04);
+    rack.add(lamp);
+    const cool = new THREE.PointLight(0xc5d6ee, 0.72, 4.8);
+    cool.position.set(0.55, 1.58, 0.32);
+    rack.add(cool);
+    g.add(rack);
   }
 
   function buildPipe() {
@@ -12947,7 +12992,7 @@
         name: 'Harbor vault',
         note: !seenBeats['bottle-hall']
           ? 'North, the hall of corks. That is the bottled monopoly.'
-          : 'The count and the bottle-hall.',
+          : 'The bottled hall is north of the count. The corks stayed.',
       });
     }
     if (seenBeats.marrowStep) rows.push({ name: 'Ashen Marrow', note: 'The digest-engine and the ash shelf.' });
@@ -13482,10 +13527,11 @@
     const data = readSave();
     if (btn) {
       btn.classList.toggle('hidden', !data);
+      btn.classList.toggle('is-saved', !!data);
       btn.textContent = data ? ('Continue — ' + savePlaceName(data)) : 'Continue';
     }
     if (note) {
-      note.textContent = data ? saveBlurb(data) : '';
+      note.textContent = data ? ('Saved here. ' + saveBlurb(data)) : '';
       note.classList.toggle('hidden', !data);
     }
     const wake = $('#btn-start');

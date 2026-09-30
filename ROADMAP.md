@@ -453,6 +453,13 @@ Playable on the Verdant Isle field:
 - On a phone, Lira’s ribbon chip and the strike names Warrior, Mage, or Ranged one notch clearer. Assist chips stay.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Bottle-hall, and the save (this branch)
+
+- The bottle-hall keeps a cork row, seal dust, and a cooler lamp off the aisle, the earth jar, and the inland bottle. The hall of corks and the scrap stay as they were.
+- Continue on the title glows when a save is there, and the note says it was saved here. The button still names the place.
+- After the hall is walked, Places names the bottled hall north of the count. It does not repeat the cork quest.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
