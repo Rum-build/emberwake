@@ -877,6 +877,10 @@ Lira’s pack now carries canvas weave, strap buckles, and worn seams, and it si
 
 The aftermath south steps now carry worn stone grain, edge chips, moss in the joints, and a soft ash wash. The step back stays where it was. Vesper stays out of the company. The pack, the bed, and the equipped gear stay readable. No new cue.
 
+## Shipped in the Continue glow pass
+
+- A saved Continue keeps the ember rim (`#ffe1a8` and `rgba(255, 176, 80, …)`) and pulses only while motion is on. Still motion leaves the rim steady. Save, Continue, and the eight cues stay as they are.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
