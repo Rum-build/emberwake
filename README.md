@@ -210,6 +210,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The vault threshold under the iron door keeps worn grain, an iron grit stain, moss in the seam, and shallow chips. The door and the count stay readable. No new cue.
 
 - The timber under the counting-room clerk desk keeps plank grain, nail heads, scuff wear near the stool, and a faint ink stain. The desk and the clerk stay readable. No new cue.
+- The cellar door threshold under the mouth keeps damp stone grain, grit in the joints, edge chips, and a dark moisture wash. The door and the cellar stay readable. No new cue.
 
 ## Play on your phone
 

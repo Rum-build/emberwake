@@ -937,6 +937,10 @@ The stone under the harbor vault’s iron door now carries worn threshold grain,
 
 The timber under the counting-room clerk desk now carries plank grain, nail heads, scuff wear near the stool, and a faint ink stain. The desk, the clerk, and the clerk beat stay where they were. No new cue.
 
+## Shipped in the cellar threshold pass
+
+The stone and timber under the root-cellar mouth now carry damp stone grain, grit in the joints, edge chips, and a dark moisture wash. The cellar door, the quiet stand, and the cellar beat stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
