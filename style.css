@@ -1767,13 +1767,17 @@ body.pack-open .places-panel {
   }
   #btn-inv-close {
     width: 100%;
-    min-height: 54px;
-    font-size: 1.08rem;
+    min-height: 56px;
+    justify-content: center;
+    text-align: center;
+    font-size: 1.15rem;
     font-weight: 700;
-    letter-spacing: 0.04em;
-    background: linear-gradient(180deg, #3a2a18, #1c140e);
-    border-color: #ffb067;
-    color: #ffe6c4;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: #e8a15a;
+    border: 2px solid #ffe7c2;
+    color: #1a100c;
+    box-shadow: none;
   }
   .inv-card, .equip-card { border-radius: 10px; padding: 12px 12px 12px 14px; }
   .inv-card {
@@ -1789,7 +1793,10 @@ body.pack-open .places-panel {
     align-items: center;
     padding: 4px 10px;
     font-size: 0.82rem;
-    background: rgba(40, 28, 16, 0.92);
+    font-weight: 700;
+    color: #1a100c;
+    background: #e8a15a;
+    border-color: #ffe7c2;
   }
 
   .combat-bottom {

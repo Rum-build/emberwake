@@ -4408,24 +4408,25 @@
   function dressRoostRim(g) {
     const rig = new THREE.Group();
     rig.position.set(2.95, 0, 7.45);
-    const rope = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.04, 0.04, 1.1, 6),
-      new THREE.MeshLambertMaterial({ color: 0xd2b07a })
-    );
+    const ropeMat = new THREE.MeshLambertMaterial({ color: 0xd2b07a });
+    const rope = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 1.1, 6), ropeMat);
     rope.rotation.z = Math.PI / 2;
     rope.position.y = 1.42;
     rig.add(rope);
+    const drop = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.62, 5), ropeMat);
+    drop.position.set(0.62, 1.12, 0.12);
+    rig.add(drop);
     const post = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.045, 0.06, 1.65, 5),
+      new THREE.CylinderGeometry(0.05, 0.07, 1.7, 5),
       new THREE.MeshLambertMaterial({ color: 0x2e2a28 })
     );
-    post.position.set(0.62, 0.82, 0.12);
+    post.position.set(0.62, 0.85, 0.12);
     rig.add(post);
     const lamp = new THREE.Mesh(
-      new THREE.BoxGeometry(0.24, 0.28, 0.24),
+      new THREE.BoxGeometry(0.36, 0.4, 0.36),
       new THREE.MeshBasicMaterial({ color: 0xffd08a, fog: false })
     );
-    lamp.position.set(0.62, 1.72, 0.12);
+    lamp.position.set(0.62, 1.78, 0.12);
     rig.add(lamp);
     const glow = new THREE.PointLight(0xffc878, 0.45, 3.4);
     glow.position.set(0.62, 1.62, 0.12);
@@ -4715,9 +4716,9 @@
     cleanRing.visible = false;
     g.add(cleanRing);
     const readyMat = new THREE.MeshBasicMaterial({
-      color: elColor.clone(), transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false, fog: false,
+      color: 0xfff1c8, transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false, fog: false,
     });
-    const readyRing = new THREE.Mesh(new THREE.RingGeometry(3.85, 4.22, 32), readyMat);
+    const readyRing = new THREE.Mesh(new THREE.RingGeometry(3.58, 4.45, 40), readyMat);
     readyRing.rotation.x = -Math.PI / 2;
     readyRing.position.y = 0.2;
     readyRing.visible = false;
@@ -4937,7 +4938,7 @@
         if (show) {
           const pulse = motionWanted ? 1 + Math.sin(t * 3.4) * 0.035 : 1;
           pool.readyRing.scale.setScalar(pulse);
-          pool.readyMat.opacity = 0.88;
+          pool.readyMat.opacity = 0.94;
         }
       }
       if (pool.embers) {
