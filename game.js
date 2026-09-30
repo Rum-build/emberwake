@@ -7250,34 +7250,99 @@
       g.add(pin);
     }
     const ember = new THREE.Group();
-    ember.position.set(0.1 * scale, 0.78 * scale, 0.22 * scale);
+    ember.position.set(0.12 * scale, 0.8 * scale, 0.46 * scale);
     ember.visible = false;
-    const emberCore = new THREE.Mesh(
-      new THREE.SphereGeometry(0.075 * scale, 6, 5),
-      new THREE.MeshBasicMaterial({ color: 0xff8a3a, fog: false })
+    ember.renderOrder = 3;
+    const emberHeart = new THREE.Mesh(
+      new THREE.SphereGeometry(0.034 * scale, 8, 6),
+      new THREE.MeshBasicMaterial({ color: 0xfff6e4, fog: false })
     );
+    ember.add(emberHeart);
+    const emberCore = new THREE.Mesh(
+      new THREE.SphereGeometry(0.058 * scale, 8, 6),
+      new THREE.MeshPhongMaterial({
+        color: 0xff6420,
+        emissive: new THREE.Color(0xff4a10),
+        shininess: 36,
+        specular: new THREE.Color(0xffe0b0),
+        fog: false,
+      })
+    );
+    emberCore.scale.set(1.08, 0.82, 0.92);
     ember.add(emberCore);
-    const emberGlow = new THREE.Mesh(
-      new THREE.SphereGeometry(0.16 * scale, 8, 6),
+    const emberShell = new THREE.Mesh(
+      new THREE.SphereGeometry(0.086 * scale, 8, 6),
       new THREE.MeshBasicMaterial({
-        color: 0xffb060, transparent: true, opacity: 0.35, depthWrite: false, fog: false,
+        color: 0xff3c14, transparent: true, opacity: 0.4, depthWrite: false, fog: false,
+      })
+    );
+    emberShell.scale.set(1.18, 0.74, 1.02);
+    ember.add(emberShell);
+    const emberGlow = new THREE.Mesh(
+      new THREE.SphereGeometry(0.17 * scale, 10, 8),
+      new THREE.MeshBasicMaterial({
+        color: 0xffb060, transparent: true, opacity: 0.2, depthWrite: false, fog: false,
       })
     );
     ember.add(emberGlow);
+    const emberHaze = new THREE.Mesh(
+      new THREE.SphereGeometry(0.28 * scale, 10, 8),
+      new THREE.MeshBasicMaterial({
+        color: 0xffc898, transparent: true, opacity: 0.08, depthWrite: false, fog: false,
+      })
+    );
+    emberHaze.scale.set(1.2, 0.7, 1.04);
+    ember.add(emberHaze);
+    const emberRim = new THREE.Mesh(
+      new THREE.TorusGeometry(0.1 * scale, 0.007 * scale, 6, 16),
+      new THREE.MeshBasicMaterial({
+        color: 0xffe6c0, transparent: true, opacity: 0.5, depthWrite: false, fog: false,
+        blending: THREE.AdditiveBlending,
+      })
+    );
+    emberRim.rotation.x = 0.95;
+    emberRim.rotation.z = 0.4;
+    ember.add(emberRim);
+    const emberShimmer = new THREE.Mesh(
+      new THREE.TorusGeometry(0.15 * scale, 0.0035 * scale, 4, 18),
+      new THREE.MeshBasicMaterial({
+        color: 0xffd0a0, transparent: true, opacity: 0.26, depthWrite: false, fog: false,
+        blending: THREE.AdditiveBlending,
+      })
+    );
+    emberShimmer.rotation.y = 0.55;
+    emberShimmer.rotation.x = 1.15;
+    ember.add(emberShimmer);
+    ember.add(new THREE.PointLight(0xff7a30, 0.32, 1.05, 2));
     const emberMotes = [];
-    for (let i = 0; i < 3; i++) {
+    [
+      [0.05, 0.05, 0.03, 0.016],
+      [-0.055, 0.02, 0.04, 0.012],
+      [0.02, -0.045, 0.05, 0.015],
+      [-0.03, 0.07, -0.01, 0.01],
+      [0.07, 0.01, -0.03, 0.013],
+      [-0.06, -0.02, 0.02, 0.011],
+      [0.01, 0.09, 0.02, 0.009],
+      [0.035, -0.07, -0.02, 0.012],
+    ].forEach((spot) => {
       const mote = new THREE.Mesh(
-        new THREE.SphereGeometry(0.028 * scale, 5, 4),
+        new THREE.SphereGeometry(spot[3] * scale, 5, 4),
         new THREE.MeshBasicMaterial({
-          color: 0xffd090, transparent: true, opacity: 0.85, depthWrite: false, fog: false,
+          color: spot[3] > 0.013 ? 0xffe2ae : 0xffb060,
+          transparent: true, opacity: 0.82, depthWrite: false, fog: false,
         })
       );
+      mote.position.set(spot[0] * scale, spot[1] * scale, spot[2] * scale);
+      mote.userData.home = [spot[0] * scale, spot[1] * scale, spot[2] * scale];
       ember.add(mote);
       emberMotes.push(mote);
-    }
+    });
     g.add(ember);
     g.userData.ember = ember;
     g.userData.emberGlow = emberGlow;
+    g.userData.emberHaze = emberHaze;
+    g.userData.emberRim = emberRim;
+    g.userData.emberShimmer = emberShimmer;
     g.userData.emberMotes = emberMotes;
     const nose = new THREE.Mesh(
       new THREE.BoxGeometry(0.06 * scale, 0.06 * scale, 0.08 * scale),
@@ -9843,18 +9908,30 @@
       if (!ember || !ember.visible) return;
       ember.scale.setScalar(scale);
       const glow = mesh.userData.emberGlow;
-      if (glow && glow.material) glow.material.opacity = still ? 0.28 : (0.22 + Math.sin(t * 3.2) * 0.12);
+      if (glow && glow.material) glow.material.opacity = still ? 0.2 : (0.14 + Math.sin(t * 3.2) * 0.07);
+      const haze = mesh.userData.emberHaze;
+      if (haze && haze.material) haze.material.opacity = still ? 0.08 : (0.05 + Math.sin(t * 2.1) * 0.03);
+      const rim = mesh.userData.emberRim;
+      if (rim && rim.material) rim.material.opacity = still ? 0.5 : (0.36 + Math.sin(t * 4.1) * 0.12);
+      const shimmer = mesh.userData.emberShimmer;
+      if (shimmer && shimmer.material) shimmer.material.opacity = still ? 0.26 : (0.16 + Math.sin(t * 5.4) * 0.1);
+      if (!still && !skipOrbit) {
+        if (rim) rim.rotation.z += 0.01;
+        if (shimmer) shimmer.rotation.y += 0.018;
+      }
       const motes = mesh.userData.emberMotes;
       if (!motes) return;
       motes.forEach((mote, i) => {
         if (still) {
-          mote.position.set(0.08, 0.04 + i * 0.03, 0);
+          const home = mote.userData.home;
+          if (home) mote.position.set(home[0], home[1], home[2]);
+          else mote.position.set(0.08, 0.04 + i * 0.03, 0);
           return;
         }
         if (skipOrbit) return;
-        const a = t * 1.6 + i * 2.1;
-        const r = 0.14 + i * 0.03;
-        mote.position.set(Math.cos(a) * r, 0.04 + Math.sin(a * 1.3) * 0.08, Math.sin(a) * r);
+        const a = t * (1.25 + (i % 3) * 0.22) + i * 1.65;
+        const r = 0.09 + (i % 4) * 0.03;
+        mote.position.set(Math.cos(a) * r, 0.02 + Math.sin(a * 1.3 + i) * 0.06, Math.sin(a) * r * 0.7);
       });
     });
   }
