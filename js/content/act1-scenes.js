@@ -172,6 +172,23 @@
     return true;
   });
 
+  Emberwake.registerScene('path-dusk', function () {
+    var torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    Emberwake.present({
+      lines: [
+        { where: 'Village path', speaker: 'Lira', text: 'Dusk on the path. Concord licensed the wreath and left the door half shut.' },
+        torren
+          ? { speaker: 'Torren', text: 'I stamped paths like this. The stamp held the licence. It did not hold the argument.' }
+          : { speaker: 'The spark', text: 'They stamped the path. The licence held. The argument did not.' },
+        { speaker: 'The spark', text: 'Vesper farms the rot past this door. She does not take the host. The path stays.' },
+      ],
+      onDone: function () {
+        if (Emberwake.notePath) Emberwake.notePath();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('cellar-threshold', function () {
     Emberwake.present({
       lines: [

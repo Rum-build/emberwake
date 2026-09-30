@@ -193,6 +193,7 @@
   let nearWing = null;
   let nearTick = null;
   let nearGrit = null;
+  let nearDusk = null;
   let nearRing = null;
   let nearClerk = null;
   let nearRation = null;
@@ -4406,6 +4407,21 @@
     };
   }
 
+  function nearestDusk() {
+    if (!playerMesh || locale !== 'field' || regionId !== 'verdant-isle' || skyPass) return null;
+    if (Math.hypot(-8.15 - playerMesh.position.x, -6.4 - playerMesh.position.z) > 0.55) return null;
+    if (seenBeats['path-dusk']) {
+      return {
+        title: 'Path dusk',
+        hint: 'Already heard. The door stays half shut. Press E to hear it again.',
+      };
+    }
+    return {
+      title: 'Path dusk',
+      hint: 'Press E. Concord licensed the wreath. It is not the door and not the letter.',
+    };
+  }
+
   function nearestRing() {
     if (!playerMesh || locale !== 'field' || regionId !== 'verdant-isle' || skyPass) return null;
     if (Math.hypot(9.2 - playerMesh.position.x, -12.4 - playerMesh.position.z) > 1.1) return null;
@@ -8236,7 +8252,8 @@
     const showWing = idle && nearWing && !showAbsorb && !showDoor && !showGate && !showReturn && !showPier;
     const showTick = idle && nearTick && !showAbsorb && !showDoor && !showGate && !showReturn && !showPier && !showWing && !showPorter && !showNotice && !showClerk;
     const showGrit = idle && nearGrit && !showAbsorb && !showDoor && !showGate;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showScrap && !showCompany && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showSpare && !showJournal && !showNotice && !showCord && !showPost && !showPier && !showFarm && !showCork && !showDust && !showLamp && !showMouth && !showRow && !showWing && !showTick && !showGrit && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol);
+    const showDusk = idle && nearDusk && !showAbsorb && !showDoor && !showGate;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showScrap && !showCompany && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showSpare && !showJournal && !showNotice && !showCord && !showPost && !showPier && !showFarm && !showCork && !showDust && !showLamp && !showMouth && !showRow && !showWing && !showTick && !showGrit && !showDusk && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
@@ -8254,7 +8271,7 @@
     else if (showChest) absorbBtn.textContent = seenBeats['wayside-chest'] ? 'Look' : 'Open';
     else if (showSpare) absorbBtn.textContent = seenBeats['spare-green'] ? 'Look' : 'Open';
     else if (showJournal) absorbBtn.textContent = 'Look';
-    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showPier || showFarm || showCork || showDust || showLamp || showMouth || showRow || showWing || showTick || showGrit || showRing || showClerk || showRation || showAside || showNima || showPatrol) absorbBtn.textContent = 'Look';
+    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showPier || showFarm || showCork || showDust || showLamp || showMouth || showRow || showWing || showTick || showGrit || showDusk || showRing || showClerk || showRation || showAside || showNima || showPatrol) absorbBtn.textContent = 'Look';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
     absorbBtn.classList.toggle('is-ready', !!showAbsorb);
   }
@@ -8266,7 +8283,7 @@
   function updatePrompt() {
     const atExit = atInteriorExit();
     interactPrompt.classList.remove('ready');
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearScrap && !nearCompany && !nearPorter && !nearLetter && !nearChest && !nearSpare && !nearJournal && !nearNotice && !nearCord && !nearPost && !nearPier && !nearFarm && !nearCork && !nearDust && !nearLamp && !nearMouth && !nearRow && !nearWing && !nearTick && !nearGrit && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearScrap && !nearCompany && !nearPorter && !nearLetter && !nearChest && !nearSpare && !nearJournal && !nearNotice && !nearCord && !nearPost && !nearPier && !nearFarm && !nearCork && !nearDust && !nearLamp && !nearMouth && !nearRow && !nearWing && !nearTick && !nearGrit && !nearDusk && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -8475,6 +8492,11 @@
       $('#interact-detail').textContent = nearGrit.hint;
       return;
     }
+    if (nearDusk && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
+      $('#interact-title').textContent = nearDusk.title;
+      $('#interact-detail').textContent = nearDusk.hint;
+      return;
+    }
     if (nearRing && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
       $('#interact-title').textContent = nearRing.title;
       $('#interact-detail').textContent = nearRing.hint;
@@ -8604,6 +8626,7 @@
       if (seenBeats['roost-wing']) waiting.push('Night on the eagle roost. Concord left the wing in the air. Vesper does not take the thermal.');
       if (seenBeats['wire-tick']) waiting.push('A tick on the harbor wire. Concord left the post counting. Vesper does not stand there.');
       if (seenBeats['stone-grit']) waiting.push('Grit on the waystone’s south stones. Concord counted the ring. Vesper farms the rot and does not take the host.');
+      if (seenBeats['path-dusk']) waiting.push('Dusk on the village path. Concord licensed the wreath. Vesper farms the rot and does not take the host.');
       if (seenBeats['cold-ring']) waiting.push('A cold ring in the grass is not a pool and not the scar.');
       if (seenBeats['clerk-tally']) waiting.push('A tally clerk on the shale counted weather. The vault door did not change.');
       if (seenBeats['coast-brawl']) waiting.push('The west-shale patrol was provoked. They fought. The vault door did not change.');
@@ -9221,6 +9244,10 @@
     }
     if (nearGrit) {
       talkGrit();
+      return;
+    }
+    if (nearDusk) {
+      talkPath();
       return;
     }
     if (nearReturn) {
@@ -11523,6 +11550,27 @@
     saveGame();
   }
 
+  function talkPath() {
+    if (locale !== 'field' || regionId !== 'verdant-isle' || dialogueOpen) return;
+    if (seenBeats['path-dusk']) {
+      showToast('The dusk stays on the path. She does not take the host. The door stays half shut.');
+      return;
+    }
+    const fn = EW.scenes['path-dusk'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'path-dusk';
+    }
+  }
+
+  function notePath() {
+    seenBeats['path-dusk'] = true;
+    showToast('The dusk stays on the path. The door stays half shut.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
   function talkRing() {
     if (locale !== 'field' || regionId !== 'verdant-isle' || dialogueOpen) return;
     if (seenBeats['cold-ring']) {
@@ -11956,6 +12004,7 @@
       nearWing = null;
       nearTick = null;
       nearGrit = null;
+      nearDusk = null;
       nearRing = null;
       nearClerk = null;
       nearRation = null;
@@ -12078,6 +12127,7 @@
         nearWing = nearestWing();
         nearTick = nearestTick();
         nearGrit = nearestGrit();
+        nearDusk = nearestDusk();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
         nearRation = nearestRation();
@@ -12141,6 +12191,7 @@
         nearWing = nearestWing();
         nearTick = nearestTick();
         nearGrit = nearestGrit();
+        nearDusk = nearestDusk();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
         nearRation = nearestRation();
@@ -12225,6 +12276,7 @@
         nearWing = nearestWing();
         nearTick = nearestTick();
         nearGrit = nearestGrit();
+        nearDusk = nearestDusk();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
         nearRation = nearestRation();
@@ -15663,6 +15715,7 @@
   EW.noteWing = noteWing;
   EW.noteTick = noteTick;
   EW.noteGrit = noteGrit;
+  EW.notePath = notePath;
   EW.noteRing = noteRing;
   EW.noteClerk = noteClerk;
   EW.noteRation = noteRation;
