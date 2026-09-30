@@ -2175,6 +2175,7 @@
     g.add(yardDrift);
     g.add(makeYardLantern(-2.7, 1.1));
     g.add(makeSealStake(2.8, -0.2));
+    dressYardAir(g);
     yardGroup = g;
     scene.add(g);
   }
@@ -5085,8 +5086,9 @@
     cleanRing.position.y = 0.14;
     cleanRing.visible = false;
     g.add(cleanRing);
+    const denseDrink = def.id === 'kiln' || def.id === 'leaf-cup' || def.id === 'vesper';
     const readyMat = new THREE.MeshBasicMaterial({
-      color: 0xfff1c8, transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false, fog: false,
+      color: denseDrink ? 0xfff8e4 : 0xfff1c8, transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false, fog: false,
     });
     const readyRing = new THREE.Mesh(new THREE.RingGeometry(3.58, 4.45, 40), readyMat);
     readyRing.rotation.x = -Math.PI / 2;
@@ -5102,6 +5104,18 @@
       ember.visible = false;
       g.add(ember);
       embers.push(ember);
+    }
+    if (denseDrink) {
+      for (let i = 0; i < 4; i++) {
+        const spark = new THREE.Mesh(
+          new THREE.SphereGeometry(0.07, 5, 4),
+          new THREE.MeshBasicMaterial({ color: 0xff5a18, transparent: true, opacity: 0, depthWrite: false, fog: false })
+        );
+        spark.visible = false;
+        spark.userData.extraSpark = true;
+        g.add(spark);
+        embers.push(spark);
+      }
     }
 
     let figure = null;
@@ -5306,9 +5320,11 @@
         const show = poolDrinkable(pool) && pool === nearPool;
         pool.readyRing.visible = show;
         if (show) {
-          const pulse = motionWanted ? 1 + Math.sin(t * 3.4) * 0.035 : 1;
+          const dense = pool.id === 'kiln' || pool.id === 'leaf-cup' || pool.id === 'vesper';
+          const amp = dense ? 0.058 : 0.035;
+          const pulse = motionWanted ? 1 + Math.sin(t * (dense ? 4.2 : 3.4)) * amp : 1;
           pool.readyRing.scale.setScalar(pulse);
-          pool.readyMat.opacity = 0.94;
+          pool.readyMat.opacity = dense ? 1 : 0.94;
         }
       }
       if (pool.embers) {
@@ -5316,11 +5332,12 @@
           const show = burst > 0.02;
           ember.visible = show;
           if (!show) return;
+          const extra = !!ember.userData.extraSpark;
           const a = pool.phase + i * (Math.PI * 2 / pool.embers.length);
-          const rad = 0.7 + (1 - burst) * 2.6;
-          ember.position.set(Math.cos(a) * rad, 0.4 + (1 - burst) * 1.2, Math.sin(a) * rad);
-          ember.material.opacity = burst * 0.95;
-          ember.scale.setScalar(0.55 + burst * 0.8);
+          const rad = extra ? 0.95 + (1 - burst) * 3.15 : 0.7 + (1 - burst) * 2.6;
+          ember.position.set(Math.cos(a) * rad, extra ? 0.55 + (1 - burst) * 1.65 : 0.4 + (1 - burst) * 1.2, Math.sin(a) * rad);
+          ember.material.opacity = burst * (extra ? 1 : 0.95);
+          ember.scale.setScalar((extra ? 0.7 : 0.55) + burst * 0.8);
         });
       }
       if (pool.figure) {
@@ -5981,6 +5998,36 @@
     g.add(seal);
     g.position.set(x, 0, z);
     return g;
+  }
+
+  function dressYardAir(g) {
+    const highMat = new THREE.MeshBasicMaterial({
+      color: 0xc5d6ee, transparent: true, opacity: 0.55, side: THREE.DoubleSide, depthWrite: false, fog: false,
+    });
+    const high = new THREE.Mesh(new THREE.PlaneGeometry(8.4, 1.65), highMat);
+    high.position.set(0.15, 2.62, -3.35);
+    g.add(high);
+    const bankMat = new THREE.MeshBasicMaterial({
+      color: 0xd5e4f2, transparent: true, opacity: 0.4, side: THREE.DoubleSide, depthWrite: false, fog: false,
+    });
+    const bank = new THREE.Mesh(new THREE.PlaneGeometry(5.6, 1.05), bankMat);
+    bank.position.set(-0.85, 1.72, -2.55);
+    g.add(bank);
+    const dustMat = new THREE.MeshBasicMaterial({ color: 0xd6e8ff, fog: false });
+    [[-2.38, 1.58, 1.32], [-2.98, 1.74, 0.88], [-2.46, 1.96, 0.98], [-2.86, 1.46, 1.34], [-2.58, 1.82, 1.22]].forEach((spot, i) => {
+      const mote = new THREE.Mesh(new THREE.SphereGeometry(i % 2 ? 0.07 : 0.05, 6, 4), dustMat);
+      mote.position.set(spot[0], spot[1], spot[2]);
+      g.add(mote);
+    });
+    const grain = new THREE.Group();
+    grain.position.set(2.8, 0, -0.2);
+    const cork = new THREE.MeshBasicMaterial({ color: 0xe8d2b0, fog: false });
+    [[-0.035, 0.48], [0.03, 0.52]].forEach((spot) => {
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.028, 0.46, 0.02), cork);
+      line.position.set(spot[0], spot[1], 0.09);
+      grain.add(line);
+    });
+    g.add(grain);
   }
 
   function dressIsleGround() {
@@ -13445,6 +13492,7 @@
         ? 'Walked. The slag is still a mouth. Vesper farms the rot.'
         : 'Through the stone west of the engine. Kestrel did not carry you.';
       rows.push({ name: 'Concord yard', note: yardNote });
+      rows.push({ name: 'Concord stake', note: 'In the yard. A cork on a post. It is not a door.' });
     } else if (seenBeats.marrowStep) rows.push({ name: 'Concord yard', note: 'Not walked yet. The stone is west of the engine.' });
     if (seenBeats.markStep) {
       const weep = pools.find((p) => p.id === 'mark-weep');
