@@ -174,6 +174,23 @@
     return true;
   });
 
+  Emberwake.registerScene('yard-cork', function () {
+    var torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    Emberwake.present({
+      lines: [
+        { where: 'Concord yard', speaker: 'Lira', text: 'Cork on the south gate. Concord licensed the leak and left the yard open.' },
+        torren
+          ? { speaker: 'Torren', text: 'I stamped gates like this. The stamp held the book. It did not hold the rot.' }
+          : { speaker: 'The spark', text: 'They stamped the gate. The book held. The rot did not.' },
+        { speaker: 'The spark', text: 'Vesper farms the rot past this gate. She does not take the host. The slag is still the drink.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteCork) Emberwake.noteCork();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('yard-aside', function () {
     const torren = Emberwake.companyHas && Emberwake.companyHas('torren');
     const nima = Emberwake.companyHas && Emberwake.companyHas('nima');
