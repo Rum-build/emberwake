@@ -470,6 +470,7 @@
     equipped = {
       lira: { weapon: 'scout-knife', armor: 'quilt-jerkin' },
     };
+    if (playerMesh) wearLiraGear(playerMesh);
     scarVerdict = null;
     regionId = 'verdant-isle';
     mergeWord = null;
@@ -6279,23 +6280,6 @@
     );
     seam.position.set(0.16 * scale, 0.64 * scale, 0.3 * scale);
     g.add(seam);
-    if (lira) {
-      const blade = new THREE.Mesh(
-        new THREE.BoxGeometry(0.035 * scale, 0.46 * scale, 0.012 * scale),
-        metal
-      );
-      blade.position.set(-0.24 * scale, 0.5 * scale, 0.1 * scale);
-      blade.rotation.z = -0.35;
-      blade.castShadow = true;
-      g.add(blade);
-      const guard = new THREE.Mesh(
-        new THREE.BoxGeometry(0.12 * scale, 0.02 * scale, 0.04 * scale),
-        metal
-      );
-      guard.position.set(-0.2 * scale, 0.34 * scale, 0.12 * scale);
-      guard.rotation.z = -0.35;
-      g.add(guard);
-    }
     if (nima) {
       const rodMat = new THREE.MeshPhongMaterial({
         color: 0x6a8a48, shininess: 16, specular: new THREE.Color(0xd4e8b0),
@@ -6568,7 +6552,114 @@
       g.add(lock);
     }
     g.userData.cloth = clothMat;
+    g.userData.scale = scale;
+    if (lira) wearLiraGear(g);
     return g;
+  }
+
+  function disposeWorn(node) {
+    if (!node) return;
+    node.traverse((child) => {
+      if (child.geometry) child.geometry.dispose();
+      const mat = child.material;
+      if (Array.isArray(mat)) mat.forEach((m) => m.dispose());
+      else if (mat) mat.dispose();
+    });
+  }
+
+  function clearWornGear(mesh) {
+    if (!mesh || !mesh.userData) return;
+    ['gear', 'held'].forEach((key) => {
+      const node = mesh.userData[key];
+      if (!node) return;
+      if (node.parent) node.parent.remove(node);
+      disposeWorn(node);
+      mesh.userData[key] = null;
+    });
+  }
+
+  function wearLiraGear(mesh) {
+    if (!mesh || !mesh.userData) return;
+    clearWornGear(mesh);
+    const s = mesh.userData.scale || 0.95;
+    const eq = (equipped && equipped.lira) || {};
+    const weapon = eq.weapon || null;
+    const armor = eq.armor || null;
+    const gear = new THREE.Group();
+    gear.name = 'lira-gear';
+    function phong(color, emissive, shininess, specular) {
+      return new THREE.MeshPhongMaterial({
+        color,
+        emissive: new THREE.Color(emissive),
+        shininess,
+        specular: new THREE.Color(specular),
+      });
+    }
+    function put(parent, geo, mat, x, y, z, rz) {
+      const piece = new THREE.Mesh(geo, mat);
+      piece.position.set(x, y, z);
+      if (rz) piece.rotation.z = rz;
+      piece.castShadow = true;
+      parent.add(piece);
+      return piece;
+    }
+    const iron = phong(0xd0d6de, 0x1c242c, 78, 0xf2f6ff);
+    const leather = phong(0x4a3428, 0x1a100c, 22, 0xc4a080);
+    const wood = phong(0x6a4428, 0x2a1408, 16, 0xe0c090);
+    if (weapon === 'scout-knife') {
+      put(gear, new THREE.BoxGeometry(0.055 * s, 0.34 * s, 0.034 * s), leather, -0.22 * s, 0.4 * s, 0.07 * s, -0.38);
+      put(gear, new THREE.BoxGeometry(0.03 * s, 0.26 * s, 0.012 * s), iron, -0.27 * s, 0.62 * s, 0.1 * s, -0.38);
+      put(gear, new THREE.BoxGeometry(0.01 * s, 0.16 * s, 0.016 * s), phong(0x8a96a4, 0x101418, 40, 0xd0d8e4), -0.278 * s, 0.64 * s, 0.112 * s, -0.38);
+      put(gear, new THREE.BoxGeometry(0.13 * s, 0.024 * s, 0.042 * s), iron, -0.2 * s, 0.48 * s, 0.09 * s, -0.38);
+      put(gear, new THREE.BoxGeometry(0.03 * s, 0.1 * s, 0.028 * s), leather, -0.17 * s, 0.42 * s, 0.08 * s, -0.38);
+      put(gear, new THREE.SphereGeometry(0.028 * s, 6, 5), phong(0xb8a090, 0x2a2018, 50, 0xfff0e0), -0.145 * s, 0.36 * s, 0.07 * s);
+    } else if (weapon === 'ashwood-blade') {
+      const ember = phong(0xff8a3a, 0x8a2808, 28, 0xffe0c0);
+      put(gear, new THREE.BoxGeometry(0.042 * s, 0.62 * s, 0.016 * s), iron, -0.28 * s, 0.74 * s, 0.1 * s, -0.42);
+      put(gear, new THREE.BoxGeometry(0.014 * s, 0.42 * s, 0.02 * s), ember, -0.29 * s, 0.78 * s, 0.114 * s, -0.42);
+      put(gear, new THREE.BoxGeometry(0.18 * s, 0.028 * s, 0.05 * s), wood, -0.2 * s, 0.46 * s, 0.09 * s, -0.42);
+      put(gear, new THREE.BoxGeometry(0.034 * s, 0.12 * s, 0.03 * s), wood, -0.16 * s, 0.38 * s, 0.08 * s, -0.42);
+      put(gear, new THREE.SphereGeometry(0.036 * s, 6, 5), ember, -0.13 * s, 0.3 * s, 0.07 * s);
+    } else if (weapon === 'wellwood-staff') {
+      const held = new THREE.Group();
+      const shaft = phong(0x2f6a58, 0x0c2820, 22, 0xd4f4ea);
+      put(held, new THREE.CylinderGeometry(0.026 * s, 0.032 * s, 1.2 * s, 7), shaft, 0.02 * s, 0.06 * s, 0.06 * s);
+      put(held, new THREE.SphereGeometry(0.06 * s, 7, 6), phong(0x7ee8ff, 0x146080, 72, 0xf4ffff), 0.02 * s, 0.7 * s, 0.06 * s);
+      put(held, new THREE.CylinderGeometry(0.038 * s, 0.038 * s, 0.04 * s, 7), iron, 0.02 * s, 0.5 * s, 0.06 * s);
+      put(held, new THREE.CylinderGeometry(0.036 * s, 0.036 * s, 0.08 * s, 7), leather, 0.02 * s, -0.22 * s, 0.06 * s);
+      put(held, new THREE.SphereGeometry(0.034 * s, 6, 5), phong(0x1a4a40, 0x082018, 30, 0xc8e8e0), 0.02 * s, -0.52 * s, 0.06 * s);
+      const arm = mesh.userData.arms && mesh.userData.arms[1];
+      (arm || mesh).add(held);
+      mesh.userData.held = held;
+    } else if (weapon === 'reed-bow') {
+      const reed = phong(0xc6b07a, 0x3a3010, 16, 0xfff4d0);
+      const stringMat = phong(0xe8eef4, 0x202830, 46, 0xffffff);
+      put(gear, new THREE.BoxGeometry(0.04 * s, 0.4 * s, 0.032 * s), reed, -0.14 * s, 0.98 * s, -0.22 * s, 0.46);
+      put(gear, new THREE.BoxGeometry(0.04 * s, 0.38 * s, 0.032 * s), reed, -0.12 * s, 0.56 * s, -0.22 * s, -0.4);
+      put(gear, new THREE.BoxGeometry(0.055 * s, 0.16 * s, 0.045 * s), leather, -0.08 * s, 0.76 * s, -0.2 * s);
+      put(gear, new THREE.BoxGeometry(0.01 * s, 0.74 * s, 0.01 * s), stringMat, -0.02 * s, 0.76 * s, -0.2 * s, 0.04);
+      put(gear, new THREE.SphereGeometry(0.03 * s, 6, 5), phong(0xd2b4ff, 0x403060, 40, 0xf4e8ff), -0.22 * s, 1.16 * s, -0.22 * s);
+      put(gear, new THREE.BoxGeometry(0.07 * s, 0.24 * s, 0.07 * s), leather, 0.24 * s, 0.46 * s, -0.04 * s, 0.18);
+      [0, 1, 2].forEach((i) => {
+        put(gear, new THREE.BoxGeometry(0.012 * s, 0.32 * s, 0.012 * s), reed, (0.2 + i * 0.025) * s, 0.62 * s, -0.03 * s, 0.18);
+        put(gear, new THREE.BoxGeometry(0.028 * s, 0.04 * s, 0.02 * s), phong(0xf4f0e4, 0x3a3428, 8, 0xffffff), (0.2 + i * 0.025) * s, 0.78 * s, -0.02 * s, 0.18);
+      });
+    }
+    if (armor === 'quilt-jerkin') {
+      const quilt = phong(0xe4d2b4, 0x4a3420, 14, 0xfff6e8);
+      const stitch = phong(0x7a5840, 0x2a1810, 8, 0xe8d0b8);
+      put(gear, new THREE.BoxGeometry(0.56 * s, 0.44 * s, 0.16 * s), quilt, 0, 0.66 * s, 0.28 * s);
+      put(gear, new THREE.BoxGeometry(0.2 * s, 0.12 * s, 0.28 * s), quilt, -0.42 * s, 0.9 * s, 0.02 * s);
+      put(gear, new THREE.BoxGeometry(0.2 * s, 0.12 * s, 0.28 * s), quilt, 0.42 * s, 0.9 * s, 0.02 * s);
+      [0.54, 0.66, 0.78].forEach((y) => {
+        put(gear, new THREE.BoxGeometry(0.42 * s, 0.014 * s, 0.02 * s), stitch, 0, y * s, 0.37 * s);
+      });
+      put(gear, new THREE.BoxGeometry(0.4 * s, 0.07 * s, 0.14 * s), quilt, 0, 0.88 * s, 0.18 * s);
+      put(gear, new THREE.BoxGeometry(0.09 * s, 0.3 * s, 0.18 * s), quilt, 0.3 * s, 0.56 * s, 0.06 * s);
+      put(gear, new THREE.BoxGeometry(0.09 * s, 0.3 * s, 0.18 * s), quilt, -0.3 * s, 0.56 * s, 0.06 * s);
+    }
+    mesh.add(gear);
+    mesh.userData.gear = gear;
   }
 
   function makeMotes(parent, count, color, box, opts) {
@@ -9296,6 +9387,7 @@
     bag = bag.filter((id) => id !== gearId);
     if (prev) bag.push(prev);
     showToast(WHO_NAME[who] + ' takes up the ' + g.name + '.');
+    if (who === 'lira' && playerMesh) wearLiraGear(playerMesh);
     renderInventory();
   }
 
@@ -9305,6 +9397,7 @@
     equipped[who][slot] = null;
     bag.push(id);
     showToast(GEAR[id].name + ' goes back in the pack.');
+    if (who === 'lira' && playerMesh) wearLiraGear(playerMesh);
     renderInventory();
   }
 
@@ -15252,6 +15345,7 @@
     seals = data.seals || [];
     bag = data.bag || [];
     equipped = data.equipped || { lira: { weapon: 'scout-knife', armor: 'quilt-jerkin' } };
+    if (playerMesh) wearLiraGear(playerMesh);
     seenBeats = data.seenBeats || {};
     silhouetteGone = !!data.silhouetteGone;
     scarVerdict = data.scarVerdict || null;
