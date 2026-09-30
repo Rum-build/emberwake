@@ -651,6 +651,13 @@ Playable on the Verdant Isle field:
 - Places still names the roost. It does not say what the ending will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Harbor telegraph, the wire tick (this branch)
+
+- At the post, a look lets Lira say Concord sold the weather and left the post counting. Torren, when he walks with her, says the stamp held the count and did not hold the storm. The spark says Vesper farms the rot inland and does not stand at the wire. The tick stays.
+- The pier, the vault door, and the quiet stand off the door stay where they were.
+- Places still names the telegraph. It does not say what the ending will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

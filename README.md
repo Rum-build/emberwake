@@ -145,6 +145,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - At the cellar mouth, a look at the arch lets Lira say Concord left the heat under the jars. Vesper farms the rot above the mouth and does not take the host. The kiln and the south step stay. No new cue.
 - In the bottle-hall, a look at the near corks lets Lira say Concord gilded the shelf and left the dark bottle corked. Vesper farms the rot past the hall and does not take the host. The quiet stand stays. No new cue.
 - Beside the eagle roost, a look at the perch lets Lira say Concord licensed the cliff and left the wing in the air. Vesper does not take the thermal. The climb stays the way home. No new cue.
+- At the harbor telegraph, a look at the wire lets Lira say Concord sold the weather and left the post counting. Vesper does not stand there. The tick stays. The pier and the door stay. No new cue.
 
 ## Play on your phone
 
