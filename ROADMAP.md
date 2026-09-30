@@ -793,6 +793,10 @@ Lira’s face now carries softer cheek and jaw volume, finer hair strands with a
 
 Torren’s face now carries softer cheek and jaw volume, finer crop strands with a parting catchlight, clearer eye catchlights, and a subtle cloth fold on the base tunic where it meets the coat. His ledger cudgel and seal coat stay on the body and stay readable. Lira’s face, the cellar door, and the earlier ground passes are unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the spark haze pass
+
+The spark near Lira now carries a layered ember core, a softer outer haze, a faint heat rim, and denser motes. Her face, Torren’s face, and equipped gear stay readable. The cellar door and the earlier ground passes are unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

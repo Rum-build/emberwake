@@ -173,6 +173,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - At the cellar door, worn mouth stones, damp grit, a cooler ash wash, and threshold scuffs sit under a soft shadow on the sill. The door and the mouth floor stay readable. No new cue.
 - Lira’s face keeps a softer cheek and jaw, finer hair with a parting catch, clearer eye lights, and a tunic fold where the gear sits. Equipped gear stays readable. Vesper stays a dark cloth with a hair lock. No new cue.
 - Torren’s face keeps a softer cheek and jaw, finer crop strands with a parting catch, clearer eye lights, and a tunic fold where the coat sits. His cudgel and seal coat stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
+- The spark near Lira keeps a layered ember core, a softer outer haze, a faint heat rim, and denser motes. Her face and equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 
 ## Play on your phone
 
