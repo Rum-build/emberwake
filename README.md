@@ -169,6 +169,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - In the counting room, worn ledger boards, chalk grit, a lamp-warm wash, desk-shadow fill, and scuff marks sit on the floor toward the clerk desk. The ledger lamp and the rug stay readable. No new cue.
 - On the telegraph approach, packed dirt plates, wire-pole grit, and sparse grass tufts sit under a soft dusk wash. Scuff marks run under the wire. The tick and the post stay readable. No new cue.
 - At the vault door, worn stone courses, seal grit, a cooler lamp wash, and threshold scuffs sit under a soft shadow on the sill. The door and the seal stay readable. No new cue.
+- Beside the counting-room clerk desk, worn ledger-side planks, ink grit, a cooler lamp wash, and standing scuffs sit under a soft shadow on the desk lip. The clerk, the ledger lamp, and the rug stay readable. No new cue.
 
 ## Play on your phone
 
