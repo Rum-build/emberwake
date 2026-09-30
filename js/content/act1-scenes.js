@@ -97,6 +97,19 @@
     return true;
   });
 
+  Emberwake.registerScene('road-bracers', function () {
+    Emberwake.present({
+      lines: [
+        { where: 'Verdant Isle', speaker: 'Lira', text: 'Bracers in the grass, south of the wake. Boiled leather. No seal.' },
+        { speaker: 'The spark', text: 'Wear them from the pack if you want the forearms changed. They do not open the kiln. The road stays.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteBracer) Emberwake.noteBracer();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('road-cloak', function () {
     Emberwake.present({
       lines: [

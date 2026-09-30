@@ -183,7 +183,10 @@
   let nearNotice = null;
   let nearCord = null;
   let nearCloak = null;
+  let nearBracer = null;
   let roadCloakMesh = null;
+  let roadBracerMesh = null;
+  const companyMeshes = { nima: null, torren: null };
   let nearPost = null;
   let nearPier = null;
   let nearFarm = null;
@@ -331,6 +334,7 @@
     const kit = (EW.content.joinKits && EW.content.joinKits[id]) || {};
     equipped[id] = { weapon: kit.weapon || null, armor: kit.armor || null };
     showToast(member.name + ' walks with Lira. The pack is heavier, and more honest.');
+    syncCompany(true);
     saveGame();
     return true;
   }
@@ -402,7 +406,7 @@
   function gearBonus(id) {
     const eq = equipped[id] || {};
     const out = { atk: 0, def: 0, mag: 0, affinity: null, path: null };
-    ['weapon', 'armor', 'cloak'].forEach((slot) => {
+    ['weapon', 'armor', 'cloak', 'bracer'].forEach((slot) => {
       const g = GEAR[eq[slot]];
       if (!g) return;
       out.atk += g.atk || 0;
@@ -470,9 +474,12 @@
     shardSeq = 1;
     bag = ['ashwood-blade', 'wellwood-staff', 'reed-bow'];
     equipped = {
-      lira: { weapon: 'scout-knife', armor: 'quilt-jerkin', cloak: null },
+      lira: { weapon: 'scout-knife', armor: 'quilt-jerkin', cloak: null, bracer: null },
     };
-    if (playerMesh) wearLiraGear(playerMesh);
+    if (playerMesh) {
+      wearLiraGear(playerMesh);
+      syncCompany(true);
+    }
     scarVerdict = null;
     regionId = 'verdant-isle';
     mergeWord = null;
@@ -559,6 +566,7 @@
     suppressEncountersUntil = 0;
     seenBeats = {};
     syncRoadCloak();
+    syncRoadBracers();
     beatHold = {};
     dialogueOpen = false;
     dialogueOnDone = null;
@@ -873,6 +881,8 @@
     overworldGroup.add(makeSaltCord(3.2, -8));
     roadCloakMesh = makeRoadCloak(6.4, -3.2);
     overworldGroup.add(roadCloakMesh);
+    roadBracerMesh = makeRoadBracers(1.6, -4.6);
+    overworldGroup.add(roadBracerMesh);
     overworldGroup.add(makeWayPost(-11.2, 1.6));
     overworldGroup.add(makeColdRing(9.2, -12.4));
     overworldGroup.add(makeMound(3.4, -1.6, 1.35));
@@ -4305,6 +4315,21 @@
     };
   }
 
+  function nearestBracer() {
+    if (!playerMesh || locale !== 'field' || regionId !== 'verdant-isle' || skyPass) return null;
+    if (Math.hypot(1.6 - playerMesh.position.x, -4.6 - playerMesh.position.z) > 0.62) return null;
+    if (seenBeats['road-bracers']) {
+      return {
+        title: 'Road bracers',
+        hint: 'The grass is empty. The bracers are in the pack. Press E. The kiln did not change.',
+      };
+    }
+    return {
+      title: 'A pair of bracers',
+      hint: 'Leather in the grass, south of the wake. Press E. It is not the cord and not a door.',
+    };
+  }
+
   function nearestPost() {
     if (!playerMesh || locale !== 'field' || regionId !== 'verdant-isle' || skyPass) return null;
     if (Math.hypot(-11.2 - playerMesh.position.x, 1.6 - playerMesh.position.z) > 1.1) return null;
@@ -6300,41 +6325,6 @@
     );
     seam.position.set(0.16 * scale, 0.64 * scale, 0.3 * scale);
     g.add(seam);
-    if (nima) {
-      const rodMat = new THREE.MeshPhongMaterial({
-        color: 0x6a8a48, shininess: 16, specular: new THREE.Color(0xd4e8b0),
-      });
-      const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.018 * scale, 0.022 * scale, 0.62 * scale, 6), rodMat);
-      rod.position.set(0.26 * scale, 0.52 * scale, 0.08 * scale);
-      rod.rotation.z = 0.22;
-      rod.castShadow = true;
-      g.add(rod);
-      const tip = new THREE.Mesh(
-        new THREE.SphereGeometry(0.04 * scale, 6, 5),
-        new THREE.MeshPhongMaterial({
-          color: 0xc6e070, emissive: new THREE.Color(0x3a5010), shininess: 20, specular: new THREE.Color(0xf4f8d0),
-        })
-      );
-      tip.position.set(0.32 * scale, 0.82 * scale, 0.08 * scale);
-      g.add(tip);
-    }
-    if (torren) {
-      const cudgel = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.04 * scale, 0.045 * scale, 0.38 * scale, 6),
-        new THREE.MeshPhongMaterial({ color: 0x4a3428, shininess: 12, specular: new THREE.Color(0xc4a080) })
-      );
-      cudgel.position.set(0.26 * scale, 0.46 * scale, 0.1 * scale);
-      cudgel.rotation.z = 0.4;
-      cudgel.castShadow = true;
-      g.add(cudgel);
-      const band = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.048 * scale, 0.048 * scale, 0.04 * scale, 6),
-        metal
-      );
-      band.position.set(0.3 * scale, 0.58 * scale, 0.1 * scale);
-      band.rotation.z = 0.4;
-      g.add(band);
-    }
     if (vesper) {
       const shard = new THREE.Mesh(
         new THREE.BoxGeometry(0.04 * scale, 0.34 * scale, 0.02 * scale),
@@ -6574,6 +6564,7 @@
     g.userData.cloth = clothMat;
     g.userData.scale = scale;
     if (lira) wearLiraGear(g);
+    if (nima || torren) wearCompanionGear(g, kind);
     return g;
   }
 
@@ -6596,6 +6587,15 @@
       disposeWorn(node);
       mesh.userData[key] = null;
     });
+    const extra = mesh.userData.bracers;
+    if (Array.isArray(extra)) {
+      extra.forEach((node) => {
+        if (!node) return;
+        if (node.parent) node.parent.remove(node);
+        disposeWorn(node);
+      });
+      mesh.userData.bracers = null;
+    }
   }
 
   function wearLiraGear(mesh) {
@@ -6710,8 +6710,110 @@
       put(gear, new THREE.BoxGeometry(0.08 * s, 0.06 * s, 0.04 * s), iron, 0, 0.98 * s, 0.18 * s);
       put(gear, new THREE.BoxGeometry(0.16 * s, 0.1 * s, 0.08 * s), wool, 0.1 * s, 1.16 * s, -0.08 * s);
     }
+    if ((eq.bracer || null) === 'road-bracers' && mesh.userData.arms) {
+      const wrap = phong(0x6a4030, 0x1a100c, 18, 0xc4a080);
+      const lip = phong(0xd0d6de, 0x1c242c, 70, 0xf4f8ff);
+      const nodes = [];
+      mesh.userData.arms.forEach((arm) => {
+        const brace = new THREE.Group();
+        put(brace, new THREE.CylinderGeometry(0.07 * s, 0.078 * s, 0.16 * s, 7), wrap, 0, -0.2 * s, 0.01 * s);
+        put(brace, new THREE.CylinderGeometry(0.082 * s, 0.082 * s, 0.028 * s, 7), lip, 0, -0.14 * s, 0.01 * s);
+        put(brace, new THREE.CylinderGeometry(0.08 * s, 0.08 * s, 0.02 * s, 7), lip, 0, -0.26 * s, 0.01 * s);
+        arm.add(brace);
+        nodes.push(brace);
+      });
+      mesh.userData.bracers = nodes;
+    }
     mesh.add(gear);
     mesh.userData.gear = gear;
+  }
+
+  function wearCompanionGear(mesh, id) {
+    if (!mesh || (id !== 'nima' && id !== 'torren')) return;
+    clearWornGear(mesh);
+    const s = mesh.userData.scale || 0.9;
+    const eq = (equipped && equipped[id]) || {};
+    const gear = new THREE.Group();
+    gear.name = id + '-gear';
+    function phong(color, emissive, shininess, specular) {
+      return new THREE.MeshPhongMaterial({
+        color,
+        emissive: new THREE.Color(emissive),
+        shininess,
+        specular: new THREE.Color(specular),
+      });
+    }
+    function put(parent, geo, mat, x, y, z, rz) {
+      const piece = new THREE.Mesh(geo, mat);
+      piece.position.set(x, y, z);
+      if (rz) piece.rotation.z = rz;
+      piece.castShadow = true;
+      parent.add(piece);
+      return piece;
+    }
+    const wood = phong(0x6a4428, 0x2a1408, 16, 0xe0c090);
+    const grain = phong(0x3a2414, 0x140c08, 8, 0xc4a080);
+    const leather = phong(0x4a3428, 0x1a100c, 20, 0xc4a080);
+    const metal = phong(0xd0d6de, 0x1c242c, 72, 0xf2f6ff);
+    if (id === 'nima' && eq.weapon === 'herb-rod') {
+      const tilt = 0.22;
+      put(gear, new THREE.CylinderGeometry(0.02 * s, 0.026 * s, 0.7 * s, 7), phong(0x6a8a48, 0x1a3010, 18, 0xd4e8b0), 0.26 * s, 0.54 * s, 0.08 * s, tilt);
+      put(gear, new THREE.BoxGeometry(0.012 * s, 0.5 * s, 0.02 * s), grain, 0.27 * s, 0.54 * s, 0.09 * s, tilt);
+      put(gear, new THREE.CylinderGeometry(0.03 * s, 0.03 * s, 0.1 * s, 7), leather, 0.24 * s, 0.4 * s, 0.08 * s, tilt);
+      put(gear, new THREE.CylinderGeometry(0.028 * s, 0.032 * s, 0.04 * s, 7), metal, 0.2 * s, 0.22 * s, 0.07 * s, tilt);
+      put(gear, new THREE.OctahedronGeometry(0.05 * s, 0), phong(0xc6e070, 0x3a5010, 28, 0xf4f8d0), 0.34 * s, 0.88 * s, 0.09 * s);
+      put(gear, new THREE.BoxGeometry(0.08 * s, 0.03 * s, 0.04 * s), phong(0x8fbf62, 0x244010, 10, 0xe8f4c0), 0.3 * s, 0.78 * s, 0.1 * s, 0.5);
+    }
+    if (id === 'nima' && eq.armor === 'herb-shawl') {
+      const leaf = phong(0xc6d86a, 0x2a4010, 10, 0xf4f8d0);
+      const deep = phong(0x6a8a40, 0x1a3010, 8, 0xd4e8b0);
+      put(gear, new THREE.BoxGeometry(0.86 * s, 0.14 * s, 0.32 * s), leaf, 0, 0.9 * s, 0.04 * s);
+      put(gear, new THREE.BoxGeometry(0.22 * s, 0.55 * s, 0.08 * s), deep, -0.4 * s, 0.58 * s, 0.12 * s, 0.12);
+      put(gear, new THREE.BoxGeometry(0.16 * s, 0.28 * s, 0.05 * s), leaf, 0.34 * s, 0.72 * s, 0.14 * s, -0.2);
+      put(gear, new THREE.BoxGeometry(0.1 * s, 0.04 * s, 0.04 * s), phong(0x8fbf62, 0x244010, 12, 0xe8f4c0), -0.4 * s, 0.32 * s, 0.14 * s);
+    }
+    if (id === 'torren' && eq.weapon === 'ledger-cudgel') {
+      const tilt = 0.4;
+      put(gear, new THREE.CylinderGeometry(0.045 * s, 0.05 * s, 0.42 * s, 7), wood, 0.26 * s, 0.48 * s, 0.1 * s, tilt);
+      put(gear, new THREE.BoxGeometry(0.02 * s, 0.28 * s, 0.03 * s), grain, 0.27 * s, 0.5 * s, 0.11 * s, tilt);
+      put(gear, new THREE.CylinderGeometry(0.055 * s, 0.055 * s, 0.05 * s, 7), metal, 0.3 * s, 0.6 * s, 0.1 * s, tilt);
+      put(gear, new THREE.CylinderGeometry(0.052 * s, 0.052 * s, 0.035 * s, 7), metal, 0.22 * s, 0.36 * s, 0.09 * s, tilt);
+      put(gear, new THREE.CylinderGeometry(0.04 * s, 0.042 * s, 0.1 * s, 7), leather, 0.2 * s, 0.3 * s, 0.08 * s, tilt);
+      put(gear, new THREE.SphereGeometry(0.04 * s, 6, 5), phong(0x2a140c, 0x6a1808, 20, 0xffc090), 0.34 * s, 0.66 * s, 0.11 * s);
+    }
+    if (id === 'torren' && eq.armor === 'seal-coat') {
+      const cloth = phong(0x2a3038, 0x10141c, 12, 0xc8d0d8);
+      const scorch = phong(0x6a4030, 0x2a1408, 8, 0xe0c090);
+      put(gear, new THREE.BoxGeometry(0.78 * s, 0.16 * s, 0.36 * s), cloth, 0, 0.86 * s, 0.02 * s);
+      put(gear, new THREE.BoxGeometry(0.24 * s, 0.7 * s, 0.08 * s), cloth, -0.36 * s, 0.48 * s, 0.12 * s, 0.06);
+      put(gear, new THREE.BoxGeometry(0.22 * s, 0.62 * s, 0.07 * s), scorch, 0.34 * s, 0.52 * s, 0.1 * s, -0.08);
+      put(gear, new THREE.BoxGeometry(0.62 * s, 0.5 * s, 0.06 * s), cloth, 0, 0.5 * s, -0.26 * s);
+      put(gear, new THREE.BoxGeometry(0.08 * s, 0.16 * s, 0.03 * s), metal, 0.08 * s, 0.78 * s, 0.2 * s);
+    }
+    mesh.add(gear);
+    mesh.userData.gear = gear;
+  }
+
+  function syncCompany(refresh) {
+    if (!playerMesh || !party) return;
+    const specs = {
+      nima: { color: 0x6aa8a0, x: -1.18, z: 0.22 },
+      torren: { color: 0x5c6b5a, x: 1.22, z: 0.08 },
+    };
+    Object.keys(specs).forEach((id) => {
+      const spec = specs[id];
+      const member = party.find((p) => p.id === id && p.hp > 0);
+      let mesh = companyMeshes[id];
+      if (member && !mesh) {
+        mesh = makeCharacter(spec.color, 0.88, id);
+        mesh.position.set(spec.x, 0, spec.z);
+        playerMesh.add(mesh);
+        companyMeshes[id] = mesh;
+      }
+      if (!mesh) return;
+      mesh.visible = !!member;
+      if (refresh && member) wearCompanionGear(mesh, id);
+    });
   }
 
   function makeMotes(parent, count, color, box, opts) {
@@ -7191,6 +7293,29 @@
     );
     clasp.position.set(0.08, 0.74, 0.12);
     g.add(clasp);
+    g.position.set(x, 0, z);
+    return g;
+  }
+
+  function makeRoadBracers(x, z) {
+    const g = new THREE.Group();
+    const leather = new THREE.MeshPhongMaterial({
+      color: 0x6a4030, emissive: new THREE.Color(0x1a100c), shininess: 18, specular: new THREE.Color(0xc4a080),
+    });
+    const metal = new THREE.MeshPhongMaterial({
+      color: 0xd0d6de, emissive: new THREE.Color(0x1c242c), shininess: 70, specular: new THREE.Color(0xf4f8ff),
+    });
+    [-0.12, 0.12].forEach((side) => {
+      const cuff = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 0.16, 7), leather);
+      cuff.rotation.z = Math.PI / 2;
+      cuff.position.set(side, 0.08, 0);
+      cuff.castShadow = true;
+      g.add(cuff);
+      const band = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.03, 7), metal);
+      band.rotation.z = Math.PI / 2;
+      band.position.set(side, 0.1, 0);
+      g.add(band);
+    });
     g.position.set(x, 0, z);
     return g;
   }
@@ -7885,6 +8010,7 @@
 
   function poseHost(mode) {
     if (!playerMesh) return;
+    syncCompany(false);
     if (!motionWanted && mode === 'idle') mode = 'still';
     const legs = playerMesh.userData.legs;
     const arms = playerMesh.userData.arms;
@@ -8835,7 +8961,8 @@
     const showGrit = idle && nearGrit && !showAbsorb && !showDoor && !showGate;
     const showDusk = idle && nearDusk && !showAbsorb && !showDoor && !showGate;
     const showCloak = idle && nearCloak && !showAbsorb && !showDoor && !showGate && !showReturn && !showChest && !showSpare && !showCord && !showPost && !showFarm && !showRing;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showScrap && !showCompany && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showSpare && !showJournal && !showNotice && !showCord && !showPost && !showPier && !showFarm && !showCork && !showDust && !showLamp && !showMouth && !showRow && !showWing && !showTick && !showGrit && !showDusk && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol && !showCloak);
+    const showBracer = idle && nearBracer && !showAbsorb && !showDoor && !showGate && !showReturn && !showChest && !showSpare && !showCord && !showPost && !showFarm && !showRing && !showCloak;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showScrap && !showCompany && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showSpare && !showJournal && !showNotice && !showCord && !showPost && !showPier && !showFarm && !showCork && !showDust && !showLamp && !showMouth && !showRow && !showWing && !showTick && !showGrit && !showDusk && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol && !showCloak && !showBracer);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
@@ -8854,6 +8981,7 @@
     else if (showSpare) absorbBtn.textContent = seenBeats['spare-green'] ? 'Look' : 'Open';
     else if (showJournal) absorbBtn.textContent = 'Look';
     else if (showCloak) absorbBtn.textContent = seenBeats['road-cloak'] ? 'Look' : 'Take';
+    else if (showBracer) absorbBtn.textContent = seenBeats['road-bracers'] ? 'Look' : 'Take';
     else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showPier || showFarm || showCork || showDust || showLamp || showMouth || showRow || showWing || showTick || showGrit || showDusk || showRing || showClerk || showRation || showAside || showNima || showPatrol) absorbBtn.textContent = 'Look';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
     absorbBtn.classList.toggle('is-ready', !!showAbsorb);
@@ -8866,7 +8994,7 @@
   function updatePrompt() {
     const atExit = atInteriorExit();
     interactPrompt.classList.remove('ready');
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearScrap && !nearCompany && !nearPorter && !nearLetter && !nearChest && !nearSpare && !nearJournal && !nearNotice && !nearCord && !nearCloak && !nearPost && !nearPier && !nearFarm && !nearCork && !nearDust && !nearLamp && !nearMouth && !nearRow && !nearWing && !nearTick && !nearGrit && !nearDusk && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearScrap && !nearCompany && !nearPorter && !nearLetter && !nearChest && !nearSpare && !nearJournal && !nearNotice && !nearCord && !nearCloak && !nearBracer && !nearPost && !nearPier && !nearFarm && !nearCork && !nearDust && !nearLamp && !nearMouth && !nearRow && !nearWing && !nearTick && !nearGrit && !nearDusk && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -9115,6 +9243,11 @@
       $('#interact-detail').textContent = nearCloak.hint;
       return;
     }
+    if (nearBracer && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
+      $('#interact-title').textContent = nearBracer.title;
+      $('#interact-detail').textContent = nearBracer.hint;
+      return;
+    }
     if (nearCrack) {
       $('#interact-title').textContent = nearCrack.title;
       $('#interact-detail').textContent = nearCrack.hint;
@@ -9199,6 +9332,7 @@
       if (seenBeats['furrow-letter']) waiting.push('A cousin’s letter says Vesper walked the Concord to the well. The furrow was the price. The road did not change.');
       if (seenBeats['wayside-chest']) waiting.push('The wayside chest gave one tonic. It is empty. The kiln is still the road.');
       if (seenBeats['road-cloak']) waiting.push('A road cloak came off a stake east of the wake. Wear it from the pack if you want the shape. The kiln did not change.');
+      if (seenBeats['road-bracers']) waiting.push('Road bracers came out of the grass south of the wake. Wear them from the pack if you want the forearms changed. The kiln did not change.');
       if (seenBeats['spare-green']) waiting.push('A spare green off the west path gave a second tonic. It does not open the kiln.');
       if (seenBeats['crypt-notice']) waiting.push('A notice in the count crypt called the crack weather. The bar stayed shut.');
       if (seenBeats['cord-bound']) waiting.push('The salt cord is bound around the jerkin. Ash coughs for 4. It does not open a door and it does not pay a scar.');
@@ -9355,14 +9489,19 @@
       const weapon = eq.weapon ? GEAR[eq.weapon] : null;
       const armor = eq.armor ? GEAR[eq.armor] : null;
       const cloak = id === 'lira' && eq.cloak ? GEAR[eq.cloak] : null;
+      const bracer = id === 'lira' && eq.bracer ? GEAR[eq.bracer] : null;
       const cloakLine = id === 'lira'
         ? `<div class="line"><span>Cloak: ${cloak ? esc(cloak.name) : 'None'}</span>${cloak ? `<button class="btn btn-small" type="button" data-act="unequip" data-who="${id}" data-slot="cloak">Stow</button>` : ''}</div>`
+        : '';
+      const bracerLine = id === 'lira'
+        ? `<div class="line"><span>Bracers: ${bracer ? esc(bracer.name) : 'None'}</span>${bracer ? `<button class="btn btn-small" type="button" data-act="unequip" data-who="${id}" data-slot="bracer">Stow</button>` : ''}</div>`
         : '';
       return `<div class="equip-card">
         <div class="who">${esc(WHO_NAME[id])}</div>
         <div class="line"><span>Weapon: ${weapon ? esc(weapon.name) : 'Empty hands'}</span>${weapon ? `<button class="btn btn-small" type="button" data-act="unequip" data-who="${id}" data-slot="weapon">Stow</button>` : ''}</div>
         <div class="line"><span>Armor: ${armor ? esc(armor.name) : 'None'}</span>${armor ? `<button class="btn btn-small" type="button" data-act="unequip" data-who="${id}" data-slot="armor">Stow</button>` : ''}</div>
         ${cloakLine}
+        ${bracerLine}
       </div>`;
     }).join('');
 
@@ -9484,6 +9623,7 @@
     if (prev) bag.push(prev);
     showToast(WHO_NAME[who] + ' takes up the ' + g.name + '.');
     if (who === 'lira' && playerMesh) wearLiraGear(playerMesh);
+    if (companyMeshes[who]) wearCompanionGear(companyMeshes[who], who);
     renderInventory();
   }
 
@@ -9494,6 +9634,7 @@
     bag.push(id);
     showToast(GEAR[id].name + ' goes back in the pack.');
     if (who === 'lira' && playerMesh) wearLiraGear(playerMesh);
+    if (companyMeshes[who]) wearCompanionGear(companyMeshes[who], who);
     renderInventory();
   }
 
@@ -9848,6 +9989,10 @@
     }
     if (nearCloak) {
       talkCloak();
+      return;
+    }
+    if (nearBracer) {
+      talkBracer();
       return;
     }
     if (nearReturn) {
@@ -11881,6 +12026,34 @@
     saveGame();
   }
 
+  function syncRoadBracers() {
+    if (roadBracerMesh) roadBracerMesh.visible = !seenBeats['road-bracers'];
+  }
+
+  function talkBracer() {
+    if (locale !== 'field' || regionId !== 'verdant-isle' || dialogueOpen) return;
+    if (seenBeats['road-bracers']) {
+      showToast('The road bracers are already in the pack. The grass stays empty. The kiln did not change.');
+      return;
+    }
+    const fn = EW.scenes['road-bracers'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'road-bracers';
+    }
+  }
+
+  function noteBracer() {
+    seenBeats['road-bracers'] = true;
+    const worn = equipped.lira && equipped.lira.bracer === 'road-bracers';
+    if (!worn && bag.indexOf('road-bracers') < 0) bag.push('road-bracers');
+    syncRoadBracers();
+    showToast('Road bracers. They are in the pack. Wear them if you want the forearms changed. The kiln is still the road.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
   function noteCord() {
     seenBeats['salt-cord'] = true;
     if (!seals.some((seal) => seal.name === 'Salt Cord')) {
@@ -12622,6 +12795,7 @@
       nearNotice = null;
       nearCord = null;
       nearCloak = null;
+      nearBracer = null;
       nearPost = null;
       nearPier = null;
       nearFarm = null;
@@ -12746,6 +12920,7 @@
         nearNotice = nearestNotice();
         nearCord = nearestCord();
         nearCloak = nearestCloak();
+        nearBracer = nearestBracer();
         nearPost = nearestPost();
         nearPier = nearestPier();
         nearFarm = nearestFarm();
@@ -12811,6 +12986,7 @@
         nearNotice = nearestNotice();
         nearCord = nearestCord();
         nearCloak = nearestCloak();
+        nearBracer = nearestBracer();
         nearPost = nearestPost();
         nearPier = nearestPier();
         nearFarm = nearestFarm();
@@ -12897,6 +13073,7 @@
         nearNotice = nearestNotice();
         nearCord = nearestCord();
         nearCloak = nearestCloak();
+        nearBracer = nearestBracer();
         nearPost = nearestPost();
         nearPier = nearestPier();
         nearFarm = nearestFarm();
@@ -15476,10 +15653,14 @@
     shards = data.shards || [];
     seals = data.seals || [];
     bag = data.bag || [];
-    equipped = data.equipped || { lira: { weapon: 'scout-knife', armor: 'quilt-jerkin' } };
-    if (playerMesh) wearLiraGear(playerMesh);
+    equipped = data.equipped || { lira: { weapon: 'scout-knife', armor: 'quilt-jerkin', cloak: null, bracer: null } };
+    if (playerMesh) {
+      wearLiraGear(playerMesh);
+      syncCompany(true);
+    }
     seenBeats = data.seenBeats || {};
     syncRoadCloak();
+    syncRoadBracers();
     silhouetteGone = !!data.silhouetteGone;
     scarVerdict = data.scarVerdict || null;
     introToastShown = !!data.introToastShown;
@@ -16358,6 +16539,7 @@
   EW.noteChest = noteChest;
   EW.noteCord = noteCord;
   EW.noteCloak = noteCloak;
+  EW.noteBracer = noteBracer;
   EW.noteBind = noteBind;
   EW.noteNotice = noteNotice;
   EW.noteMargin = noteMargin;

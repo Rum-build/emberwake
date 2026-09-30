@@ -713,6 +713,14 @@ Playable on the Verdant Isle field:
 - Hands, boots, and faces stay. Vesper stays a darker cloth mass and a hair lock. She does not take a lit face. She does not enter Aftermath.
 - The stake is off the door, the quiet stand, and the path look. The kiln stays the road. Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Party kits, and the road bracers (this branch)
+
+- Nima and Torren walk beside Lira once they have joined. In the field and in a fight, her rod shows grain, a wrap, a ferrule, and a cut herb tip. His cudgel shows grain, two bands, a wrap, and a scorched head.
+- Equipping the herb shawl hangs leaf cloth on Nima. Equipping the quartermaster coat hangs scorched cloth on Torren. Stow either one and that shape leaves. The weapons leave when they are stowed.
+- South of the wake, a pair of road bracers lies in the grass. Equip them and Lira’s forearms widen. They do not replace the cloak, the jerkin, or the weapon. Stow them and the forearms slim.
+- Faces, hands, boots, the cloak, the jerkin, and Lira’s weapons stay. Vesper stays a darker cloth mass and a hair lock. She does not take a lit face. She does not enter Aftermath.
+- The bracers sit off the cord, the cloak stake, the door, and the quiet stand. The kiln stays the road. Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
