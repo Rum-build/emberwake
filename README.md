@@ -179,6 +179,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - At the Concord yard gate, worn timber grain, iron hinge plates, a bolt catch, and a cooler dusk wash sit on the posts and the crossbar. The gate cork and the yard cobbles stay readable. No new cue.
 - At the kiln mouth, fired brick courses, ash soot streaks, an iron rim, and a cooler ember wash sit in the throat, with a soft shadow under the lip. The kiln drink and the back-wall grain stay readable. No new cue.
 - The leaf-cup keeps a veined leaf rim, a damp interior, a water catch, moss at the base, and a cooler grove wash. The drink and the water-edge ground stay readable. No new cue.
+- At the harbor telegraph, timber grain, iron bands, a taut wire, glass insulators, and a stone footing sit on the post, with packed dirt at the base. The tick and the approach stay readable. No new cue.
 
 ## Play on your phone
 
