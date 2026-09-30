@@ -889,6 +889,10 @@ The bottle-hall shelves now carry timber grain, glass catchlights, dust on the l
 
 The Places list now sits on a parchment card with a clearer rim. The place underfoot wears an ember mark. Open, close, and the stick stay as they were. No new cue.
 
+## Shipped in the wake field pass
+
+Around the wake, the ground now carries layered grass tufts, soil grit, a soft shadow under the blades, and warmer colour in the grass and soil. The spawn, the letter, and the leaf-village door stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
