@@ -558,6 +558,13 @@ Playable on the Verdant Isle field:
 - Places names the bottle-hall. It does not say what the claim will do. South still steps back to the count.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Village path, and the door sill (this branch)
+
+- The isle path keeps a few more near-field leaves and cooler dusk haze. The walk stays the same.
+- The leaf-village door keeps clearer grain on the wreath and a little ash on the sill. The lamp, the wreath, and the dusk rim stay. The step in stays.
+- Places names the village path. It does not say what the claim will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

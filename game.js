@@ -995,6 +995,7 @@
 
     POOL_DEFS.forEach((def) => makePool(def));
     dressIsleGround();
+    dressPathAir();
 
     overworldGroup.add(new THREE.AmbientLight(0xfff4e4, 0.36));
     const sun = new THREE.DirectionalLight(0xfff6e0, 1.18);
@@ -6260,6 +6261,25 @@
     g.add(grain);
   }
 
+  function dressPathAir() {
+    const leafMat = new THREE.MeshBasicMaterial({ color: 0xc6e070, fog: false, side: THREE.DoubleSide });
+    [[-9.55, 1.42, -6.35], [-9.15, 1.72, -7.05], [-6.55, 1.28, -6.45], [-6.55, 1.68, -7.15], [-7.15, 1.95, -6.55]].forEach((spot, i) => {
+      const leaf = new THREE.Mesh(new THREE.PlaneGeometry(i % 2 ? 0.44 : 0.36, 0.22), leafMat);
+      leaf.position.set(spot[0], spot[1], spot[2]);
+      leaf.rotation.z = (i - 2) * 0.28;
+      overworldGroup.add(leaf);
+    });
+    const hazeMat = new THREE.MeshBasicMaterial({ color: 0x9eb8d8, fog: false, side: THREE.DoubleSide });
+    [[-9.7, 1.7, -6.9], [-6.15, 1.55, -6.7]].forEach((spot) => {
+      const patch = new THREE.Mesh(new THREE.PlaneGeometry(0.58, 1.2), hazeMat);
+      patch.position.set(spot[0], spot[1], spot[2]);
+      overworldGroup.add(patch);
+    });
+    const bank = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.38), hazeMat);
+    bank.position.set(-9.2, 2.15, -6.55);
+    overworldGroup.add(bank);
+  }
+
   function dressIsleGround() {
     overworldGroup.add(makeLicenceStake(0.15, 8, 0.5));
     overworldGroup.add(makeLicenceStake(-8.15, 7.4, -0.4));
@@ -6695,6 +6715,18 @@
     const glow = new THREE.PointLight(0xffc878, 0.72, 4.2);
     glow.position.set(0.55, 1.15, -2.96);
     g.add(glow);
+    const grainMat = new THREE.MeshBasicMaterial({ color: 0xd4f0a0, fog: false });
+    [[0.34, 1.64, -2.84], [-0.3, 1.72, -2.82], [0.48, 1.36, -2.86], [-0.5, 1.38, -2.88]].forEach((spot) => {
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.26, 0.04), grainMat);
+      line.position.set(spot[0], spot[1], spot[2]);
+      g.add(line);
+    });
+    const gritMat = new THREE.MeshBasicMaterial({ color: 0xc8b49a, fog: false });
+    [[-0.92, 0.52, -2.74], [0.9, 0.5, -2.78]].forEach((spot) => {
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.12, 0.26), gritMat);
+      cap.position.set(spot[0], spot[1], spot[2]);
+      g.add(cap);
+    });
   }
 
   function makeCoastPatrol(x, z) {
@@ -13669,6 +13701,7 @@
       if (!seenBeats['furrow-letter']) {
         rows.push({ name: 'Cousin\'s letter', note: 'In the basket. It is not the road.' });
       }
+      rows.push({ name: 'Village path', note: 'Cooler dusk on the path. The door is still the way in.' });
     }
     if (seenBeats.cellar || seenBeats.kiln) {
       rows.push({ name: 'Root-cellar', note: 'The kiln under the arch.' });
