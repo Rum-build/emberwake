@@ -937,6 +937,7 @@
     crystal.position.set(0, 1.5, 2.4);
     village.add(crystal);
     dressVillage(village);
+    dressVillageDoor(village);
     overworldGroup.add(village);
     const bannerPin = landmark('concord-banner');
     overworldGroup.add(makeConcordBanner(bannerPin.x, bannerPin.z));
@@ -1987,8 +1988,48 @@
       }
     });
     g.userData.leak = leak;
+    dressMarrowCrypt(g);
     marrowGroup = g;
     scene.add(g);
+  }
+
+  function dressMarrowCrypt(g) {
+    const bone = new THREE.MeshBasicMaterial({ color: 0xe4d4c2, fog: false });
+    [[0.95, 3.55, 0.48], [-4.1, 2.72, 0.58], [-1.55, 3.22, 0.48]].forEach((spot) => {
+      const rib = new THREE.Mesh(
+        new THREE.TorusGeometry(spot[2], 0.075, 6, 14, Math.PI),
+        bone
+      );
+      rib.position.set(spot[0], spot[2], spot[1]);
+      g.add(rib);
+    });
+    const dustMat = new THREE.MeshBasicMaterial({
+      color: 0xc5d4e2, transparent: true, opacity: 0.78, depthWrite: false, fog: false, side: THREE.DoubleSide,
+    });
+    [[0.55, 3.35, 0.28], [-0.35, 2.15, 0.2], [1.85, 3.42, 0.18], [-1.85, 3.55, 0.16]].forEach((spot) => {
+      const dust = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 10), dustMat);
+      dust.rotation.x = -Math.PI / 2;
+      dust.position.set(spot[0], 0.06, spot[1]);
+      g.add(dust);
+    });
+    const lamp = new THREE.Group();
+    lamp.position.set(-1.05, 0, 3.48);
+    const pole = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.045, 0.06, 1.2, 6),
+      new THREE.MeshLambertMaterial({ color: 0x3a342c })
+    );
+    pole.position.y = 0.6;
+    lamp.add(pole);
+    const head = new THREE.Mesh(
+      new THREE.BoxGeometry(0.24, 0.28, 0.18),
+      new THREE.MeshBasicMaterial({ color: 0xd5e4f2, fog: false })
+    );
+    head.position.set(0, 1.22, 0);
+    lamp.add(head);
+    const cool = new THREE.PointLight(0xc5d6ee, 0.85, 6.5);
+    cool.position.set(0, 1.18, 0.16);
+    lamp.add(cool);
+    g.add(lamp);
   }
 
   function marrowFits(x, z) {
@@ -6165,6 +6206,49 @@
     const rack = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.06, 0.08), postMat);
     rack.position.set(2.85, 1.12, 2.7);
     g.add(rack);
+  }
+
+  function dressVillageDoor(g) {
+    const postMat = new THREE.MeshLambertMaterial({ color: 0x4a3428 });
+    [-1.35, 1.35].forEach((x) => {
+      const post = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.55, 0.12), postMat);
+      post.position.set(x, 0.78, -3.22);
+      g.add(post);
+    });
+    const lintel = new THREE.Mesh(new THREE.BoxGeometry(2.9, 0.1, 0.12), postMat);
+    lintel.position.set(0, 1.52, -3.22);
+    g.add(lintel);
+    const rim = new THREE.Mesh(
+      new THREE.PlaneGeometry(2.6, 1.35),
+      new THREE.MeshBasicMaterial({
+        color: 0xff8a3a, transparent: true, opacity: 0.55, depthWrite: false, fog: false, side: THREE.DoubleSide,
+      })
+    );
+    rim.position.set(0, 1.05, -3.48);
+    g.add(rim);
+    const wreath = new THREE.Mesh(
+      new THREE.TorusGeometry(0.36, 0.05, 6, 14),
+      new THREE.MeshBasicMaterial({ color: 0x5c8a3a, fog: false })
+    );
+    wreath.position.set(0, 1.28, -3.12);
+    g.add(wreath);
+    const leafMat = new THREE.MeshBasicMaterial({ color: 0x6a9a44, fog: false, side: THREE.DoubleSide });
+    for (let i = 0; i < 6; i++) {
+      const leaf = new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.1), leafMat);
+      const a = i * Math.PI / 3;
+      leaf.position.set(Math.cos(a) * 0.4, 1.28 + Math.sin(a) * 0.4, -3.1);
+      leaf.rotation.z = a;
+      g.add(leaf);
+    }
+    const lamp = new THREE.Mesh(
+      new THREE.BoxGeometry(0.22, 0.24, 0.16),
+      new THREE.MeshBasicMaterial({ color: 0xffd08a, fog: false })
+    );
+    lamp.position.set(0.55, 1.18, -3.08);
+    g.add(lamp);
+    const glow = new THREE.PointLight(0xffc878, 0.72, 4.2);
+    glow.position.set(0.55, 1.15, -2.96);
+    g.add(glow);
   }
 
   function makeCoastPatrol(x, z) {
@@ -13153,7 +13237,10 @@
           : 'The bottled hall is north of the count. The corks stayed.',
       });
     }
-    if (seenBeats.marrowStep) rows.push({ name: 'Ashen Marrow', note: 'The digest-engine and the ash shelf.' });
+    if (seenBeats.marrowStep) {
+      rows.push({ name: 'Ashen Marrow', note: 'The digest-engine and the ash shelf.' });
+      rows.push({ name: 'Marrow crypt', note: 'Bone-ash undercroft inland of the vault.' });
+    }
     if (pipeWord || seenBeats['pipe-feed']) {
       rows.push({ name: 'Engine pipe', note: pipeWord === 'crack' ? 'The feed is cracked.' : pipeWord === 'leave' ? 'The feed stayed corked.' : 'The valve is a choice.' });
     }

@@ -474,6 +474,13 @@ Playable on the Verdant Isle field:
 - After the scar, Places names the north ridge stone. It does not repeat that she farms the rot.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Marrow crypt, and the village door (this branch)
+
+- Ashen Marrow keeps bone ribs, cooler dust, and a marrow lamp in the south corridor, off the leak, the tender, the yard stone, the pipe, and the south step. The bottle-hall stays as it was.
+- The leaf-village door keeps a lamp, a leaf wreath, and a dusk rim off the door, the kiln, and the leaf-cup.
+- After the marrow is walked, Places names the bone-ash crypt. It does not repeat the cork quest or the scrap.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
