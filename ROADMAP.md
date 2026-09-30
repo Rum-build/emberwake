@@ -577,6 +577,12 @@ Playable on the Verdant Isle field:
 - Places names the pier. It does not say what the claim will do. The telegraph stays.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Claim approach lintel (this branch)
+
+- The south mouth of the remnant claim keeps grain on the lintel, ash on the sill, and a cooler catch on the open post. The approach ring stays. The south step stays.
+- Places names that lintel only after the claim is walked. It does not say what the ending will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

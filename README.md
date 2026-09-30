@@ -134,6 +134,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The isle path keeps a few more near-field leaves and cooler dusk haze. The village door keeps wreath grain and ash on the sill. The walk and the step in stay. Places names the path. No new cue.
 - Vesper’s scar keeps smoke, ash, and a rot film on the blister. The pile, the posts, and the veil stay. The walk stays. Places names the farm. No new cue.
 - The harbor pier keeps plank grain and salt on the near boards, and cooler spray beside the lamp. The sheen stays. Places names the pier. No new cue.
+- The claim’s south mouth keeps lintel grain, sill ash, and a cooler catch on the open post. The approach ring stays. The south step stays. Places names the lintel after the claim is walked. No new cue.
 
 ## Play on your phone
 
