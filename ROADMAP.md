@@ -665,6 +665,13 @@ Playable on the Verdant Isle field:
 - Places still names the waystone. It does not say what the ending will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Village path, the dusk (this branch)
+
+- South of the leaf-village, a look lets Lira say Concord licensed the wreath and left the door half shut. Torren, when he walks with her, says the stamp held the licence and did not hold the argument. The spark says Vesper farms the rot past the door and does not take the host. The path stays.
+- The door stays Enter. The letter stays in the basket.
+- Places still names the village path. It does not say what the ending will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
