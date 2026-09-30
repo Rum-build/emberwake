@@ -432,6 +432,13 @@ Playable on the Verdant Isle field:
 - Before the breach is walked, Places names it north of the widened crack. The letter, the kiln, and the leaf-cup stay as they were.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Claim approach (this branch)
+
+- The walk into the Remnant Claim wears an ash rim and a cooler light, off the south step. The quest and Places name the Claim before the choice.
+- Lira speaks once before that board. The spark listens. Claim, refuse, share, and burn stay the same choices. She does not enter.
+- The claim bed sits a little under the field so the low tones read. The aftermath seat stays quieter. That is the same cue.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

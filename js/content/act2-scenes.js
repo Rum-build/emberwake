@@ -1036,6 +1036,11 @@
       lines: [
         {
           where: 'Remnant claim',
+          speaker: 'Lira',
+          text: 'The mouth stays mine. The spark can listen. It does not wear me.',
+        },
+        {
+          where: 'Remnant claim',
           speaker: 'Vesper',
           text: 'The bar is behind you. This mass is the remnant, not a bottle. The last rite is down. I will not take her, and I will not be taken. Choose. None of this is the ending. Kestrel may land. She still does not join.',
           choices: [
