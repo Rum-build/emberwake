@@ -901,6 +901,10 @@ The walk from the wake to the leaf-village now carries worn flagstone grain, mos
 
 Under the farm marker, the ground now carries cracked rot soil, ash grit, a sickly moss fringe, and darker fissure lines. The marker, the smoke look, and the scar drink stay where they were. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the hall aisle pass
+
+The bottle-hall aisle under the shelves now carries worn stone tile grain, ash wash in the joints, edge chips, and a faint bottle-drip stain. The shelves, the near corks, and the hall beat stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

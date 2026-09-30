@@ -200,6 +200,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The wake field keeps layered grass, soil grit, a soft shadow under the blades, and warmer ground colour. The spawn, the letter, and the village door stay readable. No new cue.
 - The village path keeps worn flagstone grain, moss in the joints, a dusk shadow, and edge chips. The door and the path look stay readable. No new cue.
 - The scar farm keeps cracked rot soil, ash grit, a sickly moss fringe, and darker fissures under the marker. The smoke look and the drink stay readable. No new cue.
+- The bottle-hall aisle keeps worn tile grain, ash in the joints, edge chips, and a faint bottle drip. The shelves and the near corks stay readable. No new cue.
 
 ## Play on your phone
 
