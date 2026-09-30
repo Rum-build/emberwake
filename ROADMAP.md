@@ -609,6 +609,13 @@ Playable on the Verdant Isle field:
 - Places still names the scar farm. It does not say what the claim will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Concord yard, the gate cork (this branch)
+
+- West of the quiet stand, a look at the south gate lets Lira say Concord licensed the leak and left the yard open. Torren, when he walks with her, says the stamp held the book and did not hold the rot. The spark says Vesper farms the rot past the gate and does not take the host. The slag stays the drink.
+- The rest, the warden, and the quiet stand stay where they were. The south step stays.
+- Places still names the stake. It does not say what the ending will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

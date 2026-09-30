@@ -139,6 +139,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The marrow crypt keeps bone grain, cooler sill grit, and a cooler catch on the open rib. The lamp and the rim stay. The south step stays. Places names the sill once the marrow is walked. No new cue.
 - On the harbor pier, a look at the salt lets Lira say Concord counted the weather and left the tide. Vesper does not stand there. The telegraph stays. The quiet stand stays quiet. No new cue.
 - South of the scar farm, a look lets Lira say Concord named the cough mercy. Vesper farms the rot and does not take the host. The drink stays the blister. No new cue.
+- West of the Concord yard’s quiet stand, a look at the south gate lets Lira say Concord licensed the leak. Vesper farms the rot and does not take the host. The slag stays the drink. The rest and the south step stay. No new cue.
 
 ## Play on your phone
 
