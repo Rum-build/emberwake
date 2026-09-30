@@ -165,6 +165,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - On the village path, packed dirt, leaf litter, and small stone chips sit under a soft dusk wash. Ash grit sits beyond the door wreath. The path stones and the dusk look stay readable. No new cue.
 - In the ash nave, worn flagstone courses, dust grit in the joints, a soft dust wash, pew-shadow fill, and scuff marks sit on the floor. The east pew dust and the brass stay readable. No new cue.
 - In the bottle-hall, cork grit, a seal-dust wash, worn tile plates, shelf-shadow fill, and scuff marks sit on the floor toward the cork racks. The near corks and the seal grit stay readable. No new cue.
+- At the cellar mouth, ash grit plates, damp stone courses, a mouth-ash wash, and threshold scuffs sit under a cooler lamp rim. The mouth ash and the door stay readable. No new cue.
 
 ## Play on your phone
 

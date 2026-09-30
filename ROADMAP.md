@@ -761,6 +761,10 @@ In the ash nave, the floor now carries worn flagstone courses, dust grit in the 
 
 In the bottle-hall, the floor now carries cork grit underfoot, a seal-dust wash, worn tile plates, shelf-shadow fill, and scuff marks toward the cork racks. The near corks, the seal grit, and the rack dust stay where they were. The nave floor, the village path, the waystone approach, the roost ground, the pier boards, the yard cobbles, the scar approach, the leaf-cup bank, the wake ground, and the kiln are unchanged. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the cellar mouth pass
+
+At the cellar mouth, the floor now carries ash grit plates, damp stone courses, a mouth-ash wash, threshold scuffs, and a cooler lamp rim on the stones. The mouth ash, the door, and the arch lamp stay where they were. The bottle-hall floor, the nave floor, the village path, the waystone approach, the roost ground, the pier boards, the yard cobbles, the scar approach, the leaf-cup bank, the wake ground, and the kiln are unchanged. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
