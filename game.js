@@ -943,6 +943,7 @@
     const stonePin = landmark('sleeping-waystone');
     if (stonePin) {
       waystoneGroup = makeWaystone(stonePin.x, stonePin.z);
+      dressWaystoneRim(waystoneGroup);
       overworldGroup.add(waystoneGroup);
     }
     const ridgePin = landmark('vesper-ridge');
@@ -4200,6 +4201,34 @@
     if (data.glow) data.glow.intensity = 0;
   }
 
+  function dressWaystoneRim(g) {
+    const rim = new THREE.Mesh(
+      new THREE.TorusGeometry(3.72, 0.11, 8, 32),
+      new THREE.MeshLambertMaterial({ color: 0xd5e0ea, emissive: new THREE.Color(0x243040) })
+    );
+    rim.rotation.x = Math.PI / 2;
+    rim.position.y = 0.08;
+    g.add(rim);
+    const gritMat = new THREE.MeshLambertMaterial({ color: 0x9aa2ac });
+    [[1.45, 3.38, 0.16], [-0.15, 3.7, 0.12], [-1.55, 3.32, 0.15]].forEach((spot) => {
+      const grit = new THREE.Mesh(new THREE.DodecahedronGeometry(spot[2], 0), gritMat);
+      grit.position.set(spot[0], spot[2] * 0.6, spot[1]);
+      g.add(grit);
+    });
+    const ashMat = new THREE.MeshBasicMaterial({
+      color: 0xd8dce4, transparent: true, opacity: 0.7, depthWrite: false, fog: false, side: THREE.DoubleSide,
+    });
+    [[0.15, 3.78, 0.18], [1.7, 3.42, 0.16], [-1.35, 3.55, 0.16]].forEach((spot) => {
+      const ash = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 8), ashMat);
+      ash.rotation.x = -Math.PI / 2;
+      ash.position.set(spot[0], 0.05, spot[1]);
+      g.add(ash);
+    });
+    const cool = new THREE.PointLight(0xc5d6ee, 0.7, 8);
+    cool.position.set(0, 1.8, 2.2);
+    g.add(cool);
+  }
+
   function stoneReady() {
     const kiln = pools.find((p) => p.id === 'kiln');
     return !!(kiln && kiln.absorbed && scarVerdict);
@@ -4391,6 +4420,7 @@
     dressHarbor(g);
     dressRoostRim(g);
     dressCoastMist(g);
+    dressCoastShore(g);
     g.userData.gusts = makeGusts(g, 5, 0xd0e4f0);
   }
 
@@ -4430,6 +4460,51 @@
       streak.rotation.x = 0.15;
       g.add(streak);
     });
+  }
+
+  function dressCoastShore(g) {
+    const foamMat = new THREE.MeshBasicMaterial({
+      color: 0xf7fbff, transparent: true, opacity: 0.8, depthWrite: false, fog: false, side: THREE.DoubleSide,
+    });
+    [2.8, 4.0, 5.2].forEach((x) => {
+      const foam = new THREE.Mesh(new THREE.PlaneGeometry(1.15, 0.26), foamMat);
+      foam.rotation.x = -Math.PI / 2;
+      foam.position.set(x, 0.06, 11.12);
+      g.add(foam);
+    });
+    const sheenMat = new THREE.MeshBasicMaterial({
+      color: 0xb7d0e4, transparent: true, opacity: 0.66, depthWrite: false, fog: false, side: THREE.DoubleSide,
+    });
+    [[3.3, 10.5, 0.42], [4.7, 10.35, 0.38], [2.55, 10.72, 0.26]].forEach((spot) => {
+      const wet = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 12), sheenMat);
+      wet.rotation.x = -Math.PI / 2;
+      wet.position.set(spot[0], 0.045, spot[1]);
+      g.add(wet);
+    });
+    const post = new THREE.Group();
+    post.position.set(5.35, 0, 10.82);
+    const pole = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.045, 0.06, 1.25, 5),
+      new THREE.MeshLambertMaterial({ color: 0x3a342c })
+    );
+    pole.position.y = 0.62;
+    post.add(pole);
+    const plate = new THREE.Mesh(
+      new THREE.BoxGeometry(0.24, 0.3, 0.04),
+      new THREE.MeshBasicMaterial({ color: 0xffe1a8, fog: false })
+    );
+    plate.position.set(0, 1.16, 0.05);
+    post.add(plate);
+    const seal = new THREE.Mesh(
+      new THREE.OctahedronGeometry(0.08, 0),
+      new THREE.MeshBasicMaterial({ color: 0xfff1c4, fog: false })
+    );
+    seal.position.set(0, 1.34, 0.09);
+    post.add(seal);
+    const glow = new THREE.PointLight(0xffe1a8, 0.75, 3.4);
+    glow.position.set(0, 1.2, 0.2);
+    post.add(glow);
+    g.add(post);
   }
 
   function dressHarbor(g) {
@@ -13050,6 +13125,14 @@
         note: scarVerdict
           ? 'She farms the rot there. She does not enter.'
           : 'East of the wake. The witnesses have not spoken.',
+      });
+    }
+    if (scarVerdict || seenBeats.waystone || seenBeats['waystone-wake']) {
+      rows.push({
+        name: 'Sleeping waystone',
+        note: seenBeats['waystone-wake']
+          ? 'The north ridge stone is open. The thermal is the road.'
+          : 'North ridge. The stone stays shut. It is not the scar.',
       });
     }
     if (seenBeats.coastRoute || seenBeats['vault-face'] || regionId === 'stormreach') {
