@@ -925,6 +925,10 @@ The water beside the harbor pier now carries a soft ripple sheen, a darker depth
 
 The ground under the roost perch beam now carries packed dirt grain, feather litter flecks, an ash wash, and sparse weed tufts. The perch, the wing look, and the roost beat stay where they were. No new cue.
 
+## Shipped in the waystone plinth pass
+
+The ground and sill under the waystone’s carved face now carry worn stone grain, moss in the joints, ash grit, and shallow edge chips. The carved face, the south stones, and the waystone beat stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
