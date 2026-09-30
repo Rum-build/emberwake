@@ -1627,9 +1627,31 @@
     hallShade.position.set(-2.15, 0.045, -12.15);
     g.add(hallShade);
     dressHallMonopoly(g);
+    dressHallAir(g);
     dressCountAir(g);
     g.visible = false;
     return g;
+  }
+
+  function dressHallAir(g) {
+    const grainMat = new THREE.MeshBasicMaterial({ color: 0xf2dcc0, fog: false });
+    [[-0.72, 0.5, -10.36], [-0.6, 0.46, -10.34], [0.78, 0.5, -10.52], [0.9, 0.46, -10.5]].forEach((spot) => {
+      const twist = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.18, 0.045), grainMat);
+      twist.position.set(spot[0], spot[1], spot[2]);
+      g.add(twist);
+    });
+    const shaftMat = new THREE.MeshBasicMaterial({ color: 0xb7d0ea, fog: false });
+    [[-1.55, 1.75, -9.1], [1.45, 1.7, -9.4], [-0.85, 2.05, -8.7], [0.95, 1.95, -10.15]].forEach((spot) => {
+      const shaft = new THREE.Mesh(new THREE.PlaneGeometry(0.14, 1.55), shaftMat);
+      shaft.position.set(spot[0], spot[1], spot[2]);
+      g.add(shaft);
+    });
+    const gritMat = new THREE.MeshBasicMaterial({ color: 0xe4eef8, fog: false });
+    [[1.35, -9.6], [-1.45, -9.9], [1.55, -10.3]].forEach((spot) => {
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.04, 0.16), gritMat);
+      cap.position.set(spot[0], 0.16, spot[1]);
+      g.add(cap);
+    });
   }
 
   function dressCountAir(g) {
@@ -2122,6 +2144,18 @@
     cool.position.set(0, 1.18, 0.16);
     lamp.add(cool);
     g.add(lamp);
+    const cryptDust = new THREE.MeshBasicMaterial({ color: 0xa8c4dc, fog: false });
+    [[-1.7, 1.45, 3.15], [0.2, 1.55, 3.25], [-0.4, 1.85, 2.85]].forEach((spot) => {
+      const shaft = new THREE.Mesh(new THREE.PlaneGeometry(0.14, 1.35), cryptDust);
+      shaft.position.set(spot[0], spot[1], spot[2]);
+      g.add(shaft);
+    });
+    const rim = new THREE.Mesh(
+      new THREE.TorusGeometry(0.22, 0.045, 8, 20),
+      new THREE.MeshBasicMaterial({ color: 0xeef7ff, fog: false })
+    );
+    rim.position.set(0, 1.22, 0.14);
+    lamp.add(rim);
   }
 
   function marrowFits(x, z) {
@@ -13676,6 +13710,9 @@
           : 'The bottled hall is north of the count. The corks stayed.',
       });
       rows.push({ name: 'Counting room', note: 'Salt dust over the ledger. South still steps back to the shale.' });
+      if (seenBeats['bottle-hall']) {
+        rows.push({ name: 'Bottle-hall', note: 'Cork grain in the near row. South still steps back to the count.' });
+      }
     }
     if (seenBeats.marrowStep) {
       rows.push({ name: 'Ashen Marrow', note: 'The digest-engine and the ash shelf.' });
