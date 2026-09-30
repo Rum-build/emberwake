@@ -725,6 +725,10 @@ Playable on the Verdant Isle field:
 
 Around the wake and the path approach, the ground now carries layered grass clumps, dirt patches, small stones, root ridges, and a soft dusk wash. The village path stones, the kiln, the cloak stake, and the bracers take spots are the same meshes as before. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the leaf-cup grove pass
+
+Around the leaf-cup, the bank now carries layered moss, damp dirt, small stones, root curls, and a soft green wash at the water edge. The drink, the licence stakes, and the wax cloth are the same. The wake ground, the path stones, and the kiln are unchanged. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

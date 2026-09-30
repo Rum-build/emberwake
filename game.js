@@ -7330,6 +7330,7 @@
     overworldGroup.add(makeScarVeil());
     dressScarFarm();
     dressLeafCup();
+    dressLeafGrove();
   }
 
   function dressScarFarm() {
@@ -7384,6 +7385,141 @@
     const cool = new THREE.PointLight(0xc5e6ea, 0.42, 3.6);
     cool.position.set(0, 0.9, 0);
     g.add(cool);
+    overworldGroup.add(g);
+  }
+
+  function dressLeafGrove() {
+    const g = new THREE.Group();
+    g.position.set(-4, 0, 8);
+    const moss = new THREE.MeshPhongMaterial({
+      color: 0x1f6a3a, shininess: 22, specular: new THREE.Color(0xc8f0a0), side: THREE.DoubleSide,
+    });
+    const wet = new THREE.MeshPhongMaterial({
+      color: 0x3d8a48, shininess: 28, specular: new THREE.Color(0xe8ffc0), side: THREE.DoubleSide,
+    });
+    const damp = new THREE.MeshPhongMaterial({
+      color: 0x2a4030, shininess: 8, specular: new THREE.Color(0x6a8870),
+    });
+    const mud = new THREE.MeshPhongMaterial({
+      color: 0x3a2c1c, shininess: 6, specular: new THREE.Color(0x8a9a78),
+    });
+    const mudDark = new THREE.MeshPhongMaterial({
+      color: 0x24180f, shininess: 4, specular: new THREE.Color(0x5a4838),
+    });
+    const stoneA = new THREE.MeshPhongMaterial({
+      color: 0x6a7268, shininess: 42, specular: new THREE.Color(0xd8eee0),
+    });
+    const stoneB = new THREE.MeshPhongMaterial({
+      color: 0x3e463f, shininess: 24, specular: new THREE.Color(0x9ab0a0),
+    });
+    const bark = new THREE.MeshPhongMaterial({
+      color: 0x4a3020, shininess: 12, specular: new THREE.Color(0xc8a080),
+    });
+    const barkWet = new THREE.MeshPhongMaterial({
+      color: 0x8a6848, shininess: 18, specular: new THREE.Color(0xe8d8c0),
+    });
+    function clump(x, z, lean) {
+      const tuft = new THREE.Group();
+      const pad = new THREE.Mesh(new THREE.SphereGeometry(0.2, 6, 5), moss);
+      pad.scale.set(1.25, 0.28, 1.05);
+      pad.position.y = 0.035;
+      tuft.add(pad);
+      for (let i = 0; i < 8; i++) {
+        const h = 0.22 + (i % 3) * 0.1;
+        const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.07, h), i % 2 ? wet : moss);
+        const a = i * 0.78;
+        blade.position.set(Math.cos(a) * 0.08, h * 0.46, Math.sin(a) * 0.08);
+        blade.rotation.y = a;
+        blade.rotation.z = lean + (i - 3) * 0.06;
+        tuft.add(blade);
+      }
+      tuft.position.set(x, 0, z);
+      g.add(tuft);
+    }
+    [[0.3, 3.55, 0.1], [-2.55, 3.05, -0.12], [3.05, 2.35, 0.08], [-3.45, 1.55, 0.14], [1.7, -3.45, -0.1], [-1.85, -3.4, 0.12], [3.65, 1.65, -0.08], [-3.15, -2.45, 0.16]].forEach((spot) => {
+      clump(spot[0], spot[1], spot[2]);
+    });
+    function dirt(x, z, r) {
+      const patch = new THREE.Group();
+      const disc = new THREE.Mesh(new THREE.CircleGeometry(r, 9), mud);
+      disc.rotation.x = -Math.PI / 2;
+      disc.position.y = 0.03;
+      disc.receiveShadow = true;
+      patch.add(disc);
+      const inner = new THREE.Mesh(new THREE.CircleGeometry(r * 0.48, 7), mudDark);
+      inner.rotation.x = -Math.PI / 2;
+      inner.position.set(r * 0.12, 0.036, -r * 0.06);
+      patch.add(inner);
+      const puddle = new THREE.Mesh(
+        new THREE.CircleGeometry(r * 0.32, 8),
+        new THREE.MeshPhongMaterial({
+          color: 0x3a6a58, shininess: 60, specular: new THREE.Color(0xd8fff0), transparent: true, opacity: 0.72,
+        })
+      );
+      puddle.rotation.x = -Math.PI / 2;
+      puddle.position.set(-r * 0.08, 0.042, r * 0.05);
+      patch.add(puddle);
+      patch.position.set(x, 0, z);
+      g.add(patch);
+    }
+    [[0.15, 3.4, 0.62], [-2.9, 2.55, 0.55], [2.7, -2.25, 0.5], [-1.7, -3.5, 0.42]].forEach((spot) => {
+      dirt(spot[0], spot[1], spot[2]);
+    });
+    function stones(x, z) {
+      const cluster = new THREE.Group();
+      [[0, 0, 0.16, stoneA], [0.18, 0.05, 0.09, stoneB], [-0.14, 0.04, 0.08, stoneA]].forEach((spot, i) => {
+        const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(spot[2], 0), spot[3]);
+        rock.position.set(spot[0], spot[2] * 0.42, spot[1]);
+        rock.scale.y = 0.5;
+        rock.rotation.y = i * 0.8;
+        rock.castShadow = true;
+        cluster.add(rock);
+      });
+      cluster.position.set(x, 0, z);
+      g.add(cluster);
+    }
+    [[-1.15, 3.55], [2.85, 2.95], [-3.1, 1.3], [1.55, -3.5]].forEach((spot) => {
+      stones(spot[0], spot[1]);
+    });
+    [[3.9, 1.05, 0.11], [0.15, 3.85, 0.08], [-1.45, 3.6, 0.07], [-3.15, 2.35, 0.1], [-3.65, 0.7, 0.09], [1.35, -3.55, 0.08], [3.45, -1.45, 0.1], [-2.15, -3.2, 0.07]].forEach((spot) => {
+      const pebble = new THREE.Mesh(new THREE.DodecahedronGeometry(spot[2], 0), spot[2] > 0.09 ? stoneA : stoneB);
+      pebble.position.set(spot[0], spot[2] * 0.4, spot[1]);
+      pebble.scale.y = 0.48;
+      pebble.castShadow = true;
+      g.add(pebble);
+    });
+    function curl(x, z, rot) {
+      const root = new THREE.Group();
+      const arc = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.045, 5, 10, Math.PI * 1.2), bark);
+      arc.rotation.x = Math.PI / 2;
+      arc.position.y = 0.05;
+      arc.castShadow = true;
+      root.add(arc);
+      const tip = new THREE.Mesh(new THREE.SphereGeometry(0.06, 5, 4), barkWet);
+      tip.position.set(0.28, 0.07, 0.08);
+      root.add(tip);
+      root.position.set(x, 0, z);
+      root.rotation.y = rot;
+      g.add(root);
+    }
+    [[-0.55, 3.4, 0.4], [2.55, 1.85, -0.7], [-2.2, -3.45, 1.1]].forEach((spot) => {
+      curl(spot[0], spot[1], spot[2]);
+    });
+    const washMat = new THREE.MeshBasicMaterial({
+      color: 0x8ed48a, transparent: true, opacity: 0.07, depthWrite: false, fog: false,
+    });
+    [[0.55, 3.15, 1.05], [-2.4, 2.15, 0.95], [2.2, 0.8, 0.85], [-1.85, -3.15, 0.55]].forEach((spot) => {
+      const wash = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 12), washMat);
+      wash.rotation.x = -Math.PI / 2;
+      wash.position.set(spot[0], 0.024, spot[1]);
+      g.add(wash);
+    });
+    const lip = new THREE.PointLight(0x9ee6a0, 0.32, 7.5);
+    lip.position.set(0.3, 1.45, 2.4);
+    g.add(lip);
+    const shade = new THREE.PointLight(0xb7e0c8, 0.16, 6);
+    shade.position.set(-1.4, 1.15, -1.2);
+    g.add(shade);
     overworldGroup.add(g);
   }
 
