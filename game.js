@@ -6634,15 +6634,16 @@
     } else if (weapon === 'reed-bow') {
       const reed = phong(0xc6b07a, 0x3a3010, 16, 0xfff4d0);
       const stringMat = phong(0xe8eef4, 0x202830, 46, 0xffffff);
-      put(gear, new THREE.BoxGeometry(0.04 * s, 0.4 * s, 0.032 * s), reed, -0.14 * s, 0.98 * s, -0.22 * s, 0.46);
-      put(gear, new THREE.BoxGeometry(0.04 * s, 0.38 * s, 0.032 * s), reed, -0.12 * s, 0.56 * s, -0.22 * s, -0.4);
-      put(gear, new THREE.BoxGeometry(0.055 * s, 0.16 * s, 0.045 * s), leather, -0.08 * s, 0.76 * s, -0.2 * s);
-      put(gear, new THREE.BoxGeometry(0.01 * s, 0.74 * s, 0.01 * s), stringMat, -0.02 * s, 0.76 * s, -0.2 * s, 0.04);
-      put(gear, new THREE.SphereGeometry(0.03 * s, 6, 5), phong(0xd2b4ff, 0x403060, 40, 0xf4e8ff), -0.22 * s, 1.16 * s, -0.22 * s);
-      put(gear, new THREE.BoxGeometry(0.07 * s, 0.24 * s, 0.07 * s), leather, 0.24 * s, 0.46 * s, -0.04 * s, 0.18);
+      const tilt = -0.72;
+      put(gear, new THREE.BoxGeometry(0.04 * s, 0.42 * s, 0.032 * s), reed, 0.12 * s, 0.98 * s, 0.18 * s, tilt);
+      put(gear, new THREE.BoxGeometry(0.04 * s, 0.4 * s, 0.032 * s), reed, -0.1 * s, 0.52 * s, 0.16 * s, tilt);
+      put(gear, new THREE.BoxGeometry(0.055 * s, 0.16 * s, 0.045 * s), leather, 0.02 * s, 0.74 * s, 0.2 * s, tilt);
+      put(gear, new THREE.BoxGeometry(0.012 * s, 0.78 * s, 0.012 * s), stringMat, 0.08 * s, 0.74 * s, 0.22 * s, tilt);
+      put(gear, new THREE.SphereGeometry(0.032 * s, 6, 5), phong(0xd2b4ff, 0x403060, 40, 0xf4e8ff), 0.26 * s, 1.16 * s, 0.2 * s);
+      put(gear, new THREE.BoxGeometry(0.07 * s, 0.24 * s, 0.07 * s), leather, 0.24 * s, 0.46 * s, 0.12 * s, 0.15);
       [0, 1, 2].forEach((i) => {
-        put(gear, new THREE.BoxGeometry(0.012 * s, 0.32 * s, 0.012 * s), reed, (0.2 + i * 0.025) * s, 0.62 * s, -0.03 * s, 0.18);
-        put(gear, new THREE.BoxGeometry(0.028 * s, 0.04 * s, 0.02 * s), phong(0xf4f0e4, 0x3a3428, 8, 0xffffff), (0.2 + i * 0.025) * s, 0.78 * s, -0.02 * s, 0.18);
+        put(gear, new THREE.BoxGeometry(0.012 * s, 0.32 * s, 0.012 * s), reed, (0.2 + i * 0.025) * s, 0.62 * s, 0.14 * s, 0.15);
+        put(gear, new THREE.BoxGeometry(0.028 * s, 0.04 * s, 0.02 * s), phong(0xf4f0e4, 0x3a3428, 8, 0xffffff), (0.2 + i * 0.025) * s, 0.78 * s, 0.15 * s, 0.15);
       });
     }
     if (armor === 'quilt-jerkin') {

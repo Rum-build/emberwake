@@ -701,7 +701,7 @@ Playable on the Verdant Isle field:
 
 ## Gear on the body (this branch)
 
-- Lira’s equipped weapon is on her body in the field and in a fight. The scout knife stays on the hip. The ashwood blade is longer, with an ember edge. The wellwood staff is in the right hand. The reed bow sits across the shoulder, with a quiver. Stow the weapon and the hands are empty.
+- Lira’s equipped weapon is on her body in the field and in a fight. The scout knife stays on the hip. The ashwood blade is longer, with an ember edge. The wellwood staff is in the right hand. The reed bow crosses the chest, with a quiver. Stow the weapon and the hands are empty.
 - The quilted jerkin adds padded shoulders, side gussets, and a stitched chest. Stow it and that bulk leaves. Pack text and the body match.
 - Hands, boots, faces, and the other hip kits stay. Nima’s rod and Torren’s cudgel stay. Vesper stays a darker cloth mass and a hair lock. She does not take a lit face. She does not enter Aftermath.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
