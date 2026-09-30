@@ -785,6 +785,10 @@ Beside the counting-room clerk desk, the floor now carries worn ledger-side plan
 
 At the root-cellar door, the threshold now carries worn mouth stones, damp grit at the sill, a cooler ash wash from the mouth lamp, threshold scuffs, and a soft shadow under the door lip. The door, the arch lamp, and the interior mouth floor stay where they were. The clerk desk, the vault sill, the telegraph approach, the counting-room aisle, the cellar mouth, the bottle-hall floor, the nave floor, the village path, the waystone approach, the roost ground, the pier boards, the yard cobbles, the scar approach, the leaf-cup bank, the wake ground, and the kiln are unchanged. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the Lira face pass
+
+Lira’s face now carries softer cheek and jaw volume, finer hair strands with a parting catchlight, clearer eye catchlights, and a subtle cloth fold on the base tunic where it meets the gear. Equipped clothes, armour, and weapons stay on the body and stay readable. The cellar door, the clerk desk, the vault sill, and the earlier ground passes are unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

@@ -7459,6 +7459,69 @@
       fold2.position.set(-0.08 * scale, 0.86 * scale, 0.14 * scale);
       fold2.rotation.z = -0.2;
       g.add(fold2);
+      const strandMat = new THREE.MeshPhongMaterial({
+        color: 0x4a3020, emissive: new THREE.Color(0x140c08), shininess: 36, specular: new THREE.Color(0xf0d8c0),
+      });
+      [
+        [-0.1, 1.12, 0.15, 0.2, 0.2],
+        [0.04, 1.15, 0.16, 0.16, -0.18],
+        [0.13, 1.06, 0.11, 0.24, -0.42],
+        [-0.16, 1.05, 0.07, 0.22, 0.32],
+      ].forEach((spot) => {
+        const strand = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.012 * scale, 0.008 * scale, spot[3] * scale, 5),
+          strandMat
+        );
+        strand.position.set(spot[0] * scale, spot[1] * scale, spot[2] * scale);
+        strand.rotation.z = spot[4];
+        strand.rotation.x = 0.18;
+        g.add(strand);
+      });
+      const part = new THREE.Mesh(
+        new THREE.BoxGeometry(0.014 * scale, 0.016 * scale, 0.16 * scale),
+        new THREE.MeshBasicMaterial({ color: 0xf6ead8, fog: false })
+      );
+      part.position.set(0.012 * scale, 1.3 * scale, 0.03 * scale);
+      part.rotation.x = -0.5;
+      g.add(part);
+      const partSheen = new THREE.Mesh(
+        new THREE.BoxGeometry(0.026 * scale, 0.012 * scale, 0.11 * scale),
+        new THREE.MeshPhongMaterial({
+          color: 0x6a4830, emissive: new THREE.Color(0x2a180c), shininess: 80, specular: new THREE.Color(0xfff4e8),
+        })
+      );
+      partSheen.position.set(-0.018 * scale, 1.288 * scale, 0.045 * scale);
+      partSheen.rotation.x = -0.48;
+      g.add(partSheen);
+      [-1, 1].forEach((side) => {
+        const pad = new THREE.Mesh(new THREE.SphereGeometry(0.052 * scale, 8, 6), skin);
+        pad.scale.set(1.2, 0.82, 0.7);
+        pad.position.set(side * 0.095 * scale, 1.032 * scale, 0.155 * scale);
+        g.add(pad);
+        const catchLight = new THREE.Mesh(
+          new THREE.SphereGeometry(0.016 * scale, 6, 4),
+          new THREE.MeshBasicMaterial({ color: 0xffffff, fog: false })
+        );
+        catchLight.position.set((side * 0.062 + 0.012) * scale, 1.118 * scale, 0.206 * scale);
+        g.add(catchLight);
+      });
+      const jawSoft = new THREE.Mesh(new THREE.SphereGeometry(0.07 * scale, 8, 6), skin);
+      jawSoft.scale.set(1.28, 0.46, 0.76);
+      jawSoft.position.set(0, 0.978 * scale, 0.122 * scale);
+      g.add(jawSoft);
+      const tunic = new THREE.MeshPhongMaterial({
+        color: 0xb56a42, emissive: new THREE.Color(0x3a1810), shininess: 8, specular: new THREE.Color(0xe8c0a0),
+      });
+      [-1, 1].forEach((side) => {
+        const socket = new THREE.Mesh(
+          new THREE.TorusGeometry(0.09 * scale, 0.012 * scale, 4, 7, Math.PI * 0.55),
+          tunic
+        );
+        socket.position.set(side * 0.26 * scale, 0.72 * scale, 0.2 * scale);
+        socket.rotation.y = side * 0.9;
+        socket.rotation.z = side * -0.35;
+        g.add(socket);
+      });
     }
     if (nima) {
       const braidMat = new THREE.MeshPhongMaterial({
