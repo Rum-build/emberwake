@@ -738,6 +738,11 @@
       scene.fog.near = 8;
       scene.fog.far = 22;
       if (renderer) renderer.setClearColor(0x3a342c);
+    } else if (place === 'verdant') {
+      scene.fog.color.set(0x8fbf9a);
+      scene.fog.near = 18;
+      scene.fog.far = 78;
+      if (renderer) renderer.setClearColor(0x8fbf9a);
     } else {
       scene.fog.color.set(0x7eafd4);
       scene.fog.near = 22;
@@ -5965,6 +5970,7 @@
     weather = {
       rain: makeFall(160, 0xb7c6d4, 0.12),
       gust: makeFall(120, 0xd2c2a4, 0.18),
+      leaves: makeFall(42, 0x7aaa4a, 0.18),
     };
   }
 
@@ -5981,6 +5987,15 @@
       weather.rain.material.color.setHex(coast ? 0xeaf4ff : 0xb7c6d4);
     }
     weather.gust.visible = !!(gustOn && motionWanted);
+    if (weather.leaves) {
+      weather.leaves.visible = isleWet;
+      if (weather.leaves.material) {
+        weather.leaves.material.opacity = 0.78;
+        weather.leaves.material.size = 0.2;
+        weather.leaves.material.color.setHex(0x8ec45a);
+      }
+      if (isleWet) weather.leaves.position.set(playerMesh.position.x, playerMesh.position.y, playerMesh.position.z);
+    }
     if (coast) weather.rain.position.set(playerMesh.position.x, playerMesh.position.y, playerMesh.position.z);
     if (!motionWanted) return;
     if (phoneMode && ((Math.floor(performance.now() / 40) % 2) === 0)) return;
@@ -6001,6 +6016,7 @@
     }
     fall(weather.rain, 2.8, Math.sin(t * 0.6) * 0.2);
     fall(weather.gust, 1.15, Math.sin(t * 0.45) * 0.85);
+    if (weather.leaves) fall(weather.leaves, 0.65, Math.sin(t * 0.35) * 0.5);
   }
 
   function driftMotes() {
@@ -6222,6 +6238,8 @@
       scene.fog.far = 64;
     }
     renderer.setClearColor(tone.fog);
+    const ui = $('#combat-ui');
+    if (ui) ui.classList.toggle('dusk-fight', combatMood() === 'dusk');
   }
 
   function combatMats(color, concord) {

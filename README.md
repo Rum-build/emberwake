@@ -110,6 +110,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - After the waystone, the quest names the harbor vault and the tally clerk before the bottle-hall. A light mist and rain sit on the shale. A coast fight with a clerk and a warden opens on the licence. No new cue.
 - After the clerk, the quest names the hall of corks. On the Remnant Mark, before the scrap is taken, it names the numbered scrap. The count crypt names that scrap if it is still on the peg. The mark wears more ash and a cooler rim. Lira’s scarf and face read against the dusk. No new cue.
 - Each aftermath flag keeps a short closing line and a side board. On Share, Vesper stays beside the mass and does not enter. Credits names the engine and thanks the walk. The claim bed sits quieter there. That is the same cue.
+- The title sits in a cooler dusk. The isle field wears a light leaf-fall and a green haze. A dusk fight’s enemy bar reads one notch clearer. The blow is unchanged. No new cue.
 
 ## Play on your phone
 
