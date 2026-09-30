@@ -602,6 +602,13 @@ Playable on the Verdant Isle field:
 - Places still names the pier. It does not say what the claim will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Scar farm, the smoke line (this branch)
+
+- South of the blister, a look lets Lira say Concord named the cough mercy and the grass kept the footprint. Torren, when he walks with her, says the stamp did not stop the cough. The spark says Vesper farms the rot and does not take the host. The drink stays the blister.
+- The absorb on the scar stays the drink. The walk stays.
+- Places still names the scar farm. It does not say what the claim will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

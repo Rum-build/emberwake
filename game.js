@@ -184,6 +184,7 @@
   let nearCord = null;
   let nearPost = null;
   let nearPier = null;
+  let nearFarm = null;
   let nearRing = null;
   let nearClerk = null;
   let nearRation = null;
@@ -4262,6 +4263,21 @@
     };
   }
 
+  function nearestFarm() {
+    if (!playerMesh || locale !== 'field' || regionId !== 'verdant-isle' || skyPass) return null;
+    if (Math.hypot(14.2 - playerMesh.position.x, -2.25 - playerMesh.position.z) > 1.05) return null;
+    if (seenBeats['farm-smoke']) {
+      return {
+        title: 'Farm smoke',
+        hint: 'Already heard. The blister is still the drink. Press E to hear it again.',
+      };
+    }
+    return {
+      title: 'Farm smoke',
+      hint: 'Press E. She farms the rot. It is not the drink.',
+    };
+  }
+
   function nearestRing() {
     if (!playerMesh || locale !== 'field' || regionId !== 'verdant-isle' || skyPass) return null;
     if (Math.hypot(9.2 - playerMesh.position.x, -12.4 - playerMesh.position.z) > 1.1) return null;
@@ -8083,7 +8099,8 @@
     const showAside = idle && nearAside && !showAbsorb && !atExit && !showTalk && !showMark && !showCamp;
     const showNima = idle && nearNima && !showAbsorb && !atExit && !showTalk && !showMark && !showCamp && !showAside;
     const showPier = idle && nearPier && !showAbsorb && !showDoor && !showGate && !showReturn && !showClerk && !showPatrol;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showScrap && !showCompany && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showSpare && !showJournal && !showNotice && !showCord && !showPost && !showPier && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol);
+    const showFarm = idle && nearFarm && !showAbsorb && !showDoor && !showPier;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showScrap && !showCompany && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showSpare && !showJournal && !showNotice && !showCord && !showPost && !showPier && !showFarm && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
@@ -8101,7 +8118,7 @@
     else if (showChest) absorbBtn.textContent = seenBeats['wayside-chest'] ? 'Look' : 'Open';
     else if (showSpare) absorbBtn.textContent = seenBeats['spare-green'] ? 'Look' : 'Open';
     else if (showJournal) absorbBtn.textContent = 'Look';
-    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showPier || showRing || showClerk || showRation || showAside || showNima || showPatrol) absorbBtn.textContent = 'Look';
+    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showPier || showFarm || showRing || showClerk || showRation || showAside || showNima || showPatrol) absorbBtn.textContent = 'Look';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
     absorbBtn.classList.toggle('is-ready', !!showAbsorb);
   }
@@ -8113,7 +8130,7 @@
   function updatePrompt() {
     const atExit = atInteriorExit();
     interactPrompt.classList.remove('ready');
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearScrap && !nearCompany && !nearPorter && !nearLetter && !nearChest && !nearSpare && !nearJournal && !nearNotice && !nearCord && !nearPost && !nearPier && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearScrap && !nearCompany && !nearPorter && !nearLetter && !nearChest && !nearSpare && !nearJournal && !nearNotice && !nearCord && !nearPost && !nearPier && !nearFarm && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -8277,6 +8294,11 @@
       $('#interact-detail').textContent = nearPier.hint;
       return;
     }
+    if (nearFarm && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
+      $('#interact-title').textContent = nearFarm.title;
+      $('#interact-detail').textContent = nearFarm.hint;
+      return;
+    }
     if (nearRing && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
       $('#interact-title').textContent = nearRing.title;
       $('#interact-detail').textContent = nearRing.hint;
@@ -8397,6 +8419,7 @@
       if (seenBeats['coast-notice']) waiting.push('A notice on the shale says mouths are numbered. It is not the vault door.');
       if (seenBeats['way-post']) waiting.push('A snapped mile post on the isle does not open the kiln.');
       if (seenBeats['pier-salt']) waiting.push('Salt on the harbor pier. Concord counted the weather. Vesper does not stand there. The telegraph stays.');
+      if (seenBeats['farm-smoke']) waiting.push('Smoke on the scar farm. Concord named the cough mercy. Vesper farms the rot and does not take the host.');
       if (seenBeats['cold-ring']) waiting.push('A cold ring in the grass is not a pool and not the scar.');
       if (seenBeats['clerk-tally']) waiting.push('A tally clerk on the shale counted weather. The vault door did not change.');
       if (seenBeats['coast-brawl']) waiting.push('The west-shale patrol was provoked. They fought. The vault door did not change.');
@@ -8966,6 +8989,10 @@
     }
     if (nearPier) {
       talkPier();
+      return;
+    }
+    if (nearFarm) {
+      talkFarm();
       return;
     }
     if (nearRing) {
@@ -11088,6 +11115,27 @@
     saveGame();
   }
 
+  function talkFarm() {
+    if (locale !== 'field' || regionId !== 'verdant-isle' || dialogueOpen) return;
+    if (seenBeats['farm-smoke']) {
+      showToast('The smoke stays. She does not take the host. The blister is still the drink.');
+      return;
+    }
+    const fn = EW.scenes['farm-smoke'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'farm-smoke';
+    }
+  }
+
+  function noteFarm() {
+    seenBeats['farm-smoke'] = true;
+    showToast('The smoke stays. The blister is still the drink.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
   function talkRing() {
     if (locale !== 'field' || regionId !== 'verdant-isle' || dialogueOpen) return;
     if (seenBeats['cold-ring']) {
@@ -11512,6 +11560,7 @@
       nearCord = null;
       nearPost = null;
       nearPier = null;
+      nearFarm = null;
       nearRing = null;
       nearClerk = null;
       nearRation = null;
@@ -11625,6 +11674,7 @@
         nearCord = nearestCord();
         nearPost = nearestPost();
         nearPier = nearestPier();
+        nearFarm = nearestFarm();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
         nearRation = nearestRation();
@@ -11679,6 +11729,7 @@
         nearCord = nearestCord();
         nearPost = nearestPost();
         nearPier = nearestPier();
+        nearFarm = nearestFarm();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
         nearRation = nearestRation();
@@ -11754,6 +11805,7 @@
         nearCord = nearestCord();
         nearPost = nearestPost();
         nearPier = nearestPier();
+        nearFarm = nearestFarm();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
         nearRation = nearestRation();
@@ -15183,6 +15235,7 @@
   EW.noteLeafAfter = noteLeafAfter;
   EW.notePost = notePost;
   EW.notePier = notePier;
+  EW.noteFarm = noteFarm;
   EW.noteRing = noteRing;
   EW.noteClerk = noteClerk;
   EW.noteRation = noteRation;
