@@ -817,6 +817,10 @@ The kiln mouth now carries fired brick courses, ash soot streaks, an iron rim, a
 
 The leaf-cup now carries a veined leaf rim, a damp interior, a water meniscus catch, soft moss at the base, and a cooler grove wash. The drink and the water-edge ground stay where they were. The kiln mouth, the yard gate, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the harbor wire pass
+
+The harbor telegraph now carries timber grain on the post, iron bands, a taut wire, glass insulators, a stone footing, and packed dirt at the base. The tick and the approach stay where they were. The leaf-cup, the kiln mouth, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

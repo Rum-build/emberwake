@@ -5817,6 +5817,7 @@
     dressCoastMist(g);
     dressCoastShore(g);
     dressHarborWire(g);
+    dressWirePost(g);
     dressWireApproach(g);
     dressVaultSill(g);
     g.userData.gusts = makeGusts(g, 5, 0xd0e4f0);
@@ -6008,6 +6009,123 @@
     const cool = new THREE.PointLight(0xc5d6ee, 0.7, 4.2);
     cool.position.set(0, 1.7, 0.2);
     post.add(cool);
+    g.add(post);
+  }
+
+  function dressWirePost(g) {
+    function shelfHeight(x, z) {
+      const y = 6 - z;
+      return Math.sin(x * 0.42) * Math.cos(y * 0.36) * 0.46 + Math.sin(x * 1.25 + y * 0.5) * 0.12;
+    }
+    const post = new THREE.Group();
+    post.position.set(-4.05, 0, 1.45);
+    post.userData.wirePost = true;
+    const base = shelfHeight(-4.05, 1.45);
+    const timber = new THREE.MeshPhongMaterial({
+      color: 0x6a4a32, shininess: 14, specular: new THREE.Color(0xc4a070),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0x3a2818, shininess: 8, specular: new THREE.Color(0xa08058),
+    });
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.078, 0.096, 1.48, 8), timber);
+    pole.position.y = 0.8;
+    post.add(pole);
+    [[0.04, 0.42, 0.55], [-0.03, 0.95, 0.42], [0.02, 1.28, 0.36], [-0.045, 0.68, 0.28]].forEach((spot) => {
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.016, spot[2], 0.012), grain);
+      line.position.set(spot[0], spot[1], 0.09);
+      post.add(line);
+    });
+    const iron = new THREE.MeshPhongMaterial({
+      color: 0x2a2e34, shininess: 42, specular: new THREE.Color(0xd0d8e4),
+    });
+    [0.32, 0.78, 1.22].forEach((y) => {
+      const band = new THREE.Mesh(new THREE.TorusGeometry(0.108, 0.016, 6, 14), iron);
+      band.rotation.x = Math.PI / 2;
+      band.position.y = y;
+      post.add(band);
+      const bolt = new THREE.Mesh(new THREE.BoxGeometry(0.028, 0.028, 0.02), iron);
+      bolt.position.set(0, y, 0.112);
+      post.add(bolt);
+    });
+    const glaze = new THREE.MeshPhongMaterial({
+      color: 0xd4ece6, emissive: new THREE.Color(0x163028), shininess: 72, specular: new THREE.Color(0xf4fffc),
+    });
+    [-0.46, 0.46].forEach((x) => {
+      const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.062, 0.09, 8), glaze);
+      cup.position.set(x, 1.66, 0.03);
+      post.add(cup);
+      const lip = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.012, 6, 12), glaze);
+      lip.rotation.x = Math.PI / 2;
+      lip.position.set(x, 1.71, 0.03);
+      post.add(lip);
+    });
+    const wireMat = new THREE.MeshPhongMaterial({
+      color: 0x8e9aab, shininess: 52, specular: new THREE.Color(0xeef6ff),
+    });
+    function hang(points) {
+      for (let i = 0; i < points.length - 1; i++) {
+        const a = points[i];
+        const b = points[i + 1];
+        const dir = new THREE.Vector3(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
+        const len = dir.length();
+        const seg = new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.011, len, 5), wireMat);
+        seg.position.set((a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2);
+        seg.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.normalize());
+        post.add(seg);
+      }
+    }
+    hang([
+      [0.46, 1.64, 0.04], [0.86, 1.5, 0.12], [1.26, 1.4, 0.2], [1.66, 1.34, 0.26], [2.02, 1.38, 0.3],
+    ]);
+    hang([
+      [-0.46, 1.64, 0.04], [-0.82, 1.52, 0.1], [-1.16, 1.44, 0.16], [-1.48, 1.46, 0.14],
+    ]);
+    const shoe = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.2, 0.1, 8), iron);
+    shoe.position.y = base + 0.06;
+    post.add(shoe);
+    const stone = new THREE.MeshPhongMaterial({
+      color: 0x7a7368, shininess: 16, specular: new THREE.Color(0xd5e4f2),
+    });
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2 + 0.35;
+      const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(0.055, 0), stone);
+      rock.scale.y = 0.42;
+      rock.position.set(Math.cos(a) * 0.28, base + 0.04, Math.sin(a) * 0.28);
+      post.add(rock);
+    }
+    const dirt = new THREE.Mesh(
+      new THREE.CircleGeometry(0.46, 8),
+      new THREE.MeshPhongMaterial({ color: 0x6a5340, shininess: 8, specular: new THREE.Color(0xc4a888) })
+    );
+    dirt.rotation.x = -Math.PI / 2;
+    dirt.position.set(0.04, base + 0.02, 0.16);
+    post.add(dirt);
+    const worn = new THREE.Mesh(
+      new THREE.CircleGeometry(0.16, 6),
+      new THREE.MeshPhongMaterial({ color: 0x3a2c22, shininess: 4, specular: new THREE.Color(0x8a7058) })
+    );
+    worn.rotation.x = -Math.PI / 2;
+    worn.position.set(0.1, base + 0.028, 0.24);
+    post.add(worn);
+    const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.032, 0), grain);
+    chip.scale.y = 0.4;
+    chip.position.set(-0.14, base + 0.04, 0.22);
+    post.add(chip);
+    const scuff = new THREE.Mesh(
+      new THREE.BoxGeometry(0.05, 0.01, 0.26),
+      new THREE.MeshPhongMaterial({ color: 0x2a2018, shininess: 3, specular: new THREE.Color(0x6a5840) })
+    );
+    scuff.position.set(0.02, base + 0.032, 0.36);
+    scuff.rotation.y = 0.18;
+    post.add(scuff);
+    const shade = new THREE.Mesh(
+      new THREE.CircleGeometry(0.32, 8),
+      new THREE.MeshBasicMaterial({ color: 0x12100c, transparent: true, opacity: 0.22, depthWrite: false, fog: false })
+    );
+    shade.rotation.x = -Math.PI / 2;
+    shade.scale.set(1.05, 0.5, 1);
+    shade.position.set(0, base + 0.012, 0.1);
+    post.add(shade);
     g.add(post);
   }
 
