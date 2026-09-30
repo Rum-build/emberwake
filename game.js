@@ -979,6 +979,7 @@
     dressVillage(village);
     dressVillageDoor(village);
     dressVillageHouses(village);
+    dressVillageWell(village);
     overworldGroup.add(village);
     const bannerPin = landmark('concord-banner');
     overworldGroup.add(makeConcordBanner(bannerPin.x, bannerPin.z));
@@ -11209,6 +11210,80 @@
     const rack = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.06, 0.08), postMat);
     rack.position.set(2.85, 1.12, 2.7);
     g.add(rack);
+  }
+
+  function dressVillageWell(g) {
+    const well = new THREE.Group();
+    well.position.set(0.55, 0, -1.45);
+    const stone = new THREE.MeshPhongMaterial({
+      color: 0x6a6258, shininess: 16, specular: new THREE.Color(0xd8d0c4),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0xcbb89a, shininess: 20, specular: new THREE.Color(0xfff0d8),
+    });
+    const dampMat = new THREE.MeshBasicMaterial({
+      color: 0x24343e, transparent: true, opacity: 0.58, depthWrite: false, fog: false,
+    });
+    const moss = new THREE.MeshPhongMaterial({
+      color: 0x3f6a34, shininess: 6, specular: new THREE.Color(0xc6e070), side: THREE.DoubleSide,
+    });
+    const water = new THREE.MeshPhongMaterial({
+      color: 0x142028, shininess: 78, specular: new THREE.Color(0xd6e8f4),
+    });
+    const sheen = new THREE.MeshBasicMaterial({
+      color: 0x9eb4c4, transparent: true, opacity: 0.38, depthWrite: false, fog: false,
+    });
+    [0.16, 0.36, 0.54].forEach((y, i) => {
+      const course = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.5 - i * 0.012, 0.54 - i * 0.01, 0.18, 10),
+        stone
+      );
+      course.position.y = y;
+      course.receiveShadow = true;
+      well.add(course);
+      const seam = new THREE.Mesh(new THREE.TorusGeometry(0.5 - i * 0.01, 0.012, 4, 12), grain);
+      seam.rotation.x = Math.PI / 2;
+      seam.position.y = y + 0.08;
+      well.add(seam);
+    });
+    const rim = new THREE.Mesh(new THREE.TorusGeometry(0.48, 0.055, 6, 14), stone);
+    rim.rotation.x = Math.PI / 2;
+    rim.position.y = 0.68;
+    well.add(rim);
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2;
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.012, 0.02), grain);
+      line.position.set(Math.cos(a) * 0.48, 0.73, Math.sin(a) * 0.48);
+      line.rotation.y = -a;
+      well.add(line);
+    }
+    const mouth = new THREE.Mesh(new THREE.CircleGeometry(0.34, 12), water);
+    mouth.rotation.x = -Math.PI / 2;
+    mouth.position.y = 0.6;
+    well.add(mouth);
+    const glint = new THREE.Mesh(new THREE.CircleGeometry(0.14, 8), sheen);
+    glint.rotation.x = -Math.PI / 2;
+    glint.scale.set(1.55, 0.42, 1);
+    glint.position.set(0.05, 0.616, -0.04);
+    well.add(glint);
+    [[0.545, 0.05], [-0.51, 0.18], [0.1, 0.53], [-0.2, -0.51]].forEach((spot, i) => {
+      const stain = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.46, 0.02), dampMat);
+      stain.position.set(spot[0], 0.32, spot[1]);
+      stain.rotation.y = Math.atan2(spot[0], spot[1]);
+      stain.rotation.z = (i - 1.5) * 0.08;
+      well.add(stain);
+    });
+    [[0.44, 0.16], [-0.4, 0.22], [0.36, -0.3], [-0.16, 0.44], [0.1, -0.46]].forEach((spot, i) => {
+      const clump = new THREE.Mesh(new THREE.SphereGeometry(0.055, 5, 4), moss);
+      clump.scale.y = 0.42;
+      clump.position.set(spot[0], 0.73, spot[1]);
+      well.add(clump);
+      const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.055, 0.1), moss);
+      blade.position.set(spot[0] + 0.04, 0.8, spot[1]);
+      blade.rotation.y = i * 0.7;
+      well.add(blade);
+    });
+    g.add(well);
   }
 
   function dressVillageDoor(g) {

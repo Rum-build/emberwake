@@ -913,6 +913,10 @@ The fight panel now carries an ember rim, a soft shadow under the chrome, grain 
 
 The packed ground under the Concord yard gate now carries gravel grain, an ash wash, cart-rut scuffs, and sparse moss. The gate cork and the yard beat stay where they were. No new cue.
 
+## Shipped in the village well pass
+
+The stone well in the leaf-village square now carries rim grain, moss on the lip, a damp stain down the stones, and a dark water sheen. The village door, the path, and the leaf-village beat stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
