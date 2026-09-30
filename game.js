@@ -4485,6 +4485,7 @@
     dressRoostRim(g);
     dressCoastMist(g);
     dressCoastShore(g);
+    dressHarborWire(g);
     g.userData.gusts = makeGusts(g, 5, 0xd0e4f0);
   }
 
@@ -4627,6 +4628,45 @@
     perch.add(bird);
     perch.position.set(8.8, 0, 7.2);
     g.add(perch);
+  }
+
+  function dressHarborWire(g) {
+    const post = new THREE.Group();
+    post.position.set(-4.05, 0, 1.45);
+    const pole = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.05, 0.07, 1.7, 6),
+      new THREE.MeshLambertMaterial({ color: 0x2c3038 })
+    );
+    pole.position.y = 0.85;
+    post.add(pole);
+    const arm = new THREE.Mesh(
+      new THREE.BoxGeometry(0.92, 0.06, 0.06),
+      new THREE.MeshLambertMaterial({ color: 0x3a4048 })
+    );
+    arm.position.set(0, 1.58, 0);
+    post.add(arm);
+    const wireMat = new THREE.MeshBasicMaterial({ color: 0xc5d6ee, fog: false });
+    [-0.38, 0.38].forEach((x) => {
+      const wire = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.55, 4), wireMat);
+      wire.position.set(x, 1.28, 0);
+      post.add(wire);
+    });
+    const tickMat = new THREE.MeshBasicMaterial({ color: 0xd6e8ff, fog: false });
+    [-0.38, 0.38].forEach((x, i) => {
+      const tick = new THREE.Mesh(new THREE.SphereGeometry(i === 0 ? 0.09 : 0.07, 8, 6), tickMat);
+      tick.position.set(x, 1.66, 0.02);
+      post.add(tick);
+    });
+    const lamp = new THREE.Mesh(
+      new THREE.BoxGeometry(0.22, 0.18, 0.16),
+      new THREE.MeshBasicMaterial({ color: 0xd5e4f2, fog: false })
+    );
+    lamp.position.set(0, 1.82, 0.04);
+    post.add(lamp);
+    const cool = new THREE.PointLight(0xc5d6ee, 0.7, 4.2);
+    cool.position.set(0, 1.7, 0.2);
+    post.add(cool);
+    g.add(post);
   }
 
   function dressRoostRim(g) {
@@ -11493,7 +11533,7 @@
     if (actor.id === 'torren') {
       coverReady = true;
       assistCue = 'Torren · shoulder';
-      showLog('Torren sets his shoulder in front of the line. The next blow lands lighter.');
+      showLog('Torren sets his shoulder in front of the line. The next blow lands lighter. Torren: The coat stays on me.');
     } else {
       assistCue = 'Nima · steady';
       const hurt = party.filter((member) => member.hp > 0).sort((a, b) => (a.hp / maxHp(a)) - (b.hp / maxHp(b)))[0];
@@ -11501,8 +11541,8 @@
       hurt.hp = Math.min(maxHp(hurt), hurt.hp + 14);
       const gained = hurt.hp - before;
       showLog(gained
-        ? 'Nima steadies ' + hurt.name + '. ' + gained + ' HP. It is still not her real work.'
-        : 'Nima steadies the line. Nobody was open enough to take it.');
+        ? 'Nima steadies ' + hurt.name + '. ' + gained + ' HP. It is still not her real work. Nima: Hold. The herb is not a door.'
+        : 'Nima steadies the line. Nobody was open enough to take it. Nima: Hold. The herb is not a door.');
       if (gained) punchNumber(gained, 'heal');
     }
     updateCombatUI();
@@ -13251,6 +13291,7 @@
             ? 'The clerk is done. North in the vault, corks hold the monopoly.'
             : 'Shale, lightning, the harbor vault.';
       rows.push({ name: 'Stormreach Coast', note: coastNote });
+      rows.push({ name: 'Harbor telegraph', note: 'A wire and a cooler lamp on the shale. The tick stays on the post.' });
     }
     if (seenBeats['vault-ledger'] || seenBeats['bottle-hall']) {
       rows.push({
