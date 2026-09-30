@@ -813,6 +813,10 @@ The Concord yard gate now carries worn timber grain on the posts and the crossba
 
 The kiln mouth now carries fired brick courses, ash soot streaks, an iron rim, a cooler ember wash in the throat, and a soft shadow under the lip. The kiln drink and the back-wall grain stay where they were. The yard gate, both faces, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the leaf-cup pass
+
+The leaf-cup now carries a veined leaf rim, a damp interior, a water meniscus catch, soft moss at the base, and a cooler grove wash. The drink and the water-edge ground stay where they were. The kiln mouth, the yard gate, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

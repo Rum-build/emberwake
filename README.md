@@ -178,6 +178,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - Torren’s seal coat keeps seam and collar grain and a seal stamp catch. His ledger cudgel keeps wood grain and an iron band. They stay on the body when equipped. Lira’s gear, both faces, and the spark stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 - At the Concord yard gate, worn timber grain, iron hinge plates, a bolt catch, and a cooler dusk wash sit on the posts and the crossbar. The gate cork and the yard cobbles stay readable. No new cue.
 - At the kiln mouth, fired brick courses, ash soot streaks, an iron rim, and a cooler ember wash sit in the throat, with a soft shadow under the lip. The kiln drink and the back-wall grain stay readable. No new cue.
+- The leaf-cup keeps a veined leaf rim, a damp interior, a water catch, moss at the base, and a cooler grove wash. The drink and the water-edge ground stay readable. No new cue.
 
 ## Play on your phone
 
