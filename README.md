@@ -180,6 +180,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - At the kiln mouth, fired brick courses, ash soot streaks, an iron rim, and a cooler ember wash sit in the throat, with a soft shadow under the lip. The kiln drink and the back-wall grain stay readable. No new cue.
 - The leaf-cup keeps a veined leaf rim, a damp interior, a water catch, moss at the base, and a cooler grove wash. The drink and the water-edge ground stay readable. No new cue.
 - At the harbor telegraph, timber grain, iron bands, a taut wire, glass insulators, and a stone footing sit on the post, with packed dirt at the base. The tick and the approach stay readable. No new cue.
+- At the scar farm, weathered timber, iron fittings, an ash-rot stain, and footing grit sit on the marker, with a crop edge at the base. The smoke and the blister stay readable. No new cue.
 
 ## Play on your phone
 

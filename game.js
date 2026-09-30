@@ -9071,6 +9071,7 @@
     overworldGroup.add(makeScarPost(11.2, -8.6, -0.16));
     overworldGroup.add(makeScarVeil());
     dressScarFarm();
+    dressScarMarker();
     dressScarGround();
     dressLeafCup();
     dressLeafGrove();
@@ -9224,6 +9225,110 @@
       cap.position.set(spot[0], spot[1], spot[2]);
       overworldGroup.add(cap);
     });
+  }
+
+  function dressScarMarker() {
+    const g = new THREE.Group();
+    g.position.set(14.2, 0, -2.85);
+    g.userData.scarFarm = true;
+    const timber = new THREE.MeshPhongMaterial({
+      color: 0x6a4a34, emissive: new THREE.Color(0x1c120c), shininess: 12, specular: new THREE.Color(0xc4a070),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0x3a2818, shininess: 6, specular: new THREE.Color(0x8a6848),
+    });
+    const iron = new THREE.MeshPhongMaterial({
+      color: 0x2c3138, shininess: 46, specular: new THREE.Color(0xd0d8e4),
+    });
+    const rot = new THREE.MeshPhongMaterial({
+      color: 0x5a6230, emissive: new THREE.Color(0x1a220c), shininess: 8, specular: new THREE.Color(0xc8d090),
+    });
+    const ash = new THREE.MeshPhongMaterial({
+      color: 0xc4b0a0, shininess: 10, specular: new THREE.Color(0xf4ece4),
+    });
+    [-0.58, 0.58].forEach((x, n) => {
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.078, 1.32, 8), timber);
+      pole.position.set(x, 0.66, 0);
+      g.add(pole);
+      [[0.02, 0.38, 0.42], [-0.02, 0.82, 0.34], [0.015, 1.12, 0.22]].forEach((spot) => {
+        const line = new THREE.Mesh(new THREE.BoxGeometry(0.014, spot[2], 0.01), grain);
+        line.position.set(x + spot[0], spot[1], 0.072);
+        g.add(line);
+      });
+      [0.28, 0.78, 1.16].forEach((y) => {
+        const band = new THREE.Mesh(new THREE.TorusGeometry(0.09, 0.014, 6, 12), iron);
+        band.rotation.x = Math.PI / 2;
+        band.position.set(x, y, 0);
+        g.add(band);
+      });
+      const stain = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.48, 0.012), rot);
+      stain.position.set(x + (n ? -0.02 : 0.02), 0.48, 0.07);
+      g.add(stain);
+      const shoe = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.14, 0.08, 8), iron);
+      shoe.position.set(x, 0.05, 0);
+      g.add(shoe);
+    });
+    const bar = new THREE.Mesh(new THREE.BoxGeometry(1.28, 0.07, 0.07), timber);
+    bar.position.set(0, 1.22, 0);
+    g.add(bar);
+    const barGrain = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.012, 0.014), grain);
+    barGrain.position.set(0, 1.25, 0.04);
+    g.add(barGrain);
+    const strap = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.028, 0.016), iron);
+    strap.position.set(0, 1.18, 0.046);
+    g.add(strap);
+    const latch = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.1, 0.02), iron);
+    latch.position.set(0.58, 1.08, 0.06);
+    g.add(latch);
+    const smear = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.02, 0.014), rot);
+    smear.position.set(-0.12, 1.16, 0.048);
+    g.add(smear);
+    const char = new THREE.MeshPhongMaterial({
+      color: 0x2a1814, shininess: 4, specular: new THREE.Color(0x6a4030),
+    });
+    [-0.58, 0.58].forEach((x) => {
+      [[0.1, 0.08, 0.04, ash], [-0.08, 0.06, 0.03, char], [0.02, -0.1, 0.028, ash], [-0.12, -0.04, 0.022, char]].forEach((spot) => {
+        const speck = new THREE.Mesh(new THREE.DodecahedronGeometry(spot[2], 0), spot[3]);
+        speck.scale.y = 0.4;
+        speck.position.set(x + spot[0], spot[2] * 0.5, spot[1]);
+        g.add(speck);
+      });
+    });
+    const dirt = new THREE.Mesh(
+      new THREE.CircleGeometry(0.42, 8),
+      new THREE.MeshPhongMaterial({ color: 0x5a3828, shininess: 6, specular: new THREE.Color(0xc47848) })
+    );
+    dirt.rotation.x = -Math.PI / 2;
+    dirt.position.set(0, 0.02, 0.28);
+    g.add(dirt);
+    const lip = new THREE.Mesh(
+      new THREE.TorusGeometry(0.34, 0.02, 4, 10, Math.PI),
+      new THREE.MeshPhongMaterial({ color: 0x3a2418, shininess: 4, specular: new THREE.Color(0x8a6040) })
+    );
+    lip.rotation.x = Math.PI / 2;
+    lip.position.set(0, 0.03, 0.28);
+    g.add(lip);
+    for (let i = 0; i < 8; i++) {
+      const x = -0.7 + i * 0.2;
+      const h = 0.22 + (i % 3) * 0.06;
+      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.016, h, 5), i % 2 ? char : timber);
+      stem.position.set(x, h * 0.5, 0.42);
+      stem.rotation.z = (i - 3.5) * 0.06;
+      g.add(stem);
+      const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.08, 0.1), i % 3 === 0 ? rot : char);
+      blade.position.set(x, h + 0.02, 0.44);
+      blade.rotation.y = 0.4;
+      g.add(blade);
+    }
+    const shade = new THREE.Mesh(
+      new THREE.CircleGeometry(0.36, 8),
+      new THREE.MeshBasicMaterial({ color: 0x120e0c, transparent: true, opacity: 0.22, depthWrite: false, fog: false })
+    );
+    shade.rotation.x = -Math.PI / 2;
+    shade.scale.set(1.8, 0.45, 1);
+    shade.position.set(0, 0.015, 0.08);
+    g.add(shade);
+    overworldGroup.add(g);
   }
 
   function dressLeafCup() {

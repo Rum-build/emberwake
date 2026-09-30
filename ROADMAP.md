@@ -821,6 +821,10 @@ The leaf-cup now carries a veined leaf rim, a damp interior, a water meniscus ca
 
 The harbor telegraph now carries timber grain on the post, iron bands, a taut wire, glass insulators, a stone footing, and packed dirt at the base. The tick and the approach stay where they were. The leaf-cup, the kiln mouth, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the scar marker pass
+
+The scar farm now carries weathered timber on the marker, iron fittings, an ash-rot stain, footing grit, and a crop edge at the base. The smoke and the blister stay where they were. The harbor telegraph, the leaf-cup, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
