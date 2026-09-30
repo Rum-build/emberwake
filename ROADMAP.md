@@ -869,6 +869,10 @@ Lira’s starter stick now carries bark grain, a worn grip wrap, and tip scuffs,
 
 The field bed and the existing stings were nearly silent: the loop sat under a 0.04 gain, and the sources could start while the context was still suspended. The same loop and the same stings now sit high enough to hear, and the first tap or move resumes them. Silent still stops the bed. The eight cues stay the set. No new cue.
 
+## Shipped in the pack back pass
+
+Lira’s pack now carries canvas weave, strap buckles, and worn seams, and it sits on her back. The pack panel and the move stick stay where they were. The bed, the stings, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
