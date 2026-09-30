@@ -881,6 +881,10 @@ The aftermath south steps now carry worn stone grain, edge chips, moss in the jo
 
 - A saved Continue keeps the ember rim (`#ffe1a8` and `rgba(255, 176, 80, …)`) and pulses only while motion is on. Still motion leaves the rim steady. Save, Continue, and the eight cues stay as they are.
 
+## Shipped in the bottle-hall shelf pass
+
+The bottle-hall shelves now carry timber grain, glass catchlights, dust on the lips, and iron brackets. The near corks, the earth jar, and the walk stay where they were. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

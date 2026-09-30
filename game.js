@@ -2089,8 +2089,13 @@
     g.add(hallShelf);
     [0xff6a1a, 0x3ec6ff, 0xd2b4ff].forEach((color, i) => {
       const bottle = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.055, 0.065, 0.3, 6),
-        new THREE.MeshLambertMaterial({ color: color, emissive: new THREE.Color(color).multiplyScalar(0.2) })
+        new THREE.CylinderGeometry(0.055, 0.065, 0.3, 8),
+        new THREE.MeshPhongMaterial({
+          color: color,
+          emissive: new THREE.Color(color).multiplyScalar(0.22),
+          shininess: 72,
+          specular: new THREE.Color(0xfff6ea),
+        })
       );
       bottle.position.set(-2.55, 1.38, -8.05 - i * 0.28);
       g.add(bottle);
@@ -2117,6 +2122,7 @@
     dressHallMonopoly(g);
     dressHallAir(g);
     dressHallFloor(g);
+    dressHallShelves(g);
     dressCountAir(g);
     dressCountFloor(g);
     dressClerkDesk(g);
@@ -2575,6 +2581,141 @@
     cool.position.set(0.55, 1.58, 0.32);
     rack.add(cool);
     g.add(rack);
+  }
+
+  function hallTimberMat() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 128;
+    canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#7a5436';
+    ctx.fillRect(0, 0, 128, 64);
+    for (let i = 0; i < 10; i++) {
+      ctx.strokeStyle = i % 2 ? '#3e2618' : '#c4a078';
+      ctx.lineWidth = i % 3 === 0 ? 2 : 1;
+      ctx.beginPath();
+      const y = 4 + i * 6;
+      ctx.moveTo(0, y);
+      ctx.bezierCurveTo(32, y - 3, 78, y + 4, 128, y - 1);
+      ctx.stroke();
+    }
+    ctx.fillStyle = 'rgba(236, 206, 156, 0.45)';
+    ctx.fillRect(0, 0, 128, 5);
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.wrapS = THREE.RepeatWrapping;
+    tex.wrapT = THREE.RepeatWrapping;
+    return new THREE.MeshPhongMaterial({
+      map: tex, shininess: 16, specular: new THREE.Color(0xe8c898),
+    });
+  }
+
+  function dressHallShelves(g) {
+    const timber = hallTimberMat();
+    const iron = new THREE.MeshPhongMaterial({
+      color: 0x2c2824, shininess: 38, specular: new THREE.Color(0xd4ccc0),
+    });
+    const dust = new THREE.MeshPhongMaterial({
+      color: 0xd8d2c6, shininess: 4, specular: new THREE.Color(0xfff6ea),
+    });
+    const catchMat = new THREE.MeshBasicMaterial({ color: 0xfff8ee, fog: false });
+    const glassColors = [0xff6a1a, 0x3ec6ff, 0xd2b4ff, 0xe2c878];
+    function shelfRun(spec) {
+      const alongZ = spec.axis !== 'x';
+      const plank = new THREE.Mesh(
+        new THREE.BoxGeometry(alongZ ? spec.depth : spec.len, 0.055, alongZ ? spec.len : spec.depth),
+        timber
+      );
+      plank.position.set(spec.x, spec.y, spec.z);
+      g.add(plank);
+      const back = new THREE.Mesh(
+        new THREE.BoxGeometry(alongZ ? 0.04 : spec.len, 0.2, alongZ ? spec.len : 0.04),
+        timber
+      );
+      if (alongZ) back.position.set(spec.x + spec.back, spec.y + 0.11, spec.z);
+      else back.position.set(spec.x, spec.y + 0.11, spec.z + spec.back);
+      g.add(back);
+      [-1, 1].forEach((side) => {
+        const bx = alongZ ? spec.x + spec.lip * 0.2 : spec.x + side * spec.len * 0.36;
+        const bz = alongZ ? spec.z + side * spec.len * 0.36 : spec.z + spec.lip * 0.2;
+        const arm = new THREE.Mesh(
+          new THREE.BoxGeometry(alongZ ? spec.depth * 0.8 : 0.04, 0.026, alongZ ? 0.04 : spec.depth * 0.8),
+          iron
+        );
+        arm.position.set(bx, spec.y - 0.04, bz);
+        g.add(arm);
+        const leg = new THREE.Mesh(new THREE.BoxGeometry(0.034, 0.15, 0.034), iron);
+        leg.position.set(alongZ ? spec.x + spec.back * 0.45 : bx, spec.y - 0.12, alongZ ? bz : spec.z + spec.back * 0.45);
+        g.add(leg);
+      });
+      const lip = new THREE.Mesh(
+        new THREE.BoxGeometry(alongZ ? 0.028 : spec.len * 0.92, 0.016, alongZ ? spec.len * 0.92 : 0.028),
+        dust
+      );
+      if (alongZ) lip.position.set(spec.x + spec.lip, spec.y + 0.032, spec.z);
+      else lip.position.set(spec.x, spec.y + 0.032, spec.z + spec.lip);
+      g.add(lip);
+      for (let i = 0; i < 5; i++) {
+        const speck = new THREE.Mesh(new THREE.SphereGeometry(0.01 + (i % 2) * 0.005, 4, 3), dust);
+        const t = -spec.len * 0.38 + i * spec.len * 0.19;
+        if (alongZ) speck.position.set(spec.x + spec.lip, spec.y + 0.046, spec.z + t);
+        else speck.position.set(spec.x + t, spec.y + 0.046, spec.z + spec.lip);
+        g.add(speck);
+      }
+      const n = spec.bottles || 0;
+      for (let i = 0; i < n; i++) {
+        const t = n === 1 ? 0 : -spec.len * 0.34 + i * (spec.len * 0.68 / (n - 1));
+        const bx = alongZ ? spec.x + spec.lip * 0.28 : spec.x + t;
+        const bz = alongZ ? spec.z + t : spec.z + spec.lip * 0.28;
+        const color = glassColors[i % glassColors.length];
+        const bottle = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.042, 0.052, 0.24, 8),
+          new THREE.MeshPhongMaterial({
+            color: color,
+            emissive: new THREE.Color(color).multiplyScalar(0.2),
+            shininess: 68,
+            specular: new THREE.Color(0xfff6ea),
+          })
+        );
+        bottle.position.set(bx, spec.y + 0.17, bz);
+        g.add(bottle);
+        const neck = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.016, 0.026, 0.06, 6),
+          new THREE.MeshPhongMaterial({ color: 0xe8eef4, shininess: 42, specular: new THREE.Color(0xffffff) })
+        );
+        neck.position.set(bx, spec.y + 0.31, bz);
+        g.add(neck);
+        const glint = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.09, 0.012), catchMat);
+        glint.position.set(bx + 0.018, spec.y + 0.19, bz + 0.016);
+        g.add(glint);
+        const cork = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.02, 0.02, 0.032, 5),
+          new THREE.MeshPhongMaterial({ color: 0xd7b56a, shininess: 8, specular: new THREE.Color(0xf4e2b0) })
+        );
+        cork.position.set(bx, spec.y + 0.35, bz);
+        g.add(cork);
+      }
+    }
+    shelfRun({ x: -2.42, y: 1.24, z: -8.35, len: 1.02, axis: 'z', depth: 0.34, back: -0.15, lip: 0.15, bottles: 0 });
+    [-8.05, -8.33, -8.61].forEach((z) => {
+      const glint = new THREE.Mesh(new THREE.BoxGeometry(0.014, 0.11, 0.014), catchMat);
+      glint.position.set(-2.47, 1.46, z);
+      g.add(glint);
+    });
+    shelfRun({ x: -2.5, y: 0.56, z: -8.35, len: 0.92, axis: 'z', depth: 0.3, back: -0.13, lip: 0.13, bottles: 3 });
+    shelfRun({ x: 3.18, y: 1.16, z: -7.95, len: 1.22, axis: 'z', depth: 0.3, back: 0.13, lip: -0.13, bottles: 4 });
+    shelfRun({ x: 3.2, y: 0.58, z: -8.05, len: 1.1, axis: 'z', depth: 0.28, back: 0.12, lip: -0.12, bottles: 3 });
+    const rackFace = new THREE.Mesh(new THREE.BoxGeometry(1.88, 1.08, 0.02), timber);
+    rackFace.position.set(2.35, 1.16, -11.48);
+    g.add(rackFace);
+    shelfRun({ x: 2.35, y: 0.7, z: -11.38, len: 1.65, axis: 'x', depth: 0.2, back: -0.08, lip: 0.09, bottles: 0 });
+    shelfRun({ x: 2.35, y: 1.22, z: -11.38, len: 1.65, axis: 'x', depth: 0.2, back: -0.08, lip: 0.09, bottles: 0 });
+    for (let i = 0; i < 8; i++) {
+      const x = 2.35 - 0.72 + (i % 4) * 0.48;
+      const y = i < 4 ? 0.9 : 1.42;
+      const glint = new THREE.Mesh(new THREE.BoxGeometry(0.016, 0.05, 0.012), catchMat);
+      glint.position.set(x + 0.02, y, -11.4);
+      g.add(glint);
+    }
   }
 
   function buildPipe() {
