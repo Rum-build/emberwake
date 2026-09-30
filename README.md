@@ -194,6 +194,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The field bed and the existing stings are loud enough to hear. The first tap on Start, Continue, or a move resumes the sound, and Silent still stops it. The eight cues stay the set. No new cue.
 - Lira’s pack keeps canvas weave, strap buckles, and worn seams, and it sits on her back. The pack panel, the move stick, and the eight cues stay readable. No new cue.
 - The aftermath south steps keep worn stone grain, edge chips, moss in the joints, and a soft ash wash. The step back and Vesper’s absence stay. No new cue.
+- A saved Continue glows with an ember rim and a soft pulse. Still motion holds the rim steady. The same save and the same eight cues.
 
 ## Play on your phone
 
