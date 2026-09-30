@@ -909,6 +909,10 @@ The bottle-hall aisle under the shelves now carries worn stone tile grain, ash w
 
 The fight panel now carries an ember rim, a soft shadow under the chrome, grain in the meter fills, and a richer border. Fight, Magic, Item, and Flee stay where they were. The held charges still read Fire, Water, Bolt, and Earth. No new cue.
 
+## Shipped in the yard gravel pass
+
+The packed ground under the Concord yard gate now carries gravel grain, an ash wash, cart-rut scuffs, and sparse moss. The gate cork and the yard beat stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

@@ -3393,6 +3393,7 @@
     g.add(makeSealStake(2.8, -0.2));
     dressYardAir(g);
     dressYardGround(g);
+    dressYardGravel(g);
     dressYardGate(g);
     yardGroup = g;
     scene.add(g);
@@ -9728,6 +9729,78 @@
     const fill = new THREE.PointLight(0x9eb0d0, 0.12, 5.5);
     fill.position.set(-1.1, 1.25, 2.55);
     g.add(fill);
+  }
+
+  function dressYardGravel(g) {
+    const stone = new THREE.MeshPhongMaterial({
+      color: 0x7a7268, shininess: 14, specular: new THREE.Color(0xe0d6c8),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0xc8b8a0, shininess: 18, specular: new THREE.Color(0xfff0dc),
+    });
+    const chipMat = new THREE.MeshPhongMaterial({
+      color: 0x3a342c, shininess: 8, specular: new THREE.Color(0x8a8074),
+    });
+    const rut = new THREE.MeshPhongMaterial({
+      color: 0x1a1612, shininess: 4, specular: new THREE.Color(0x6a5848),
+    });
+    const ash = new THREE.MeshBasicMaterial({
+      color: 0x2a241c, transparent: true, opacity: 0.42, depthWrite: false, fog: false,
+    });
+    const moss = new THREE.MeshPhongMaterial({
+      color: 0x4a6234, shininess: 6, specular: new THREE.Color(0xc6d878), side: THREE.DoubleSide,
+    });
+    function pad(x, z, rot) {
+      const group = new THREE.Group();
+      const slab = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.04, 0.48), stone);
+      slab.position.y = 0.07;
+      slab.receiveShadow = true;
+      group.add(slab);
+      [-0.12, 0, 0.12].forEach((row) => {
+        const line = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.01, 0.018), grain);
+        line.position.set(0, 0.094, row);
+        group.add(line);
+      });
+      const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.045, 0), chipMat);
+      chip.position.set(0.28, 0.09, 0.16);
+      chip.scale.y = 0.35;
+      group.add(chip);
+      group.position.set(x, 0, z);
+      group.rotation.y = rot;
+      g.add(group);
+    }
+    [
+      [-2.15, 3.35, 0.2], [-1.35, 3.85, -0.15], [-0.45, 4.15, 0.1],
+      [0.45, 3.7, 0.25], [1.2, 4.05, -0.2], [-2.45, 3.95, 0.35],
+      [-0.9, 3.15, -0.08], [0.15, 4.35, 0.12],
+    ].forEach((spot) => pad(spot[0], spot[1], spot[2]));
+    [[-1.7, 3.55, 0.7], [0.2, 4.0, 0.85], [-2.3, 3.2, 0.45]].forEach((spot) => {
+      const wash = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 8), ash);
+      wash.rotation.x = -Math.PI / 2;
+      wash.position.set(spot[0], 0.1, spot[1]);
+      g.add(wash);
+    });
+    [[-0.85, 3.55, 1.7], [0.2, 3.65, 1.55]].forEach((spot) => {
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.016, spot[2]), rut);
+      line.position.set(spot[0], 0.1, spot[1]);
+      g.add(line);
+    });
+    [[-0.3, 3.2, 0.55], [0.55, 4.05, 0.4]].forEach((spot) => {
+      const scuff = new THREE.Mesh(new THREE.BoxGeometry(spot[2], 0.014, 0.07), rut);
+      scuff.position.set(spot[0], 0.102, spot[1]);
+      scuff.rotation.y = 0.4;
+      g.add(scuff);
+    });
+    [[-2.7, 3.85], [-2.4, 4.25], [1.55, 4.2], [1.7, 3.45], [-0.15, 4.5]].forEach((spot, i) => {
+      const clump = new THREE.Mesh(new THREE.SphereGeometry(0.07, 5, 4), moss);
+      clump.scale.y = 0.32;
+      clump.position.set(spot[0], 0.06, spot[1]);
+      g.add(clump);
+      const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.05, 0.12), moss);
+      blade.position.set(spot[0] + 0.04, 0.1, spot[1] + 0.02);
+      blade.rotation.y = i * 0.7;
+      g.add(blade);
+    });
   }
 
   function dressWakeCover() {
