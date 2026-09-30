@@ -191,6 +191,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - At the harbor pier, weathered plank grain, iron cleats, rope wraps, and wet-dark pilings sit on the frame, with spray grit at the feet. The salt boards and the pier ground stay readable. No new cue.
 - In the leaf-village, cream paper grain, ink bleed, a wax seal, and a folded crease sit on the letter, with a soft shadow in the basket. The step in and the furrow stay readable. No new cue.
 - Lira’s starter stick keeps bark grain, a worn grip wrap, and tip scuffs, and it sits in the hand when the scout knife is equipped. The knife, the other weapons, and the move stick stay readable. No new cue.
+- The field bed and the existing stings are loud enough to hear. The first tap on Start, Continue, or a move resumes the sound, and Silent still stops it. The eight cues stay the set. No new cue.
 
 ## Play on your phone
 
