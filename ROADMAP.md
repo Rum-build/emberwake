@@ -893,6 +893,10 @@ The Places list now sits on a parchment card with a clearer rim. The place under
 
 Around the wake, the ground now carries layered grass tufts, soil grit, a soft shadow under the blades, and warmer colour in the grass and soil. The spawn, the letter, and the leaf-village door stay where they were. No new cue.
 
+## Shipped in the path flagstone pass
+
+The walk from the wake to the leaf-village now carries worn flagstone grain, moss in the joints, a dusk shadow wash, and edge chips. The village door and the path look stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
