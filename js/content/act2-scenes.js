@@ -36,6 +36,23 @@
     return true;
   });
 
+  Emberwake.registerScene('roost-wing', function () {
+    var torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    Emberwake.present({
+      lines: [
+        { where: 'Eagle roost', speaker: 'Lira', text: 'Night on the perch. Concord licensed the cliff and left the wing in the air.' },
+        torren
+          ? { speaker: 'Torren', text: 'I stamped roosts like this. The stamp held the licence. It did not hold the bird.' }
+          : { speaker: 'The spark', text: 'They stamped the perch. The licence held. The bird did not.' },
+        { speaker: 'The spark', text: 'Vesper farms the rot inland. She does not take this thermal. The climb is still the way home.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteWing) Emberwake.noteWing();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('coast-landing', function () {
     Emberwake.present({
       lines: [

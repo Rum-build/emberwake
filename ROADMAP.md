@@ -644,6 +644,13 @@ Playable on the Verdant Isle field:
 - Places still names the bottle-hall. It does not say what the ending will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Eagle roost, the perch night (this branch)
+
+- Beside the climb, a look lets Lira say Concord licensed the cliff and left the wing in the air. Torren, when he walks with her, says the stamp held the licence and did not hold the bird. The spark says Vesper farms the rot inland and does not take the thermal. The climb stays the way home.
+- The roost button, the quiet stand, and the pier stay where they were.
+- Places still names the roost. It does not say what the ending will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
