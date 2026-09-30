@@ -1294,7 +1294,105 @@
     dressCellarCrawl(g);
     dressKilnHeat(g);
     dressKilnGrain(g);
+    dressCellarMouthFloor(g);
     return g;
+  }
+
+  function dressCellarMouthFloor(g) {
+    const ash = new THREE.MeshPhongMaterial({
+      color: 0x5a4638, shininess: 10, specular: new THREE.Color(0xc4a888),
+    });
+    const worn = new THREE.MeshPhongMaterial({
+      color: 0x2a2018, shininess: 6, specular: new THREE.Color(0x6a5848),
+    });
+    const damp = new THREE.MeshPhongMaterial({
+      color: 0x4a5864, shininess: 28, specular: new THREE.Color(0xd5e4f2),
+    });
+    const pale = new THREE.MeshPhongMaterial({
+      color: 0x8a9aaa, shininess: 32, specular: new THREE.Color(0xf4fbff),
+    });
+    const gritMat = new THREE.MeshPhongMaterial({
+      color: 0xc4b4a0, shininess: 8, specular: new THREE.Color(0xf0e4d4),
+    });
+    function plate(x, z, rot, cool) {
+      const group = new THREE.Group();
+      const stone = cool ? damp : ash;
+      const lipMat = cool ? pale : worn;
+      const slab = new THREE.Mesh(new THREE.CircleGeometry(0.46, 7), stone);
+      slab.rotation.x = -Math.PI / 2;
+      slab.position.y = 0.075;
+      slab.receiveShadow = true;
+      group.add(slab);
+      const mate = new THREE.Mesh(new THREE.CircleGeometry(0.22, 6), cool ? pale : worn);
+      mate.rotation.x = -Math.PI / 2;
+      mate.position.set(0.16, 0.084, 0.05);
+      group.add(mate);
+      const cap = new THREE.Mesh(new THREE.CircleGeometry(0.13, 5), worn);
+      cap.rotation.x = -Math.PI / 2;
+      cap.position.set(-0.1, 0.088, -0.04);
+      group.add(cap);
+      const lip = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.024, 4, 8, Math.PI * 1.15), lipMat);
+      lip.rotation.x = Math.PI / 2;
+      lip.position.y = 0.092;
+      group.add(lip);
+      if (cool) {
+        const rim = new THREE.Mesh(
+          new THREE.TorusGeometry(0.2, 0.018, 6, 14),
+          new THREE.MeshBasicMaterial({ color: 0xd5e4f2, fog: false })
+        );
+        rim.rotation.x = Math.PI / 2;
+        rim.position.y = 0.096;
+        group.add(rim);
+      }
+      const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.042, 0), worn);
+      chip.position.set(-0.22, 0.09, 0.07);
+      chip.scale.y = 0.35;
+      group.add(chip);
+      group.position.set(x, 0, z);
+      group.rotation.y = rot;
+      g.add(group);
+    }
+    [
+      [0.2, 2.45, 0.2, false], [-0.55, 3.1, -0.25, false], [0.75, 1.35, 0.35, false],
+      [0.15, 0.35, -0.1, false], [1.05, -0.4, 0.2, false],
+      [-0.35, 2.05, 0.15, true], [0.85, 2.9, -0.2, true], [-0.2, -0.55, 0.3, true],
+    ].forEach((spot) => {
+      plate(spot[0], spot[1], spot[2], spot[3]);
+    });
+    function grit(x, z) {
+      const group = new THREE.Group();
+      [[0, 0, 0.036], [0.06, 0.03, 0.022], [-0.05, 0.04, 0.026], [0.02, -0.05, 0.018]].forEach((spot) => {
+        const speck = new THREE.Mesh(new THREE.SphereGeometry(spot[2], 4, 3), gritMat);
+        speck.position.set(spot[0], 0.08 + spot[2] * 0.4, spot[1]);
+        group.add(speck);
+      });
+      group.position.set(x, 0, z);
+      g.add(group);
+    }
+    [[0.45, 2.7], [-0.1, 1.7], [0.4, 0.05]].forEach((spot) => {
+      grit(spot[0], spot[1]);
+    });
+    const washMat = new THREE.MeshBasicMaterial({
+      color: 0xc4a888, transparent: true, opacity: 0.08, depthWrite: false, fog: false,
+    });
+    [[0.35, 1.7, 0.95], [0.05, 2.75, 0.7]].forEach((spot) => {
+      const wash = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 10), washMat);
+      wash.rotation.x = -Math.PI / 2;
+      wash.position.set(spot[0], 0.06, spot[1]);
+      g.add(wash);
+    });
+    const scuffMat = new THREE.MeshPhongMaterial({
+      color: 0x1a1410, shininess: 3, specular: new THREE.Color(0x6a5848),
+    });
+    [[0.05, 2.35, 0.1], [0.2, 3.15, -0.2], [-0.15, 1.55, 0.35]].forEach((spot) => {
+      const scuff = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.012, 0.06), scuffMat);
+      scuff.position.set(spot[0], 0.09, spot[1]);
+      scuff.rotation.y = spot[2];
+      g.add(scuff);
+    });
+    const rim = new THREE.PointLight(0xc5d6ee, 0.42, 4.8);
+    rim.position.set(0.35, 1.45, 2.35);
+    g.add(rim);
   }
 
   function dressCellarMouth(g) {
