@@ -7519,7 +7519,7 @@
     });
     [[-1.15, 0.15, 1.7, 0.16], [0.15, 0.48, 1.45, -0.12], [1.15, 0.05, 1.25, 0.2], [-0.35, 0.85, 1.85, 0.05], [0.65, -0.15, 1.05, -0.1]].forEach((spot) => {
       const line = new THREE.Mesh(new THREE.BoxGeometry(spot[2], 0.016, 0.07), ripple);
-      line.position.set(spot[0], -0.05, spot[1]);
+      line.position.set(spot[0], 0.22, spot[1]);
       line.rotation.y = spot[3];
       water.add(line);
     });
@@ -7529,7 +7529,7 @@
         ripple
       );
       ring.rotation.x = Math.PI / 2;
-      ring.position.set(spot[0], -0.045, spot[1]);
+      ring.position.set(spot[0], 0.225, spot[1]);
       water.add(ring);
     });
     const depthMat = new THREE.MeshBasicMaterial({
@@ -7539,7 +7539,7 @@
       const wash = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 12), depthMat);
       wash.rotation.x = -Math.PI / 2;
       wash.scale.set(1, spot[3], 1);
-      wash.position.set(spot[0], -0.07, spot[1]);
+      wash.position.set(spot[0], 0.2, spot[1]);
       water.add(wash);
     });
     const foam = new THREE.MeshBasicMaterial({
@@ -7549,10 +7549,10 @@
       const fleck = new THREE.Mesh(new THREE.PlaneGeometry(i % 2 ? 0.42 : 0.28, 0.1), foam);
       fleck.rotation.x = -Math.PI / 2;
       fleck.rotation.z = i * 0.35;
-      fleck.position.set(spot[0], -0.04, spot[1]);
+      fleck.position.set(spot[0], 0.23, spot[1]);
       water.add(fleck);
       const bead = new THREE.Mesh(new THREE.SphereGeometry(i % 2 ? 0.045 : 0.032, 5, 4), foam);
-      bead.position.set(spot[0] + 0.08, -0.02, spot[1] + 0.05);
+      bead.position.set(spot[0] + 0.08, 0.25, spot[1] + 0.05);
       water.add(bead);
     });
     const dusk = new THREE.Mesh(
@@ -7563,7 +7563,7 @@
     );
     dusk.rotation.x = -Math.PI / 2;
     dusk.scale.set(0.55, 2.4, 1);
-    dusk.position.set(0.22, -0.035, 0.4);
+    dusk.position.set(0.22, 0.21, 0.4);
     water.add(dusk);
     g.add(water);
   }
