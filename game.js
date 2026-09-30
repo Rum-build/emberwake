@@ -2865,6 +2865,7 @@
     g.add(makeSealStake(2.8, -0.2));
     dressYardAir(g);
     dressYardGround(g);
+    dressYardGate(g);
     yardGroup = g;
     scene.add(g);
   }
@@ -8382,6 +8383,64 @@
     g.add(seal);
     g.position.set(x, 0, z);
     return g;
+  }
+
+  function dressYardGate(g) {
+    const timber = new THREE.MeshPhongMaterial({
+      color: 0x7a6248, emissive: new THREE.Color(0x24180e), shininess: 14, specular: new THREE.Color(0xe0c8a8),
+    });
+    const worn = new THREE.MeshPhongMaterial({
+      color: 0x3a2a1e, emissive: new THREE.Color(0x120c08), shininess: 6, specular: new THREE.Color(0xb09078),
+    });
+    const iron = new THREE.MeshPhongMaterial({
+      color: 0x2c343c, emissive: new THREE.Color(0x101418), shininess: 68, specular: new THREE.Color(0xe4eaf2),
+    });
+    const catchMat = new THREE.MeshBasicMaterial({ color: 0xeef4ff, fog: false });
+    const washMat = new THREE.MeshBasicMaterial({
+      color: 0xb7c6d6, transparent: true, opacity: 0.16, depthWrite: false, fog: false,
+    });
+    const gate = new THREE.Group();
+    gate.userData.yardGate = true;
+    [-1.4, 1.4].forEach((x) => {
+      [0.42, 0.78, 1.18, 1.52].forEach((y, i) => {
+        const line = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.014, 0.02), i % 2 ? worn : timber);
+        line.position.set(x, y, 4.71);
+        gate.add(line);
+        const back = line.clone();
+        back.position.z = 4.39;
+        gate.add(back);
+      });
+      const vein = new THREE.Mesh(new THREE.BoxGeometry(0.014, 1.15, 0.016), worn);
+      vein.position.set(x - 0.04, 0.95, 4.712);
+      gate.add(vein);
+      const strap = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.055, 0.028), iron);
+      strap.position.set(x, 1.12, 4.72);
+      gate.add(strap);
+      const rivet = new THREE.Mesh(new THREE.SphereGeometry(0.018, 6, 5), iron);
+      rivet.position.set(x, 1.12, 4.74);
+      gate.add(rivet);
+      const hinge = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.18, 0.036), iron);
+      hinge.position.set(x + (x < 0 ? 0.1 : -0.1), 1.38, 4.71);
+      gate.add(hinge);
+      const wash = new THREE.Mesh(new THREE.PlaneGeometry(0.36, 1.5), washMat);
+      wash.position.set(x, 0.98, 4.75);
+      gate.add(wash);
+    });
+    [-0.85, -0.2, 0.45].forEach((x, i) => {
+      const grain = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.014, 0.018), i === 1 ? worn : timber);
+      grain.position.set(x, 1.86, 4.68);
+      gate.add(grain);
+    });
+    const barStrap = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.045, 0.026), iron);
+    barStrap.position.set(0.15, 1.76, 4.69);
+    gate.add(barStrap);
+    const bolt = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.04, 0.036), iron);
+    bolt.position.set(1.02, 1.02, 4.73);
+    gate.add(bolt);
+    const latch = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.07, 0.02), catchMat);
+    latch.position.set(0.88, 1.02, 4.75);
+    gate.add(latch);
+    g.add(gate);
   }
 
   function dressYardAir(g) {

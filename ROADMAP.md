@@ -805,6 +805,10 @@ Lira’s quilted jerkin now carries extra stitch rows and leather grain, the ash
 
 Torren’s seal coat now carries seam and collar grain and a seal stamp catch. His ledger cudgel carries extra wood grain and an iron band. They stay on the body when equipped. Lira’s gear, both faces, and the spark stay readable. The earlier ground passes are unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the yard gate pass
+
+The Concord yard gate now carries worn timber grain on the posts and the crossbar, iron hinge and strap plates, a bolt catch, and a cooler dusk wash on the uprights. The gate cork and the yard cobbles stay where they were. Lira’s gear, Torren’s gear, both faces, and the spark stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
