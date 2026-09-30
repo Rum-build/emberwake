@@ -63,6 +63,14 @@ button, .inventory-panel, .inv-body, .credits-content {
   pointer-events: none;
   overflow: hidden;
 }
+#title-screen .title-bg {
+  background:
+    radial-gradient(ellipse at 50% 8%, rgba(255, 186, 110, 0.42), transparent 40%),
+    radial-gradient(ellipse at 50% 28%, rgba(255, 110, 40, 0.28), transparent 52%),
+    radial-gradient(ellipse at 78% 84%, rgba(90, 36, 16, 0.4), transparent 48%),
+    radial-gradient(ellipse at 16% 76%, rgba(48, 22, 12, 0.36), transparent 46%),
+    #1a120e;
+}
 .title-bg::after {
   content: "";
   position: absolute;
@@ -178,6 +186,22 @@ body.still-motion .encounter-flash.active {
   border-radius: 2px;
   background: rgba(12, 10, 9, 0.42);
   box-shadow: inset 0 0 0 1px rgba(255, 224, 160, 0.32);
+}
+#title-screen > .title-content {
+  border: 2px solid rgba(255, 186, 110, 0.94);
+  border-radius: 12px;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 214, 160, 0.06) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(0deg, rgba(90, 48, 24, 0.1) 0 1px, transparent 1px 12px),
+    linear-gradient(180deg, rgba(255, 214, 168, 0.28), rgba(255, 168, 88, 0.08) 24%, transparent 46%),
+    linear-gradient(168deg, rgba(74, 52, 38, 0.94) 0%, rgba(44, 30, 22, 0.92) 48%, rgba(22, 16, 12, 0.9) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 214, 0.55),
+    inset 0 0 0 1px rgba(120, 58, 22, 0.55),
+    inset 0 0 28px rgba(255, 120, 48, 0.14),
+    0 0 0 1px rgba(255, 140, 60, 0.45),
+    0 0 22px rgba(255, 120, 48, 0.4),
+    0 18px 36px rgba(0, 0, 0, 0.5);
 }
 
 .wake-host {
@@ -681,16 +705,16 @@ body.still-motion .encounter-flash.active {
 }
 #btn-continue.is-saved {
   background: linear-gradient(180deg, #9a5430 0%, #5a2c18 48%, #2c1610 100%);
-  border-color: #ffe7c2;
+  border: 2px solid rgba(255, 214, 160, 0.95);
   color: #fff4e4;
   text-shadow: 0 1px 0 rgba(42, 18, 8, 0.45), 0 0 14px rgba(255, 176, 80, 0.55);
   box-shadow:
     inset 0 1px 0 rgba(255, 244, 220, 0.9),
     inset 0 -10px 16px rgba(42, 14, 8, 0.45),
-    inset 0 0 18px rgba(255, 140, 60, 0.38),
+    inset 0 0 22px rgba(255, 140, 60, 0.28),
     0 0 0 2px #ffe1a8,
-    0 0 22px rgba(255, 176, 80, 0.72),
-    0 0 46px rgba(255, 96, 28, 0.4);
+    0 0 16px rgba(255, 176, 80, 0.42),
+    0 0 36px rgba(255, 176, 80, 0.22);
 }
 body:not(.still-motion) #btn-continue.is-saved {
   animation: continueGlow 2.6s ease-in-out infinite;
@@ -706,28 +730,30 @@ body.still-motion #btn-continue.is-saved {
     box-shadow:
       inset 0 1px 0 rgba(255, 244, 220, 0.9),
       inset 0 -10px 16px rgba(42, 14, 8, 0.45),
-      inset 0 0 18px rgba(255, 140, 60, 0.38),
+      inset 0 0 22px rgba(255, 140, 60, 0.28),
       0 0 0 2px #ffe1a8,
-      0 0 22px rgba(255, 176, 80, 0.72),
-      0 0 46px rgba(255, 96, 28, 0.4);
+      0 0 16px rgba(255, 176, 80, 0.42),
+      0 0 36px rgba(255, 176, 80, 0.22);
   }
   50% {
     box-shadow:
       inset 0 1px 0 rgba(255, 250, 236, 1),
       inset 0 -10px 16px rgba(42, 14, 8, 0.35),
-      inset 0 0 28px rgba(255, 168, 80, 0.55),
+      inset 0 0 26px rgba(255, 168, 80, 0.4),
       0 0 0 2px #ffe1a8,
-      0 0 34px rgba(255, 176, 80, 0.92),
-      0 0 68px rgba(255, 90, 24, 0.5);
+      0 0 24px rgba(255, 176, 80, 0.55),
+      0 0 48px rgba(255, 176, 80, 0.28);
   }
 }
 #title-screen #btn-motion,
 #title-screen #btn-ash,
+#title-screen #btn-credits,
 #title-screen #btn-start,
 #title-screen #btn-continue:not(.is-saved) {
   border-width: 2px;
-  border-color: #d4c8b4;
-  box-shadow: inset 0 0 0 2px rgba(58, 46, 38, 0.95), 0 0 0 1px rgba(180, 160, 140, 0.62);
+  border-color: rgba(255, 196, 130, 0.9);
+  border-radius: 8px;
+  box-shadow: inset 0 1px 0 rgba(255, 236, 214, 0.28), 0 0 0 1px rgba(255, 140, 60, 0.35);
 }
 #title-screen #btn-motion[aria-pressed="true"],
 #title-screen #btn-ash[aria-pressed="true"] {
@@ -740,8 +766,14 @@ body.still-motion #btn-continue.is-saved {
   background: rgba(16, 12, 10, 0.45);
   box-shadow: inset 0 0 0 2px rgba(42, 36, 30, 0.9), 0 0 0 1px rgba(120, 108, 96, 0.45);
 }
-#title-screen #btn-start {
-  box-shadow: inset 0 0 0 1px #ffe0a0, inset 0 0 0 3px rgba(58, 46, 38, 0.95), 0 0 0 1px rgba(180, 160, 140, 0.7);
+#title-screen #btn-start,
+#title-screen #btn-continue:not(.is-saved) {
+  border-color: rgba(255, 214, 160, 0.95);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 214, 0.42),
+    0 0 14px rgba(255, 176, 80, 0.32),
+    0 0 28px rgba(255, 120, 48, 0.18),
+    0 6px 14px rgba(0, 0, 0, 0.28);
 }
 .inv-quest {
   grid-column: 1 / -1;
