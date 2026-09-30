@@ -460,6 +460,13 @@ Playable on the Verdant Isle field:
 - After the hall is walked, Places names the bottled hall north of the count. It does not repeat the cork quest.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Kiln heat, and the leaf-cup (this branch)
+
+- The buried kiln keeps an ember glow, a soot rim, and a little smoke off the mouth. The ash shelf in the cellar keeps a soot mark and one ember. The drink is unchanged.
+- The leaf-cup keeps a cooler rim, a wax sheen, and a scatter of leaves off the mouth. The letter and the cup stay in the same order.
+- A hit washes hotter. The numbers of the blows stay where they were. The wash is not a cue.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

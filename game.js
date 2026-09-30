@@ -1258,7 +1258,47 @@
       bar.position.set(0.15, 0.16, -19.7 + dz);
       g.add(bar);
     });
+    dressKilnHeat(g);
     return g;
+  }
+
+  function dressKilnHeat(g) {
+    const soot = new THREE.Mesh(
+      new THREE.RingGeometry(2.78, 3.28, 28),
+      new THREE.MeshBasicMaterial({
+        color: 0x120c0a, transparent: true, opacity: 0.88, side: THREE.DoubleSide, depthWrite: false, fog: false,
+      })
+    );
+    soot.rotation.x = -Math.PI / 2;
+    soot.position.set(0, 0.055, -21);
+    g.add(soot);
+    const emberMat = new THREE.MeshBasicMaterial({ color: 0xff5a18, fog: false });
+    [[2.95, 0.32, -20.15], [-2.9, 0.46, -21.7], [2.1, 0.58, -23.25], [-2.35, 0.4, -23.05], [2.55, 0.7, -22.55]].forEach((spot) => {
+      const ember = new THREE.Mesh(new THREE.SphereGeometry(0.11, 6, 5), emberMat);
+      ember.position.set(spot[0], spot[1], spot[2]);
+      g.add(ember);
+    });
+    const smokeMat = new THREE.MeshBasicMaterial({
+      color: 0x3a3438, transparent: true, opacity: 0.55, depthWrite: false, fog: false, side: THREE.DoubleSide,
+    });
+    [[2.4, 1.45, -23.05, 0.72], [-2.7, 1.55, -23.0, 0.62], [2.85, 1.15, -22.05, 0.5]].forEach((spot) => {
+      const puff = new THREE.Mesh(new THREE.PlaneGeometry(spot[3], spot[3] * 1.35), smokeMat);
+      puff.position.set(spot[0], spot[1], spot[2]);
+      g.add(puff);
+    });
+    const glow = new THREE.PointLight(0xff4a18, 0.7, 5.2);
+    glow.position.set(2.55, 1.15, -22.45);
+    g.add(glow);
+    const shelfSoot = new THREE.Mesh(
+      new THREE.CircleGeometry(0.42, 10),
+      new THREE.MeshBasicMaterial({ color: 0x1a100c, transparent: true, opacity: 0.8, depthWrite: false, fog: false })
+    );
+    shelfSoot.rotation.x = -Math.PI / 2;
+    shelfSoot.position.set(-2.55, 1.42, -1.18);
+    g.add(shelfSoot);
+    const shelfEmber = new THREE.Mesh(new THREE.SphereGeometry(0.08, 6, 5), emberMat);
+    shelfEmber.position.set(-2.15, 1.5, -1.22);
+    g.add(shelfEmber);
   }
 
   function buildVaultRoom() {
@@ -5666,6 +5706,41 @@
     overworldGroup.add(makeScarPost(10.4, -7.1, 0.22));
     overworldGroup.add(makeScarPost(11.2, -8.6, -0.16));
     overworldGroup.add(makeScarVeil());
+    dressLeafCup();
+  }
+
+  function dressLeafCup() {
+    const g = new THREE.Group();
+    g.position.set(-4, 0, 8);
+    const rim = new THREE.Mesh(
+      new THREE.TorusGeometry(3.18, 0.11, 8, 28),
+      new THREE.MeshLambertMaterial({ color: 0xb7ddd6, emissive: new THREE.Color(0x1c3a38) })
+    );
+    rim.rotation.x = Math.PI / 2;
+    rim.position.y = 0.2;
+    g.add(rim);
+    const wax = new THREE.Mesh(
+      new THREE.RingGeometry(2.74, 3.08, 28),
+      new THREE.MeshBasicMaterial({
+        color: 0xf3e2b0, transparent: true, opacity: 0.66, side: THREE.DoubleSide, depthWrite: false, fog: false,
+      })
+    );
+    wax.rotation.x = -Math.PI / 2;
+    wax.position.y = 0.13;
+    g.add(wax);
+    const leafMat = new THREE.MeshLambertMaterial({ color: 0x6a9a44, side: THREE.DoubleSide });
+    const rotMat = new THREE.MeshLambertMaterial({ color: 0x5a3828, side: THREE.DoubleSide });
+    [[3.2, 0.45], [3.0, 1.55], [3.35, 2.55], [3.05, 3.6], [3.28, 4.55], [2.95, 5.5]].forEach((spot, i) => {
+      const leaf = new THREE.Mesh(new THREE.PlaneGeometry(0.38, 0.18), i % 2 ? rotMat : leafMat);
+      leaf.rotation.x = -Math.PI / 2;
+      leaf.rotation.z = spot[1];
+      leaf.position.set(Math.cos(spot[1]) * spot[0], 0.08, Math.sin(spot[1]) * spot[0]);
+      g.add(leaf);
+    });
+    const cool = new THREE.PointLight(0xc5e6ea, 0.42, 3.6);
+    cool.position.set(0, 0.9, 0);
+    g.add(cool);
+    overworldGroup.add(g);
   }
 
   function makeSaltCord(x, z) {
