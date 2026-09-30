@@ -192,6 +192,7 @@
   let nearRow = null;
   let nearWing = null;
   let nearTick = null;
+  let nearGrit = null;
   let nearRing = null;
   let nearClerk = null;
   let nearRation = null;
@@ -4390,6 +4391,21 @@
     };
   }
 
+  function nearestGrit() {
+    if (!playerMesh || locale !== 'field' || regionId !== 'verdant-isle' || skyPass) return null;
+    if (Math.hypot(0 - playerMesh.position.x, 22.2 - playerMesh.position.z) > 0.75) return null;
+    if (seenBeats['stone-grit']) {
+      return {
+        title: 'South stones',
+        hint: 'Already heard. The stones stay cold. Press E to hear it again.',
+      };
+    }
+    return {
+      title: 'South stones',
+      hint: 'Press E. Concord counted the ring. It is not the road and not the scar.',
+    };
+  }
+
   function nearestRing() {
     if (!playerMesh || locale !== 'field' || regionId !== 'verdant-isle' || skyPass) return null;
     if (Math.hypot(9.2 - playerMesh.position.x, -12.4 - playerMesh.position.z) > 1.1) return null;
@@ -8219,7 +8235,8 @@
     const showRow = idle && nearRow && !showAbsorb && !atExit;
     const showWing = idle && nearWing && !showAbsorb && !showDoor && !showGate && !showReturn && !showPier;
     const showTick = idle && nearTick && !showAbsorb && !showDoor && !showGate && !showReturn && !showPier && !showWing && !showPorter && !showNotice && !showClerk;
-    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showScrap && !showCompany && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showSpare && !showJournal && !showNotice && !showCord && !showPost && !showPier && !showFarm && !showCork && !showDust && !showLamp && !showMouth && !showRow && !showWing && !showTick && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol);
+    const showGrit = idle && nearGrit && !showAbsorb && !showDoor && !showGate;
+    absorbBtn.classList.toggle('hidden', !showAbsorb && !showDoor && !atExit && !showGate && !showReturn && !showLook && !showPipe && !showThroat && !showStone && !showTalk && !showMark && !showNave && !showGallery && !showStair && !showCrack && !showBar && !showEnd && !showCredits && !showPerch && !showKestrel && !showScrap && !showCompany && !showPorter && !showLetter && !showMargin && !showChalk && !showCamp && !showChest && !showSpare && !showJournal && !showNotice && !showCord && !showPost && !showPier && !showFarm && !showCork && !showDust && !showLamp && !showMouth && !showRow && !showWing && !showTick && !showGrit && !showRing && !showClerk && !showRation && !showAside && !showNima && !showPatrol);
     if (atExit) absorbBtn.textContent = 'Leave';
     else if (showDoor) absorbBtn.textContent = 'Enter';
     else if (showReturn) absorbBtn.textContent = 'Return';
@@ -8237,7 +8254,7 @@
     else if (showChest) absorbBtn.textContent = seenBeats['wayside-chest'] ? 'Look' : 'Open';
     else if (showSpare) absorbBtn.textContent = seenBeats['spare-green'] ? 'Look' : 'Open';
     else if (showJournal) absorbBtn.textContent = 'Look';
-    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showPier || showFarm || showCork || showDust || showLamp || showMouth || showRow || showWing || showTick || showRing || showClerk || showRation || showAside || showNima || showPatrol) absorbBtn.textContent = 'Look';
+    else if (showLetter || showMargin || showChalk || showCamp || showNotice || showCord || showPost || showPier || showFarm || showCork || showDust || showLamp || showMouth || showRow || showWing || showTick || showGrit || showRing || showClerk || showRation || showAside || showNima || showPatrol) absorbBtn.textContent = 'Look';
     else if (showAbsorb) absorbBtn.textContent = 'Absorb ' + nearPool.short;
     absorbBtn.classList.toggle('is-ready', !!showAbsorb);
   }
@@ -8249,7 +8266,7 @@
   function updatePrompt() {
     const atExit = atInteriorExit();
     interactPrompt.classList.remove('ready');
-    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearScrap && !nearCompany && !nearPorter && !nearLetter && !nearChest && !nearSpare && !nearJournal && !nearNotice && !nearCord && !nearPost && !nearPier && !nearFarm && !nearCork && !nearDust && !nearLamp && !nearMouth && !nearRow && !nearWing && !nearTick && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
+    if (gameState !== State.OVERWORLD || inventoryOpen || encounterLocked || dialogueOpen || creditsCovering() || (!nearPool && !nearDoor && !nearGate && !nearReturn && !nearMarrow && !nearWorker && !nearWarden && !nearPipe && !nearThroat && !nearStone && !nearMark && !nearNave && !nearGallery && !nearStair && !nearMargin && !nearChalk && !nearCamp && !nearCrack && !nearBar && !nearEnd && !nearCredits && !nearPerch && !nearKestrel && !nearScrap && !nearCompany && !nearPorter && !nearLetter && !nearChest && !nearSpare && !nearJournal && !nearNotice && !nearCord && !nearPost && !nearPier && !nearFarm && !nearCork && !nearDust && !nearLamp && !nearMouth && !nearRow && !nearWing && !nearTick && !nearGrit && !nearRing && !nearClerk && !nearRation && !nearAside && !nearNima && !nearPatrol && !approachPool && !atExit)) {
       interactPrompt.classList.add('hidden');
       return;
     }
@@ -8453,6 +8470,11 @@
       $('#interact-detail').textContent = nearTick.hint;
       return;
     }
+    if (nearGrit && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
+      $('#interact-title').textContent = nearGrit.title;
+      $('#interact-detail').textContent = nearGrit.hint;
+      return;
+    }
     if (nearRing && !(nearPool && !nearPool.absorbed && !nearPool.bottled && !nearPool.withheld)) {
       $('#interact-title').textContent = nearRing.title;
       $('#interact-detail').textContent = nearRing.hint;
@@ -8581,6 +8603,7 @@
       if (seenBeats['hall-row']) waiting.push('Grain on the bottle-hall’s near corks. Concord gilded the shelf. Vesper farms the rot and does not take the host.');
       if (seenBeats['roost-wing']) waiting.push('Night on the eagle roost. Concord left the wing in the air. Vesper does not take the thermal.');
       if (seenBeats['wire-tick']) waiting.push('A tick on the harbor wire. Concord left the post counting. Vesper does not stand there.');
+      if (seenBeats['stone-grit']) waiting.push('Grit on the waystone’s south stones. Concord counted the ring. Vesper farms the rot and does not take the host.');
       if (seenBeats['cold-ring']) waiting.push('A cold ring in the grass is not a pool and not the scar.');
       if (seenBeats['clerk-tally']) waiting.push('A tally clerk on the shale counted weather. The vault door did not change.');
       if (seenBeats['coast-brawl']) waiting.push('The west-shale patrol was provoked. They fought. The vault door did not change.');
@@ -9194,6 +9217,10 @@
     }
     if (nearGate) {
       landOnCoast();
+      return;
+    }
+    if (nearGrit) {
+      talkGrit();
       return;
     }
     if (nearReturn) {
@@ -11475,6 +11502,27 @@
     saveGame();
   }
 
+  function talkGrit() {
+    if (locale !== 'field' || regionId !== 'verdant-isle' || dialogueOpen) return;
+    if (seenBeats['stone-grit']) {
+      showToast('The grit stays on the stones. She does not take the host. The ring stays cold.');
+      return;
+    }
+    const fn = EW.scenes['stone-grit'];
+    if (typeof fn === 'function') {
+      const played = fn();
+      if (played !== false && dialogueOpen) pendingBeat = 'stone-grit';
+    }
+  }
+
+  function noteGrit() {
+    seenBeats['stone-grit'] = true;
+    showToast('The grit stays on the stones. The ring stays cold.');
+    refreshRumor();
+    updateHUD();
+    saveGame();
+  }
+
   function talkRing() {
     if (locale !== 'field' || regionId !== 'verdant-isle' || dialogueOpen) return;
     if (seenBeats['cold-ring']) {
@@ -11907,6 +11955,7 @@
       nearRow = null;
       nearWing = null;
       nearTick = null;
+      nearGrit = null;
       nearRing = null;
       nearClerk = null;
       nearRation = null;
@@ -12028,6 +12077,7 @@
         nearRow = nearestRow();
         nearWing = nearestWing();
         nearTick = nearestTick();
+        nearGrit = nearestGrit();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
         nearRation = nearestRation();
@@ -12090,6 +12140,7 @@
         nearRow = nearestRow();
         nearWing = nearestWing();
         nearTick = nearestTick();
+        nearGrit = nearestGrit();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
         nearRation = nearestRation();
@@ -12173,6 +12224,7 @@
         nearRow = nearestRow();
         nearWing = nearestWing();
         nearTick = nearestTick();
+        nearGrit = nearestGrit();
         nearRing = nearestRing();
         nearClerk = nearestClerk();
         nearRation = nearestRation();
@@ -15610,6 +15662,7 @@
   EW.noteRow = noteRow;
   EW.noteWing = noteWing;
   EW.noteTick = noteTick;
+  EW.noteGrit = noteGrit;
   EW.noteRing = noteRing;
   EW.noteClerk = noteClerk;
   EW.noteRation = noteRation;

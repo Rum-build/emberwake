@@ -658,6 +658,13 @@ Playable on the Verdant Isle field:
 - Places still names the telegraph. It does not say what the ending will do.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Waystone, the south stones (this branch)
+
+- South of the ring, a look lets Lira say Concord counted the ring and left it cold. Torren, when he walks with her, says the stamp held the count and did not warm the stone. The spark says Vesper farms the rot off the ridge and does not take the host. The stones stay cold.
+- The land through the ring stays. The tease and the wake stay on the stone.
+- Places still names the waystone. It does not say what the ending will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
