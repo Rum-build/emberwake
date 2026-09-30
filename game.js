@@ -1320,6 +1320,7 @@
     dressKilnGrain(g);
     dressKilnMouth(g);
     dressKilnExterior(g);
+    dressKilnYard(g);
     dressCellarMouthFloor(g);
     return g;
   }
@@ -1933,6 +1934,70 @@
     glow.position.set(0.15, 1.05, -15.7);
     kiln.add(glow);
     g.add(kiln);
+  }
+
+  function dressKilnYard(g) {
+    const ash = new THREE.MeshPhongMaterial({
+      color: 0xe4dcd2, shininess: 10, specular: new THREE.Color(0xfff8f0),
+    });
+    const drift = new THREE.MeshBasicMaterial({
+      color: 0xcfc6ba, transparent: true, opacity: 0.9, depthWrite: false, fog: false,
+    });
+    const char = new THREE.MeshPhongMaterial({
+      color: 0x100c0a, shininess: 22, specular: new THREE.Color(0xb0a498),
+    });
+    const scorch = new THREE.MeshBasicMaterial({
+      color: 0x2a0c08, transparent: true, opacity: 0.92, depthWrite: false, fog: false,
+    });
+    const heat = new THREE.MeshBasicMaterial({
+      color: 0xff4a18, transparent: true, opacity: 0.72, depthWrite: false, fog: false,
+    });
+    const grit = new THREE.MeshPhongMaterial({
+      color: 0xa08068, shininess: 16, specular: new THREE.Color(0xfff0d8),
+    });
+    const worn = new THREE.MeshPhongMaterial({
+      color: 0x1a120e, shininess: 4, specular: new THREE.Color(0x6a5840),
+    });
+    const burn = new THREE.Mesh(new THREE.CircleGeometry(0.92, 12), scorch);
+    burn.rotation.x = -Math.PI / 2;
+    burn.scale.set(1.65, 0.72, 1);
+    burn.position.set(0.04, 0.09, -17.12);
+    g.add(burn);
+    const emberEdge = new THREE.Mesh(new THREE.RingGeometry(0.62, 0.88, 16), heat);
+    emberEdge.rotation.x = -Math.PI / 2;
+    emberEdge.scale.set(1.55, 0.68, 1);
+    emberEdge.position.set(0.04, 0.105, -17.12);
+    g.add(emberEdge);
+    [[-0.62, -17.5, 0.58], [0.42, -17.82, 0.52], [-0.08, -18.02, 0.64], [0.78, -17.38, 0.4]].forEach((spot) => {
+      const plate = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 8), ash);
+      plate.rotation.x = -Math.PI / 2;
+      plate.position.set(spot[0], 0.11, spot[1]);
+      plate.receiveShadow = true;
+      g.add(plate);
+    });
+    const sheet = new THREE.Mesh(new THREE.CircleGeometry(1.2, 10), drift);
+    sheet.rotation.x = -Math.PI / 2;
+    sheet.scale.set(1.4, 0.58, 1);
+    sheet.position.set(0.02, 0.1, -17.68);
+    g.add(sheet);
+    [[-0.48, -17.48], [0.12, -17.66], [0.58, -17.42], [-0.22, -17.92], [0.38, -17.98], [-0.7, -17.72]].forEach((spot, i) => {
+      const bit = new THREE.Mesh(new THREE.DodecahedronGeometry(0.08, 0), char);
+      bit.scale.set(1.25, 0.42, 0.9);
+      bit.position.set(spot[0], 0.15, spot[1]);
+      bit.rotation.y = i * 0.55;
+      g.add(bit);
+    });
+    [[-0.12, -17.22], [0.06, -17.52], [-0.04, -17.86], [0.14, -18.12]].forEach((spot, i) => {
+      const step = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.045, 0.3), grit);
+      step.position.set(spot[0], 0.125, spot[1]);
+      step.rotation.y = (i - 1) * 0.1;
+      step.receiveShadow = true;
+      g.add(step);
+      const nick = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.018, 0.055), worn);
+      nick.position.set(spot[0] + 0.05, 0.155, spot[1]);
+      nick.rotation.y = 0.35 + i * 0.08;
+      g.add(nick);
+    });
   }
 
   function buildVaultRoom() {

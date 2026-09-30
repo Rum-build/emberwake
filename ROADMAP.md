@@ -949,6 +949,10 @@ The Pack overlay now carries an ember rim, a soft shadow under the panel, cleare
 
 The timber and plaster faces around the leaf-village square now carry plank grain, plaster patches, moss at the base, and window-sill wear. The village door, the well, and the leaf-village beat stay where they were. No new cue.
 
+## Shipped in the kiln yard pass
+
+The ground around the buried kiln’s exterior now carries denser ash drift, charcoal flecks, heat-scorch near the mouth, and worn footpath grit. The kiln drink, the throat, and the kiln beat stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
