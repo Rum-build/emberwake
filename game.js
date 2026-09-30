@@ -9111,6 +9111,7 @@
   function dressLeafCup() {
     const g = new THREE.Group();
     g.position.set(-4, 0, 8);
+    g.userData.leafCup = true;
     const rim = new THREE.Mesh(
       new THREE.TorusGeometry(3.18, 0.11, 8, 28),
       new THREE.MeshLambertMaterial({ color: 0xb7ddd6, emissive: new THREE.Color(0x1c3a38) })
@@ -9136,6 +9137,68 @@
       leaf.position.set(Math.cos(spot[1]) * spot[0], 0.08, Math.sin(spot[1]) * spot[0]);
       g.add(leaf);
     });
+    const veinLeaf = new THREE.MeshPhongMaterial({
+      color: 0x6aaa48, emissive: new THREE.Color(0x1a3010), shininess: 16, specular: new THREE.Color(0xe4f4c0), side: THREE.DoubleSide,
+    });
+    const vein = new THREE.MeshPhongMaterial({
+      color: 0x2a4018, shininess: 8, specular: new THREE.Color(0xc8e090),
+    });
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2 + 0.18;
+      const sprig = new THREE.Group();
+      const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.92, 0.46), veinLeaf);
+      blade.rotation.x = -Math.PI / 2;
+      sprig.add(blade);
+      const mid = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.016, 0.03), vein);
+      mid.rotation.x = -Math.PI / 2;
+      mid.position.y = 0.02;
+      sprig.add(mid);
+      [-0.1, 0.1].forEach((side) => {
+        const rib = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.012, 0.018), vein);
+        rib.rotation.x = -Math.PI / 2;
+        rib.rotation.z = side > 0 ? 0.55 : -0.55;
+        rib.position.set(0.06, 0.022, side);
+        sprig.add(rib);
+      });
+      sprig.position.set(Math.cos(a) * 3.12, 0.17, Math.sin(a) * 3.12);
+      sprig.rotation.y = -a;
+      g.add(sprig);
+    }
+    const damp = new THREE.Mesh(
+      new THREE.CircleGeometry(2.35, 20),
+      new THREE.MeshPhongMaterial({
+        color: 0x1a4a44, emissive: new THREE.Color(0x082018), shininess: 52, specular: new THREE.Color(0xd8fff0),
+      })
+    );
+    damp.rotation.x = -Math.PI / 2;
+    damp.position.y = 0.06;
+    g.add(damp);
+    const meniscus = new THREE.Mesh(
+      new THREE.TorusGeometry(2.12, 0.028, 6, 28),
+      new THREE.MeshBasicMaterial({ color: 0xe8fff8, fog: false })
+    );
+    meniscus.rotation.x = Math.PI / 2;
+    meniscus.position.y = 0.09;
+    g.add(meniscus);
+    const moss = new THREE.MeshPhongMaterial({
+      color: 0x2a6a3a, emissive: new THREE.Color(0x102810), shininess: 14, specular: new THREE.Color(0xc8f0a0),
+    });
+    for (let i = 0; i < 10; i++) {
+      const a = (i / 10) * Math.PI * 2 + 0.35;
+      const pad = new THREE.Mesh(new THREE.SphereGeometry(0.16, 6, 4), moss);
+      pad.scale.set(1.35, 0.28, 0.85);
+      pad.position.set(Math.cos(a) * 2.72, 0.05, Math.sin(a) * 2.72);
+      g.add(pad);
+    }
+    const wash = new THREE.Mesh(
+      new THREE.CircleGeometry(2.45, 16),
+      new THREE.MeshBasicMaterial({
+        color: 0xb7d4c8, transparent: true, opacity: 0.14, depthWrite: false, fog: false,
+      })
+    );
+    wash.rotation.x = -Math.PI / 2;
+    wash.position.y = 0.11;
+    g.add(wash);
     const cool = new THREE.PointLight(0xc5e6ea, 0.42, 3.6);
     cool.position.set(0, 0.9, 0);
     g.add(cool);
