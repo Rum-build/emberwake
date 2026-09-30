@@ -953,6 +953,10 @@ The timber and plaster faces around the leaf-village square now carry plank grai
 
 The ground around the buried kiln’s exterior now carries denser ash drift, charcoal flecks, heat-scorch near the mouth, and worn footpath grit. The kiln drink, the throat, and the kiln beat stay where they were. No new cue.
 
+## Shipped in the talk panel pass
+
+The dialogue panel now carries an ember rim, a soft shadow, a warmer parchment fill, and clearer borders on the choices and the advance button. Open, close, and the talk beats stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
