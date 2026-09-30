@@ -544,6 +544,13 @@ Playable on the Verdant Isle field:
 - Places names the counting room. It does not say what the claim will do. South still steps back to the shale.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Roost night, and the pier lamp (this branch)
+
+- The eagle roost keeps a cooler night haze, grain on the rope, and a little ember grit on the perch beam. The rope, the lamp, and the mist stay where they were. The climb stays the same.
+- The harbor pier keeps a wet sheen and a cooler lamp. The telegraph stays. No new person stands there.
+- Places names the roost. It does not say what the claim will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
