@@ -972,6 +972,7 @@
     if (stonePin) {
       waystoneGroup = makeWaystone(stonePin.x, stonePin.z);
       dressWaystoneRim(waystoneGroup);
+      dressWaystoneSouth();
       overworldGroup.add(waystoneGroup);
     }
     const ridgePin = landmark('vesper-ridge');
@@ -4885,6 +4886,107 @@
     const cool = new THREE.PointLight(0xc5d6ee, 0.7, 8);
     cool.position.set(0, 1.8, 2.2);
     g.add(cool);
+  }
+
+  function dressWaystoneSouth() {
+    const stone = new THREE.MeshPhongMaterial({
+      color: 0x7a756c, shininess: 18, specular: new THREE.Color(0xe0d8cc),
+    });
+    const worn = new THREE.MeshPhongMaterial({
+      color: 0x5c5852, shininess: 10, specular: new THREE.Color(0xb0a898),
+    });
+    const pale = new THREE.MeshPhongMaterial({
+      color: 0x8a8478, shininess: 24, specular: new THREE.Color(0xf4f0e4),
+    });
+    const lichen = new THREE.MeshPhongMaterial({
+      color: 0x8a9a68, shininess: 8, specular: new THREE.Color(0xd8e8b0),
+    });
+    const moss = new THREE.MeshPhongMaterial({
+      color: 0x3d6a40, shininess: 12, specular: new THREE.Color(0xc6e090), side: THREE.DoubleSide,
+    });
+    const mossDry = new THREE.MeshPhongMaterial({
+      color: 0x6a8a48, shininess: 6, specular: new THREE.Color(0xe4f0a8), side: THREE.DoubleSide,
+    });
+    function plate(x, z, rot) {
+      const group = new THREE.Group();
+      const disc = new THREE.Mesh(new THREE.CircleGeometry(0.58, 7), stone);
+      disc.rotation.x = -Math.PI / 2;
+      disc.position.y = 0.03;
+      disc.receiveShadow = true;
+      group.add(disc);
+      const cap = new THREE.Mesh(new THREE.CircleGeometry(0.26, 6), worn);
+      cap.rotation.x = -Math.PI / 2;
+      cap.position.set(0.1, 0.038, -0.06);
+      group.add(cap);
+      const lip = new THREE.Mesh(new THREE.TorusGeometry(0.48, 0.035, 4, 8, Math.PI * 1.2), pale);
+      lip.rotation.x = Math.PI / 2;
+      lip.position.y = 0.048;
+      group.add(lip);
+      const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.07, 0), worn);
+      chip.position.set(-0.32, 0.06, 0.12);
+      chip.scale.y = 0.4;
+      group.add(chip);
+      const edge = new THREE.Mesh(new THREE.DodecahedronGeometry(0.05, 0), pale);
+      edge.position.set(0.34, 0.055, -0.08);
+      edge.scale.y = 0.45;
+      group.add(edge);
+      group.position.set(x, 0, z);
+      group.rotation.y = rot;
+      overworldGroup.add(group);
+    }
+    [[1.6, 22.9, 0.3], [-1.55, 23.05, -0.2], [0.35, 23.7, 0.12], [-2.4, 22.4, 0.55], [2.45, 22.45, -0.4]].forEach((spot) => {
+      plate(spot[0], spot[1], spot[2]);
+    });
+    function grit(x, z) {
+      const group = new THREE.Group();
+      [[0, 0, 0.04], [0.07, 0.03, 0.028], [-0.05, 0.02, 0.03], [0.02, -0.06, 0.022]].forEach((spot) => {
+        const speck = new THREE.Mesh(new THREE.SphereGeometry(spot[2], 4, 3), lichen);
+        speck.position.set(spot[0], spot[2] * 0.6, spot[1]);
+        group.add(speck);
+      });
+      group.position.set(x, 0, z);
+      overworldGroup.add(group);
+    }
+    [[1.15, 23.15], [-1.05, 23.35], [1.25, 23.05], [-2.05, 22.7], [2.05, 22.85]].forEach((spot) => {
+      grit(spot[0], spot[1]);
+    });
+    function tuft(x, z, lean) {
+      const group = new THREE.Group();
+      for (let i = 0; i < 5; i++) {
+        const h = 0.14 + (i % 3) * 0.06;
+        const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.035, h), i % 2 ? mossDry : moss);
+        const a = i * 1.1;
+        blade.position.set(Math.cos(a) * 0.035, h * 0.48, Math.sin(a) * 0.035);
+        blade.rotation.y = a;
+        blade.rotation.z = lean + (i - 2) * 0.08;
+        group.add(blade);
+      }
+      group.position.set(x, 0, z);
+      overworldGroup.add(group);
+    }
+    [[1.05, 23.45, 0.1], [-0.85, 23.55, -0.08], [2.0, 22.95, 0.12], [-1.9, 22.85, -0.1], [0.85, 23.95, 0.06]].forEach((spot) => {
+      tuft(spot[0], spot[1], spot[2]);
+    });
+    const duskMat = new THREE.MeshBasicMaterial({
+      color: 0xffc090, transparent: true, opacity: 0.05, depthWrite: false, fog: false,
+    });
+    const dusk = new THREE.Mesh(new THREE.CircleGeometry(1.7, 12), duskMat);
+    dusk.rotation.x = -Math.PI / 2;
+    dusk.position.set(0.2, 0.022, 23.2);
+    overworldGroup.add(dusk);
+    const coolMat = new THREE.MeshBasicMaterial({
+      color: 0xc5d6ee, transparent: true, opacity: 0.045, depthWrite: false, fog: false,
+    });
+    const coolWash = new THREE.Mesh(new THREE.CircleGeometry(1.15, 10), coolMat);
+    coolWash.rotation.x = -Math.PI / 2;
+    coolWash.position.set(-1.2, 0.024, 22.7);
+    overworldGroup.add(coolWash);
+    const warm = new THREE.PointLight(0xffb080, 0.18, 7);
+    warm.position.set(0.4, 1.4, 23.1);
+    overworldGroup.add(warm);
+    const fill = new THREE.PointLight(0xb7c8e0, 0.12, 5.5);
+    fill.position.set(-1.1, 1.2, 22.6);
+    overworldGroup.add(fill);
   }
 
   function stoneReady() {
