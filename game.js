@@ -5814,6 +5814,7 @@
     dressRoostRim(g);
     dressRoostNight(g);
     dressRoostGround(g);
+    dressRoostPerch(g);
     dressCoastMist(g);
     dressCoastShore(g);
     dressHarborWire(g);
@@ -6475,6 +6476,100 @@
     const cool = new THREE.PointLight(0xb7d4ee, 0.22, 5.5);
     cool.position.set(2.35, 1.15, 8.35);
     g.add(cool);
+  }
+
+  function dressRoostPerch(g) {
+    const perch = new THREE.Group();
+    perch.position.set(0, 0.4, 9);
+    perch.userData.roostPerch = true;
+    const timber = new THREE.MeshPhongMaterial({
+      color: 0x6a5344, emissive: new THREE.Color(0x1a140e), shininess: 12, specular: new THREE.Color(0xc8b090),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0x3a3028, shininess: 6, specular: new THREE.Color(0x8a7860),
+    });
+    const rope = new THREE.MeshPhongMaterial({
+      color: 0xc4a46a, shininess: 14, specular: new THREE.Color(0xf0e0b8),
+    });
+    const iron = new THREE.MeshPhongMaterial({
+      color: 0x2c3138, shininess: 48, specular: new THREE.Color(0xd8e0ea),
+    });
+    const down = new THREE.MeshPhongMaterial({
+      color: 0xe6e0d4, shininess: 8, specular: new THREE.Color(0xfffaf2),
+    });
+    const twig = new THREE.MeshPhongMaterial({
+      color: 0x4a3a2c, shininess: 6, specular: new THREE.Color(0xa09078),
+    });
+    [[0.16, 1], [-0.14, -1]].forEach((beam) => {
+      const log = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.05, 1.28, 8), timber);
+      log.rotation.z = Math.PI / 2;
+      log.position.set(0, 0.06, beam[0]);
+      perch.add(log);
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.012, 0.012), grain);
+      line.position.set(0, 0.09, beam[0] + 0.03 * beam[1]);
+      perch.add(line);
+    });
+    const cross = new THREE.Mesh(new THREE.CylinderGeometry(0.034, 0.04, 0.48, 6), timber);
+    cross.rotation.x = Math.PI / 2;
+    cross.position.set(0, 0.1, 0);
+    perch.add(cross);
+    [-0.48, 0.48].forEach((x) => {
+      const lash = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.012, 6, 12), rope);
+      lash.rotation.y = Math.PI / 2;
+      lash.position.set(x, 0.08, 0.16);
+      perch.add(lash);
+      const peg = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.016, 0.14, 6), iron);
+      peg.position.set(x, 0.02, 0.2);
+      peg.rotation.x = 0.4;
+      perch.add(peg);
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.02, 6, 4), iron);
+      head.position.set(x, 0.08, 0.22);
+      perch.add(head);
+    });
+    const wrap = new THREE.Mesh(new THREE.TorusGeometry(0.055, 0.01, 5, 10), rope);
+    wrap.rotation.z = Math.PI / 2;
+    wrap.position.set(0, 0.1, 0);
+    perch.add(wrap);
+    const bed = new THREE.Mesh(new THREE.SphereGeometry(0.22, 8, 6), down);
+    bed.scale.set(1.15, 0.28, 0.85);
+    bed.position.set(0.02, 0.14, 0.02);
+    perch.add(bed);
+    for (let i = 0; i < 7; i++) {
+      const a = (i / 7) * Math.PI * 2 + 0.3;
+      const stick = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.01, 0.28, 4), twig);
+      stick.rotation.z = Math.PI / 2;
+      stick.rotation.y = a;
+      stick.position.set(Math.cos(a) * 0.16, 0.16, Math.sin(a) * 0.12);
+      perch.add(stick);
+    }
+    [[0.08, 0.2, 0.4], [-0.1, 0.18, -0.5]].forEach((spot) => {
+      const feather = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.16, 0.05),
+        new THREE.MeshPhongMaterial({ color: 0xd8d4cc, shininess: 8, specular: new THREE.Color(0xffffff), side: THREE.DoubleSide })
+      );
+      feather.rotation.x = -Math.PI / 2;
+      feather.rotation.z = spot[2];
+      feather.position.set(spot[0], 0.2, spot[1]);
+      perch.add(feather);
+    });
+    const stone = new THREE.MeshPhongMaterial({
+      color: 0x6a7278, shininess: 22, specular: new THREE.Color(0xd0e4f0),
+    });
+    [[0.12, 0.42, 0.05], [-0.16, 0.36, 0.038], [0.28, 0.3, 0.03], [-0.02, 0.5, 0.026]].forEach((spot) => {
+      const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(spot[2], 0), stone);
+      chip.scale.y = 0.42;
+      chip.position.set(spot[0], -0.22, spot[1]);
+      perch.add(chip);
+    });
+    const shade = new THREE.Mesh(
+      new THREE.CircleGeometry(0.34, 8),
+      new THREE.MeshBasicMaterial({ color: 0x121418, transparent: true, opacity: 0.22, depthWrite: false, fog: false })
+    );
+    shade.rotation.x = -Math.PI / 2;
+    shade.scale.set(1.4, 0.45, 1);
+    shade.position.set(0, -0.24, 0.22);
+    perch.add(shade);
+    g.add(perch);
   }
 
   function dressHarborPier(g) {
