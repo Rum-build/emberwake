@@ -4992,10 +4992,11 @@
 
   function dressHarborPier(g) {
     const sheenMat = new THREE.MeshBasicMaterial({ color: 0x9ec6de, fog: false });
-    [[5.15, 7.55, 0.55], [6.05, 6.85, 0.48]].forEach((spot) => {
+    [[5.15, 7.55, 0.62], [6.05, 6.85, 0.52]].forEach((spot) => {
       const wet = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 16), sheenMat);
       wet.rotation.x = -Math.PI / 2;
-      wet.position.set(spot[0], 0.07, spot[1]);
+      wet.position.set(spot[0], 0.46, spot[1]);
+      wet.renderOrder = 2;
       g.add(wet);
     });
     const pole = new THREE.Mesh(
