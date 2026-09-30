@@ -1568,9 +1568,9 @@
       slab.rotation.y = (i - 1) * 0.04;
       slab.receiveShadow = true;
       g.add(slab);
-      [-0.08, 0.07].forEach((dz) => {
-        const line = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.02, 0.042), grain);
-        line.position.set(spot[0], 0.168, spot[1] + dz);
+      [-0.1, 0.02, 0.12].forEach((dz) => {
+        const line = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.028, 0.055), grain);
+        line.position.set(spot[0], 0.205, spot[1] + dz);
         line.rotation.y = (i - 1) * 0.04;
         g.add(line);
       });
@@ -1581,14 +1581,14 @@
         g.add(bit);
       });
     });
-    [[-0.28, 0.96], [-0.26, 1.1], [0.34, 0.98], [0.36, 1.12]].forEach((spot) => {
-      const speck = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 4), gritMat);
-      speck.position.set(spot[0], 0.175, spot[1]);
+    [[-0.28, 0.94], [-0.27, 1.06], [-0.26, 1.16], [0.34, 0.96], [0.35, 1.08], [0.36, 1.18]].forEach((spot) => {
+      const speck = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 4), gritMat);
+      speck.position.set(spot[0], 0.21, spot[1]);
       g.add(speck);
     });
     [[-0.28, 1.02], [0.34, 1.02]].forEach((spot) => {
-      const seam = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.02, 0.32), gritMat);
-      seam.position.set(spot[0], 0.168, spot[1]);
+      const seam = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.03, 0.36), gritMat);
+      seam.position.set(spot[0], 0.19, spot[1]);
       g.add(seam);
     });
     const wash = new THREE.Mesh(new THREE.BoxGeometry(1.62, 0.016, 0.24), wet);
