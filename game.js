@@ -5049,6 +5049,24 @@
     const cool = new THREE.PointLight(0xc5d6ee, 0.45, 3.2);
     cool.position.set(5.55, 1.28, 7.15);
     g.add(cool);
+    const grainMat = new THREE.MeshBasicMaterial({ color: 0xe4c89a, fog: false });
+    [[6.45, 8.35], [6.95, 7.95], [5.85, 8.15]].forEach((spot) => {
+      const board = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.14, 0.2), grainMat);
+      board.position.set(spot[0], 0.64, spot[1]);
+      g.add(board);
+    });
+    const saltMat = new THREE.MeshBasicMaterial({ color: 0xf7f1e4, fog: false });
+    [[6.15, 8.65], [7.15, 8.15]].forEach((spot) => {
+      const crust = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.1, 0.18), saltMat);
+      crust.position.set(spot[0], 0.7, spot[1]);
+      g.add(crust);
+    });
+    const sprayMat = new THREE.MeshBasicMaterial({ color: 0xa8d4e8, fog: false, side: THREE.DoubleSide });
+    [[6.35, 1.72, 7.45], [4.85, 1.64, 7.25]].forEach((spot) => {
+      const spray = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 1.15), sprayMat);
+      spray.position.set(spot[0], spot[1], spot[2]);
+      g.add(spray);
+    });
   }
 
   function buildCoast() {
@@ -13756,6 +13774,7 @@
             : 'Shale, lightning, the harbor vault.';
       rows.push({ name: 'Stormreach Coast', note: coastNote });
       rows.push({ name: 'Harbor telegraph', note: 'A wire and a cooler lamp on the shale. The tick stays on the post.' });
+      rows.push({ name: 'Harbor pier', note: 'Salt on the near boards. The telegraph stays.' });
       rows.push({ name: 'Eagle roost', note: 'Cooler night on the perch. The climb is still the way home.' });
     }
     if (seenBeats['vault-ledger'] || seenBeats['bottle-hall']) {
