@@ -744,7 +744,7 @@
       scene.fog.far = 92;
       if (renderer) renderer.setClearColor(0x7eafd4);
     }
-    tuneBed(place === 'stormreach' ? 'coast' : (place === 'claim' || place === 'aftermath') ? 'claim' : 'field');
+    tuneBed(place === 'stormreach' ? 'coast' : place === 'claim' ? 'claim' : place === 'aftermath' ? 'aftermath' : 'field');
   }
 
   function raisePlane(geo, heightAt) {
@@ -3263,6 +3263,40 @@
     landed.visible = false;
     g.add(landed);
     makeMotes(g, 72, 0xd0b8a4, { x: 10, y: 4.2, z: 10 }, { fall: true });
+    const endRim = new THREE.DirectionalLight(0xffe6c0, 0.48);
+    endRim.position.set(-6, 5, 8);
+    g.add(endRim);
+    const stoneMat = new THREE.MeshLambertMaterial({ color: 0x2a221c });
+    [[-4.35, 2.55], [4.4, 2.2], [-4.15, 0.15]].forEach((spot, i) => {
+      const rock = new THREE.Mesh(
+        new THREE.BoxGeometry(0.32 + (i % 2) * 0.1, 0.14 + (i === 1 ? 0.06 : 0), 0.26),
+        stoneMat
+      );
+      rock.position.set(spot[0], 0.08, spot[1]);
+      rock.rotation.y = 0.3 + i * 0.4;
+      g.add(rock);
+    });
+    const boards = {
+      claim: makeCountPage('SHE WEARS IT', ['No number', 'Still hungry', 'South is the claim']),
+      refuse: makeCountPage('NAME KEPT', ['Licence Zero', 'Rot goes on', 'She did not enter']),
+      share: makeCountPage('BESIDE IT', ['Two hungers', 'She does not enter', 'No page holds both']),
+      burn: makeCountPage('SCAR ECHO', ['The burn', 'Debt stays', 'They rewrite']),
+    };
+    Object.keys(boards).forEach((key) => {
+      const board = boards[key];
+      board.position.set(-3.55, 1.35, 1.15);
+      board.rotation.y = -0.7;
+      board.visible = key === 'claim';
+      g.add(board);
+    });
+    const beside = new THREE.Mesh(
+      new THREE.RingGeometry(0.55, 0.72, 18),
+      new THREE.MeshBasicMaterial({ color: 0xc080ff, side: THREE.DoubleSide, fog: false, transparent: true, opacity: 0.85 })
+    );
+    beside.rotation.x = -Math.PI / 2;
+    beside.position.set(2.15, 0.05, -2.15);
+    beside.visible = false;
+    g.add(beside);
     function endImage(kind) {
       const image = new THREE.Group();
       if (kind === 'claim') {
@@ -3297,6 +3331,18 @@
         leaf.position.set(0.52, 0.38, -0.95);
         leaf.rotation.z = 0.6;
         image.add(leaf);
+        const wick = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.04, 0.05, 0.28, 5),
+          new THREE.MeshLambertMaterial({ color: 0xe8d8c0 })
+        );
+        wick.position.set(-3.7, 0.16, 1.6);
+        image.add(wick);
+        const flame = new THREE.Mesh(
+          new THREE.SphereGeometry(0.07, 5, 4),
+          new THREE.MeshBasicMaterial({ color: 0xffe0a0, fog: false })
+        );
+        flame.position.set(-3.7, 0.34, 1.6);
+        image.add(flame);
       } else if (kind === 'refuse') {
         const post = new THREE.Mesh(
           new THREE.CylinderGeometry(0.08, 0.11, 0.8, 6),
@@ -3329,6 +3375,12 @@
         dead.rotation.x = -Math.PI / 2;
         dead.position.set(0.15, 0.05, -0.35);
         image.add(dead);
+        const cold = new THREE.Mesh(
+          new THREE.BoxGeometry(1.15, 0.08, 0.08),
+          new THREE.MeshBasicMaterial({ color: 0x8aa4c8, fog: false })
+        );
+        cold.position.set(-3.55, 1.05, 0.35);
+        image.add(cold);
       } else if (kind === 'share') {
         [-0.32, 0.32].forEach((x, i) => {
           const half = new THREE.Mesh(
@@ -3347,6 +3399,12 @@
         );
         seam.position.set(0, 0.75, -0.2);
         image.add(seam);
+        const shareStone = new THREE.Mesh(
+          new THREE.BoxGeometry(0.36, 0.14, 0.28),
+          new THREE.MeshLambertMaterial({ color: 0x3a2848 })
+        );
+        shareStone.position.set(3.7, 0.08, 1.7);
+        image.add(shareStone);
       } else {
         const gash = new THREE.Mesh(
           new THREE.PlaneGeometry(0.18, 2.6),
@@ -3376,6 +3434,12 @@
         second.rotation.z = 0.4;
         second.position.set(0.55, 0.06, 0.2);
         image.add(second);
+        const emberCoal = new THREE.Mesh(
+          new THREE.SphereGeometry(0.12, 5, 4),
+          new THREE.MeshBasicMaterial({ color: 0xff4a18, fog: false })
+        );
+        emberCoal.position.set(3.5, 0.14, 1.4);
+        image.add(emberCoal);
       }
       image.visible = kind === 'claim';
       g.add(image);
@@ -3404,6 +3468,9 @@
     g.userData.banner = banner;
     g.userData.landed = landed;
     g.userData.images = images;
+    g.userData.rim = endRim;
+    g.userData.boards = boards;
+    g.userData.beside = beside;
     aftermathGroup = g;
     scene.add(g);
   }
@@ -6444,10 +6511,10 @@
     if (locale === 'aftermath') {
       if (!seenBeats.aftermath) return 'Hear the ending. Then the room stays.';
       if (seenBeats.rematchTease) return 'The rite remembers. Wake starts a new host and throws this save out. The scar stays here. South is the claim.';
-      if (claimWord === 'burn') return 'The ending is written. The scar is the echo. Scar debt ' + scarDebt + '. Credits are north. South is the claim.';
-      if (claimWord === 'refuse') return 'The ending is written. Licence Zero kept its number. Credits are north. South is the claim.';
-      if (claimWord === 'share') return 'The ending is written. Two hungers remain. Credits are north. South is the claim.';
-      return 'The ending is written. Lira still wears it. Credits are north. South is the claim.';
+      if (claimWord === 'burn') return 'The scar is the echo. Debt ' + scarDebt + '. Credits are north. South is the claim.';
+      if (claimWord === 'refuse') return 'Her name stayed. The number stayed. Credits are north. South is the claim.';
+      if (claimWord === 'share') return 'She stands beside the mass. She does not enter. Credits are north. South is the claim.';
+      return 'She still wears it. Credits are north. South is the claim.';
     }
     if (locale === 'remnant-claim') {
       if (!seenBeats.claimFight) return 'Past the bar. A Concord last rite stands before the claim.';
@@ -9111,6 +9178,17 @@
       data.clerk.position.y = word === 'burn' ? 0.2 : 0;
     }
     if (data.landed) data.landed.visible = kestrelClaim === 'land';
+    if (data.rim) {
+      const rimHex = word === 'refuse' ? 0x9eb4d0 : word === 'share' ? 0xd0a0ff : word === 'burn' ? 0xff4018 : 0xffe6c0;
+      data.rim.color.setHex(rimHex);
+      data.rim.intensity = word === 'refuse' ? 0.28 : word === 'burn' ? 0.7 : 0.48;
+    }
+    if (data.boards) {
+      Object.keys(data.boards).forEach((key) => {
+        data.boards[key].visible = key === word;
+      });
+    }
+    if (data.beside) data.beside.visible = word === 'share';
     if (data.images) {
       Object.keys(data.images).forEach((key) => {
         data.images[key].visible = key === word;
@@ -12387,20 +12465,23 @@
       });
       tuneBed(bedPlace);
     }
-    if (bedWanted) bedGain.gain.value = 0.04;
+    if (bedWanted) bedGain.gain.value = bedPlace === 'aftermath' ? 0.026 : 0.04;
     if (audioCtx.state === 'suspended') audioCtx.resume();
   }
 
   function tuneBed(place) {
-    bedPlace = place === 'coast' ? 'coast' : place === 'claim' ? 'claim' : 'field';
+    bedPlace = place === 'coast' ? 'coast' : place === 'claim' ? 'claim' : place === 'aftermath' ? 'aftermath' : 'field';
     if (!bedFilter || !bedTones) return;
     const spec = bedPlace === 'coast'
       ? { cut: 520, freqs: [92, 138] }
       : bedPlace === 'claim'
         ? { cut: 140, freqs: [55, 82] }
-        : { cut: 240, freqs: [78, 117] };
+        : bedPlace === 'aftermath'
+          ? { cut: 110, freqs: [55, 82] }
+          : { cut: 240, freqs: [78, 117] };
     bedFilter.frequency.value = spec.cut;
     bedTones.forEach((osc, i) => { osc.frequency.value = spec.freqs[i]; });
+    if (bedGain) bedGain.gain.value = bedWanted ? (bedPlace === 'aftermath' ? 0.026 : 0.04) : 0;
   }
 
   function syncMotion() {
@@ -12630,12 +12711,12 @@
       const endNote = !seenBeats.aftermath
         ? 'Walked. The ending is still being heard.'
         : claimWord === 'burn'
-          ? 'Written. The scar is the echo. Scar debt ' + scarDebt + '.'
+          ? 'Written. The scar is the echo. Debt ' + scarDebt + '.'
           : claimWord === 'refuse'
-            ? 'Written. The licence kept its number.'
+            ? 'Written. Her name stayed. The number stayed.'
             : claimWord === 'share'
-              ? 'Written. Two hungers remain.'
-              : 'Written. Lira still wears it.';
+              ? 'Written. She stands beside the mass. She did not enter.'
+              : 'Written. She still wears it.';
       rows.push({ name: 'Aftermath', note: endNote });
     } else if (claimWord) {
       rows.push({ name: 'Aftermath', note: 'Not walked yet. North of the mass, after the flag. The list does not carry you.' });

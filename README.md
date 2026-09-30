@@ -109,6 +109,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The ash shelf, the sealed throat, and the yard sit in a closer dusk, with a few more pieces off the mouths and the south steps. Torren’s shoulder and Nima’s steady show as a chip in a fight. A hit flashes hotter. On a phone, owed scar debt reads as Debt. The eight cues stay the full set.
 - After the waystone, the quest names the harbor vault and the tally clerk before the bottle-hall. A light mist and rain sit on the shale. A coast fight with a clerk and a warden opens on the licence. No new cue.
 - After the clerk, the quest names the hall of corks. On the Remnant Mark, before the scrap is taken, it names the numbered scrap. The count crypt names that scrap if it is still on the peg. The mark wears more ash and a cooler rim. Lira’s scarf and face read against the dusk. No new cue.
+- Each aftermath flag keeps a short closing line and a side board. On Share, Vesper stays beside the mass and does not enter. Credits names the engine and thanks the walk. The claim bed sits quieter there. That is the same cue.
 
 ## Play on your phone
 
