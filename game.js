@@ -1021,6 +1021,7 @@
     });
     dressCellarMouth(dungeon);
     dressCellarDoorSill(dungeon);
+    dressCellarDoorFace(dungeon);
     overworldGroup.add(dungeon);
 
     POOL_DEFS.forEach((def) => makePool(def));
@@ -1507,6 +1508,92 @@
     shade.scale.set(1.85, 0.28, 1);
     shade.position.set(0.02, 0.025, 1.02);
     g.add(shade);
+  }
+
+  function dressCellarDoorFace(g) {
+    const door = new THREE.Group();
+    door.position.set(0, 1, 0.88);
+    door.userData.cellarDoor = true;
+    const timber = new THREE.MeshPhongMaterial({
+      color: 0x6a4a32, emissive: new THREE.Color(0x1a1008), shininess: 14, specular: new THREE.Color(0xd4c0a0),
+    });
+    const pale = new THREE.MeshPhongMaterial({
+      color: 0x8a6844, shininess: 18, specular: new THREE.Color(0xf0e0c8),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0x3a2818, shininess: 6, specular: new THREE.Color(0xa08058),
+    });
+    const iron = new THREE.MeshPhongMaterial({
+      color: 0x4a4038, emissive: new THREE.Color(0x14100c), shininess: 42, specular: new THREE.Color(0xc8c0b0),
+    });
+    const rust = new THREE.MeshPhongMaterial({
+      color: 0x8a3a22, emissive: new THREE.Color(0x2a1008), shininess: 18, specular: new THREE.Color(0xe8a078),
+    });
+    const ash = new THREE.MeshPhongMaterial({
+      color: 0x2a241c, shininess: 8, specular: new THREE.Color(0x8a8070),
+    });
+    [
+      [-0.52, 0.26, 1.86],
+      [-0.26, 0.24, 1.9],
+      [0, 0.28, 1.84],
+      [0.26, 0.22, 1.88],
+      [0.5, 0.24, 1.82],
+    ].forEach((board, i) => {
+      const plank = new THREE.Mesh(
+        new THREE.BoxGeometry(board[1], board[2], 0.045),
+        i % 2 ? pale : timber
+      );
+      plank.position.set(board[0], 0.02, 0.02);
+      door.add(plank);
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.012, board[2] * 0.9, 0.01), grain);
+      line.position.set(board[0] + board[1] * 0.28, 0.02, 0.048);
+      door.add(line);
+    });
+    [-0.55, 0.12, 0.72].forEach((y) => {
+      const strap = new THREE.Mesh(new THREE.BoxGeometry(1.22, 0.055, 0.016), iron);
+      strap.position.set(0, y, 0.055);
+      door.add(strap);
+      [-0.48, -0.16, 0.16, 0.48].forEach((x) => {
+        const rivet = new THREE.Mesh(new THREE.SphereGeometry(0.018, 6, 4), iron);
+        rivet.position.set(x, y, 0.07);
+        door.add(rivet);
+      });
+    });
+    [-0.62, 0.08, 0.68].forEach((y) => {
+      const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.038, 0.04, 0.14, 7), rust);
+      barrel.position.set(-0.66, y, 0.06);
+      door.add(barrel);
+      const leaf = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.07, 0.014), rust);
+      leaf.position.set(-0.54, y, 0.058);
+      door.add(leaf);
+      const wear = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.018, 0.01), ash);
+      wear.position.set(-0.5, y - 0.012, 0.068);
+      door.add(wear);
+    });
+    const plate = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.16, 0.014), iron);
+    plate.position.set(0.52, 0.08, 0.06);
+    door.add(plate);
+    const hasp = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.028, 0.016), rust);
+    hasp.position.set(0.5, 0.1, 0.072);
+    hasp.rotation.z = -0.12;
+    door.add(hasp);
+    const scratch = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.01, 0.008), ash);
+    scratch.position.set(0.52, 0.02, 0.072);
+    door.add(scratch);
+    const wash = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.15, 0.55),
+      new THREE.MeshBasicMaterial({
+        color: 0x3a342c, transparent: true, opacity: 0.22, depthWrite: false, fog: false,
+      })
+    );
+    wash.position.set(0.04, -0.58, 0.07);
+    door.add(wash);
+    [[-0.28, -0.42, 0.32], [0.18, -0.7, 0.22], [0.42, -0.5, 0.18]].forEach((spot) => {
+      const streak = new THREE.Mesh(new THREE.BoxGeometry(0.03, spot[2], 0.01), ash);
+      streak.position.set(spot[0], spot[1], 0.074);
+      door.add(streak);
+    });
+    g.add(door);
   }
 
   function dressCellarCrawl(g) {
