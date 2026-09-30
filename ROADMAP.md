@@ -929,6 +929,10 @@ The ground under the roost perch beam now carries packed dirt grain, feather lit
 
 The ground and sill under the waystone’s carved face now carry worn stone grain, moss in the joints, ash grit, and shallow edge chips. The carved face, the south stones, and the waystone beat stay where they were. No new cue.
 
+## Shipped in the vault threshold pass
+
+The stone under the harbor vault’s iron door now carries worn threshold grain, an iron grit stain, moss in the seam, and shallow chips. The vault door, the quiet stand, and the vault beat stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

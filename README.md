@@ -207,6 +207,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The harbor water beside the pier keeps a soft ripple sheen, a darker depth wash near the pilings, foam flecks at the edge, and a faint dusk reflection. The pier and the salt look stay readable. No new cue.
 - The roost pad under the perch beam keeps packed dirt grain, feather litter, an ash wash, and sparse weed tufts. The perch and the wing look stay readable. No new cue.
 - The waystone plinth keeps worn sill grain, moss in the joints, ash grit, and shallow edge chips. The carved face and the south stones stay readable. No new cue.
+- The vault threshold under the iron door keeps worn grain, an iron grit stain, moss in the seam, and shallow chips. The door and the count stay readable. No new cue.
 
 ## Play on your phone
 
