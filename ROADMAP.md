@@ -961,6 +961,10 @@ The dialogue panel now carries an ember rim, a soft shadow, a warmer parchment f
 
 The ground marker under an enemy now carries ember glow grain, a scorched dirt ring, and a clearer rim. The fight, the soft-lock, and the fight panel stay where they were. No new cue.
 
+## Shipped in the host mesh pass
+
+Lira’s default host mesh now carries richer cloth folds, longer hair strands, boot and leather grain, and a clearer face. Equipped sword, armour, cloak, and bracers still change the body. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
