@@ -516,6 +516,13 @@ Playable on the Verdant Isle field:
 - Before it is read, Places names the letter in the basket. It does not say what the letter says. South still leaves the village.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Yard haze, and a brighter drink (this branch)
+
+- The Concord yard keeps a cooler dusk ash haze, cork grain on the seal stake, and a little seal-dust near the lantern. The lantern, the smoke, and the stake stay where they were. The walks stay the same.
+- On the scar, the leaf-cup, and the kiln, the pale ring pulses a little brighter, and a few more sparks rise when the drink lands. The cost, the strain, and the amount in the pool stay as they were.
+- Places names the Concord stake in the yard. It does not say what the slag will do.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
