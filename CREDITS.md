@@ -6,7 +6,7 @@ Every track and sound effect that ships is listed in this file and on the in-gam
 
 ## This slice
 
-The field bed is generated in the browser. No audio file is fetched. On Stormreach the same loop is retuned higher (coast bed). In the remnant claim and the aftermath it is retuned lower (claim bed). Silent still stops it.
+The field bed is generated in the browser. No audio file is fetched. On the Verdant Isle the same loop opens its filter to 380 and starts on the first touch of the title. Motion does not stop it. On Stormreach the same loop is retuned higher (coast bed). In the remnant claim and the aftermath it is retuned lower (claim bed). Silent still stops it.
 
 ## Cue log
 
@@ -14,7 +14,7 @@ Add a row before a file is referenced by the game. Leave the row in place if a c
 
 | Title | Author | Licence | Source | Used for |
 |-------|--------|---------|--------|----------|
-| Field bed | Emberwake (original, this repository) | CC0 | Procedural. No recording. `game.js` loops filtered noise and two slow tones. | Quiet ambient after Wake or Continue, until Silent is pressed |
+| Field bed | Emberwake (original, this repository) | CC0 | Procedural. No recording. `game.js` loops filtered noise and two slow tones. On the Verdant Isle the same loop opens its filter to 380 so the tones read, and it starts on the first touch of the title. Coast, claim, and aftermath keep their own cuts. It is not a new cue. | Quiet ambient on the title and the Verdant Isle, until Silent is pressed |
 | Coast bed | Emberwake (original, this repository) | CC0 | Procedural. No recording. The field bed retuned: higher filter, tones at 92 and 138. | Stormreach Coast, until Silent is pressed |
 | Claim bed | Emberwake (original, this repository) | CC0 | Procedural. No recording. The field bed retuned: lower filter, tones at 55 and 82. In the claim the same loop sits a little under the field, so those tones read. In the aftermath it sits quieter still. It is not a new cue. | Remnant claim and the aftermath, until Silent is pressed |
 | Absorb sting | Emberwake (original, this repository) | CC0 | Procedural. No recording. Two short triangle tones and a soft sine in `game.js`. | Plays when a pool is absorbed, if Sound is on |
