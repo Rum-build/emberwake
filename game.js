@@ -2135,6 +2135,7 @@
     dressHallMonopoly(g);
     dressHallAir(g);
     dressHallFloor(g);
+    dressHallAisle(g);
     dressHallShelves(g);
     dressCountAir(g);
     dressCountFloor(g);
@@ -2252,6 +2253,77 @@
       scuff.position.set(spot[0], 0.085, spot[1]);
       scuff.rotation.y = spot[2];
       g.add(scuff);
+    });
+  }
+
+  function dressHallAisle(g) {
+    const stone = new THREE.MeshPhongMaterial({
+      color: 0x8a7e70, shininess: 18, specular: new THREE.Color(0xe8dcc8),
+    });
+    const grain = new THREE.MeshPhongMaterial({
+      color: 0xe4d2b4, shininess: 26, specular: new THREE.Color(0xfff6e8),
+    });
+    const chipMat = new THREE.MeshPhongMaterial({
+      color: 0xc4b6a2, shininess: 22, specular: new THREE.Color(0xfff0e0),
+    });
+    const ash = new THREE.MeshBasicMaterial({
+      color: 0x1a1612, transparent: true, opacity: 0.62, depthWrite: false, fog: false,
+    });
+    const drip = new THREE.MeshBasicMaterial({
+      color: 0x8a4218, transparent: true, opacity: 0.4, depthWrite: false, fog: false,
+    });
+    function tile(x, z, rot) {
+      const group = new THREE.Group();
+      const slab = new THREE.Mesh(new THREE.BoxGeometry(0.74, 0.045, 0.52), stone);
+      slab.position.y = 0.112;
+      slab.receiveShadow = true;
+      group.add(slab);
+      [-0.13, 0, 0.13].forEach((row) => {
+        const line = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.012, 0.02), grain);
+        line.position.set(0, 0.14, row);
+        group.add(line);
+      });
+      const lip = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.014, 0.028), grain);
+      lip.position.set(0, 0.132, 0.22);
+      group.add(lip);
+      const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.05, 0), chipMat);
+      chip.position.set(0.3, 0.13, 0.18);
+      chip.scale.y = 0.4;
+      group.add(chip);
+      const nick = new THREE.Mesh(new THREE.DodecahedronGeometry(0.032, 0), chipMat);
+      nick.position.set(-0.28, 0.12, -0.16);
+      nick.scale.y = 0.35;
+      group.add(nick);
+      group.position.set(x, 0, z);
+      group.rotation.y = rot;
+      g.add(group);
+    }
+    const cols = [-1.8, -0.9, 0, 0.9, 1.8];
+    const rows = [-8.4, -9.12, -9.84, -10.56, -11.28, -12.0];
+    cols.forEach((x, ix) => {
+      rows.forEach((z, iz) => {
+        tile(x, z, ((ix + iz) % 5 - 2) * 0.035);
+      });
+    });
+    [[-2.28, -8.4, 0.08], [2.55, -8.12, -0.06], [2.48, -11.4, 0.1]].forEach((spot) => {
+      tile(spot[0], spot[1], spot[2]);
+    });
+    [-1.35, -0.45, 0.45, 1.35].forEach((x) => {
+      const joint = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.012, 3.85), ash);
+      joint.position.set(x, 0.1, -10.2);
+      g.add(joint);
+    });
+    [-8.76, -9.48, -10.2, -10.92, -11.64].forEach((z) => {
+      const joint = new THREE.Mesh(new THREE.BoxGeometry(3.7, 0.012, 0.1), ash);
+      joint.position.set(0, 0.1, z);
+      g.add(joint);
+    });
+    [[-2.2, -8.42, 0.38, 0.64], [2.48, -8.14, 0.32, 0.56], [2.15, -11.32, 0.42, 0.28]].forEach((spot) => {
+      const stain = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 8), drip);
+      stain.rotation.x = -Math.PI / 2;
+      stain.scale.set(1, spot[3] / spot[2], 1);
+      stain.position.set(spot[0], 0.148, spot[1]);
+      g.add(stain);
     });
   }
 
