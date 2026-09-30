@@ -158,6 +158,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - Around the wake and the path approach, layered grass clumps, dirt patches, small stones, and root ridges sit in a soft dusk wash. The village path stones, the cloak stake, and the bracers stay readable. Gear on the body is unchanged. No new cue.
 - Around the leaf-cup, moss, damp dirt, small stones, and root curls sit in a soft green wash at the water edge. The drink, the licence stakes, and the wax cloth stay. The wake ground is unchanged. No new cue.
 - On the scar-farm approach, cracked earth, ash grit, weed tufts, and scorched stones sit in a soft smoke tint. The smoke columns and the drink stay readable. No new cue.
+- Inside the Concord yard’s south gate, worn cobbles, chalk grit, and weeds in the joints sit under a gate shadow and a soft dusk wash. The gate, the cork look, and the seal stake stay readable. No new cue.
 
 ## Play on your phone
 
