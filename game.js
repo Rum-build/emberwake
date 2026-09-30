@@ -1701,6 +1701,7 @@
     g.add(hallShade);
     dressHallMonopoly(g);
     dressHallAir(g);
+    dressHallFloor(g);
     dressCountAir(g);
     g.visible = false;
     return g;
@@ -1724,6 +1725,96 @@
       const cap = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.04, 0.16), gritMat);
       cap.position.set(spot[0], 0.16, spot[1]);
       g.add(cap);
+    });
+  }
+
+  function dressHallFloor(g) {
+    const tile = new THREE.MeshPhongMaterial({
+      color: 0x6a6258, shininess: 18, specular: new THREE.Color(0xd4c4a4),
+    });
+    const worn = new THREE.MeshPhongMaterial({
+      color: 0x2a2420, shininess: 8, specular: new THREE.Color(0x8a7860),
+    });
+    const pale = new THREE.MeshPhongMaterial({
+      color: 0xc4b496, shininess: 24, specular: new THREE.Color(0xfff0d8),
+    });
+    const cork = new THREE.MeshPhongMaterial({
+      color: 0xd7b56a, shininess: 10, specular: new THREE.Color(0xf4e2b0),
+    });
+    function plate(x, z, rot) {
+      const group = new THREE.Group();
+      const slab = new THREE.Mesh(new THREE.CircleGeometry(0.46, 7), tile);
+      slab.rotation.x = -Math.PI / 2;
+      slab.position.y = 0.07;
+      slab.receiveShadow = true;
+      group.add(slab);
+      const mate = new THREE.Mesh(new THREE.CircleGeometry(0.24, 6), pale);
+      mate.rotation.x = -Math.PI / 2;
+      mate.position.set(0.18, 0.078, 0.06);
+      group.add(mate);
+      const cap = new THREE.Mesh(new THREE.CircleGeometry(0.14, 5), worn);
+      cap.rotation.x = -Math.PI / 2;
+      cap.position.set(-0.1, 0.082, -0.05);
+      group.add(cap);
+      const lip = new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.026, 4, 8, Math.PI * 1.15), pale);
+      lip.rotation.x = Math.PI / 2;
+      lip.position.y = 0.086;
+      group.add(lip);
+      const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.045, 0), worn);
+      chip.position.set(-0.24, 0.09, 0.08);
+      chip.scale.y = 0.35;
+      group.add(chip);
+      group.position.set(x, 0, z);
+      group.rotation.y = rot;
+      g.add(group);
+    }
+    [
+      [-0.9, -7.6, 0.2], [0.7, -8.95, -0.25], [0.15, -11.15, 0.15],
+      [2.55, -9.25, -0.4], [-2.3, -10.95, 0.3], [-1.85, -13.55, -0.1],
+      [0.2, -12.15, 0.35], [0.7, -13.85, 0.05],
+    ].forEach((spot) => {
+      plate(spot[0], spot[1], spot[2]);
+    });
+    function grit(x, z) {
+      const group = new THREE.Group();
+      [[0, 0, 0.038], [0.06, 0.03, 0.024], [-0.05, 0.04, 0.028], [0.02, -0.05, 0.02], [-0.03, -0.02, 0.016]].forEach((spot) => {
+        const speck = new THREE.Mesh(new THREE.SphereGeometry(spot[2], 4, 3), cork);
+        speck.position.set(spot[0], 0.07 + spot[2] * 0.4, spot[1]);
+        group.add(speck);
+      });
+      group.position.set(x, 0, z);
+      g.add(group);
+    }
+    [[0.4, -8.6], [-0.5, -11.4], [1.1, -12.0], [-1.7, -12.8], [0.55, -9.7]].forEach((spot) => {
+      grit(spot[0], spot[1]);
+    });
+    const washMat = new THREE.MeshBasicMaterial({
+      color: 0xc4a46a, transparent: true, opacity: 0.08, depthWrite: false, fog: false,
+    });
+    [[-0.15, -8.05, 0.75], [0.05, -11.35, 1.05]].forEach((spot) => {
+      const wash = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 10), washMat);
+      wash.rotation.x = -Math.PI / 2;
+      wash.position.set(spot[0], 0.055, spot[1]);
+      g.add(wash);
+    });
+    const shadeMat = new THREE.MeshBasicMaterial({
+      color: 0x08060a, transparent: true, opacity: 0.26, depthWrite: false, fog: false,
+    });
+    [[-2.35, -7.85], [-1.85, -11.55], [2.85, -13.15]].forEach((spot) => {
+      const shade = new THREE.Mesh(new THREE.CircleGeometry(0.4, 8), shadeMat);
+      shade.rotation.x = -Math.PI / 2;
+      shade.scale.set(1.4, 0.42, 1);
+      shade.position.set(spot[0], 0.05, spot[1]);
+      g.add(shade);
+    });
+    const scuffMat = new THREE.MeshPhongMaterial({
+      color: 0x1a1410, shininess: 3, specular: new THREE.Color(0x6a5840),
+    });
+    [[0.25, -7.85, 0.15], [-0.15, -10.55, -0.4], [0.35, -12.05, 0.25]].forEach((spot) => {
+      const scuff = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.012, 0.62), scuffMat);
+      scuff.position.set(spot[0], 0.085, spot[1]);
+      scuff.rotation.y = spot[2];
+      g.add(scuff);
     });
   }
 
