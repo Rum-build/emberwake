@@ -8826,6 +8826,36 @@
       });
       mesh.userData.bracers = nodes;
     }
+    const pack = new THREE.Group();
+    pack.userData.liraPack = true;
+    const canvas = phong(0x8d7a52, 0x2a2010, 12, 0xe8d8b0);
+    const canvasDark = phong(0x5c4a32, 0x1a1208, 8, 0xb8a080);
+    const weave = phong(0xd4c4a0, 0x3a2c18, 10, 0xfff0d0);
+    const buckle = phong(0xd8dce4, 0x2a3038, 72, 0xffffff);
+    const worn = phong(0x3a2c20, 0x100c08, 6, 0x8a7860);
+    put(pack, new THREE.BoxGeometry(0.36 * s, 0.46 * s, 0.18 * s), canvas, 0, 0.58 * s, -0.4 * s);
+    const belly = put(pack, new THREE.SphereGeometry(0.16 * s, 8, 6), canvasDark, 0, 0.56 * s, -0.46 * s);
+    belly.scale.set(1.15, 1.3, 0.55);
+    [-0.1, 0, 0.1].forEach((y) => {
+      put(pack, new THREE.BoxGeometry(0.3 * s, 0.012 * s, 0.012 * s), weave, 0, (0.56 + y) * s, -0.5 * s);
+    });
+    [-0.1, 0, 0.1].forEach((x) => {
+      put(pack, new THREE.BoxGeometry(0.01 * s, 0.36 * s, 0.01 * s), canvasDark, x * s, 0.58 * s, -0.502 * s);
+    });
+    put(pack, new THREE.BoxGeometry(0.34 * s, 0.014 * s, 0.016 * s), worn, 0, 0.78 * s, -0.44 * s);
+    put(pack, new THREE.BoxGeometry(0.014 * s, 0.4 * s, 0.014 * s), worn, -0.16 * s, 0.58 * s, -0.48 * s);
+    put(pack, new THREE.BoxGeometry(0.014 * s, 0.4 * s, 0.014 * s), worn, 0.16 * s, 0.58 * s, -0.48 * s);
+    const flap = put(pack, new THREE.BoxGeometry(0.34 * s, 0.12 * s, 0.16 * s), canvasDark, 0, 0.8 * s, -0.38 * s);
+    flap.rotation.x = -0.35;
+    put(pack, new THREE.BoxGeometry(0.08 * s, 0.05 * s, 0.016 * s), buckle, 0, 0.68 * s, -0.5 * s);
+    put(pack, new THREE.BoxGeometry(0.03 * s, 0.02 * s, 0.01 * s), worn, 0, 0.68 * s, -0.512 * s);
+    [-1, 1].forEach((side) => {
+      put(pack, new THREE.BoxGeometry(0.05 * s, 0.32 * s, 0.03 * s), canvasDark, side * 0.12 * s, 0.84 * s, -0.24 * s);
+      put(pack, new THREE.BoxGeometry(0.05 * s, 0.04 * s, 0.32 * s), canvasDark, side * 0.12 * s, 0.98 * s, -0.08 * s);
+      put(pack, new THREE.BoxGeometry(0.055 * s, 0.04 * s, 0.016 * s), buckle, side * 0.12 * s, 0.9 * s, -0.27 * s);
+      put(pack, new THREE.BoxGeometry(0.02 * s, 0.016 * s, 0.008 * s), worn, side * 0.12 * s, 0.9 * s, -0.282 * s);
+    });
+    gear.add(pack);
     mesh.add(gear);
     mesh.userData.gear = gear;
   }
