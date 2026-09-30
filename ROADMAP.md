@@ -809,6 +809,10 @@ Torren’s seal coat now carries seam and collar grain and a seal stamp catch. H
 
 The Concord yard gate now carries worn timber grain on the posts and the crossbar, iron hinge and strap plates, a bolt catch, and a cooler dusk wash on the uprights. The gate cork and the yard cobbles stay where they were. Lira’s gear, Torren’s gear, both faces, and the spark stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the kiln mouth pass
+
+The kiln mouth now carries fired brick courses, ash soot streaks, an iron rim, a cooler ember wash in the throat, and a soft shadow under the lip. The kiln drink and the back-wall grain stay where they were. The yard gate, both faces, and the equipped gear stay readable. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

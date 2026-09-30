@@ -1295,6 +1295,7 @@
     dressCellarCrawl(g);
     dressKilnHeat(g);
     dressKilnGrain(g);
+    dressKilnMouth(g);
     dressCellarMouthFloor(g);
     return g;
   }
@@ -1615,6 +1616,69 @@
     const fill = new THREE.PointLight(0xff7a40, 0.55, 6.5);
     fill.position.set(0, 1.15, -22.5);
     g.add(fill);
+  }
+
+  function dressKilnMouth(g) {
+    const fired = [
+      new THREE.MeshPhongMaterial({ color: 0x8a4030, emissive: new THREE.Color(0x2a1008), shininess: 18, specular: new THREE.Color(0xe8a080) }),
+      new THREE.MeshPhongMaterial({ color: 0x5a2820, emissive: new THREE.Color(0x1a0c08), shininess: 10, specular: new THREE.Color(0xb07058) }),
+      new THREE.MeshPhongMaterial({ color: 0xa45438, emissive: new THREE.Color(0x3a1810), shininess: 24, specular: new THREE.Color(0xf0c0a0) }),
+    ];
+    const soot = new THREE.MeshPhongMaterial({ color: 0x1a1210, shininess: 4, specular: new THREE.Color(0x6a5850) });
+    const iron = new THREE.MeshPhongMaterial({
+      color: 0x2c343c, emissive: new THREE.Color(0x101418), shininess: 70, specular: new THREE.Color(0xe4eaf2),
+    });
+    const mouth = new THREE.Group();
+    mouth.userData.kilnMouth = true;
+    [-1, 1].forEach((side) => {
+      for (let row = 0; row < 5; row++) {
+        for (let i = 0; i < 3; i++) {
+          const brick = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.12, 0.06), fired[(i + row) % 3]);
+          brick.position.set(side * (1.42 + i * 0.34), 0.22 + row * 0.28, -16.52);
+          mouth.add(brick);
+        }
+      }
+      const streak = new THREE.Mesh(new THREE.BoxGeometry(0.07, 1.2, 0.028), soot);
+      streak.position.set(side * 1.72, 0.82, -16.47);
+      streak.rotation.z = side * 0.06;
+      mouth.add(streak);
+    });
+    for (let i = 0; i < 6; i++) {
+      const brick = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.14, 0.1), fired[i % 3]);
+      brick.position.set(-0.95 + i * 0.38, 2.16, -16.5);
+      mouth.add(brick);
+    }
+    const rim = new THREE.Mesh(new THREE.BoxGeometry(2.15, 0.06, 0.05), iron);
+    rim.position.set(0, 1.92, -16.46);
+    mouth.add(rim);
+    [-1.05, 1.05].forEach((x) => {
+      const jamb = new THREE.Mesh(new THREE.BoxGeometry(0.055, 1.65, 0.05), iron);
+      jamb.position.set(x, 1.05, -16.46);
+      mouth.add(jamb);
+    });
+    const catchLight = new THREE.Mesh(
+      new THREE.BoxGeometry(0.14, 0.035, 0.02),
+      new THREE.MeshBasicMaterial({ color: 0xfff0e0, fog: false })
+    );
+    catchLight.position.set(0.35, 1.92, -16.42);
+    mouth.add(catchLight);
+    const wash = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.65, 1.4),
+      new THREE.MeshBasicMaterial({
+        color: 0xc48a68, transparent: true, opacity: 0.16, depthWrite: false, fog: false, side: THREE.DoubleSide,
+      })
+    );
+    wash.position.set(0, 1.02, -17.2);
+    mouth.add(wash);
+    const shade = new THREE.Mesh(
+      new THREE.CircleGeometry(0.72, 10),
+      new THREE.MeshBasicMaterial({ color: 0x0c0808, transparent: true, opacity: 0.28, depthWrite: false, fog: false })
+    );
+    shade.rotation.x = -Math.PI / 2;
+    shade.scale.set(1.55, 0.32, 1);
+    shade.position.set(0, 0.055, -16.32);
+    mouth.add(shade);
+    g.add(mouth);
   }
 
   function buildVaultRoom() {
