@@ -7144,10 +7144,14 @@
     run.rotation.z = Math.PI / 2;
     run.position.set(0.03, 0.64, 0.42);
     pier.add(run);
-    [[-0.86, 0.34], [0.84, 0.32], [-0.18, 0.5], [0.32, 0.48], [0.72, -0.22]].forEach((spot, i) => {
-      const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.028 + (i % 3) * 0.008, 0), grit);
-      chip.scale.y = 0.38;
-      chip.position.set(spot[0], 0.44, spot[1]);
+    const coil = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.016, 6, 12), rope);
+    coil.rotation.x = Math.PI / 2;
+    coil.position.set(-0.55, 0.62, 0.08);
+    pier.add(coil);
+    [[-0.72, 0.5], [-0.22, 0.52], [0.18, 0.5], [0.62, 0.52], [0.95, 0.36], [-0.95, 0.34]].forEach((spot, i) => {
+      const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.03 + (i % 3) * 0.01, 0), grit);
+      chip.scale.y = 0.45;
+      chip.position.set(spot[0], 0.64, spot[1]);
       pier.add(chip);
     });
     g.add(pier);
