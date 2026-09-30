@@ -214,6 +214,23 @@
     return true;
   });
 
+  Emberwake.registerScene('farm-smoke', function () {
+    var torren = Emberwake.companyHas && Emberwake.companyHas('torren');
+    Emberwake.present({
+      lines: [
+        { where: 'Scar farm', speaker: 'Lira', text: 'Smoke on the blister. Concord named the cough mercy. The grass kept her footprint.' },
+        torren
+          ? { speaker: 'Torren', text: 'I stamped mercy on a field like this. The stamp did not stop the cough.' }
+          : { speaker: 'The spark', text: 'They stamped mercy on the cough. The grass did not take the stamp.' },
+        { speaker: 'The spark', text: 'Vesper farms the rot here. She does not take the host. The drink is still the blister.' },
+      ],
+      onDone: function () {
+        if (Emberwake.noteFarm) Emberwake.noteFarm();
+      },
+    });
+    return true;
+  });
+
   Emberwake.registerScene('concord-patrol', function () {
     Emberwake.present({
       lines: [
