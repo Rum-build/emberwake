@@ -753,6 +753,10 @@ South of the sleeping waystone, the approach now carries layered flagstone plate
 
 On the village path, the ground now carries packed dirt plates, layered leaf litter, small stone chips, and a soft dusk wash. Ash grit sits beyond the door wreath. The dusk flagstones, the path look, and the wreath stay where they were. The waystone approach, the roost ground, the pier boards, the yard cobbles, the scar approach, the leaf-cup bank, the wake ground, and the kiln are unchanged. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
 
+## Shipped in the nave floor pass
+
+In the ash nave, the floor now carries worn flagstone courses, dust grit in the joints, a soft dust wash, pew-shadow fill, and scuff marks. The east pew dust, the brass inlays, and the colonnade shafts stay where they were. The village path, the waystone approach, the roost ground, the pier boards, the yard cobbles, the scar approach, the leaf-cup bank, the wake ground, and the kiln are unchanged. Gear on the body is unchanged. Vesper stays a dark cloth with a hair lock. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
