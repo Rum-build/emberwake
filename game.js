@@ -2769,6 +2769,7 @@
       g.add(stub);
     });
     dressNaveAir(g);
+    dressNaveFloor(g);
     naveGroup = g;
     scene.add(g);
   }
@@ -2811,6 +2812,97 @@
     );
     catchLight.position.set(-0.52, 0.2, 2.82);
     g.add(catchLight);
+  }
+
+  function dressNaveFloor(g) {
+    const stone = new THREE.MeshPhongMaterial({
+      color: 0x7a7064, shininess: 16, specular: new THREE.Color(0xe0d0b8),
+    });
+    const worn = new THREE.MeshPhongMaterial({
+      color: 0x3a322c, shininess: 8, specular: new THREE.Color(0x8a7a68),
+    });
+    const pale = new THREE.MeshPhongMaterial({
+      color: 0xb4a894, shininess: 22, specular: new THREE.Color(0xfff4e4),
+    });
+    const dust = new THREE.MeshPhongMaterial({
+      color: 0xd4c4ac, shininess: 6, specular: new THREE.Color(0xf4ece0),
+    });
+    function course(x, z, rot) {
+      const group = new THREE.Group();
+      const slab = new THREE.Mesh(new THREE.CircleGeometry(0.5, 7), stone);
+      slab.rotation.x = -Math.PI / 2;
+      slab.position.y = 0.03;
+      slab.receiveShadow = true;
+      group.add(slab);
+      const mate = new THREE.Mesh(new THREE.CircleGeometry(0.28, 6), pale);
+      mate.rotation.x = -Math.PI / 2;
+      mate.position.set(0.22, 0.038, 0.08);
+      group.add(mate);
+      const cap = new THREE.Mesh(new THREE.CircleGeometry(0.16, 5), worn);
+      cap.rotation.x = -Math.PI / 2;
+      cap.position.set(-0.12, 0.042, -0.06);
+      group.add(cap);
+      const lip = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.03, 4, 8, Math.PI * 1.2), pale);
+      lip.rotation.x = Math.PI / 2;
+      lip.position.y = 0.046;
+      group.add(lip);
+      const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.05, 0), worn);
+      chip.position.set(-0.28, 0.05, 0.1);
+      chip.scale.y = 0.35;
+      group.add(chip);
+      group.position.set(x, 0, z);
+      group.rotation.y = rot;
+      g.add(group);
+    }
+    [
+      [0.05, 0.72, 0.2], [-0.4, 0.5, -0.15], [0.55, 0.28, 0.4], [0.2, -1.35, 0.1],
+      [-1.05, 2.05, 0.3], [0.95, 1.55, -0.2],
+      [-0.85, 3.35, 0.15], [0.7, 3.85, -0.35], [0.1, 4.55, 0.25],
+      [-0.95, 5.15, -0.1], [0.85, 5.55, 0.4], [-0.15, 6.15, 0.05],
+    ].forEach((spot) => {
+      course(spot[0], spot[1], spot[2]);
+    });
+    function grit(x, z) {
+      const group = new THREE.Group();
+      [[0, 0, 0.04], [0.07, 0.03, 0.026], [-0.06, 0.04, 0.03], [0.03, -0.06, 0.022], [-0.02, -0.04, 0.018]].forEach((spot) => {
+        const speck = new THREE.Mesh(new THREE.SphereGeometry(spot[2], 4, 3), dust);
+        speck.position.set(spot[0], spot[2] * 0.55, spot[1]);
+        group.add(speck);
+      });
+      group.position.set(x, 0, z);
+      g.add(group);
+    }
+    [[0.35, 0.55], [-0.15, 0.95], [-0.55, 2.05], [0.35, 3.55], [-0.4, 4.85], [0.45, 5.85]].forEach((spot) => {
+      grit(spot[0], spot[1]);
+    });
+    const washMat = new THREE.MeshBasicMaterial({
+      color: 0xd4c4b0, transparent: true, opacity: 0.08, depthWrite: false, fog: false,
+    });
+    [[0.1, 1.6, 1.15], [0.05, 4.4, 1.35], [-0.15, 5.8, 0.9]].forEach((spot) => {
+      const wash = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 10), washMat);
+      wash.rotation.x = -Math.PI / 2;
+      wash.position.set(spot[0], 0.02, spot[1]);
+      g.add(wash);
+    });
+    const shadeMat = new THREE.MeshBasicMaterial({
+      color: 0x0c080c, transparent: true, opacity: 0.28, depthWrite: false, fog: false,
+    });
+    [[-1.95, 0.52], [-1.95, 1.48], [-1.95, 2.48], [1.95, 0.52], [1.95, 1.48]].forEach((spot) => {
+      const shade = new THREE.Mesh(new THREE.CircleGeometry(0.42, 8), shadeMat);
+      shade.rotation.x = -Math.PI / 2;
+      shade.scale.set(1.45, 0.42, 1);
+      shade.position.set(spot[0], 0.018, spot[1]);
+      g.add(shade);
+    });
+    const scuffMat = new THREE.MeshPhongMaterial({
+      color: 0x1a1410, shininess: 3, specular: new THREE.Color(0x6a5a48),
+    });
+    [[0.15, 1.35, 0.55], [-0.35, 3.15, -0.35], [0.25, 4.15, 0.2], [-0.15, 5.35, 0.7], [0.4, 6.0, -0.15]].forEach((spot) => {
+      const scuff = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.014, 0.06), scuffMat);
+      scuff.position.set(spot[0], 0.04, spot[1]);
+      scuff.rotation.y = spot[2];
+      g.add(scuff);
+    });
   }
 
   function tuckCathedral() {

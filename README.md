@@ -163,6 +163,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - At the messenger roost, perch grit, a worn rope on the walk, night haze on the boards, and feather grit sit under a cooler lamp rim. The hanging rope and the wing look stay readable. No new cue.
 - South of the waystone, layered flagstones, lichen grit, and moss in the joints sit under a soft dusk wash. The ring and the south-stone look stay readable. No new cue.
 - On the village path, packed dirt, leaf litter, and small stone chips sit under a soft dusk wash. Ash grit sits beyond the door wreath. The path stones and the dusk look stay readable. No new cue.
+- In the ash nave, worn flagstone courses, dust grit in the joints, a soft dust wash, pew-shadow fill, and scuff marks sit on the floor. The east pew dust and the brass stay readable. No new cue.
 
 ## Play on your phone
 
