@@ -5405,20 +5405,20 @@
     const g = new THREE.Group();
     g.position.set(14.2, 0, -5.5);
     const cloth = new THREE.MeshBasicMaterial({
-      color: 0xb7c8d4, transparent: true, opacity: 0.58, side: THREE.DoubleSide, depthWrite: false, fog: false,
+      color: 0xd5e4ee, transparent: true, opacity: 0.86, side: THREE.DoubleSide, depthWrite: false, fog: false,
     });
-    [[3.4, -2.6, 0.45], [-3.1, -3.0, -0.35]].forEach((spec) => {
-      const veil = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 2.05), cloth);
-      veil.position.set(spec[0], 1.15, spec[1]);
+    [[4.15, 0.35, 0.15], [-4.15, 0.2, -0.2]].forEach((spec) => {
+      const veil = new THREE.Mesh(new THREE.PlaneGeometry(1.35, 2.45), cloth);
+      veil.position.set(spec[0], 1.35, spec[1]);
       veil.rotation.y = spec[2];
       g.add(veil);
       const ash = new THREE.Mesh(
-        new THREE.PlaneGeometry(0.16, 1.7),
+        new THREE.PlaneGeometry(0.18, 2.05),
         new THREE.MeshBasicMaterial({
-          color: 0x7eb0c8, transparent: true, opacity: 0.72, side: THREE.DoubleSide, depthWrite: false, fog: false,
+          color: 0x7eb0c8, transparent: true, opacity: 0.9, side: THREE.DoubleSide, depthWrite: false, fog: false,
         })
       );
-      ash.position.set(spec[0] + 0.48, 1.02, spec[1] + 0.08);
+      ash.position.set(spec[0] + (spec[0] > 0 ? 0.55 : -0.55), 1.2, spec[1]);
       ash.rotation.y = spec[2];
       g.add(ash);
     });
@@ -5443,7 +5443,7 @@
     const flame = new THREE.PointLight(0xff7a30, 0.65, 5);
     flame.position.set(0, 1.36, 0);
     g.add(flame);
-    [[0.04, 1.78, 0.22, 0.38], [-0.06, 2.12, 0.34, 0.28], [0.08, 2.48, 0.46, 0.16]].forEach((spec) => {
+    [[0.04, 1.82, 0.32, 0.62], [-0.08, 2.22, 0.48, 0.48], [0.1, 2.68, 0.62, 0.34]].forEach((spec) => {
       const puff = new THREE.Mesh(
         new THREE.SphereGeometry(spec[2], 6, 5),
         new THREE.MeshBasicMaterial({
