@@ -973,6 +973,10 @@ Torren’s party mesh now carries richer cloth folds, temple and beard hair, boo
 
 The Concord captain now carries richer armour plates, cloth under the plate, a helm crest, and boot and gauntlet grain. The fight, the telegraph, and the fight panel stay where they were. No new cue.
 
+## Shipped in the title chrome pass
+
+The wake screen now carries an ember rim, a warmer parchment field, a softer glow on Wake and Continue, and clearer button borders. Sound, the save glow, and the eight cues stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
