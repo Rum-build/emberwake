@@ -221,6 +221,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The Concord captain keeps richer armour plates, cloth under the plate, a helm crest, and boot and gauntlet grain. The fight and the eight cues stay the same. No new cue.
 - The title keeps an ember rim, a warmer parchment field, a softer glow on Wake and Continue, and clearer button borders. Sound, Wake, and Continue stay the same. No new cue.
 - The buried kiln pool keeps denser swirl, ember-rot grain, a clearer surface sheen, and a stronger absorb glow. The drink and the eight cues stay the same. No new cue.
+- The leaf-village roofs keep thatch strand grain, moss patches, ridge wear, and chimney soot. The door, the walls, and the well stay readable. No new cue.
 
 ## Play on your phone
 
