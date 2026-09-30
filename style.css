@@ -287,15 +287,35 @@ body.still-motion .encounter-flash.active {
   line-height: 1.45;
 }
 
+#credits-screen {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 120, 48, 0.18), transparent 46%),
+    linear-gradient(180deg, #120c0a 0%, #0e1218 58%, #16100c 100%);
+}
+
+#credits-screen::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+  background-image:
+    radial-gradient(circle, rgba(255, 90, 24, 0.9) 0 1.15px, transparent 1.7px),
+    radial-gradient(circle, rgba(213, 228, 242, 0.5) 0 1px, transparent 1.55px);
+  background-size: 148px 186px, 214px 164px;
+  background-position: 18px 28px, 78px 96px;
+}
+
 .credits-content {
   text-align: left;
-  max-width: 38rem;
+  max-width: 40rem;
 }
 
 .credits-content p {
-  margin-bottom: 14px;
-  line-height: 1.5;
-  color: #d5d0c6;
+  margin-bottom: 22px;
+  line-height: 1.72;
+  color: #e4ddd2;
 }
 
 .credits-note {
@@ -304,9 +324,14 @@ body.still-motion .encounter-flash.active {
 }
 
 .credits-thanks {
-  color: #e6d7bc !important;
-  border-top: 1px solid rgba(212, 176, 112, 0.4);
-  padding-top: 12px;
+  color: #f6ead6 !important;
+  font-size: 1.08rem;
+  line-height: 1.65;
+  background: rgba(28, 16, 10, 0.88);
+  border: 1px solid rgba(255, 154, 72, 0.62);
+  padding: 18px 18px 16px;
+  margin-top: 8px;
+  box-shadow: inset 0 0 0 1px rgba(213, 228, 242, 0.16);
 }
 
 .path-content {
@@ -1851,8 +1876,8 @@ body.pack-open .places-panel {
     max-width: none;
     text-align: left;
   }
-  .credits-content p { font-size: 0.92rem; }
-  .credits-thanks { font-size: 0.9rem; }
+  .credits-content p { font-size: 0.92rem; margin-bottom: 18px; }
+  .credits-thanks { font-size: 1rem; padding: 14px 14px 12px; }
 }
 
 @media (max-width: 520px) {

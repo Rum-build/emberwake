@@ -495,6 +495,13 @@ Playable on the Verdant Isle field:
 - Places names that post. It does not repeat the roost or the corks.
 - Phone controls, Absorb, Pack, and Continue stay. No new cue.
 
+## Ending boards, and the credits scroll (this branch)
+
+- Each aftermath board keeps an ash frame and a cooler lamp. Claim wears a gold ring, refuse a cool bar, share two halves, and burn an ember. The four closing lines stay. Vesper does not enter the company.
+- Credits keeps the same eight cues and the same thank-you. The lines sit further apart, the thank-you block reads clearer, and a little ember grit sits on the scroll. No new cue.
+- After the ending is heard, Places names Credits north of the room. South still steps back to the claim.
+- Phone controls, Absorb, Pack, and Continue stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

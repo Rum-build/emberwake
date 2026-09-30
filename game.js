@@ -3653,8 +3653,86 @@
     g.userData.rim = endRim;
     g.userData.boards = boards;
     g.userData.beside = beside;
+    dressAftermathBoards(g);
     aftermathGroup = g;
     scene.add(g);
+  }
+
+  function dressAftermathBoards(g) {
+    const frame = new THREE.Group();
+    frame.position.set(-3.55, 1.35, 1.15);
+    frame.rotation.y = -0.7;
+    const ashMat = new THREE.MeshBasicMaterial({ color: 0xd4c8b4, fog: false });
+    const w = 2.62;
+    const h = 1.78;
+    const t = 0.08;
+    [
+      [w + t, t, t, 0, h / 2, 0.08],
+      [w + t, t, t, 0, -h / 2, 0.08],
+      [t, h + t, t, -w / 2, 0, 0.08],
+      [t, h + t, t, w / 2, 0, 0.08],
+    ].forEach((spec) => {
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(spec[0], spec[1], spec[2]), ashMat);
+      bar.position.set(spec[3], spec[4], spec[5]);
+      frame.add(bar);
+    });
+    const lamp = new THREE.Mesh(
+      new THREE.BoxGeometry(0.34, 0.26, 0.18),
+      new THREE.MeshBasicMaterial({ color: 0xd5e4f2, fog: false })
+    );
+    lamp.position.set(1.62, 0.62, 0.38);
+    frame.add(lamp);
+    const pole = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.04, 0.05, 0.7, 5),
+      new THREE.MeshBasicMaterial({ color: 0xd5e4f2, fog: false })
+    );
+    pole.position.set(1.62, 0.22, 0.38);
+    frame.add(pole);
+    const cool = new THREE.PointLight(0xc5d6ee, 0.85, 5.2);
+    cool.position.set(1.62, 0.7, 0.55);
+    frame.add(cool);
+    function pin(kind) {
+      const prop = new THREE.Group();
+      prop.position.set(1.62, -0.15, 0.2);
+      if (kind === 'claim') {
+        const ring = new THREE.Mesh(
+          new THREE.TorusGeometry(0.26, 0.055, 6, 18),
+          new THREE.MeshBasicMaterial({ color: 0xe8d2a0, fog: false })
+        );
+        prop.add(ring);
+      } else if (kind === 'refuse') {
+        const bar = new THREE.Mesh(
+          new THREE.BoxGeometry(0.7, 0.1, 0.1),
+          new THREE.MeshBasicMaterial({ color: 0x8aa4c8, fog: false })
+        );
+        prop.add(bar);
+      } else if (kind === 'share') {
+        [-0.18, 0.18].forEach((x, i) => {
+          const half = new THREE.Mesh(
+            new THREE.BoxGeometry(0.22, 0.46, 0.06),
+            new THREE.MeshBasicMaterial({ color: i ? 0xc080ff : 0xffb060, fog: false })
+          );
+          half.position.x = x;
+          prop.add(half);
+        });
+      } else {
+        const coal = new THREE.Mesh(
+          new THREE.DodecahedronGeometry(0.2, 0),
+          new THREE.MeshBasicMaterial({ color: 0xff4a18, fog: false })
+        );
+        prop.add(coal);
+      }
+      prop.visible = kind === 'claim';
+      frame.add(prop);
+      return prop;
+    }
+    g.add(frame);
+    g.userData.pins = {
+      claim: pin('claim'),
+      refuse: pin('refuse'),
+      share: pin('share'),
+      burn: pin('burn'),
+    };
   }
 
   function naveFits(x, z) {
@@ -9856,6 +9934,11 @@
         data.images[key].visible = key === word;
       });
     }
+    if (data.pins) {
+      Object.keys(data.pins).forEach((key) => {
+        data.pins[key].visible = key === word;
+      });
+    }
   }
 
   function playAftermathScene() {
@@ -13419,6 +13502,9 @@
               ? 'Written. She stands beside the mass. She did not enter.'
               : 'Written. She still wears it.';
       rows.push({ name: 'Aftermath', note: endNote });
+      if (seenBeats.aftermath) {
+        rows.push({ name: 'Credits', note: 'North of the ending. The scroll names the walk. South still steps back.' });
+      }
     } else if (claimWord) {
       rows.push({ name: 'Aftermath', note: 'Not walked yet. North of the mass, after the flag. The list does not carry you.' });
     }
