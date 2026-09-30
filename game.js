@@ -2882,6 +2882,9 @@
     const claimFill = new THREE.PointLight(0xffd0a8, 0.95, 20);
     claimFill.position.set(0, 2.6, 4.4);
     g.add(claimFill);
+    const approachCool = new THREE.DirectionalLight(0x9eb6cc, 0.55);
+    approachCool.position.set(-3.2, 5.4, 9.2);
+    g.add(approachCool);
     const geo = new THREE.PlaneGeometry(22, 24, 16, 14);
     const ash = new THREE.Color(0x0c080a);
     const ember = new THREE.Color(0xff5a18);
@@ -3145,6 +3148,20 @@
     g.userData.stage = stage;
     g.userData.halo = halo;
     g.userData.coreBase = 1.15;
+    const approachAsh = new THREE.Mesh(
+      new THREE.RingGeometry(1.35, 2.05, 24),
+      new THREE.MeshBasicMaterial({ color: 0x2a2428, side: THREE.DoubleSide, fog: false })
+    );
+    approachAsh.rotation.x = -Math.PI / 2;
+    approachAsh.position.set(0, 0.045, 4.2);
+    g.add(approachAsh);
+    const approachRim = new THREE.Mesh(
+      new THREE.RingGeometry(1.95, 2.18, 28),
+      new THREE.MeshBasicMaterial({ color: 0xc5d6e6, side: THREE.DoubleSide, fog: false })
+    );
+    approachRim.rotation.x = -Math.PI / 2;
+    approachRim.position.set(0, 0.06, 4.2);
+    g.add(approachRim);
     makeMotes(g, 120, 0xd0b8a4, { x: 16, y: 5.5, z: 18 }, { fall: true });
     claimGroup = g;
     scene.add(g);
@@ -6710,8 +6727,8 @@
       return 'She still wears it. Credits are north. South is the claim.';
     }
     if (locale === 'remnant-claim') {
-      if (!seenBeats.claimFight) return 'Past the bar. A Concord last rite stands before the claim.';
-      if (!claimWord) return 'Vesper is at the remnant. Claim, refuse, share, or burn. North writes it after.';
+      if (!seenBeats.claimFight) return 'Past the bar. The Remnant Claim is north. A last rite stands before it.';
+      if (!claimWord) return 'The Remnant Claim is here. Vesper is at the mass. Claim, refuse, share, or burn. North writes it after.';
       if (!seenBeats.aftermath) {
         if (claimWord === 'claim') return 'The spark claimed the remnant. North is the aftermath.';
         if (claimWord === 'refuse') return 'The remnant was refused. North is the aftermath.';
@@ -12663,7 +12680,7 @@
       });
       tuneBed(bedPlace);
     }
-    if (bedWanted) bedGain.gain.value = bedPlace === 'aftermath' ? 0.026 : 0.04;
+    if (bedWanted) bedGain.gain.value = bedLevel();
     if (audioCtx.state === 'suspended') audioCtx.resume();
   }
 
@@ -12679,7 +12696,14 @@
           : { cut: 240, freqs: [78, 117] };
     bedFilter.frequency.value = spec.cut;
     bedTones.forEach((osc, i) => { osc.frequency.value = spec.freqs[i]; });
-    if (bedGain) bedGain.gain.value = bedWanted ? (bedPlace === 'aftermath' ? 0.026 : 0.04) : 0;
+    if (bedGain) bedGain.gain.value = bedLevel();
+  }
+
+  function bedLevel() {
+    if (!bedWanted) return 0;
+    if (bedPlace === 'aftermath') return 0.026;
+    if (bedPlace === 'claim') return 0.032;
+    return 0.04;
   }
 
   function syncMotion() {
@@ -12910,10 +12934,10 @@
               ? 'Shared. She did not enter. North is the aftermath.'
               : claimWord === 'burn'
                 ? 'Burned. The scar took the ash. North is the aftermath.'
-                : 'Walked. The rite or the claim is still ahead.';
+                : 'The Remnant Claim is walked. The choice is still ahead.';
       rows.push({ name: 'Remnant claim', note: claimNote });
     } else if (breachWord === 'hold') {
-      rows.push({ name: 'Remnant claim', note: 'Not walked yet. North, past the bar. The list does not carry you.' });
+      rows.push({ name: 'Remnant claim', note: 'North, past the bar. That is the Remnant Claim. The list does not carry you.' });
     }
     if (seenBeats.endStep || seenBeats.aftermath) {
       const endNote = !seenBeats.aftermath
