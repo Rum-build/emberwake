@@ -1045,6 +1045,10 @@ The ash nave now keeps wood grain, seat wear, and nail heads on the pews, cracke
 
 The leaf-village yard now keeps wood planks and thatch eaves on the hut sides, worn dirt underfoot, and leaf clumps by the walls. The door, the fronts, the roofs, and the path stones stay where they were. No new cue.
 
+## Shipped in the kiln forge pass
+
+The buried kiln chamber now keeps brick courses on the walls, ash crust on the floor, a brick collar around the ember, and worn tools by the mouth. The swirl, the drink, and the cellar door stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

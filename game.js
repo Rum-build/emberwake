@@ -1325,6 +1325,7 @@
     dressKilnMouth(g);
     dressKilnExterior(g);
     dressKilnYard(g);
+    dressKilnForge(g);
     dressCellarMouthFloor(g);
     return g;
   }
@@ -2170,6 +2171,172 @@
       nick.rotation.y = 0.35 + i * 0.08;
       g.add(nick);
     });
+  }
+
+  function dressKilnForge(g) {
+    const brick = new THREE.MeshBasicMaterial({ color: 0x8a4030, fog: false });
+    const brickAlt = new THREE.MeshBasicMaterial({ color: 0x4a241c, fog: false });
+    const brickHot = new THREE.MeshBasicMaterial({ color: 0xc46a3a, fog: false });
+    const mortar = new THREE.MeshBasicMaterial({ color: 0xe4d4c0, fog: false });
+    const soot = new THREE.MeshBasicMaterial({ color: 0x140c0a, fog: false });
+    const ash = new THREE.MeshBasicMaterial({ color: 0xc8b4a0, fog: false });
+    const ashDark = new THREE.MeshBasicMaterial({ color: 0x2a1814, fog: false });
+    const ember = new THREE.MeshBasicMaterial({ color: 0xff5a18, fog: false });
+    const emberCore = new THREE.MeshBasicMaterial({ color: 0xffe4a4, fog: false });
+    const iron = new THREE.MeshBasicMaterial({ color: 0x3a3834, fog: false });
+    const ironEdge = new THREE.MeshBasicMaterial({ color: 0xd0ccc4, fog: false });
+    function courseBrick(x, y, z, w, h, d, mat) {
+      const bit = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+      bit.position.set(x, y, z);
+      g.add(bit);
+      return bit;
+    }
+    [-1, 1].forEach((side) => {
+      const xFace = side * 3.18;
+      for (let row = 0; row < 8; row++) {
+        const y = 0.22 + row * 0.24;
+        const shift = row % 2 ? 0.2 : 0;
+        for (let i = 0; i < 14; i++) {
+          const z = -23.2 + i * 0.44 + shift;
+          if (z < -23.35 || z > -17.15) continue;
+          const mat = (i + row) % 5 === 0 ? brickHot : (i + row) % 2 ? brickAlt : brick;
+          courseBrick(xFace, y, z, 0.16, 0.16, 0.36, mat);
+          const joint = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.17, 0.03), mortar);
+          joint.position.set(xFace - side * 0.09, y, z + 0.18);
+          g.add(joint);
+        }
+        const bed = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.03, 5.6), mortar);
+        bed.position.set(xFace - side * 0.03, y - 0.09, -20.2);
+        g.add(bed);
+      }
+      const drip = new THREE.Mesh(new THREE.BoxGeometry(0.03, 1.35, 0.1), soot);
+      drip.position.set(xFace - side * 0.02, 1.15, side < 0 ? -19.4 : -21.6);
+      g.add(drip);
+      const stain = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.55, 0.85), soot);
+      stain.position.set(xFace - side * 0.015, 0.55, side < 0 ? -22.4 : -18.2);
+      g.add(stain);
+    });
+    for (let row = 0; row < 5; row++) {
+      const y = 1.05 + row * 0.24;
+      const shift = row % 2 ? 0.22 : 0;
+      for (let i = 0; i < 14; i++) {
+        const x = -3.05 + i * 0.46 + shift;
+        if (x < -3.15 || x > 3.15) continue;
+        const mat = (i + row) % 4 === 0 ? brickHot : (i + row) % 2 ? brickAlt : brick;
+        courseBrick(x, y, -23.4, 0.38, 0.16, 0.07, mat);
+        const joint = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.17, 0.02), mortar);
+        joint.position.set(x + 0.19, y, -23.36);
+        g.add(joint);
+      }
+      const bed = new THREE.Mesh(new THREE.BoxGeometry(6.1, 0.028, 0.02), mortar);
+      bed.position.set(0, y - 0.09, -23.36);
+      g.add(bed);
+    }
+    [-1, 1].forEach((side) => {
+      for (let row = 0; row < 3; row++) {
+        const y = 0.28 + row * 0.22;
+        for (let i = 0; i < 3; i++) {
+          const x = side * (2.15 + i * 0.42);
+          courseBrick(x, y, -23.4, 0.34, 0.14, 0.07, (i + row) % 2 ? brickAlt : brick);
+        }
+      }
+    });
+    [-1, 1].forEach((side) => {
+      for (let row = 0; row < 8; row++) {
+        const y = 0.24 + row * 0.24;
+        const shift = row % 2 ? 0.16 : 0;
+        for (let i = 0; i < 4; i++) {
+          const x = side * (1.55 + i * 0.42 + shift);
+          if (Math.abs(x) > 3.15 || Math.abs(x) < 1.35) continue;
+          courseBrick(x, y, -17.02, 0.34, 0.16, 0.06, (i + row) % 2 ? brickAlt : brick);
+        }
+      }
+    });
+    for (let i = 0; i < 16; i++) {
+      const a = (i / 16) * Math.PI * 2;
+      const rad = 3.05;
+      const mat = i % 3 === 0 ? brickHot : i % 2 ? brickAlt : brick;
+      const voussoir = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.36, 0.48), mat);
+      voussoir.position.set(Math.cos(a) * rad, 0.46, -21 + Math.sin(a) * rad);
+      voussoir.rotation.y = -a;
+      g.add(voussoir);
+      const joint = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.38, 0.04), mortar);
+      joint.position.set(Math.cos(a + 0.12) * rad, 0.46, -21 + Math.sin(a + 0.12) * rad);
+      joint.rotation.y = -a;
+      g.add(joint);
+      if (i % 2 === 0) {
+        const coal = new THREE.Mesh(new THREE.SphereGeometry(0.07, 5, 4), i % 4 === 0 ? emberCore : ember);
+        coal.position.set(Math.cos(a) * 2.72, 0.32, -21 + Math.sin(a) * 2.72);
+        g.add(coal);
+      }
+    }
+    [[-1.55, -18.7, 0.34], [1.7, -18.85, 0.28], [-2.15, -19.55, 0.22], [2.25, -19.35, 0.26], [-1.1, -22.55, 0.2], [1.35, -22.7, 0.24]].forEach((spot, i) => {
+      const plate = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 7), i % 2 ? ashDark : ash);
+      plate.rotation.x = -Math.PI / 2;
+      plate.position.set(spot[0], 0.2, spot[1]);
+      g.add(plate);
+      const crack = new THREE.Mesh(new THREE.BoxGeometry(spot[2] * 1.2, 0.02, 0.03), soot);
+      crack.position.set(spot[0], 0.22, spot[1]);
+      crack.rotation.y = i * 0.4;
+      g.add(crack);
+    });
+    const grip = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.05, 0.28, 6), ashDark);
+    grip.position.set(1.62, 0.12, -19.35);
+    grip.rotation.z = 0.35;
+    g.add(grip);
+    const wrap = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.22, 0.09), ember);
+    wrap.position.set(1.58, 0.16, -19.32);
+    wrap.rotation.z = 0.35;
+    g.add(wrap);
+    const hook = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.05, 0.05), iron);
+    hook.position.set(1.22, 1.12, -19.35);
+    hook.rotation.z = 0.9;
+    g.add(hook);
+    const edge = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.95, 0.015), ironEdge);
+    edge.position.set(1.4, 0.62, -19.32);
+    edge.rotation.z = 0.35;
+    g.add(edge);
+    [-0.28, 0.28].forEach((x) => {
+      const cross = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.48), iron);
+      cross.position.set(0.15 + x, 0.2, -19.7);
+      g.add(cross);
+    });
+    const crust = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.03, 0.32), ash);
+    crust.position.set(0.15, 0.2, -19.7);
+    g.add(crust);
+    const lump = new THREE.Mesh(new THREE.DodecahedronGeometry(0.1, 0), ember);
+    lump.position.set(0.32, 0.28, -19.62);
+    lump.scale.y = 0.6;
+    g.add(lump);
+    const rim = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.06, 0.42), iron);
+    rim.position.set(-1.35, 0.14, -19.55);
+    g.add(rim);
+    const fill = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.04, 0.24), ash);
+    fill.position.set(-1.35, 0.16, -19.55);
+    g.add(fill);
+    const handle = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.04, 0.06), ironEdge);
+    handle.position.set(-1.78, 0.14, -19.55);
+    g.add(handle);
+    [[-2.05, -19.15, 0.2], [2.1, -20.15, -0.35]].forEach((spot, i) => {
+      const shard = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.08, 0.16), i ? brickAlt : brickHot);
+      shard.position.set(spot[0], 0.1, spot[1]);
+      shard.rotation.y = spot[2];
+      shard.rotation.z = 0.15;
+      g.add(shard);
+    });
+    const tongs = new THREE.Group();
+    [-0.04, 0.04].forEach((z) => {
+      const arm = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.03, 0.03), iron);
+      arm.position.set(0, 0.04, z);
+      arm.rotation.y = z * 1.2;
+      tongs.add(arm);
+    });
+    const rivet = new THREE.Mesh(new THREE.SphereGeometry(0.03, 5, 4), ironEdge);
+    rivet.position.set(0.08, 0.06, 0);
+    tongs.add(rivet);
+    tongs.position.set(1.85, 0.06, -19.15);
+    tongs.rotation.y = 0.4;
+    g.add(tongs);
   }
 
   function buildVaultRoom() {
