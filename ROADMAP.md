@@ -997,6 +997,10 @@ Nima’s party mesh now carries richer cloth folds, hair detail, a clearer face,
 
 The bottle-hall shelves now carry thicker glass, cork and seal grain, an ember-rot tint in each bottle, and worn shelf edges. The near corks, the earth jar, and the walk stay where they were. No new cue.
 
+## Shipped in the Places card pass
+
+The Places destination cards now carry a warmer parchment field, ember rim grain, a clearer title over the note, a worn card edge, and a stronger selected glow. Hover brightens a card on a desktop. The list still does not travel. Phone Places still starts under the place name, and the stick stays clear. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
