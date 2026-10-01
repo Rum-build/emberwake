@@ -1117,10 +1117,11 @@
     hearthLight.position.set(2.2, 1.4, 1.4);
     villageRoom.add(hearthLight);
     makeMotes(villageRoom, 28, 0xd8c4a4, { x: 6, y: 1.4, z: 6 });
-    [[-1.4, -1.1, 0xc47a6a], [1.3, -0.8, 0x6a5a48], [0.1, 0.4, 0x6aa8a0]].forEach((spec) => {
+    [[-1.4, -1.1, 0xc47a6a, 'sera'], [1.3, -0.8, 0x6a5a48, 'joss'], [0.1, 0.4, 0x6aa8a0, null]].forEach((spec) => {
       const fig = makeCharacter(spec[2], 0.9);
       fig.position.set(spec[0], 0, spec[1]);
       fig.rotation.y = Math.PI;
+      if (spec[3]) dressVillager(fig, spec[3]);
       villageRoom.add(fig);
     });
     const tray = new THREE.Mesh(
@@ -10180,6 +10181,114 @@
       mark.position.set(x * scale, 0.028 * scale, 0.135 * scale);
       g.add(mark);
     });
+  }
+
+  function dressVillager(figure, role) {
+    const s = figure.userData.scale || 0.9;
+    const sera = role === 'sera';
+    function basic(color) {
+      return new THREE.MeshBasicMaterial({ color, fog: false });
+    }
+    const fold = basic(sera ? 0x4a2030 : 0x2a2018);
+    const ridge = basic(sera ? 0xf0c0b0 : 0xd8c4a4);
+    const hair = basic(sera ? 0x2a1814 : 0x3a3834);
+    const tip = basic(sera ? 0xa06048 : 0xc8c4bc);
+    [[-0.22, 0.52, 0.16, -0.18], [0.24, 0.48, 0.14, 0.16], [-0.08, 0.34, 0.2, 0.08]].forEach((spot) => {
+      const cloth = new THREE.Mesh(new THREE.BoxGeometry(0.1 * s, 0.32 * s, 0.04 * s), fold);
+      cloth.position.set(spot[0] * s, spot[1] * s, spot[2] * s);
+      cloth.rotation.z = spot[3];
+      figure.add(cloth);
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.02 * s, 0.26 * s, 0.016 * s), ridge);
+      line.position.set((spot[0] + 0.04) * s, spot[1] * s, (spot[2] + 0.03) * s);
+      line.rotation.z = spot[3];
+      figure.add(line);
+    });
+    [
+      [-0.16, 1.16, 0.14, 0.42, 0.35],
+      [0.14, 1.18, 0.12, 0.38, -0.28],
+      [-0.02, 1.22, 0.16, 0.22, 0.08],
+    ].forEach((spot) => {
+      const strand = new THREE.Mesh(new THREE.CylinderGeometry(0.016 * s, 0.008 * s, spot[3] * s, 5), hair);
+      strand.position.set(spot[0] * s, spot[1] * s, spot[2] * s);
+      strand.rotation.z = spot[4];
+      figure.add(strand);
+      const end = new THREE.Mesh(new THREE.SphereGeometry(0.018 * s, 5, 4), tip);
+      end.position.set(
+        spot[0] * s + Math.sin(spot[4]) * spot[3] * 0.4 * s,
+        (spot[1] - spot[3] * 0.4) * s,
+        spot[2] * s
+      );
+      figure.add(end);
+    });
+    [-1, 1].forEach((side) => {
+      const hollow = new THREE.Mesh(new THREE.BoxGeometry(0.06 * s, 0.028 * s, 0.02 * s), basic(sera ? 0x8a5048 : 0x6a5040));
+      hollow.position.set(side * 0.08 * s, 1.02 * s, 0.19 * s);
+      hollow.rotation.z = side * -0.3;
+      figure.add(hollow);
+    });
+    const lip = new THREE.Mesh(new THREE.BoxGeometry(0.09 * s, 0.024 * s, 0.02 * s), basic(sera ? 0xa04048 : 0x6a3830));
+    lip.position.set(0, 0.97 * s, 0.2 * s);
+    figure.add(lip);
+    const brow = new THREE.Mesh(new THREE.BoxGeometry(0.18 * s, 0.02 * s, 0.016 * s), basic(0x1a1210));
+    brow.position.set(0, 1.14 * s, 0.19 * s);
+    figure.add(brow);
+    if (!sera) {
+      const crease = new THREE.Mesh(new THREE.BoxGeometry(0.12 * s, 0.012 * s, 0.014 * s), basic(0x3a2820));
+      crease.position.set(0.02 * s, 1.06 * s, 0.195 * s);
+      figure.add(crease);
+    }
+    const stitch = basic(0xe8d8c0);
+    const scuff = basic(0x1a100c);
+    [-0.11, 0.11].forEach((x) => {
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.1 * s, 0.014 * s, 0.016 * s), stitch);
+      line.position.set(x * s, 0.07 * s, 0.14 * s);
+      figure.add(line);
+      const mark = new THREE.Mesh(new THREE.BoxGeometry(0.07 * s, 0.02 * s, 0.016 * s), scuff);
+      mark.position.set(x * s, 0.045 * s, 0.15 * s);
+      figure.add(mark);
+    });
+    (figure.userData.arms || []).forEach((arm) => {
+      const cuff = new THREE.Mesh(new THREE.BoxGeometry(0.09 * s, 0.04 * s, 0.07 * s), ridge);
+      cuff.position.set(0, -0.22 * s, 0.02 * s);
+      arm.add(cuff);
+    });
+    if (sera) {
+      const shawl = new THREE.Mesh(new THREE.BoxGeometry(0.16 * s, 0.42 * s, 0.05 * s), basic(0x8a3848));
+      shawl.position.set(-0.26 * s, 0.72 * s, 0.1 * s);
+      shawl.rotation.z = 0.22;
+      figure.add(shawl);
+      const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.03 * s, 0.03 * s, 0.012 * s, 8), basic(0xd4b56a));
+      pin.rotation.x = Math.PI / 2;
+      pin.position.set(0.06 * s, 0.8 * s, 0.22 * s);
+      figure.add(pin);
+      const linen = new THREE.Mesh(new THREE.BoxGeometry(0.12 * s, 0.08 * s, 0.08 * s), basic(0xf3e6c8));
+      linen.position.set(0.28 * s, 0.46 * s, 0.16 * s);
+      linen.rotation.z = 0.2;
+      figure.add(linen);
+      const seam = new THREE.Mesh(new THREE.BoxGeometry(0.08 * s, 0.012 * s, 0.012 * s), basic(0x6a3038));
+      seam.position.set(0.28 * s, 0.46 * s, 0.2 * s);
+      figure.add(seam);
+    } else {
+      const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.012 * s, 0.014 * s, 0.28 * s, 5), basic(0x4a3424));
+      handle.position.set(-0.32 * s, 0.5 * s, 0.16 * s);
+      handle.rotation.z = 0.35;
+      figure.add(handle);
+      const blade = new THREE.Mesh(new THREE.BoxGeometry(0.14 * s, 0.04 * s, 0.016 * s), basic(0xd8e4ee));
+      blade.position.set(-0.4 * s, 0.62 * s, 0.18 * s);
+      blade.rotation.z = -0.6;
+      figure.add(blade);
+      const edge = new THREE.Mesh(new THREE.BoxGeometry(0.1 * s, 0.012 * s, 0.01 * s), basic(0xf4f8ff));
+      edge.position.set(-0.42 * s, 0.64 * s, 0.19 * s);
+      edge.rotation.z = -0.6;
+      figure.add(edge);
+      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.01 * s, 0.01 * s, 0.22 * s, 4), basic(0x4a6a32));
+      stem.position.set(0.22 * s, 0.58 * s, 0.18 * s);
+      stem.rotation.z = -0.25;
+      figure.add(stem);
+      const head = new THREE.Mesh(new THREE.BoxGeometry(0.08 * s, 0.1 * s, 0.04 * s), basic(0xe8d8a0));
+      head.position.set(0.26 * s, 0.7 * s, 0.2 * s);
+      figure.add(head);
+    }
   }
 
   function dressLiraHost(g, scale, skin) {

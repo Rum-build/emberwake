@@ -1021,6 +1021,10 @@ The aftermath grounds now keep a cracked stone or ash grain, an ember or rot tin
 
 The eagle roost perch now keeps wood grain and twine on the beams, a stick-weave nest with a pale lining, ash stains, and feather chips on the floor. The beams, the pad, and the climb stay where they were. No new cue.
 
+## Shipped in the village folk pass
+
+Sera and Old Joss now keep cloth folds, hair strands, a clearer face, boot grain, and a worn shawl or barley knife. Nima, Lira, and Torren stay as they were. The argument still recruits Nima. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
