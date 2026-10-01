@@ -227,6 +227,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The bottle-hall shelves keep thicker glass, cork and seal grain, an ember-rot tint in each bottle, and worn shelf edges. The near corks and the walk stay readable. No new cue.
 - The Places cards keep a warmer parchment field, an ember rim, a clearer title, and a worn edge. The list still does not travel. No new cue.
 - The harbor pier keeps board grain, nail and knot wear, twisted rope, rust on the iron, and a wet edge by the water. The salt look and the walk stay readable. No new cue.
+- The patrol grunts keep cloth folds, a helm, boot and gauntlet grain, and a clearer face. The captain and the clerks stay as they were. The chest plate still shows. No new cue.
 
 ## Play on your phone
 

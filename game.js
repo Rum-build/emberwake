@@ -3606,6 +3606,7 @@
     pole.position.set(4.8, 1.1, 2.4);
     g.add(pole);
     const warden = makeCharacter(0x4a453c, 0.92, 'concord');
+    dressPatrolGrunt(warden);
     warden.position.set(3.5, 0, 1.5);
     warden.rotation.y = Math.PI * 0.8;
     g.add(warden);
@@ -8638,6 +8639,7 @@
       watchers = [];
       [[1.6, 0.4], [-1.3, 1.1], [0.2, -1.7]].forEach((spot, i) => {
         const fig = makeCharacter(i === 0 ? 0x2a3038 : 0x3e4550, 0.9, 'concord');
+        dressPatrolGrunt(fig);
         fig.position.set(spot[0], 0, spot[1]);
         fig.rotation.y = Math.atan2(-spot[0], -spot[1]);
         g.add(fig);
@@ -12865,10 +12867,12 @@
   function makeCoastPatrol(x, z) {
     const g = new THREE.Group();
     const lead = makeCharacter(0x2a3038, 0.92, 'concord');
+    dressPatrolGrunt(lead);
     lead.position.set(-0.42, 0, 0);
     lead.rotation.y = 0.5;
     g.add(lead);
     const second = makeCharacter(0x3e4550, 0.86, 'concord');
+    dressPatrolGrunt(second);
     second.position.set(0.48, 0, 0.12);
     second.rotation.y = -0.2;
     g.add(second);
@@ -13568,6 +13572,52 @@
     return enemy.id === 'scribe' || enemy.id === 'warden' || enemy.id === 'clerk' || enemy.id === 'stoker' || enemy.id === 'counter' || enemy.id === 'captain' || enemy.id === 'auditor' || enemy.id === 'celebrant';
   }
 
+  function dressPatrolGrunt(figure) {
+    if (!figure) return;
+    const s = (figure.userData && figure.userData.scale) || 0.9;
+    const cloth = new THREE.MeshBasicMaterial({ color: 0x1a242c, fog: false });
+    const ridge = new THREE.MeshBasicMaterial({ color: 0xc5d0dc, fog: false });
+    const iron = new THREE.MeshBasicMaterial({ color: 0xd4c48a, fog: false });
+    const ironDark = new THREE.MeshBasicMaterial({ color: 0x2a2418, fog: false });
+    const stitch = new THREE.MeshBasicMaterial({ color: 0xe8d8c0, fog: false });
+    const scuff = new THREE.MeshBasicMaterial({ color: 0x0c0e12, fog: false });
+    function put(parent, geo, mat, x, y, z, rz) {
+      const piece = new THREE.Mesh(geo, mat);
+      piece.position.set(x, y, z);
+      if (rz) piece.rotation.z = rz;
+      parent.add(piece);
+      return piece;
+    }
+    put(figure, new THREE.BoxGeometry(0.1 * s, 0.28 * s, 0.04 * s), cloth, -0.3 * s, 0.5 * s, 0.16 * s);
+    put(figure, new THREE.BoxGeometry(0.045 * s, 0.24 * s, 0.02 * s), ridge, -0.24 * s, 0.5 * s, 0.19 * s);
+    put(figure, new THREE.BoxGeometry(0.08 * s, 0.16 * s, 0.03 * s), ridge, 0.28 * s, 0.46 * s, 0.2 * s, 0.2);
+    [-0.08, 0.08].forEach((x) => {
+      put(figure, new THREE.BoxGeometry(0.03 * s, 0.12 * s, 0.02 * s), cloth, x * s, 0.5 * s, 0.22 * s);
+    });
+    put(figure, new THREE.BoxGeometry(0.16 * s, 0.05 * s, 0.04 * s), iron, -0.32 * s, 0.92 * s, 0.08 * s);
+    put(figure, new THREE.BoxGeometry(0.16 * s, 0.05 * s, 0.04 * s), iron, 0.32 * s, 0.92 * s, 0.08 * s);
+    put(figure, new THREE.BoxGeometry(0.05 * s, 0.04 * s, 0.02 * s), ironDark, -0.32 * s, 0.92 * s, 0.1 * s);
+    put(figure, new THREE.BoxGeometry(0.05 * s, 0.04 * s, 0.02 * s), ironDark, 0.32 * s, 0.92 * s, 0.1 * s);
+    put(figure, new THREE.BoxGeometry(0.34 * s, 0.045 * s, 0.04 * s), iron, 0, 1.18 * s, 0.16 * s);
+    put(figure, new THREE.BoxGeometry(0.22 * s, 0.02 * s, 0.02 * s), ironDark, 0, 1.16 * s, 0.185 * s);
+    put(figure, new THREE.BoxGeometry(0.03 * s, 0.1 * s, 0.02 * s), iron, 0, 1.1 * s, 0.2 * s);
+    [-1, 1].forEach((side) => {
+      put(figure, new THREE.BoxGeometry(0.04 * s, 0.08 * s, 0.03 * s), iron, side * 0.15 * s, 1.05 * s, 0.16 * s);
+    });
+    put(figure, new THREE.BoxGeometry(0.08 * s, 0.03 * s, 0.02 * s), scuff, -0.07 * s, 1.04 * s, 0.19 * s);
+    put(figure, new THREE.BoxGeometry(0.08 * s, 0.03 * s, 0.02 * s), scuff, 0.07 * s, 1.04 * s, 0.19 * s);
+    put(figure, new THREE.BoxGeometry(0.07 * s, 0.016 * s, 0.016 * s), new THREE.MeshBasicMaterial({ color: 0x8a3038, fog: false }), 0, 0.99 * s, 0.2 * s);
+    [-0.11, 0.11].forEach((x) => {
+      put(figure, new THREE.BoxGeometry(0.09 * s, 0.012 * s, 0.012 * s), stitch, x * s, 0.07 * s, 0.13 * s);
+      put(figure, new THREE.BoxGeometry(0.05 * s, 0.02 * s, 0.02 * s), scuff, x * s, 0.05 * s, 0.14 * s);
+    });
+    (figure.userData.arms || []).forEach((arm) => {
+      put(arm, new THREE.BoxGeometry(0.07 * s, 0.04 * s, 0.03 * s), iron, 0, -0.34 * s, 0.05 * s);
+      put(arm, new THREE.BoxGeometry(0.05 * s, 0.01 * s, 0.01 * s), stitch, 0, -0.33 * s, 0.068 * s);
+      put(arm, new THREE.BoxGeometry(0.03 * s, 0.012 * s, 0.01 * s), ironDark, 0, -0.35 * s, 0.07 * s);
+    });
+  }
+
   function dressCaptain(figure) {
     const s = (figure.userData && figure.userData.scale) || 1.05;
     function phong(color, emissive, shininess, specular) {
@@ -13630,6 +13680,7 @@
     const concord = enemyConcord(enemy);
     if (enemy.shape === 'human') {
       const figure = makeCharacter(enemy.color, 0.9, concord ? 'concord' : undefined);
+      if (enemy.id === 'warden' || enemy.id === 'scribe') dressPatrolGrunt(figure);
       addFoeRim(figure);
       addPatrolRim(figure);
       return figure;

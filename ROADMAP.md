@@ -1005,6 +1005,10 @@ The Places destination cards now carry a warmer parchment field, ember rim grain
 
 The harbor pier now carries board grain, nail and knot wear, twisted rope strands, rust on the iron rings and bollards, and a wet edge by the water. The salt look, the pier lamp, and the walk stay where they were. No new cue.
 
+## Shipped in the patrol grunt pass
+
+The yard and patrol soldiers now carry cloth folds, a helm, boot and gauntlet grain, and a clearer face. The captain, the clerks, and the fight stay where they were. The chest plate still shows. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
