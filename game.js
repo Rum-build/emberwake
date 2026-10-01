@@ -2036,6 +2036,7 @@
     ironBar.position.set(0, 0.62, -4.15);
     g.add(ironBar);
     const clerk = makeCharacter(0x3a3532, 0.92, 'concord');
+    dressClerk(clerk);
     clerk.position.set(-1.2, 0, -1.5);
     clerk.rotation.y = Math.PI;
     g.add(clerk);
@@ -2193,6 +2194,7 @@
     g.add(marrowLight);
     g.userData.marrowLight = marrowLight;
     const hallClerk = makeCharacter(0x3a3532, 0.9, 'concord');
+    dressClerk(hallClerk);
     hallClerk.position.set(1.8, 0, -8.6);
     hallClerk.rotation.y = Math.PI * 0.5;
     g.add(hallClerk);
@@ -13570,6 +13572,51 @@
 
   function enemyConcord(enemy) {
     return enemy.id === 'scribe' || enemy.id === 'warden' || enemy.id === 'clerk' || enemy.id === 'stoker' || enemy.id === 'counter' || enemy.id === 'captain' || enemy.id === 'auditor' || enemy.id === 'celebrant';
+  }
+
+  function dressClerk(figure) {
+    if (!figure) return;
+    const s = (figure.userData && figure.userData.scale) || 0.92;
+    const robe = new THREE.MeshBasicMaterial({ color: 0x241c16, fog: false });
+    const fold = new THREE.MeshBasicMaterial({ color: 0xd8c4a4, fog: false });
+    const ink = new THREE.MeshBasicMaterial({ color: 0x1a2438, fog: false });
+    const page = new THREE.MeshBasicMaterial({ color: 0xf3e6c8, fog: false });
+    const stitch = new THREE.MeshBasicMaterial({ color: 0xe8d8bc, fog: false });
+    const scuff = new THREE.MeshBasicMaterial({ color: 0x100c0a, fog: false });
+    const hair = new THREE.MeshBasicMaterial({ color: 0x2a221c, fog: false });
+    const hairTip = new THREE.MeshBasicMaterial({ color: 0x8a7460, fog: false });
+    function put(parent, geo, mat, x, y, z, rz) {
+      const piece = new THREE.Mesh(geo, mat);
+      piece.position.set(x, y, z);
+      if (rz) piece.rotation.z = rz;
+      parent.add(piece);
+      return piece;
+    }
+    put(figure, new THREE.BoxGeometry(0.12 * s, 0.34 * s, 0.04 * s), robe, -0.28 * s, 0.48 * s, 0.14 * s);
+    put(figure, new THREE.BoxGeometry(0.04 * s, 0.28 * s, 0.02 * s), fold, -0.2 * s, 0.5 * s, 0.18 * s);
+    put(figure, new THREE.BoxGeometry(0.1 * s, 0.22 * s, 0.03 * s), fold, 0.26 * s, 0.4 * s, 0.16 * s, -0.15);
+    put(figure, new THREE.BoxGeometry(0.36 * s, 0.06 * s, 0.03 * s), robe, 0, 0.28 * s, 0.18 * s);
+    put(figure, new THREE.BoxGeometry(0.28 * s, 0.012 * s, 0.012 * s), fold, 0, 0.3 * s, 0.2 * s);
+    const satchel = put(figure, new THREE.BoxGeometry(0.16 * s, 0.2 * s, 0.06 * s), new THREE.MeshBasicMaterial({ color: 0x6a5038, fog: false }), -0.32 * s, 0.5 * s, 0.12 * s);
+    put(satchel, new THREE.BoxGeometry(0.1 * s, 0.12 * s, 0.012 * s), page, 0, 0.01 * s, 0.036 * s);
+    put(satchel, new THREE.BoxGeometry(0.08 * s, 0.008 * s, 0.008 * s), ink, 0, 0.02 * s, 0.044 * s);
+    put(figure, new THREE.BoxGeometry(0.04 * s, 0.07 * s, 0.04 * s), ink, 0.2 * s, 0.44 * s, 0.2 * s);
+    put(figure, new THREE.BoxGeometry(0.012 * s, 0.16 * s, 0.012 * s), page, 0.22 * s, 0.72 * s, 0.2 * s, 0.5);
+    [-0.1, 0.02, 0.12].forEach((x, i) => {
+      put(figure, new THREE.BoxGeometry(0.02 * s, 0.1 * s, 0.02 * s), i === 1 ? hairTip : hair, x * s, 1.18 * s, 0.16 * s);
+    });
+    put(figure, new THREE.BoxGeometry(0.08 * s, 0.028 * s, 0.016 * s), new THREE.MeshBasicMaterial({ color: 0x8a6858, fog: false }), -0.08 * s, 1.04 * s, 0.19 * s);
+    put(figure, new THREE.BoxGeometry(0.08 * s, 0.028 * s, 0.016 * s), new THREE.MeshBasicMaterial({ color: 0x8a6858, fog: false }), 0.08 * s, 1.04 * s, 0.19 * s);
+    put(figure, new THREE.BoxGeometry(0.07 * s, 0.014 * s, 0.014 * s), new THREE.MeshBasicMaterial({ color: 0x6a3830, fog: false }), 0, 0.99 * s, 0.2 * s);
+    put(figure, new THREE.BoxGeometry(0.16 * s, 0.02 * s, 0.016 * s), new THREE.MeshBasicMaterial({ color: 0x1a1612, fog: false }), 0, 1.14 * s, 0.18 * s);
+    [-0.11, 0.11].forEach((x) => {
+      put(figure, new THREE.BoxGeometry(0.09 * s, 0.012 * s, 0.012 * s), stitch, x * s, 0.07 * s, 0.13 * s);
+      put(figure, new THREE.BoxGeometry(0.05 * s, 0.018 * s, 0.018 * s), scuff, x * s, 0.05 * s, 0.14 * s);
+    });
+    (figure.userData.arms || []).forEach((arm) => {
+      put(arm, new THREE.BoxGeometry(0.08 * s, 0.04 * s, 0.06 * s), fold, 0, -0.28 * s, 0.02 * s);
+      put(arm, new THREE.BoxGeometry(0.06 * s, 0.01 * s, 0.01 * s), ink, 0, -0.27 * s, 0.05 * s);
+    });
   }
 
   function dressPatrolGrunt(figure) {
