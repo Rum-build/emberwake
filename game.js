@@ -9367,6 +9367,7 @@
       fold2.position.set(0.08 * scale, 0.86 * scale, 0.15 * scale);
       fold2.rotation.z = 0.25;
       g.add(fold2);
+      dressNimaHost(g, scale, skin);
     }
     if (torren) {
       const beard = new THREE.Mesh(
@@ -9699,6 +9700,121 @@
       new THREE.MeshBasicMaterial({ color: 0x3a2018, fog: false })
     );
     shade.position.set(0, 1.128 * scale, 0.2 * scale);
+    g.add(shade);
+  }
+
+  function dressNimaHost(g, scale, skin) {
+    const foldShadow = new THREE.MeshPhongMaterial({
+      color: 0x1a4a48, emissive: new THREE.Color(0x082018), shininess: 6, specular: new THREE.Color(0x8ec8c0),
+    });
+    const foldRidge = new THREE.MeshPhongMaterial({
+      color: 0xd4f0e8, emissive: new THREE.Color(0x245850), shininess: 18, specular: new THREE.Color(0xf4fffc),
+    });
+    const leaf = new THREE.MeshPhongMaterial({
+      color: 0xc6e070, emissive: new THREE.Color(0x3a5010), shininess: 14, specular: new THREE.Color(0xf4f8d0),
+    });
+    const drape = new THREE.Mesh(new THREE.BoxGeometry(0.1 * scale, 0.34 * scale, 0.07 * scale), foldShadow);
+    drape.position.set(-0.52 * scale, 0.34 * scale, 0.12 * scale);
+    drape.rotation.z = 0.12;
+    drape.castShadow = true;
+    g.add(drape);
+    const ridge = new THREE.Mesh(new THREE.BoxGeometry(0.028 * scale, 0.28 * scale, 0.02 * scale), foldRidge);
+    ridge.position.set(-0.56 * scale, 0.36 * scale, 0.16 * scale);
+    ridge.rotation.z = 0.16;
+    g.add(ridge);
+    const pleat = new THREE.Mesh(new THREE.BoxGeometry(0.05 * scale, 0.22 * scale, 0.03 * scale), foldRidge);
+    pleat.position.set(-0.08 * scale, 0.42 * scale, 0.26 * scale);
+    g.add(pleat);
+    const pleatDark = new THREE.Mesh(new THREE.BoxGeometry(0.045 * scale, 0.18 * scale, 0.026 * scale), foldShadow);
+    pleatDark.position.set(0.12 * scale, 0.4 * scale, 0.25 * scale);
+    pleatDark.rotation.z = -0.14;
+    g.add(pleatDark);
+    const hip = new THREE.Mesh(new THREE.BoxGeometry(0.07 * scale, 0.16 * scale, 0.04 * scale), leaf);
+    hip.position.set(0.5 * scale, 0.32 * scale, 0.14 * scale);
+    hip.rotation.z = -0.18;
+    g.add(hip);
+    const arm = g.userData.arms && g.userData.arms[0];
+    if (arm) {
+      const wrinkle = new THREE.Mesh(new THREE.BoxGeometry(0.08 * scale, 0.04 * scale, 0.05 * scale), foldRidge);
+      wrinkle.position.set(0, -0.22 * scale, 0.05 * scale);
+      wrinkle.rotation.z = -0.35;
+      arm.add(wrinkle);
+      const sleeve = new THREE.Mesh(new THREE.BoxGeometry(0.05 * scale, 0.1 * scale, 0.028 * scale), foldShadow);
+      sleeve.position.set(0.02 * scale, -0.28 * scale, 0.04 * scale);
+      arm.add(sleeve);
+    }
+    const strandMat = new THREE.MeshPhongMaterial({
+      color: 0x142018, emissive: new THREE.Color(0x081008), shininess: 36, specular: new THREE.Color(0x8fbf62),
+    });
+    const tipMat = new THREE.MeshPhongMaterial({
+      color: 0xd4e878, emissive: new THREE.Color(0x3a5010), shininess: 48, specular: new THREE.Color(0xf8ffd0),
+    });
+    [
+      [-0.15, 1.1, 0.08, 0.28, 0.22],
+      [0.16, 1.08, 0.07, 0.26, -0.2],
+      [-0.06, 1.02, 0.1, 0.18, 0.08],
+    ].forEach((spot) => {
+      const strand = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.014 * scale, 0.007 * scale, spot[3] * scale, 6),
+        strandMat
+      );
+      strand.position.set(spot[0] * scale, spot[1] * scale, spot[2] * scale);
+      strand.rotation.z = spot[4];
+      strand.rotation.x = 0.12;
+      g.add(strand);
+      const tip = new THREE.Mesh(new THREE.SphereGeometry(0.018 * scale, 6, 5), tipMat);
+      tip.position.set(
+        spot[0] * scale + Math.sin(spot[4]) * spot[3] * 0.4 * scale,
+        (spot[1] - spot[3] * 0.4) * scale,
+        spot[2] * scale
+      );
+      g.add(tip);
+    });
+    const stitch = new THREE.MeshPhongMaterial({
+      color: 0xe8f4c8, emissive: new THREE.Color(0x3a4820), shininess: 24, specular: new THREE.Color(0xf8ffe8),
+    });
+    const scuffMat = new THREE.MeshBasicMaterial({ color: 0x101408, fog: false });
+    [-0.11, 0.11].forEach((x) => {
+      [0.035, 0.062].forEach((y) => {
+        const line = new THREE.Mesh(new THREE.BoxGeometry(0.11 * scale, 0.014 * scale, 0.018 * scale), stitch);
+        line.position.set(x * scale, y * scale, 0.135 * scale);
+        g.add(line);
+      });
+      const scuff = new THREE.Mesh(new THREE.BoxGeometry(0.07 * scale, 0.02 * scale, 0.016 * scale), scuffMat);
+      scuff.position.set(x * scale, 0.078 * scale, 0.14 * scale);
+      g.add(scuff);
+    });
+    [0.08, 0.16].forEach((x) => {
+      const grain = new THREE.Mesh(new THREE.BoxGeometry(0.045 * scale, 0.012 * scale, 0.016 * scale), leaf);
+      grain.position.set(x * scale, 0.43 * scale, 0.2 * scale);
+      g.add(grain);
+    });
+    [-1, 1].forEach((side) => {
+      const ear = new THREE.Mesh(new THREE.SphereGeometry(0.048 * scale, 6, 5), skin);
+      ear.scale.set(0.55, 1.0, 0.38);
+      ear.position.set(side * 0.19 * scale, 1.06 * scale, 0.02 * scale);
+      g.add(ear);
+      const hollow = new THREE.Mesh(
+        new THREE.BoxGeometry(0.05 * scale, 0.018 * scale, 0.016 * scale),
+        new THREE.MeshBasicMaterial({ color: 0xc49878, fog: false })
+      );
+      hollow.position.set(side * 0.09 * scale, 1.03 * scale, 0.19 * scale);
+      hollow.rotation.z = side * -0.25;
+      g.add(hollow);
+    });
+    const lip = new THREE.Mesh(
+      new THREE.BoxGeometry(0.07 * scale, 0.018 * scale, 0.018 * scale),
+      new THREE.MeshPhongMaterial({
+        color: 0xc46878, emissive: new THREE.Color(0x4a1820), shininess: 20, specular: new THREE.Color(0xffd0d4),
+      })
+    );
+    lip.position.set(0, 0.988 * scale, 0.21 * scale);
+    g.add(lip);
+    const shade = new THREE.Mesh(
+      new THREE.BoxGeometry(0.15 * scale, 0.016 * scale, 0.014 * scale),
+      new THREE.MeshBasicMaterial({ color: 0x1a2820, fog: false })
+    );
+    shade.position.set(0, 1.132 * scale, 0.198 * scale);
     g.add(shade);
   }
 

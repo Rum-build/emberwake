@@ -989,6 +989,10 @@ The leaf-village house roofs now carry thatch strand grain, moss patches, ridge 
 
 Vesper’s silhouette now carries richer shadow cloth, rot-tinged accents, strands on the hair lock, a clearer dark face, and boot grain. She does not enter Aftermath. The talk beats and the eight cues stay where they were. No new cue.
 
+## Shipped in the Nima mesh pass
+
+Nima’s party mesh now carries richer cloth folds, hair detail, a clearer face, and boot grain. Equipped herb rod and shawl still change the body. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
