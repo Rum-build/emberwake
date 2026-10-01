@@ -232,6 +232,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The aftermath floors keep a cracked stone or ash grain, a tint for Claim, Refuse, Share, and Burn, and debris chips. The south steps stay. Vesper does not enter. No new cue.
 - The eagle roost perch keeps wood grain, twine on the beams, a stick-weave nest with a pale lining, ash stains, and feather chips on the floor. The climb stays. No new cue.
 - Sera and Old Joss keep cloth folds, hair strands, a clearer face, boot grain, and a worn shawl or barley knife. Nima’s mesh stays as it was. No new cue.
+- The counting room keeps fluted columns, cracked flagstones, plaster chips, and a warm rim on the lamp niches. The vault door stays. No new cue.
 
 ## Play on your phone
 
