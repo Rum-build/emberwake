@@ -13875,40 +13875,56 @@
   }
 
   function dressVillageYard(g) {
-    const timber = new THREE.MeshPhongMaterial({
-      color: 0x6a4630, shininess: 14, specular: new THREE.Color(0xe0c098),
-    });
-    const timberDark = new THREE.MeshPhongMaterial({
-      color: 0x3a2418, shininess: 6, specular: new THREE.Color(0xa08060),
-    });
+    const timber = new THREE.MeshBasicMaterial({ color: 0x6a4630, fog: false });
+    const timberDark = new THREE.MeshBasicMaterial({ color: 0x3a2418, fog: false });
     const grain = new THREE.MeshBasicMaterial({ color: 0xf2d4a4, fog: false });
-    const thatch = new THREE.MeshPhongMaterial({
-      color: 0xc48848, shininess: 8, specular: new THREE.Color(0xf0d0a8),
-    });
+    const thatch = new THREE.MeshBasicMaterial({ color: 0xc48848, fog: false });
     const thatchDark = new THREE.MeshBasicMaterial({ color: 0x3a2010, fog: false });
+    const sheathMat = new THREE.MeshBasicMaterial({ color: 0x8a5a34, fog: false });
     const leaf = new THREE.MeshPhongMaterial({
       color: 0x3f8a38, shininess: 10, specular: new THREE.Color(0xd4f090), side: THREE.DoubleSide,
     });
     const leafDark = new THREE.MeshPhongMaterial({
       color: 0x1e5a22, shininess: 6, specular: new THREE.Color(0x8ab860), side: THREE.DoubleSide,
     });
-    const dirt = new THREE.MeshPhongMaterial({
-      color: 0x5a4030, shininess: 6, specular: new THREE.Color(0xc4a070),
-    });
-    const dirtDark = new THREE.MeshPhongMaterial({
-      color: 0x2e1c12, shininess: 4, specular: new THREE.Color(0x6a4830),
-    });
+    const dirt = new THREE.MeshBasicMaterial({ color: 0x6a4830, fog: false });
+    const dirtDark = new THREE.MeshBasicMaterial({ color: 0x2e1c12, fog: false });
     const chipMat = new THREE.MeshBasicMaterial({ color: 0xe4d4b0, fog: false });
     [[-2.2, 0], [0, 1.5], [2.2, 0]].forEach((spot, house) => {
       [-1, 1].forEach((side) => {
         const x = spot[0] + side * 0.84;
-        [0.32, 0.5, 0.68, 0.86, 1.04].forEach((y, row) => {
-          const plank = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.14, 1.22), row % 2 ? timberDark : timber);
+        const sheath = new THREE.Mesh(new THREE.BoxGeometry(0.05, 1.14, 1.34), sheathMat);
+        sheath.position.set(spot[0] + side * 0.84, 0.62, spot[1]);
+        g.add(sheath);
+        [-0.58, 0.58].forEach((z) => {
+          const post = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.16, 0.1), timberDark);
+          post.position.set(spot[0] + side * 0.9, 0.6, spot[1] + z);
+          g.add(post);
+        });
+        [0.28, 0.46, 0.64, 0.82, 1.0].forEach((y, row) => {
+          const plank = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.15, 1.26), row % 2 ? timberDark : timber);
           plank.position.set(spot[0] + side * 0.9, y, spot[1]);
           g.add(plank);
-          const line = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.02, 0.95), grain);
-          line.position.set(spot[0] + side * 0.95, y, spot[1] + (row % 2 ? 0.05 : -0.04));
+          const line = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.035, 1.05), grain);
+          line.position.set(spot[0] + side * 0.96, y, spot[1] + (row % 2 ? 0.04 : -0.03));
           g.add(line);
+        });
+        [0, 1, 2, 3, 4].forEach((row) => {
+          const inset = row * 0.15;
+          const course = new THREE.Mesh(
+            new THREE.BoxGeometry(0.18, 0.1, 1.32 - inset * 1.05),
+            row % 2 ? thatchDark : thatch
+          );
+          course.position.set(spot[0] + side * (1.02 - inset), 1.34 + row * 0.15, spot[1]);
+          course.rotation.z = side * 0.62;
+          g.add(course);
+          const strand = new THREE.Mesh(
+            new THREE.BoxGeometry(0.04, 0.03, 1.05 - inset * 0.8),
+            row % 2 ? grain : thatchDark
+          );
+          strand.position.set(spot[0] + side * (1.1 - inset), 1.38 + row * 0.15, spot[1]);
+          strand.rotation.z = side * 0.62;
+          g.add(strand);
         });
         const eave = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.07, 1.32), thatch);
         eave.position.set(spot[0] + side * 0.98, 1.28, spot[1]);
