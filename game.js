@@ -20337,7 +20337,7 @@
       party.forEach((p, i) => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'btn btn-menu';
+        btn.className = 'btn btn-menu btn-target';
         btn.textContent = p.name + '  ' + p.hp + '/' + maxHp(p) + ' HP · ' + p.mp + ' MP';
         btn.disabled = p.hp <= 0;
         btn.addEventListener('click', () => executeAction(i));
@@ -20348,7 +20348,7 @@
         if (!e.alive) return;
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'btn btn-menu';
+        btn.className = 'btn btn-menu btn-target';
         btn.textContent = e.name + '  ' + e.hp + '/' + e.maxHp;
         btn.addEventListener('click', () => executeAction(i));
         targetButtons.appendChild(btn);
@@ -21124,8 +21124,15 @@
     }
     const held = $('#combat-held');
     if (held && spark) {
-      held.textContent = 'Held · Fire ' + spark.fire + ' · Water ' + spark.water + ' · Bolt ' + spark.lightning + ' · Earth ' + (spark.earth || 0)
+      const line = 'Held · Fire ' + spark.fire + ' · Water ' + spark.water + ' · Bolt ' + spark.lightning + ' · Earth ' + (spark.earth || 0)
         + (scarDebt > 0 ? ' · Scar ' + scarDebt + ' (−' + (scarDebt * SCAR_CUT) + ' HP, Mend keeps ' + (scarDebt * SCAR_MEND) + ')' : '');
+      function pip(kind, n) {
+        return '<span class="spark-track"><i class="spark-pip ' + kind + '" style="width:' + Math.max(0, Math.min(100, n * 22)) + '%"></i></span>';
+      }
+      held.innerHTML = '<span class="held-line"></span><span class="spark-bars" aria-hidden="true">'
+        + pip('fire', spark.fire) + pip('water', spark.water) + pip('bolt', spark.lightning) + pip('earth', spark.earth || 0)
+        + '</span>';
+      held.querySelector('.held-line').textContent = line;
     }
     paintTelegraphs();
   }

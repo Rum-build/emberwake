@@ -238,6 +238,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The ash nave pews keep wood grain, seat wear, and nail heads. The aisle keeps cracked flagstones, and the walls keep stone courses and plaster chips. The dust and the door stay. No new cue.
 - The leaf-village yard keeps wood planks and thatch eaves on the hut sides, worn dirt underfoot, and leaf clumps by the walls. The door, the fronts, and the path stones stay. No new cue.
 - The buried kiln chamber keeps brick courses on the walls, ash crust on the floor, a brick collar around the ember, and worn tools by the mouth. The swirl, the drink, and the door stay. No new cue.
+- The combat plates keep a rim and glow on the HP and MP bars, spark tracks under the held line, a framed turn banner, and a target bracket on the enemy card. Fight, Magic, Item, and Flee stay the same commands. No new cue.
 
 ## Play on your phone
 

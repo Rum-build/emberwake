@@ -1049,6 +1049,10 @@ The leaf-village yard now keeps wood planks and thatch eaves on the hut sides, w
 
 The buried kiln chamber now keeps brick courses on the walls, ash crust on the floor, a brick collar around the ember, and worn tools by the mouth. The swirl, the drink, and the cellar door stay where they were. No new cue.
 
+## Shipped in the combat plate pass
+
+The combat plates now keep a rim and glow on the HP and MP bars, spark tracks under the held line, a framed turn banner, and a target bracket on the enemy card. Fight, Magic, Item, and Flee stay the same commands. The stick and the pack stay. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
