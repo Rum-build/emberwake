@@ -224,6 +224,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The leaf-village roofs keep thatch strand grain, moss patches, ridge wear, and chimney soot. The door, the walls, and the well stay readable. No new cue.
 - Vesper’s silhouette keeps richer shadow cloth, rot-tinged accents, strands on the hair lock, a clearer dark face, and boot grain. She does not enter Aftermath. No new cue.
 - Nima’s party mesh keeps richer cloth folds, hair detail, a clearer face, and boot grain. Equipped herb rod and shawl still change the body. No new cue.
+- The bottle-hall shelves keep thicker glass, cork and seal grain, an ember-rot tint in each bottle, and worn shelf edges. The near corks and the walk stay readable. No new cue.
 
 ## Play on your phone
 

@@ -2239,17 +2239,7 @@
     hallShelf.position.set(-2.55, 0.9, -8.35);
     g.add(hallShelf);
     [0xff6a1a, 0x3ec6ff, 0xd2b4ff].forEach((color, i) => {
-      const bottle = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.055, 0.065, 0.3, 8),
-        new THREE.MeshPhongMaterial({
-          color: color,
-          emissive: new THREE.Color(color).multiplyScalar(0.22),
-          shininess: 72,
-          specular: new THREE.Color(0xfff6ea),
-        })
-      );
-      bottle.position.set(-2.55, 1.38, -8.05 - i * 0.28);
-      g.add(bottle);
+      addHallBottle(g, -2.55, 1.38, -8.05 - i * 0.28, color, i, { x: 1, z: 0 });
     });
     const hallSlate = new THREE.Mesh(
       new THREE.BoxGeometry(0.5, 0.34, 0.04),
@@ -2898,6 +2888,111 @@
     });
   }
 
+  function addHallBottle(g, x, y, z, color, i, face) {
+    const fx = face && face.x ? face.x : 0;
+    const fz = face && face.z ? face.z : 0;
+    const liquid = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.046, 0.058, 0.2, 8),
+      new THREE.MeshPhongMaterial({
+        color: color,
+        emissive: new THREE.Color(color).multiplyScalar(0.5),
+        shininess: 24,
+        specular: new THREE.Color(0xfff0d8),
+      })
+    );
+    liquid.position.set(x, y - 0.02, z);
+    g.add(liquid);
+    const glass = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.058, 0.074, 0.28, 10),
+      new THREE.MeshPhongMaterial({
+        color: 0xd8e4ee,
+        emissive: new THREE.Color(0x1a2830),
+        shininess: 96,
+        specular: new THREE.Color(0xffffff),
+        transparent: true,
+        opacity: 0.38,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+      })
+    );
+    glass.position.set(x, y, z);
+    glass.renderOrder = 2;
+    g.add(glass);
+    const shoulder = new THREE.Mesh(
+      new THREE.TorusGeometry(0.052, 0.016, 6, 10),
+      new THREE.MeshBasicMaterial({ color: 0xf4f8fc, fog: false })
+    );
+    shoulder.rotation.x = Math.PI / 2;
+    shoulder.position.set(x, y + 0.1, z);
+    g.add(shoulder);
+    const base = new THREE.Mesh(
+      new THREE.TorusGeometry(0.066, 0.016, 6, 10),
+      new THREE.MeshBasicMaterial({ color: 0xd8e4ee, fog: false })
+    );
+    base.rotation.x = Math.PI / 2;
+    base.position.set(x, y - 0.12, z);
+    g.add(base);
+    const neck = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.02, 0.034, 0.07, 6),
+      new THREE.MeshPhongMaterial({
+        color: 0xe8eef4,
+        shininess: 70,
+        specular: new THREE.Color(0xffffff),
+        transparent: true,
+        opacity: 0.55,
+        depthWrite: false,
+      })
+    );
+    neck.position.set(x, y + 0.16, z);
+    neck.renderOrder = 2;
+    g.add(neck);
+    const swirlCols = [0xff6a18, 0x6a1848, 0xffe0a0];
+    for (let s = 0; s < 3; s++) {
+      const chip = new THREE.Mesh(
+        new THREE.BoxGeometry(0.028, 0.078, 0.02),
+        new THREE.MeshBasicMaterial({ color: swirlCols[(i + s) % 3], fog: false })
+      );
+      const along = (s - 1) * 0.05;
+      chip.position.set(
+        x + fx * 0.09 + (fz ? along : 0),
+        y - 0.02 + (s - 1) * 0.05,
+        z + fz * 0.09 + (fx ? along : 0)
+      );
+      chip.rotation.z = fx ? (s - 1) * 0.55 : 0;
+      chip.rotation.x = fz ? (s - 1) * 0.55 : 0;
+      chip.renderOrder = 3;
+      g.add(chip);
+    }
+    const cork = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.036, 0.036, 0.058, 6),
+      new THREE.MeshBasicMaterial({ color: 0xf0d8a8, fog: false })
+    );
+    cork.position.set(x, y + 0.22, z);
+    g.add(cork);
+    [-0.012, 0.012].forEach((ox) => {
+      const grain = new THREE.Mesh(
+        new THREE.BoxGeometry(0.008, 0.052, 0.01),
+        new THREE.MeshBasicMaterial({ color: 0x4a2810, fog: false })
+      );
+      grain.position.set(x + ox + fx * 0.016, y + 0.22, z + fz * 0.02 + (fx ? 0.022 : 0));
+      g.add(grain);
+    });
+    const sealCol = i % 2 ? 0xc04040 : 0xffe08a;
+    const seal = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.044, 0.04, 0.02, 8),
+      new THREE.MeshBasicMaterial({ color: sealCol, fog: false })
+    );
+    seal.position.set(x, y + 0.258, z);
+    g.add(seal);
+    const glint = new THREE.Mesh(
+      new THREE.BoxGeometry(0.01, 0.11, 0.008),
+      new THREE.MeshBasicMaterial({ color: 0xfff8ee, fog: false })
+    );
+    glint.position.set(x + fx * 0.04 + 0.02, y + 0.02, z + fz * 0.04 + 0.016);
+    glint.renderOrder = 3;
+    g.add(glint);
+  }
+
   function dressHallShelves(g) {
     const timber = hallTimberMat();
     const iron = new THREE.MeshPhongMaterial({
@@ -2943,6 +3038,32 @@
       if (alongZ) lip.position.set(spec.x + spec.lip, spec.y + 0.032, spec.z);
       else lip.position.set(spec.x, spec.y + 0.032, spec.z + spec.lip);
       g.add(lip);
+      const faceSign = Math.sign(spec.lip) || 1;
+      const wear = new THREE.Mesh(
+        new THREE.BoxGeometry(alongZ ? 0.03 : spec.len * 0.9, 0.036, alongZ ? spec.len * 0.9 : 0.03),
+        new THREE.MeshBasicMaterial({ color: 0xe8d4b0, fog: false })
+      );
+      if (alongZ) wear.position.set(spec.x + spec.lip + faceSign * 0.026, spec.y + 0.02, spec.z);
+      else wear.position.set(spec.x, spec.y + 0.02, spec.z + spec.lip + faceSign * 0.026);
+      g.add(wear);
+      const groove = new THREE.Mesh(
+        new THREE.BoxGeometry(alongZ ? 0.012 : spec.len * 0.7, 0.01, alongZ ? spec.len * 0.7 : 0.012),
+        new THREE.MeshBasicMaterial({ color: 0x1a100c, fog: false })
+      );
+      if (alongZ) groove.position.set(spec.x + spec.lip + faceSign * 0.034, spec.y + 0.028, spec.z);
+      else groove.position.set(spec.x, spec.y + 0.028, spec.z + spec.lip + faceSign * 0.034);
+      g.add(groove);
+      [-0.32, 0.22].forEach((t, c) => {
+        const chip = new THREE.Mesh(
+          new THREE.BoxGeometry(alongZ ? 0.05 : 0.11, 0.02, alongZ ? 0.11 : 0.05),
+          new THREE.MeshBasicMaterial({ color: c ? 0xfff0d0 : 0xc4a070, fog: false })
+        );
+        const along = t * spec.len;
+        if (alongZ) chip.position.set(spec.x + spec.lip + faceSign * 0.03, spec.y + 0.05, spec.z + along);
+        else chip.position.set(spec.x + along, spec.y + 0.05, spec.z + spec.lip + faceSign * 0.03);
+        chip.rotation.y = c ? 0.35 : -0.2;
+        g.add(chip);
+      });
       for (let i = 0; i < 5; i++) {
         const speck = new THREE.Mesh(new THREE.SphereGeometry(0.01 + (i % 2) * 0.005, 4, 3), dust);
         const t = -spec.len * 0.38 + i * spec.len * 0.19;
@@ -2953,35 +3074,13 @@
       const n = spec.bottles || 0;
       for (let i = 0; i < n; i++) {
         const t = n === 1 ? 0 : -spec.len * 0.34 + i * (spec.len * 0.68 / (n - 1));
-        const bx = alongZ ? spec.x + spec.lip * 0.28 : spec.x + t;
-        const bz = alongZ ? spec.z + t : spec.z + spec.lip * 0.28;
+        const bx = alongZ ? spec.x + spec.lip * 0.5 : spec.x + t;
+        const bz = alongZ ? spec.z + t : spec.z + spec.lip * 0.5;
         const color = glassColors[i % glassColors.length];
-        const bottle = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.042, 0.052, 0.24, 8),
-          new THREE.MeshPhongMaterial({
-            color: color,
-            emissive: new THREE.Color(color).multiplyScalar(0.2),
-            shininess: 68,
-            specular: new THREE.Color(0xfff6ea),
-          })
-        );
-        bottle.position.set(bx, spec.y + 0.17, bz);
-        g.add(bottle);
-        const neck = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.016, 0.026, 0.06, 6),
-          new THREE.MeshPhongMaterial({ color: 0xe8eef4, shininess: 42, specular: new THREE.Color(0xffffff) })
-        );
-        neck.position.set(bx, spec.y + 0.31, bz);
-        g.add(neck);
-        const glint = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.09, 0.012), catchMat);
-        glint.position.set(bx + 0.018, spec.y + 0.19, bz + 0.016);
-        g.add(glint);
-        const cork = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.02, 0.02, 0.032, 5),
-          new THREE.MeshPhongMaterial({ color: 0xd7b56a, shininess: 8, specular: new THREE.Color(0xf4e2b0) })
-        );
-        cork.position.set(bx, spec.y + 0.35, bz);
-        g.add(cork);
+        const face = alongZ
+          ? { x: Math.sign(spec.lip) || 1, z: 0 }
+          : { x: 0, z: Math.sign(spec.lip) || 1 };
+        addHallBottle(g, bx, spec.y + 0.17, bz, color, i, face);
       }
     }
     shelfRun({ x: -2.42, y: 1.24, z: -8.35, len: 1.02, axis: 'z', depth: 0.34, back: -0.15, lip: 0.15, bottles: 0 });
