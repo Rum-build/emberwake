@@ -947,6 +947,7 @@
     beach.rotation.x = -Math.PI / 2;
     beach.position.y = 0.01;
     overworldGroup.add(beach);
+    dressIsleShore(overworldGroup);
     ringHills(overworldGroup, 31, 16, 0x1a4552);
 
     for (let i = 0; i < 22; i++) {
@@ -7692,6 +7693,7 @@
     dressRoostPad(g);
     dressCoastMist(g);
     dressCoastShore(g);
+    dressShelfLip(g);
     dressHarborWire(g);
     dressWirePost(g);
     dressWireApproach(g);
@@ -7736,6 +7738,125 @@
       streak.rotation.x = 0.15;
       g.add(streak);
     });
+  }
+
+  function dressIsleShore(g) {
+    const wet = new THREE.MeshBasicMaterial({ color: 0x5a4630, fog: false });
+    const sheen = new THREE.MeshBasicMaterial({
+      color: 0xb7d4e8, transparent: true, opacity: 0.82, depthWrite: false, fog: false,
+    });
+    const foam = new THREE.MeshBasicMaterial({ color: 0xf7fbff, fog: false, side: THREE.DoubleSide });
+    const foamDark = new THREE.MeshBasicMaterial({
+      color: 0xd5e4f0, transparent: true, opacity: 0.9, depthWrite: false, fog: false, side: THREE.DoubleSide,
+    });
+    const rock = new THREE.MeshBasicMaterial({ color: 0x4a453e, fog: false });
+    const rockPale = new THREE.MeshBasicMaterial({ color: 0xc8c0b0, fog: false });
+    const rockWet = new THREE.MeshBasicMaterial({ color: 0x1c3038, fog: false });
+    const ripple = new THREE.MeshBasicMaterial({ color: 0xe7f4ff, fog: false });
+    const depth = new THREE.MeshBasicMaterial({
+      color: 0x061018, transparent: true, opacity: 0.72, depthWrite: false, fog: false,
+    });
+    function lipHeight(x, z) {
+      const y = -z;
+      return Math.sin(x * 0.3) * Math.cos(y * 0.25) * 0.48
+        + Math.sin(x * 0.82 + 1.4) * Math.cos(y * 0.66) * 0.14;
+    }
+    [[-6.4, -29.2, 0.62], [-3.4, -29.35, 0.5], [-0.6, -29.15, 0.55], [2.2, -29.28, 0.42]].forEach((spot, i) => {
+      const y = lipHeight(spot[0], spot[1]) + 0.06;
+      const plate = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 8), i % 2 ? wet : sheen);
+      plate.rotation.x = -Math.PI / 2;
+      plate.position.set(spot[0], y, spot[1]);
+      g.add(plate);
+      const grain = new THREE.Mesh(new THREE.BoxGeometry(spot[2] * 1.15, 0.016, 0.04), rockPale);
+      grain.position.set(spot[0], y + 0.02, spot[1]);
+      grain.rotation.y = i * 0.45;
+      g.add(grain);
+    });
+    [[-5.6, -30.2], [-3.1, -30.35], [-0.4, -30.15], [2.4, -30.28], [4.6, -30.05]].forEach((spot, i) => {
+      const lip = new THREE.Mesh(new THREE.PlaneGeometry(i % 2 ? 1.05 : 0.78, 0.28), i % 3 === 0 ? foamDark : foam);
+      lip.rotation.x = -Math.PI / 2;
+      lip.rotation.z = (i - 2) * 0.16;
+      lip.position.set(spot[0], 0.08, spot[1]);
+      g.add(lip);
+      const bead = new THREE.Mesh(new THREE.SphereGeometry(0.055, 5, 4), foam);
+      bead.position.set(spot[0] + 0.16, 0.12, spot[1] + 0.08);
+      g.add(bead);
+    });
+    [[-5.8, -29.45], [-2.2, -29.55], [1.4, -29.35]].forEach((spot, i) => {
+      const outcrop = new THREE.Group();
+      const body = new THREE.Mesh(new THREE.DodecahedronGeometry(0.42, 0), i % 2 ? rock : rockWet);
+      body.scale.set(1.45, 0.62, 1.05);
+      body.position.y = 0.16;
+      outcrop.add(body);
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.05, 0.14), rockPale);
+      cap.position.set(0.06, 0.38, 0.02);
+      cap.rotation.y = i * 0.5;
+      outcrop.add(cap);
+      const tide = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.04, 0.12), sheen);
+      tide.position.set(0, 0.08, 0.22);
+      outcrop.add(tide);
+      outcrop.position.set(spot[0], lipHeight(spot[0], spot[1]), spot[1]);
+      outcrop.rotation.y = i * 0.6;
+      g.add(outcrop);
+    });
+    [[-4.8, -31.15], [-2.2, -31.35], [0.6, -31.2], [3.2, -31.05]].forEach((spot, i) => {
+      const line = new THREE.Mesh(new THREE.BoxGeometry(i % 2 ? 1.45 : 1.05, 0.02, 0.08), ripple);
+      line.position.set(spot[0], 0.04, spot[1]);
+      line.rotation.y = (i - 1) * 0.14;
+      g.add(line);
+    });
+    [[-3.6, -31.7, 0.85], [1.2, -31.55, 0.7], [3.8, -31.35, 0.5]].forEach((spot) => {
+      const wash = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 8), depth);
+      wash.rotation.x = -Math.PI / 2;
+      wash.position.set(spot[0], 0.02, spot[1]);
+      g.add(wash);
+    });
+  }
+
+  function dressShelfLip(g) {
+    const wet = new THREE.MeshBasicMaterial({ color: 0x5a4630, fog: false });
+    const sheen = new THREE.MeshBasicMaterial({
+      color: 0xb7d4e8, transparent: true, opacity: 0.82, depthWrite: false, fog: false,
+    });
+    const foam = new THREE.MeshBasicMaterial({ color: 0xf7fbff, fog: false, side: THREE.DoubleSide });
+    const rock = new THREE.MeshBasicMaterial({ color: 0x4a453e, fog: false });
+    const rockPale = new THREE.MeshBasicMaterial({ color: 0xc8c0b0, fog: false });
+    const ripple = new THREE.MeshBasicMaterial({ color: 0xe7f4ff, fog: false });
+    const depth = new THREE.MeshBasicMaterial({
+      color: 0x061018, transparent: true, opacity: 0.72, depthWrite: false, fog: false,
+    });
+    [[-8.4, 10.4, 0.48], [-7.2, 10.8, 0.36], [-9.1, 10.1, 0.32]].forEach((spot, i) => {
+      const plate = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 8), i % 2 ? wet : sheen);
+      plate.rotation.x = -Math.PI / 2;
+      plate.position.set(spot[0], 0.06, spot[1]);
+      g.add(plate);
+    });
+    [[-8.8, 11.55], [-7.6, 11.7], [-9.4, 11.35]].forEach((spot, i) => {
+      const lip = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.18), foam);
+      lip.rotation.x = -Math.PI / 2;
+      lip.rotation.z = (i - 1) * 0.2;
+      lip.position.set(spot[0], 0.07, spot[1]);
+      g.add(lip);
+    });
+    [[-9.6, 10.2], [-7.8, 9.6]].forEach((spot, i) => {
+      const body = new THREE.Mesh(new THREE.DodecahedronGeometry(0.26, 0), rock);
+      body.scale.set(1.3, 0.5, 0.85);
+      body.position.set(spot[0], 0.12, spot[1]);
+      g.add(body);
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.035, 0.08), rockPale);
+      cap.position.set(spot[0] + 0.04, 0.24, spot[1]);
+      g.add(cap);
+    });
+    [[-8.2, 12.6], [-9.0, 12.9], [-7.4, 13.1]].forEach((spot, i) => {
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.015, 0.05), ripple);
+      line.position.set(spot[0], -0.05, spot[1]);
+      line.rotation.y = i * 0.15;
+      g.add(line);
+    });
+    const wash = new THREE.Mesh(new THREE.CircleGeometry(0.55, 8), depth);
+    wash.rotation.x = -Math.PI / 2;
+    wash.position.set(-8.4, -0.04, 12.85);
+    g.add(wash);
   }
 
   function dressCoastShore(g) {
