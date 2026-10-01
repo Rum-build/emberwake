@@ -1053,6 +1053,10 @@ The buried kiln chamber now keeps brick courses on the walls, ash crust on the f
 
 The combat plates now keep a rim and glow on the HP and MP bars, spark tracks under the held line, a framed turn banner, and a target bracket on the enemy card. Fight, Magic, Item, and Flee stay the same commands. The stick and the pack stay. No new cue.
 
+## Shipped in the shore lip pass
+
+The isle south shore now keeps wet sand, a foam lip, rock outcrops, and ripple on the near water. The west shelf lip keeps the same. The pier water, the buoys, and the shale foam stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

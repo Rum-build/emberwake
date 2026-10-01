@@ -239,6 +239,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The leaf-village yard keeps wood planks and thatch eaves on the hut sides, worn dirt underfoot, and leaf clumps by the walls. The door, the fronts, and the path stones stay. No new cue.
 - The buried kiln chamber keeps brick courses on the walls, ash crust on the floor, a brick collar around the ember, and worn tools by the mouth. The swirl, the drink, and the door stay. No new cue.
 - The combat plates keep a rim and glow on the HP and MP bars, spark tracks under the held line, a framed turn banner, and a target bracket on the enemy card. Fight, Magic, Item, and Flee stay the same commands. No new cue.
+- The isle south shore keeps wet sand, a foam lip, rock outcrops, and ripple on the near water. The west shelf lip keeps the same. The pier water and the shale foam stay. No new cue.
 
 ## Play on your phone
 
