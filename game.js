@@ -1725,12 +1725,8 @@
     const brickAlt = new THREE.MeshPhongMaterial({
       color: 0x4e3028, shininess: 6, specular: new THREE.Color(0x9a7868),
     });
-    const mortar = new THREE.MeshPhongMaterial({
-      color: 0xd2c2ae, shininess: 4, specular: new THREE.Color(0xf6eee4),
-    });
-    const dampWall = new THREE.MeshPhongMaterial({
-      color: 0x1e2c34, shininess: 22, specular: new THREE.Color(0x9ab4c4),
-    });
+    const mortar = new THREE.MeshBasicMaterial({ color: 0xe4d4c0, fog: false });
+    const dampWall = new THREE.MeshBasicMaterial({ color: 0x3a5a68, fog: false });
     const timber = new THREE.MeshPhongMaterial({
       color: 0x6a4428, shininess: 16, specular: new THREE.Color(0xe8c8a0),
     });
@@ -1770,14 +1766,17 @@
           );
           bit.position.set(xFace, y, z);
           g.add(bit);
+          const joint = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.14, 0.028), mortar);
+          joint.position.set(xFace - sign * 0.07, y, z + 0.17);
+          g.add(joint);
           if ((i + row) % 4 === 1) {
             const pit = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.04, 0.08), darkGrain);
-            pit.position.set(xFace - sign * 0.06, y, z + 0.06);
+            pit.position.set(xFace - sign * 0.08, y, z + 0.04);
             g.add(pit);
           }
         }
-        const bed = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.03, 4.85), mortar);
-        bed.position.set(xFace + sign * 0.04, y - 0.085, -13.75);
+        const bed = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.028, 4.85), mortar);
+        bed.position.set(xFace - sign * 0.06, y - 0.085, -13.75);
         g.add(bed);
       }
       const stain = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.62, 1.25), dampWall);
