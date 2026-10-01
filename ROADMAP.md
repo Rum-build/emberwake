@@ -1059,6 +1059,8 @@ The isle south shore now keeps wet sand, a foam lip, rock outcrops, and ripple o
 
 Pack rows, equipment slots, and the spark plate are rimmed parchment panels with an ember left edge, in the same family as the Places cards. Equip, stow, and use still write the same bag.
 
+Lira’s host now keeps a waist belt, gathered folds, a thigh drape, bangs, a side lock, under-eye planes, laced boots, and a side leather panel. The quilted jerkin keeps a hem binding when it is worn. Equip and stow still change the mesh. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

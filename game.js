@@ -11075,6 +11075,122 @@
     );
     shade.position.set(0, 1.128 * scale, 0.2 * scale);
     g.add(shade);
+    const clothDeep = new THREE.MeshPhongMaterial({
+      color: 0x4a2014, emissive: new THREE.Color(0x1a0c08), shininess: 8, specular: new THREE.Color(0xc48a60),
+    });
+    const clothLift = new THREE.MeshPhongMaterial({
+      color: 0xf2c09a, emissive: new THREE.Color(0x6a3018), shininess: 18, specular: new THREE.Color(0xfff0e0),
+    });
+    const beltMat = new THREE.MeshPhongMaterial({
+      color: 0x3a2418, emissive: new THREE.Color(0x140c08), shininess: 22, specular: new THREE.Color(0xe8c8a0),
+    });
+    const buckleMat = new THREE.MeshPhongMaterial({
+      color: 0xd8dee8, emissive: new THREE.Color(0x2a3038), shininess: 80, specular: new THREE.Color(0xffffff),
+    });
+    const belt = new THREE.Mesh(new THREE.BoxGeometry(0.42 * scale, 0.045 * scale, 0.16 * scale), beltMat);
+    belt.position.set(0, 0.42 * scale, 0.16 * scale);
+    g.add(belt);
+    const buckle = new THREE.Mesh(new THREE.BoxGeometry(0.07 * scale, 0.05 * scale, 0.02 * scale), buckleMat);
+    buckle.position.set(0, 0.42 * scale, 0.25 * scale);
+    g.add(buckle);
+    const tongue = new THREE.Mesh(new THREE.BoxGeometry(0.028 * scale, 0.02 * scale, 0.012 * scale), clothDeep);
+    tongue.position.set(0, 0.42 * scale, 0.264 * scale);
+    g.add(tongue);
+    [[-0.12, 0.2], [0.1, -0.24]].forEach((spot) => {
+      const gather = new THREE.Mesh(new THREE.BoxGeometry(0.07 * scale, 0.16 * scale, 0.04 * scale), clothLift);
+      gather.position.set(spot[0] * scale, 0.32 * scale, 0.2 * scale);
+      gather.rotation.z = spot[1];
+      g.add(gather);
+      const crease = new THREE.Mesh(new THREE.BoxGeometry(0.028 * scale, 0.14 * scale, 0.018 * scale), clothDeep);
+      crease.position.set((spot[0] + 0.045) * scale, 0.31 * scale, 0.222 * scale);
+      crease.rotation.z = spot[1];
+      g.add(crease);
+    });
+    const thigh = new THREE.Mesh(new THREE.BoxGeometry(0.1 * scale, 0.22 * scale, 0.05 * scale), clothDeep);
+    thigh.position.set(0.2 * scale, 0.2 * scale, 0.1 * scale);
+    thigh.rotation.z = 0.18;
+    g.add(thigh);
+    const thighRidge = new THREE.Mesh(new THREE.BoxGeometry(0.024 * scale, 0.18 * scale, 0.018 * scale), clothLift);
+    thighRidge.position.set(0.24 * scale, 0.2 * scale, 0.13 * scale);
+    thighRidge.rotation.z = 0.22;
+    g.add(thighRidge);
+    const collar = new THREE.Mesh(new THREE.BoxGeometry(0.2 * scale, 0.055 * scale, 0.07 * scale), clothLift);
+    collar.position.set(0, 1.0 * scale, 0.15 * scale);
+    g.add(collar);
+    const collarShade = new THREE.Mesh(new THREE.BoxGeometry(0.14 * scale, 0.018 * scale, 0.016 * scale), clothDeep);
+    collarShade.position.set(0, 0.978 * scale, 0.186 * scale);
+    g.add(collarShade);
+    const bangMat = new THREE.MeshPhongMaterial({
+      color: 0x1a100c, emissive: new THREE.Color(0x080402), shininess: 48, specular: new THREE.Color(0xffe8d0),
+    });
+    [[-0.08, 0.16], [-0.02, -0.06], [0.045, 0.12], [0.1, -0.2]].forEach((spot) => {
+      const bang = new THREE.Mesh(new THREE.CylinderGeometry(0.012 * scale, 0.006 * scale, 0.1 * scale, 5), bangMat);
+      bang.position.set(spot[0] * scale, 1.2 * scale, 0.2 * scale);
+      bang.rotation.z = spot[1];
+      bang.rotation.x = 0.55;
+      g.add(bang);
+    });
+    const lock = new THREE.Mesh(new THREE.CylinderGeometry(0.018 * scale, 0.008 * scale, 0.42 * scale, 6), bangMat);
+    lock.position.set(-0.24 * scale, 0.92 * scale, 0.1 * scale);
+    lock.rotation.z = 0.12;
+    g.add(lock);
+    const lockTip = new THREE.Mesh(new THREE.SphereGeometry(0.016 * scale, 6, 5), tipMat);
+    lockTip.position.set(-0.27 * scale, 0.7 * scale, 0.12 * scale);
+    g.add(lockTip);
+    const socketMat = new THREE.MeshBasicMaterial({ color: 0x6a4034, fog: false });
+    [-1, 1].forEach((side) => {
+      const under = new THREE.Mesh(new THREE.BoxGeometry(0.05 * scale, 0.012 * scale, 0.012 * scale), socketMat);
+      under.position.set(side * 0.07 * scale, 1.085 * scale, 0.208 * scale);
+      under.rotation.z = side * 0.12;
+      g.add(under);
+      const temple = new THREE.Mesh(new THREE.BoxGeometry(0.028 * scale, 0.05 * scale, 0.02 * scale), skin);
+      temple.position.set(side * 0.15 * scale, 1.12 * scale, 0.1 * scale);
+      temple.rotation.y = side * 0.6;
+      g.add(temple);
+    });
+    const philtrum = new THREE.Mesh(new THREE.BoxGeometry(0.016 * scale, 0.028 * scale, 0.012 * scale), skin);
+    philtrum.position.set(0, 1.02 * scale, 0.212 * scale);
+    g.add(philtrum);
+    const chin = new THREE.Mesh(
+      new THREE.BoxGeometry(0.05 * scale, 0.018 * scale, 0.016 * scale),
+      new THREE.MeshPhongMaterial({
+        color: 0xe8b090, emissive: new THREE.Color(0x5a3020), shininess: 16, specular: new THREE.Color(0xffe0d0),
+      })
+    );
+    chin.position.set(0, 0.948 * scale, 0.178 * scale);
+    g.add(chin);
+    const lace = new THREE.MeshPhongMaterial({
+      color: 0xc4b49a, emissive: new THREE.Color(0x3a2c18), shininess: 12, specular: new THREE.Color(0xfff0d8),
+    });
+    const heelMat = new THREE.MeshPhongMaterial({
+      color: 0x1a100c, emissive: new THREE.Color(0x080402), shininess: 20, specular: new THREE.Color(0x8a7060),
+    });
+    [-0.11, 0.11].forEach((x) => {
+      [0.045, 0.072].forEach((y, i) => {
+        const cross = new THREE.Mesh(new THREE.BoxGeometry(0.09 * scale, 0.01 * scale, 0.012 * scale), lace);
+        cross.position.set(x * scale, y * scale, 0.125 * scale);
+        cross.rotation.z = i ? -0.5 : 0.5;
+        g.add(cross);
+      });
+      const heel = new THREE.Mesh(new THREE.BoxGeometry(0.08 * scale, 0.028 * scale, 0.04 * scale), heelMat);
+      heel.position.set(x * scale, 0.02 * scale, -0.045 * scale);
+      g.add(heel);
+      const cuff = new THREE.Mesh(new THREE.TorusGeometry(0.068 * scale, 0.011 * scale, 5, 8), beltMat);
+      cuff.position.set(x * scale, 0.1 * scale, 0.02 * scale);
+      cuff.rotation.x = Math.PI / 2;
+      g.add(cuff);
+    });
+    const hide = new THREE.MeshPhongMaterial({
+      color: 0x6a4030, emissive: new THREE.Color(0x24140c), shininess: 14, specular: new THREE.Color(0xe8c8a0),
+    });
+    const sidePanel = new THREE.Mesh(new THREE.BoxGeometry(0.05 * scale, 0.2 * scale, 0.06 * scale), hide);
+    sidePanel.position.set(0.32 * scale, 0.55 * scale, 0.02 * scale);
+    g.add(sidePanel);
+    [0.5, 0.58].forEach((y) => {
+      const stitchRow = new THREE.Mesh(new THREE.BoxGeometry(0.042 * scale, 0.008 * scale, 0.01 * scale), stitch);
+      stitchRow.position.set(0.346 * scale, y * scale, 0.05 * scale);
+      g.add(stitchRow);
+    });
   }
 
   function dressNimaHost(g, scale, skin) {
@@ -11518,6 +11634,10 @@
         });
       });
       put(gear, new THREE.BoxGeometry(0.26 * s, 0.01 * s, 0.012 * s), stitch, 0, 0.9 * s, 0.258 * s);
+      const bind = phong(0x5a3828, 0x1a100c, 12, 0xd4b090);
+      put(gear, new THREE.BoxGeometry(0.5 * s, 0.022 * s, 0.04 * s), bind, 0, 0.45 * s, 0.3 * s);
+      put(gear, new THREE.BoxGeometry(0.16 * s, 0.018 * s, 0.08 * s), bind, -0.42 * s, 0.84 * s, 0.1 * s);
+      put(gear, new THREE.BoxGeometry(0.16 * s, 0.018 * s, 0.08 * s), bind, 0.42 * s, 0.84 * s, 0.1 * s);
     }
     if (cloak === 'road-cloak') {
       const wool = phong(0x3a4a62, 0x101820, 10, 0xd0e0ee);

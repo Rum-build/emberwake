@@ -243,6 +243,8 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 
 The pack’s item rows, equipment slot lines, and party plates use the same parchment rim and ember left edge as the Places cards. The Close control still spans the phone panel, and the stick stays hidden while the pack is open.
 
+Lira’s host keeps a waist belt with two gathered folds, a thigh drape, a collar, bangs and a side lock, under-eye planes, a philtrum and a chin, laced boots with heels, and a side leather panel. The quilted jerkin, when worn, adds a hem binding and shoulder seams. Stow still thins that silhouette. No new cue.
+
 ## Play on your phone
 
 Open **https://rum-build.github.io/emberwake/** in Safari or Chrome. Use the on-screen MOVE stick, Pack, and Absorb.
