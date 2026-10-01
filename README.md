@@ -235,6 +235,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The counting room keeps fluted columns, cracked flagstones, plaster chips, and a warm rim on the lamp niches. The vault door stays. No new cue.
 - The root-cellar crawl keeps brick and mortar on the walls, damp stains, worn crate planks, ash on the floor, and grain on the low beams. The cellar door stays. No new cue.
 - The scar farm plot keeps turned furrows, soil clods, a short fence with wood grain, and sick crop along the rows. The marker, the smoke, and the drink stay. No new cue.
+- The ash nave pews keep wood grain, seat wear, and nail heads. The aisle keeps cracked flagstones, and the walls keep stone courses and plaster chips. The dust and the door stay. No new cue.
 
 ## Play on your phone
 

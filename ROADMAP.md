@@ -1037,6 +1037,10 @@ The root-cellar crawl now keeps brick and mortar on the walls, damp stains, worn
 
 The scar farm plot now keeps turned furrows, soil clods, a short fence with wood grain, and sick crop along the rows. The marker, the smoke, the blister, and the walk stay where they were. No new cue.
 
+## Shipped in the nave hall pass
+
+The ash nave now keeps wood grain, seat wear, and nail heads on the pews, cracked flagstones in the aisle, and stone courses with plaster chips on the walls. The dust, the door, and the walk stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
