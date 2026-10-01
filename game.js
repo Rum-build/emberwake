@@ -1318,6 +1318,7 @@
       g.add(bar);
     });
     dressCellarCrawl(g);
+    dressCellarHold(g);
     dressKilnHeat(g);
     dressKilnGrain(g);
     dressKilnMouth(g);
@@ -1715,6 +1716,175 @@
     const light = new THREE.PointLight(0xc5d6ee, 0.6, 4.6);
     light.position.set(0.72, 1.42, -10.28);
     g.add(light);
+  }
+
+  function dressCellarHold(g) {
+    const brick = new THREE.MeshPhongMaterial({
+      color: 0x7a4638, shininess: 8, specular: new THREE.Color(0xc8a090),
+    });
+    const brickAlt = new THREE.MeshPhongMaterial({
+      color: 0x4e3028, shininess: 6, specular: new THREE.Color(0x9a7868),
+    });
+    const mortar = new THREE.MeshPhongMaterial({
+      color: 0xd2c2ae, shininess: 4, specular: new THREE.Color(0xf6eee4),
+    });
+    const dampWall = new THREE.MeshPhongMaterial({
+      color: 0x1e2c34, shininess: 22, specular: new THREE.Color(0x9ab4c4),
+    });
+    const timber = new THREE.MeshPhongMaterial({
+      color: 0x6a4428, shininess: 16, specular: new THREE.Color(0xe8c8a0),
+    });
+    const timberPale = new THREE.MeshPhongMaterial({
+      color: 0x8a5a34, shininess: 18, specular: new THREE.Color(0xf4d8b0),
+    });
+    const darkGrain = new THREE.MeshPhongMaterial({
+      color: 0x24140c, shininess: 4, specular: new THREE.Color(0x6a4030),
+    });
+    const grain = new THREE.MeshBasicMaterial({ color: 0xf2d6a8, fog: false });
+    const iron = new THREE.MeshPhongMaterial({
+      color: 0x3a3834, shininess: 42, specular: new THREE.Color(0xd0ccc4),
+    });
+    const wear = new THREE.MeshPhongMaterial({
+      color: 0x3a2818, shininess: 6, specular: new THREE.Color(0x8a6848),
+    });
+    const ash = new THREE.MeshPhongMaterial({
+      color: 0x2a221c, shininess: 5, specular: new THREE.Color(0x6a5848),
+    });
+    const paleAsh = new THREE.MeshPhongMaterial({
+      color: 0xc8b4a0, shininess: 8, specular: new THREE.Color(0xf4eadc),
+    });
+    const dampFloor = new THREE.MeshBasicMaterial({
+      color: 0x142028, transparent: true, opacity: 0.62, depthWrite: false, fog: false,
+    });
+    function wallCourses(sign) {
+      const xFace = sign * 2.92;
+      for (let row = 0; row < 7; row++) {
+        const y = 0.24 + row * 0.2;
+        const shift = (row % 2) * 0.18;
+        for (let i = 0; i < 12; i++) {
+          const z = -16.2 + i * 0.42 + shift;
+          if (z > -11.4 || z < -16.35) continue;
+          const bit = new THREE.Mesh(
+            new THREE.BoxGeometry(0.14, 0.13, 0.34),
+            (i + row) % 3 === 0 ? brickAlt : brick
+          );
+          bit.position.set(xFace, y, z);
+          g.add(bit);
+          if ((i + row) % 4 === 1) {
+            const pit = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.04, 0.08), darkGrain);
+            pit.position.set(xFace - sign * 0.06, y, z + 0.06);
+            g.add(pit);
+          }
+        }
+        const bed = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.03, 4.85), mortar);
+        bed.position.set(xFace + sign * 0.04, y - 0.085, -13.75);
+        g.add(bed);
+      }
+      const stain = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.62, 1.25), dampWall);
+      stain.position.set(xFace - sign * 0.02, 0.48, sign < 0 ? -13.15 : -14.55);
+      g.add(stain);
+      const drip = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.95, 0.09), dampWall);
+      drip.position.set(xFace - sign * 0.025, 0.78, sign < 0 ? -12.62 : -15.05);
+      g.add(drip);
+    }
+    wallCourses(-1);
+    wallCourses(1);
+    function crateStack(x, z, rot) {
+      const group = new THREE.Group();
+      [0, 1].forEach((level) => {
+        const y = 0.22 + level * 0.42;
+        const body = new THREE.Mesh(
+          new THREE.BoxGeometry(0.7, 0.38, 0.54),
+          level ? timberPale : timber
+        );
+        body.position.y = y;
+        body.castShadow = true;
+        group.add(body);
+        [-0.11, 0.02, 0.14].forEach((oy) => {
+          const gap = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.016, 0.012), darkGrain);
+          gap.position.set(0, y + oy, 0.276);
+          group.add(gap);
+        });
+        [-0.18, 0.18].forEach((gx) => {
+          const line = new THREE.Mesh(new THREE.BoxGeometry(0.014, 0.3, 0.012), grain);
+          line.position.set(gx, y, 0.282);
+          group.add(line);
+        });
+        [[-0.24, 0.1], [0.22, -0.08], [0.06, 0.12]].forEach((nail) => {
+          const head = new THREE.Mesh(new THREE.SphereGeometry(0.02, 5, 4), iron);
+          head.position.set(nail[0], y + nail[1], 0.288);
+          group.add(head);
+        });
+        const chip = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.045, 0.03), wear);
+        chip.position.set(level ? -0.26 : 0.24, y + 0.15, 0.278);
+        group.add(chip);
+      });
+      const scuff = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.55, 0.32), darkGrain);
+      scuff.position.set(-0.36, 0.5, 0.02);
+      group.add(scuff);
+      group.position.set(x, 0, z);
+      group.rotation.y = rot;
+      g.add(group);
+    }
+    crateStack(-2.32, -13.5, 0.12);
+    crateStack(2.26, -14.95, -0.08);
+    crateStack(-2.18, -15.2, 0.2);
+    function beam(z) {
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(5.35, 0.16, 0.22), timber);
+      bar.position.set(0, 1.78, z);
+      bar.castShadow = true;
+      g.add(bar);
+      [-1.6, -0.4, 0.7, 1.8].forEach((x, i) => {
+        const line = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.02, 0.03), i % 2 ? grain : darkGrain);
+        line.position.set(x, 1.87, z + (i % 2 ? 0.04 : -0.04));
+        g.add(line);
+      });
+      const knot = new THREE.Mesh(new THREE.SphereGeometry(0.045, 6, 4), darkGrain);
+      knot.position.set(0.35, 1.86, z);
+      g.add(knot);
+      [-2.42, 2.42].forEach((x) => {
+        const post = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 1.55, 6), timberPale);
+        post.position.set(x, 0.95, z);
+        g.add(post);
+        const streak = new THREE.Mesh(new THREE.BoxGeometry(0.02, 1.15, 0.03), grain);
+        streak.position.set(x + (x < 0 ? 0.06 : -0.06), 0.95, z);
+        g.add(streak);
+      });
+    }
+    beam(-12.85);
+    beam(-15.35);
+    function ashPlate(x, z, rot) {
+      const group = new THREE.Group();
+      const slab = new THREE.Mesh(new THREE.CircleGeometry(0.42, 7), ash);
+      slab.rotation.x = -Math.PI / 2;
+      slab.position.y = 0.055;
+      group.add(slab);
+      const cap = new THREE.Mesh(new THREE.CircleGeometry(0.16, 5), paleAsh);
+      cap.rotation.x = -Math.PI / 2;
+      cap.position.set(0.1, 0.064, -0.04);
+      group.add(cap);
+      const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.04, 0), paleAsh);
+      chip.position.set(-0.18, 0.07, 0.08);
+      chip.scale.y = 0.35;
+      group.add(chip);
+      group.position.set(x, 0, z);
+      group.rotation.y = rot;
+      g.add(group);
+    }
+    [[0.15, -13.35, 0.2], [-0.4, -14.15, -0.15], [0.45, -14.85, 0.3], [-0.1, -15.55, 0.05]].forEach((spot) => {
+      ashPlate(spot[0], spot[1], spot[2]);
+    });
+    [[0.05, -13.7, 0.7], [0.2, -14.6, 0.55], [-0.25, -15.15, 0.42]].forEach((spot) => {
+      const stain = new THREE.Mesh(new THREE.CircleGeometry(spot[2], 8), dampFloor);
+      stain.rotation.x = -Math.PI / 2;
+      stain.position.set(spot[0], 0.05, spot[1]);
+      g.add(stain);
+    });
+    [[0.55, -13.1], [-0.65, -13.85], [0.15, -15.75]].forEach((spot) => {
+      const grit = new THREE.Mesh(new THREE.SphereGeometry(0.035, 4, 3), paleAsh);
+      grit.position.set(spot[0], 0.07, spot[1]);
+      g.add(grit);
+    });
   }
 
   function dressKilnHeat(g) {
