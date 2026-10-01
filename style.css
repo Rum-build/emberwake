@@ -1267,6 +1267,10 @@ body:not(.still-motion) .btn-absorb.is-ready {
   display: flex;
   flex-direction: column;
   box-shadow:
+    inset 14px 14px 0 -11px rgba(255, 224, 170, 0.92),
+    inset -14px 14px 0 -11px rgba(255, 224, 170, 0.92),
+    inset 14px -14px 0 -11px rgba(255, 186, 110, 0.55),
+    inset -14px -14px 0 -11px rgba(255, 186, 110, 0.55),
     inset 0 1px 0 rgba(255, 236, 214, 0.58),
     inset 0 0 0 1px rgba(120, 58, 22, 0.62),
     inset 0 0 36px rgba(255, 120, 48, 0.14),
@@ -1281,7 +1285,11 @@ body:not(.still-motion) .btn-absorb.is-ready {
   gap: 12px;
   align-items: flex-start;
   padding: max(14px, env(safe-area-inset-top)) 14px 10px;
-  border-bottom: 1px solid rgba(212, 176, 112, 0.55);
+  border-bottom: 1px solid rgba(255, 196, 120, 0.62);
+  background:
+    linear-gradient(180deg, rgba(255, 220, 170, 0.16), transparent 78%),
+    linear-gradient(180deg, #3c2a1e 0%, #241810 100%);
+  box-shadow: inset 0 -1px 0 rgba(90, 42, 18, 0.7);
 }
 
 .inv-header h2 {
@@ -1333,14 +1341,34 @@ body:not(.still-motion) .btn-absorb.is-ready {
 }
 
 .inv-card, .equip-card {
+  position: relative;
   background:
-    linear-gradient(180deg, rgba(255, 228, 196, 0.14), rgba(48, 28, 16, 0.42));
-  border: 2px solid rgba(255, 196, 130, 0.82);
-  border-radius: 8px;
-  padding: 8px 10px;
+    radial-gradient(120% 90% at 0% 0%, rgba(255, 214, 160, 0.2), transparent 48%),
+    linear-gradient(180deg, rgba(255, 228, 196, 0.16), transparent 42%),
+    linear-gradient(168deg, #4a3224 0%, #2a1a12 58%, #140e0c 100%);
+  border: 1px solid rgba(176, 112, 64, 0.72);
+  border-top-color: rgba(255, 220, 176, 0.88);
+  border-left-color: rgba(255, 196, 130, 0.78);
+  border-right-color: rgba(110, 62, 32, 0.82);
+  border-bottom-color: rgba(42, 20, 12, 0.96);
+  border-radius: 11px;
+  padding: 8px 10px 8px 12px;
   box-shadow:
-    inset 0 1px 0 rgba(255, 236, 214, 0.32),
-    0 6px 14px rgba(0, 0, 0, 0.32);
+    inset 0 1px 0 rgba(255, 236, 214, 0.45),
+    inset 3px 0 0 #e07838,
+    inset 0 -2px 0 rgba(28, 14, 8, 0.55),
+    0 8px 16px rgba(0, 0, 0, 0.32);
+}
+.inv-card::after, .equip-card::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 9px;
+  height: 9px;
+  border-top: 1px solid rgba(255, 220, 170, 0.75);
+  border-right: 1px solid rgba(255, 220, 170, 0.75);
+  pointer-events: none;
 }
 
 .inv-card .name, .equip-card .who {
@@ -1360,6 +1388,15 @@ body:not(.still-motion) .btn-absorb.is-ready {
   justify-content: space-between;
   gap: 8px;
   align-items: center;
+}
+.equip-card .line {
+  margin-top: 5px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  background: rgba(12, 8, 6, 0.42);
+  border: 1px solid rgba(255, 196, 130, 0.38);
+  border-top-color: rgba(255, 220, 176, 0.55);
+  box-shadow: inset 0 1px 0 rgba(255, 236, 214, 0.12);
 }
 
 .inv-card .stack {
@@ -1390,10 +1427,24 @@ body.pack-open .places-panel {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 2px 8px;
-  background: rgba(20, 28, 48, 0.65);
-  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 228, 196, 0.1), transparent 50%),
+    rgba(28, 18, 12, 0.72);
+  border-radius: 10px;
   padding: 6px 8px;
-  border: 1px solid rgba(120, 150, 190, 0.2);
+  border: 1px solid rgba(176, 112, 64, 0.55);
+  border-top-color: rgba(255, 220, 176, 0.7);
+  box-shadow: inset 3px 0 0 rgba(224, 120, 56, 0.85);
+}
+.inv-stats {
+  padding: 10px 12px 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(176, 112, 64, 0.62);
+  border-top-color: rgba(255, 220, 176, 0.78);
+  background:
+    linear-gradient(180deg, rgba(255, 214, 160, 0.12), transparent 36%),
+    rgba(22, 14, 10, 0.55);
+  box-shadow: inset 0 1px 0 rgba(255, 236, 214, 0.28);
 }
 
 .party-mini .role {
@@ -2242,6 +2293,7 @@ body.pack-open .places-panel {
     align-items: stretch;
     gap: 10px;
     background:
+      linear-gradient(180deg, rgba(255, 220, 170, 0.14), transparent 72%),
       linear-gradient(180deg, #3c2a1e 0%, #241810 100%);
     padding-bottom: 12px;
   }
@@ -2259,13 +2311,15 @@ body.pack-open .places-panel {
     color: #1a100c;
     box-shadow: none;
   }
-  .inv-card, .equip-card { border-radius: 10px; padding: 12px 12px 12px 14px; }
-  .inv-card {
-    border-left: 4px solid rgba(255, 176, 103, 0.95);
+  .inv-card, .equip-card { border-radius: 12px; padding: 12px 12px 12px 14px; }
+  .inv-card, .equip-card {
     background:
-      linear-gradient(180deg, rgba(255, 214, 160, 0.16), rgba(48, 28, 16, 0.5));
+      radial-gradient(120% 80% at 0% 0%, rgba(255, 214, 160, 0.22), transparent 46%),
+      linear-gradient(180deg, rgba(255, 228, 196, 0.16), transparent 40%),
+      linear-gradient(168deg, #4a3224 0%, #2a1a12 58%, #140e0c 100%);
     box-shadow:
-      inset 0 1px 0 rgba(255, 236, 214, 0.32),
+      inset 0 1px 0 rgba(255, 236, 214, 0.42),
+      inset 4px 0 0 #e07838,
       0 6px 14px rgba(0, 0, 0, 0.32);
   }
   .inv-card .name { font-size: 1.05rem; flex: 1 1 9rem; }
