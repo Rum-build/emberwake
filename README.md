@@ -241,6 +241,8 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The combat plates keep a rim and glow on the HP and MP bars, spark tracks under the held line, a framed turn banner, and a target bracket on the enemy card. Fight, Magic, Item, and Flee stay the same commands. No new cue.
 - The isle south shore keeps wet sand, a foam lip, rock outcrops, and ripple on the near water. The west shelf lip keeps the same. The pier water and the shale foam stay. No new cue.
 
+The pack’s item rows, equipment slot lines, and party plates use the same parchment rim and ember left edge as the Places cards. The Close control still spans the phone panel, and the stick stays hidden while the pack is open.
+
 ## Play on your phone
 
 Open **https://rum-build.github.io/emberwake/** in Safari or Chrome. Use the on-screen MOVE stick, Pack, and Absorb.

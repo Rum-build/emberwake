@@ -1057,6 +1057,8 @@ The combat plates now keep a rim and glow on the HP and MP bars, spark tracks un
 
 The isle south shore now keeps wet sand, a foam lip, rock outcrops, and ripple on the near water. The west shelf lip keeps the same. The pier water, the buoys, and the shale foam stay where they were. No new cue.
 
+Pack rows, equipment slots, and the spark plate are rimmed parchment panels with an ember left edge, in the same family as the Places cards. Equip, stow, and use still write the same bag.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
