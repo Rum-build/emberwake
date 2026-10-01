@@ -233,6 +233,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The eagle roost perch keeps wood grain, twine on the beams, a stick-weave nest with a pale lining, ash stains, and feather chips on the floor. The climb stays. No new cue.
 - Sera and Old Joss keep cloth folds, hair strands, a clearer face, boot grain, and a worn shawl or barley knife. Nima’s mesh stays as it was. No new cue.
 - The counting room keeps fluted columns, cracked flagstones, plaster chips, and a warm rim on the lamp niches. The vault door stays. No new cue.
+- The root-cellar crawl keeps brick and mortar on the walls, damp stains, worn crate planks, ash on the floor, and grain on the low beams. The cellar door stays. No new cue.
 
 ## Play on your phone
 

@@ -1029,6 +1029,10 @@ Sera and Old Joss now keep cloth folds, hair strands, a clearer face, boot grain
 
 The counting room now keeps fluted columns, cracked flagstones, plaster chips, and a warm rim on the lamp niches. The vault door, the clerk, and the walk stay where they were. No new cue.
 
+## Shipped in the cellar interior pass
+
+The root-cellar crawl now keeps brick and mortar on the walls, damp stains, worn crate planks, ash on the floor, and grain on the low beams. The cellar door, the mouth, and the walk stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
