@@ -4343,6 +4343,7 @@
     });
     dressNaveAir(g);
     dressNaveFloor(g);
+    dressNaveHall(g);
     naveGroup = g;
     scene.add(g);
   }
@@ -4475,6 +4476,129 @@
       scuff.position.set(spot[0], 0.04, spot[1]);
       scuff.rotation.y = spot[2];
       g.add(scuff);
+    });
+  }
+
+  function dressNaveHall(g) {
+    const timber = new THREE.MeshPhongMaterial({
+      color: 0x6a4632, shininess: 16, specular: new THREE.Color(0xe0c098),
+    });
+    const worn = new THREE.MeshPhongMaterial({
+      color: 0x3a2418, shininess: 6, specular: new THREE.Color(0xa08058),
+    });
+    const grain = new THREE.MeshBasicMaterial({ color: 0xf2d4a4, fog: false });
+    const iron = new THREE.MeshPhongMaterial({
+      color: 0x4a4038, shininess: 42, specular: new THREE.Color(0xd0ccc4),
+    });
+    const stone = new THREE.MeshPhongMaterial({
+      color: 0x6a6258, shininess: 14, specular: new THREE.Color(0xd8d0c4),
+    });
+    const stoneDark = new THREE.MeshPhongMaterial({
+      color: 0x2e2824, shininess: 6, specular: new THREE.Color(0x8a8078),
+    });
+    const plaster = new THREE.MeshPhongMaterial({
+      color: 0xc8b8a4, shininess: 8, specular: new THREE.Color(0xf4ece0),
+    });
+    const plasterChip = new THREE.MeshBasicMaterial({ color: 0xe8dcc8, fog: false });
+    const crack = new THREE.MeshPhongMaterial({
+      color: 0x1a1410, shininess: 3, specular: new THREE.Color(0x6a5848),
+    });
+    [-1.95, 1.95].forEach((x) => {
+      [0.2, 1.15, 2.15].forEach((z, row) => {
+        [-0.28, -0.08, 0.12, 0.32].forEach((dx, i) => {
+          const line = new THREE.Mesh(new THREE.BoxGeometry(0.014, 0.012, 0.22), i % 2 ? grain : worn);
+          line.position.set(x + dx, 0.4, z);
+          g.add(line);
+        });
+        const scuff = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.012, 0.05), worn);
+        scuff.position.set(x + (row === 1 ? 0.12 : -0.08), 0.402, z + 0.06);
+        g.add(scuff);
+        const face = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.05, 0.016), timber);
+        face.position.set(x, 0.22, z + 0.135);
+        g.add(face);
+        [-0.3, 0.08, 0.34].forEach((dx) => {
+          const streak = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.22, 0.012), grain);
+          streak.position.set(x + dx, 0.46, z - 0.06);
+          g.add(streak);
+        });
+        const chip = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.03, 0.02), worn);
+        chip.position.set(x + 0.42, 0.36, z + 0.12);
+        g.add(chip);
+        [[-0.38, 0.28], [0.36, 0.16]].forEach((nail) => {
+          const head = new THREE.Mesh(new THREE.SphereGeometry(0.016, 5, 4), iron);
+          head.position.set(x + nail[0], nail[1], z + 0.145);
+          g.add(head);
+        });
+      });
+    });
+    [-2.15, 2.15].forEach((x, n) => {
+      [-0.16, 0, 0.16].forEach((dx) => {
+        const line = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.62, 0.012), grain);
+        line.position.set(x + dx, 0.5, -1.15);
+        g.add(line);
+      });
+      const rail = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.04, 0.03), timber);
+      rail.position.set(x, 0.84, -1.14);
+      g.add(rail);
+      const wear = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.02, 0.016), worn);
+      wear.position.set(x + (n ? 0.1 : -0.1), 0.86, -1.12);
+      g.add(wear);
+    });
+    const splinter = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.02, 0.03), grain);
+    splinter.position.set(-1.15, 0.2, 2.78);
+    splinter.rotation.y = 0.65;
+    g.add(splinter);
+    [[0.02, 0.95, 0.1], [0.12, 1.72, -0.08], [-0.08, 2.48, 0.16]].forEach((spot) => {
+      const group = new THREE.Group();
+      const slab = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.045, 0.52), stone);
+      slab.position.y = 0.05;
+      slab.receiveShadow = true;
+      group.add(slab);
+      const seam = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.012, 0.03), plasterChip);
+      seam.position.set(0, 0.078, 0.24);
+      group.add(seam);
+      const fissure = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.012, 0.02), crack);
+      fissure.position.set(0.04, 0.08, 0);
+      fissure.rotation.y = spot[2];
+      group.add(fissure);
+      const nick = new THREE.Mesh(new THREE.DodecahedronGeometry(0.04, 0), stoneDark);
+      nick.position.set(-0.28, 0.08, 0.12);
+      nick.scale.y = 0.35;
+      group.add(nick);
+      group.position.set(spot[0], 0, spot[1]);
+      g.add(group);
+    });
+    [[-2.4, 1.2], [-2.4, -0.6], [2.4, 1.2], [2.4, -0.6]].forEach((spot) => {
+      const sign = spot[0] < 0 ? 1 : -1;
+      const faceX = spot[0] + sign * 0.24;
+      [0.45, 0.85, 1.25, 1.65].forEach((y, i) => {
+        const course = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.1, 0.52), i % 2 ? stoneDark : stone);
+        course.position.set(faceX, y, spot[1]);
+        g.add(course);
+        const joint = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.016, 0.54), plasterChip);
+        joint.position.set(faceX + sign * 0.015, y - 0.06, spot[1]);
+        g.add(joint);
+      });
+      const chip = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.22, 0.16), plaster);
+      chip.position.set(faceX + sign * 0.01, 1.05, spot[1] + 0.12);
+      g.add(chip);
+      const pit = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.1, 0.08), stoneDark);
+      pit.position.set(faceX + sign * 0.02, 0.7, spot[1] - 0.1);
+      g.add(pit);
+    });
+    [-2.15, 2.15].forEach((x) => {
+      const panel = new THREE.Mesh(new THREE.BoxGeometry(0.85, 1.35, 0.06), plaster);
+      panel.position.set(x, 1.7, -5.02);
+      g.add(panel);
+      [-0.22, 0, 0.22].forEach((dx) => {
+        const line = new THREE.Mesh(new THREE.BoxGeometry(0.02, 1.05, 0.012), plasterChip);
+        line.position.set(x + dx, 1.7, -4.98);
+        g.add(line);
+      });
+      const flake = new THREE.Mesh(new THREE.DodecahedronGeometry(0.06, 0), stoneDark);
+      flake.position.set(x + 0.28, 1.25, -4.96);
+      flake.scale.y = 0.4;
+      g.add(flake);
     });
   }
 
