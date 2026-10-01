@@ -1033,6 +1033,10 @@ The counting room now keeps fluted columns, cracked flagstones, plaster chips, a
 
 The root-cellar crawl now keeps brick and mortar on the walls, damp stains, worn crate planks, ash on the floor, and grain on the low beams. The cellar door, the mouth, and the walk stay where they were. No new cue.
 
+## Shipped in the scar plot pass
+
+The scar farm plot now keeps turned furrows, soil clods, a short fence with wood grain, and sick crop along the rows. The marker, the smoke, the blister, and the walk stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
