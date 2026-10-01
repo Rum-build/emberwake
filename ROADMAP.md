@@ -1013,6 +1013,10 @@ The yard and patrol soldiers now carry cloth folds, a helm, boot and gauntlet gr
 
 The counting-room and bottle-hall clerks now carry robe folds, sleeve cuffs, a clearer face and hair, boot grain, and a ledger satchel with ink. The captain, the patrol grunts, and the desk stay where they were. The chest plate still shows. No new cue.
 
+## Shipped in the aftermath floor pass
+
+The aftermath grounds now keep a cracked stone or ash grain, an ember or rot tint for Claim, Refuse, Share, and Burn, and debris chips. The south steps stay where they were. Vesper does not enter. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

@@ -229,6 +229,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The harbor pier keeps board grain, nail and knot wear, twisted rope, rust on the iron, and a wet edge by the water. The salt look and the walk stay readable. No new cue.
 - The patrol grunts keep cloth folds, a helm, boot and gauntlet grain, and a clearer face. The captain and the clerks stay as they were. The chest plate still shows. No new cue.
 - The counting-room and bottle-hall clerks keep robe folds, sleeve cuffs, a clearer face and hair, boot grain, and a ledger satchel with ink. The chest plate still shows. No new cue.
+- The aftermath floors keep a cracked stone or ash grain, a tint for Claim, Refuse, Share, and Burn, and debris chips. The south steps stay. Vesper does not enter. No new cue.
 
 ## Play on your phone
 
