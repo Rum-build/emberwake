@@ -7131,6 +7131,7 @@
     dressRoostNight(g);
     dressRoostGround(g);
     dressRoostPerch(g);
+    dressRoostWeave(g);
     dressRoostPad(g);
     dressCoastMist(g);
     dressCoastShore(g);
@@ -8018,6 +8019,121 @@
     shade.position.set(0, -0.24, 0.22);
     perch.add(shade);
     g.add(perch);
+  }
+
+  function dressRoostWeave(g) {
+    const weave = new THREE.Group();
+    weave.position.set(0, 0.4, 9);
+    weave.userData.roostWeave = true;
+    const cache = {};
+    function mat(color) {
+      const key = String(color);
+      if (!cache[key]) cache[key] = new THREE.MeshBasicMaterial({ color, fog: false });
+      return cache[key];
+    }
+    [0.16, -0.14].forEach((z, bi) => {
+      [-0.46, -0.22, 0.02, 0.26, 0.46].forEach((x, i) => {
+        const strand = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.018, 0.022), mat(i % 2 ? 0xf2d6a8 : 0x2a160c));
+        strand.position.set(x, 0.128, z + (bi ? -0.028 : 0.028));
+        strand.rotation.y = (i - 2) * 0.06;
+        weave.add(strand);
+      });
+      const eye = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.02, 8), mat(0x6a4428));
+      eye.rotation.x = Math.PI / 2;
+      eye.position.set(bi ? 0.24 : -0.28, 0.136, z);
+      weave.add(eye);
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.038, 0.008, 6, 10), mat(0x2a160c));
+      ring.rotation.x = Math.PI / 2;
+      ring.position.set(bi ? 0.24 : -0.28, 0.146, z);
+      weave.add(ring);
+    });
+    [-0.48, 0.48].forEach((x) => {
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2;
+        const bit = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.016, 0.016), mat(i % 2 ? 0xf0d8a8 : 0x6a4428));
+        bit.position.set(x, 0.08 + Math.sin(a) * 0.05, 0.16 + Math.cos(a) * 0.045);
+        bit.rotation.y = 0.4;
+        bit.rotation.z = a;
+        weave.add(bit);
+      }
+    });
+    for (let i = 0; i < 7; i++) {
+      const bit = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.014, 0.014), mat(i % 2 ? 0xf0d8a8 : 0x5a3820));
+      bit.position.set(-0.3 + i * 0.09, 0.15, 0.22);
+      bit.rotation.z = i % 2 ? 0.45 : -0.4;
+      weave.add(bit);
+    }
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2;
+      const coil = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.016, 0.016), mat(i % 2 ? 0xf0d8a8 : 0x6a4428));
+      coil.position.set(0.58 + Math.cos(a) * 0.07, 0.05, 0.42 + Math.sin(a) * 0.07);
+      coil.rotation.y = a;
+      weave.add(coil);
+    }
+    const lining = new THREE.Mesh(new THREE.CircleGeometry(0.16, 14), mat(0xf7f1e4));
+    lining.rotation.x = -Math.PI / 2;
+    lining.position.set(0.02, 0.228, 0.02);
+    weave.add(lining);
+    const liningEdge = new THREE.Mesh(new THREE.TorusGeometry(0.15, 0.02, 6, 16), mat(0xe4d2b0));
+    liningEdge.rotation.x = Math.PI / 2;
+    liningEdge.position.set(0.02, 0.236, 0.02);
+    weave.add(liningEdge);
+    for (let i = 0; i < 10; i++) {
+      const a = (i / 10) * Math.PI + 0.15;
+      const stick = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.012, 0.015, 0.36, 5),
+        mat(i % 2 ? 0x5a4030 : 0xc4a070)
+      );
+      stick.rotation.z = Math.PI / 2;
+      stick.rotation.y = a;
+      stick.position.set(0.02 + Math.cos(a) * 0.03, 0.214, 0.02 + Math.sin(a) * 0.02);
+      weave.add(stick);
+    }
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2 + 0.3;
+      const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.014, 0.18, 4), mat(0x4a3424));
+      rim.position.set(0.02 + Math.cos(a) * 0.17, 0.28, 0.02 + Math.sin(a) * 0.13);
+      rim.rotation.z = Math.cos(a) * 0.45;
+      rim.rotation.x = Math.sin(a) * 0.4;
+      weave.add(rim);
+    }
+    const beamStain = new THREE.Mesh(
+      new THREE.CircleGeometry(0.1, 10),
+      new THREE.MeshBasicMaterial({ color: 0x1a140e, transparent: true, opacity: 0.88, depthWrite: false, fog: false })
+    );
+    beamStain.rotation.x = -Math.PI / 2;
+    beamStain.position.set(0.2, 0.14, -0.14);
+    weave.add(beamStain);
+    [[0.16, 0.152, -0.12], [0.24, 0.156, -0.16], [0.3, 0.15, -0.1]].forEach((spot, i) => {
+      const blob = new THREE.Mesh(new THREE.SphereGeometry(0.024 + i * 0.006, 6, 4), mat(0xf4f0e8));
+      blob.scale.y = 0.42;
+      blob.position.set(spot[0], spot[1], spot[2]);
+      weave.add(blob);
+    });
+    const floorAsh = new THREE.Mesh(
+      new THREE.CircleGeometry(0.24, 14),
+      new THREE.MeshBasicMaterial({ color: 0x2a2218, transparent: true, opacity: 0.82, depthWrite: false, fog: false })
+    );
+    floorAsh.rotation.x = -Math.PI / 2;
+    floorAsh.position.set(0.46, 0.028, 0.62);
+    weave.add(floorAsh);
+    [[0.38, 0.52], [0.52, 0.66], [0.3, 0.7], [0.58, 0.5]].forEach((spot, i) => {
+      const blob = new THREE.Mesh(new THREE.SphereGeometry(0.028 + (i % 2) * 0.01, 6, 4), mat(i % 2 ? 0xf4f0e8 : 0xd8d2c8));
+      blob.scale.y = 0.4;
+      blob.position.set(spot[0], 0.05, spot[1]);
+      weave.add(blob);
+    });
+    [[0.64, -0.36, 0.45, 0xf7f3ea], [-0.62, 0.5, -0.35, 0x8a8680], [0.78, 0.16, 0.9, 0xf7f3ea], [-0.42, -0.62, 1.15, 0xb8b0a4], [0.12, 0.68, -0.15, 0x6a6560]].forEach((spot) => {
+      const bit = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.016, 0.07), mat(spot[3]));
+      bit.rotation.y = spot[2];
+      bit.position.set(spot[0], 0.042, spot[1]);
+      weave.add(bit);
+      const shaft = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.01, 0.012), mat(0x3a342c));
+      shaft.rotation.y = spot[2];
+      shaft.position.set(spot[0], 0.054, spot[1]);
+      weave.add(shaft);
+    });
+    g.add(weave);
   }
 
   function dressRoostPad(g) {
