@@ -2273,8 +2273,103 @@
     dressClerkDesk(g);
     dressClerkBody(g);
     dressClerkBoards(g);
+    dressVaultInterior(g);
     g.visible = false;
     return g;
+  }
+
+  function dressVaultInterior(g) {
+    const cache = {};
+    function mat(color) {
+      const key = String(color);
+      if (!cache[key]) cache[key] = new THREE.MeshBasicMaterial({ color, fog: false });
+      return cache[key];
+    }
+    [-1, 1].forEach((side) => {
+      [2.35, 0.55, -1.15, -2.75].forEach((z) => {
+        const x = side * 3.15;
+        const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.17, 2.05, 8), mat(0xb7aea0));
+        shaft.position.set(x, 1.08, z);
+        g.add(shaft);
+        [-0.09, -0.03, 0.03, 0.09].forEach((oz, i) => {
+          const flute = new THREE.Mesh(
+            new THREE.BoxGeometry(0.028, 1.55, 0.02),
+            mat(i % 2 ? 0xf2eadc : 0x2a2622)
+          );
+          flute.position.set(x - side * 0.13, 1.12, z + oz);
+          g.add(flute);
+        });
+        const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.2, 0.1, 8), mat(0xe8dfd2));
+        cap.position.set(x, 2.12, z);
+        g.add(cap);
+        const base = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.24, 0.1, 8), mat(0x6a6258));
+        base.position.set(x, 0.08, z);
+        g.add(base);
+        const dust = new THREE.Mesh(
+          new THREE.CircleGeometry(0.28, 10),
+          new THREE.MeshBasicMaterial({ color: 0x8a8074, transparent: true, opacity: 0.72, depthWrite: false, fog: false })
+        );
+        dust.rotation.x = -Math.PI / 2;
+        dust.position.set(x, 0.05, z);
+        g.add(dust);
+        [[0.1, 0.12], [-0.12, 0.06]].forEach((spot, i) => {
+          const grit = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.02, 0.04), mat(i ? 0xd8d0c4 : 0x4a443c));
+          grit.position.set(x + spot[0], 0.07, z + spot[1]);
+          g.add(grit);
+        });
+      });
+      [2.15, 0.35, -1.45, -2.55].forEach((z, i) => {
+        const x = side * 4.08;
+        const panel = new THREE.Mesh(new THREE.BoxGeometry(0.05, i % 2 ? 0.95 : 0.7, 0.78), mat(i % 2 ? 0xe6dcc8 : 0xcbbfa8));
+        panel.position.set(x, i % 2 ? 1.55 : 0.62, z);
+        g.add(panel);
+        const hole = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.16, 0.14), mat(0x3a342c));
+        hole.position.set(x - side * 0.02, (i % 2 ? 1.25 : 0.48), z + 0.22);
+        g.add(hole);
+        const fall = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.025, 0.08), mat(0xe6dcc8));
+        fall.position.set(x - side * 0.18, 0.05, z + 0.28);
+        fall.rotation.y = 0.4;
+        g.add(fall);
+      });
+      [1.65, -1.85].forEach((z) => {
+        const x = side * 4.02;
+        const recess = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.46, 0.38), mat(0x141210));
+        recess.position.set(x, 1.58, z);
+        g.add(recess);
+        const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 5), mat(0xffe6a0));
+        lamp.position.set(x - side * 0.02, 1.58, z);
+        g.add(lamp);
+        [[0.04, 0.5, 0, 1.84], [0.04, 0.5, 0, 1.32], [0.5, 0.04, 0.22, 1.58], [0.5, 0.04, -0.22, 1.58]].forEach((rim) => {
+          const edge = new THREE.Mesh(new THREE.BoxGeometry(0.04, rim[0], rim[1]), mat(0xffc878));
+          edge.position.set(x - side * 0.08, rim[3], z + rim[2]);
+          g.add(edge);
+          const hot = new THREE.Mesh(new THREE.BoxGeometry(0.02, rim[0] * 0.72, Math.max(0.02, rim[1] * 0.72)), mat(0xfff0c0));
+          hot.position.set(x - side * 0.1, rim[3], z + rim[2]);
+          g.add(hot);
+        });
+      });
+    });
+    [
+      [2.15, 1.5, 1.15, 0.7],
+      [2.35, -0.4, 1.0, 0.62],
+      [1.9, -2.9, 0.95, 0.58],
+      [-0.9, 1.7, 1.05, 0.66],
+      [1.2, 0.9, 0.8, 0.52],
+      [-1.5, 2.6, 0.95, 0.58],
+      [2.5, 2.2, 0.75, 0.48],
+    ].forEach((slab, i) => {
+      const stone = new THREE.Mesh(new THREE.BoxGeometry(slab[2], 0.03, slab[3]), mat(i % 2 ? 0xc8bfb0 : 0xa89880));
+      stone.position.set(slab[0], 0.048, slab[1]);
+      g.add(stone);
+      const crack = new THREE.Mesh(new THREE.BoxGeometry(slab[2] * 0.72, 0.012, 0.03), mat(0x2a2418));
+      crack.position.set(slab[0], 0.066, slab[1]);
+      crack.rotation.y = i * 0.35;
+      g.add(crack);
+      const chip = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.02, 0.05), mat(i % 2 ? 0xfff0d0 : 0x6a5848));
+      chip.position.set(slab[0] + 0.2, 0.07, slab[1] + 0.12);
+      chip.rotation.y = 0.4;
+      g.add(chip);
+    });
   }
 
   function dressHallAir(g) {

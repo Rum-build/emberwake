@@ -1025,6 +1025,10 @@ The eagle roost perch now keeps wood grain and twine on the beams, a stick-weave
 
 Sera and Old Joss now keep cloth folds, hair strands, a clearer face, boot grain, and a worn shawl or barley knife. Nima, Lira, and Torren stay as they were. The argument still recruits Nima. No new cue.
 
+## Shipped in the vault interior pass
+
+The counting room now keeps fluted columns, cracked flagstones, plaster chips, and a warm rim on the lamp niches. The vault door, the clerk, and the walk stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
