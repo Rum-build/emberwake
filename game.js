@@ -13903,16 +13903,16 @@
       [-1, 1].forEach((side) => {
         const x = spot[0] + side * 0.84;
         [0.32, 0.5, 0.68, 0.86, 1.04].forEach((y, row) => {
-          const plank = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.12, 1.18), row % 2 ? timberDark : timber);
-          plank.position.set(x, y, spot[1]);
+          const plank = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.14, 1.22), row % 2 ? timberDark : timber);
+          plank.position.set(spot[0] + side * 0.9, y, spot[1]);
           g.add(plank);
-          const line = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.016, 0.9), grain);
-          line.position.set(x + side * 0.028, y, spot[1] + (row % 2 ? 0.06 : -0.04));
+          const line = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.02, 0.95), grain);
+          line.position.set(spot[0] + side * 0.95, y, spot[1] + (row % 2 ? 0.05 : -0.04));
           g.add(line);
         });
-        const eave = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.05, 1.28), thatch);
-        eave.position.set(x + side * 0.06, 1.22, spot[1]);
-        eave.rotation.z = side * 0.35;
+        const eave = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.07, 1.32), thatch);
+        eave.position.set(spot[0] + side * 0.98, 1.28, spot[1]);
+        eave.rotation.z = side * 0.4;
         g.add(eave);
         [-0.35, 0.05, 0.4].forEach((z, n) => {
           const strand = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.16, 0.03), n % 2 ? thatchDark : grain);
