@@ -6855,6 +6855,7 @@
     dressHarborPier(g);
     dressPierBoards(g);
     dressPierFrame(g);
+    dressPierWear(g);
     dressHarborWater(g);
     dressRoostRim(g);
     dressRoostNight(g);
@@ -8031,6 +8032,107 @@
       pier.add(chip);
     });
     g.add(pier);
+  }
+
+  function dressPierWear(g) {
+    const deck = new THREE.Group();
+    deck.position.set(6.35, 0, 8.15);
+    const pale = new THREE.MeshBasicMaterial({ color: 0xf2d6a8, fog: false });
+    const dark = new THREE.MeshBasicMaterial({ color: 0x2a160c, fog: false });
+    const nail = new THREE.MeshBasicMaterial({ color: 0x1c1814, fog: false });
+    const rust = new THREE.MeshBasicMaterial({ color: 0xc45a28, fog: false });
+    const pit = new THREE.MeshBasicMaterial({ color: 0x3a4a32, fog: false });
+    const ropeA = new THREE.MeshBasicMaterial({ color: 0xf0d8a8, fog: false });
+    const ropeB = new THREE.MeshBasicMaterial({ color: 0x6a4428, fog: false });
+    const knot = new THREE.MeshBasicMaterial({ color: 0x5a3418, fog: false });
+    const sheen = new THREE.MeshBasicMaterial({
+      color: 0xe8f8ff, transparent: true, opacity: 0.92, depthWrite: false, fog: false,
+    });
+    [-0.36, -0.12, 0.12, 0.36].forEach((z, i) => {
+      for (let s = 0; s < 3; s++) {
+        const strand = new THREE.Mesh(
+          new THREE.BoxGeometry(1.35, 0.012, 0.016),
+          s === 1 ? dark : pale
+        );
+        strand.position.set(-0.12 + (s - 1) * 0.06, 0.628, z + (s - 1) * 0.042);
+        deck.add(strand);
+      }
+      [-0.72, 0.68].forEach((x, n) => {
+        const head = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.016, 6), nail);
+        head.position.set(x, 0.632, z);
+        deck.add(head);
+        const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.01, 5), n ? rust : pit);
+        cap.position.set(x, 0.644, z);
+        deck.add(cap);
+      });
+      const eye = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.014, 8), knot);
+      eye.position.set(i % 2 ? 0.22 : -0.28, 0.634, z);
+      deck.add(eye);
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.028, 0.006, 4, 8), dark);
+      ring.rotation.x = Math.PI / 2;
+      ring.position.set(i % 2 ? 0.22 : -0.28, 0.644, z);
+      deck.add(ring);
+    });
+    for (let i = 0; i < 12; i++) {
+      const t = -0.38 + i * 0.07;
+      const ang = i * 0.85;
+      [0, Math.PI].forEach((phase, p) => {
+        const bit = new THREE.Mesh(
+          new THREE.BoxGeometry(0.09, 0.016, 0.016),
+          p ? ropeB : ropeA
+        );
+        bit.position.set(0.03 + t, 0.64 + Math.sin(ang + phase) * 0.03, 0.42 + Math.cos(ang + phase) * 0.03);
+        bit.rotation.y = 0.45;
+        bit.rotation.z = Math.sin(ang + phase) * 0.6;
+        deck.add(bit);
+      });
+    }
+    for (let i = 0; i < 8; i++) {
+      const ang = (i / 8) * Math.PI * 2;
+      const fiber = new THREE.Mesh(
+        new THREE.BoxGeometry(0.08, 0.014, 0.014),
+        i % 2 ? ropeB : ropeA
+      );
+      fiber.position.set(-0.55 + Math.cos(ang) * 0.12, 0.638, 0.08 + Math.sin(ang) * 0.12);
+      fiber.rotation.y = ang;
+      deck.add(fiber);
+    }
+    [-0.42, 0.48].forEach((x) => {
+      const scab = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.022, 0.045), rust);
+      scab.position.set(x, 0.648, 0.46);
+      deck.add(scab);
+      const green = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.016, 0.03), pit);
+      green.position.set(x + 0.04, 0.656, 0.47);
+      deck.add(green);
+      [-0.05, 0.05].forEach((dx) => {
+        const flake = new THREE.Mesh(new THREE.BoxGeometry(0.022, 0.034, 0.016), rust);
+        flake.position.set(x + dx, 0.69, 0.43);
+        deck.add(flake);
+      });
+    });
+    [[-0.9, 0.28], [0.9, 0.28]].forEach((spot) => {
+      const flake = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.034, 0.022), rust);
+      flake.position.set(spot[0], 0.4, spot[1] + 0.11);
+      deck.add(flake);
+      const green = new THREE.Mesh(new THREE.SphereGeometry(0.018, 5, 4), pit);
+      green.position.set(spot[0] + 0.07, 0.42, spot[1] + 0.1);
+      deck.add(green);
+    });
+    const lip = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.02, 0.08), sheen);
+    lip.position.set(0, 0.63, 0.52);
+    deck.add(lip);
+    const drip = new THREE.Mesh(
+      new THREE.BoxGeometry(1.35, 0.014, 0.05),
+      new THREE.MeshBasicMaterial({
+        color: 0xb7e4f8, transparent: true, opacity: 0.88, depthWrite: false, fog: false,
+      })
+    );
+    drip.position.set(0.08, 0.61, 0.58);
+    deck.add(drip);
+    g.add(deck);
+    const wash = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.018, 0.09), sheen);
+    wash.position.set(6.2, 0.17, 10.08);
+    g.add(wash);
   }
 
   function dressHarborWater(g) {
