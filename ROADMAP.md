@@ -1041,6 +1041,10 @@ The scar farm plot now keeps turned furrows, soil clods, a short fence with wood
 
 The ash nave now keeps wood grain, seat wear, and nail heads on the pews, cracked flagstones in the aisle, and stone courses with plaster chips on the walls. The dust, the door, and the walk stay where they were. No new cue.
 
+## Shipped in the village yard pass
+
+The leaf-village yard now keeps wood planks and thatch eaves on the hut sides, worn dirt underfoot, and leaf clumps by the walls. The door, the fronts, the roofs, and the path stones stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

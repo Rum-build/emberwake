@@ -982,6 +982,7 @@
     dressVillageRoofs(village);
     dressVillageWalls(village);
     dressVillageWell(village);
+    dressVillageYard(village);
     overworldGroup.add(village);
     const bannerPin = landmark('concord-banner');
     overworldGroup.add(makeConcordBanner(bannerPin.x, bannerPin.z));
@@ -13870,6 +13871,98 @@
       const drip = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.16, 0.02), wear);
       drip.position.set(spot[0] + (i - 1) * 0.05 + 0.16, 0.38, faceZ - 0.05);
       g.add(drip);
+    });
+  }
+
+  function dressVillageYard(g) {
+    const timber = new THREE.MeshPhongMaterial({
+      color: 0x6a4630, shininess: 14, specular: new THREE.Color(0xe0c098),
+    });
+    const timberDark = new THREE.MeshPhongMaterial({
+      color: 0x3a2418, shininess: 6, specular: new THREE.Color(0xa08060),
+    });
+    const grain = new THREE.MeshBasicMaterial({ color: 0xf2d4a4, fog: false });
+    const thatch = new THREE.MeshPhongMaterial({
+      color: 0xc48848, shininess: 8, specular: new THREE.Color(0xf0d0a8),
+    });
+    const thatchDark = new THREE.MeshBasicMaterial({ color: 0x3a2010, fog: false });
+    const leaf = new THREE.MeshPhongMaterial({
+      color: 0x3f8a38, shininess: 10, specular: new THREE.Color(0xd4f090), side: THREE.DoubleSide,
+    });
+    const leafDark = new THREE.MeshPhongMaterial({
+      color: 0x1e5a22, shininess: 6, specular: new THREE.Color(0x8ab860), side: THREE.DoubleSide,
+    });
+    const dirt = new THREE.MeshPhongMaterial({
+      color: 0x5a4030, shininess: 6, specular: new THREE.Color(0xc4a070),
+    });
+    const dirtDark = new THREE.MeshPhongMaterial({
+      color: 0x2e1c12, shininess: 4, specular: new THREE.Color(0x6a4830),
+    });
+    const chipMat = new THREE.MeshBasicMaterial({ color: 0xe4d4b0, fog: false });
+    [[-2.2, 0], [0, 1.5], [2.2, 0]].forEach((spot, house) => {
+      [-1, 1].forEach((side) => {
+        const x = spot[0] + side * 0.84;
+        [0.32, 0.5, 0.68, 0.86, 1.04].forEach((y, row) => {
+          const plank = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.12, 1.18), row % 2 ? timberDark : timber);
+          plank.position.set(x, y, spot[1]);
+          g.add(plank);
+          const line = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.016, 0.9), grain);
+          line.position.set(x + side * 0.028, y, spot[1] + (row % 2 ? 0.06 : -0.04));
+          g.add(line);
+        });
+        const eave = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.05, 1.28), thatch);
+        eave.position.set(x + side * 0.06, 1.22, spot[1]);
+        eave.rotation.z = side * 0.35;
+        g.add(eave);
+        [-0.35, 0.05, 0.4].forEach((z, n) => {
+          const strand = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.16, 0.03), n % 2 ? thatchDark : grain);
+          strand.position.set(x + side * 0.1, 1.08, spot[1] + z);
+          strand.rotation.z = side * 0.4;
+          g.add(strand);
+        });
+        const bush = new THREE.Group();
+        bush.position.set(x + side * 0.18, 0, spot[1] + (house === 1 ? 0.35 : -0.2));
+        const pad = new THREE.Mesh(new THREE.SphereGeometry(0.16, 6, 4), leaf);
+        pad.scale.set(1.3, 0.45, 0.9);
+        pad.position.y = 0.08;
+        bush.add(pad);
+        for (let i = 0; i < 5; i++) {
+          const blade = new THREE.Mesh(new THREE.PlaneGeometry(0.08, 0.28), i % 2 ? leafDark : leaf);
+          const a = i * 1.1;
+          blade.position.set(Math.cos(a) * 0.08, 0.2, Math.sin(a) * 0.06);
+          blade.rotation.y = a;
+          bush.add(blade);
+          const vein = new THREE.Mesh(new THREE.PlaneGeometry(0.012, 0.2), grain);
+          vein.position.set(Math.cos(a) * 0.08, 0.2, Math.sin(a) * 0.06 + 0.004);
+          vein.rotation.y = a;
+          bush.add(vein);
+        }
+        g.add(bush);
+      });
+    });
+    [[-1.35, -2.35, 0.2], [-1.15, -1.65, -0.15], [-1.5, -0.95, 0.3], [-0.85, -0.4, 0.05], [1.65, -2.15, -0.2], [1.5, -1.4, 0.25], [1.85, -0.65, -0.1]].forEach((spot) => {
+      const group = new THREE.Group();
+      const slab = new THREE.Mesh(new THREE.CircleGeometry(0.38, 7), dirt);
+      slab.rotation.x = -Math.PI / 2;
+      slab.position.y = 0.03;
+      group.add(slab);
+      const cap = new THREE.Mesh(new THREE.CircleGeometry(0.14, 5), dirtDark);
+      cap.rotation.x = -Math.PI / 2;
+      cap.position.set(0.08, 0.04, -0.04);
+      group.add(cap);
+      const crack = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.012, 0.02), chipMat);
+      crack.position.y = 0.046;
+      crack.rotation.y = spot[2];
+      group.add(crack);
+      group.position.set(spot[0], 0, spot[1]);
+      g.add(group);
+    });
+    [[-1.6, -1.9], [-0.7, -1.15], [1.35, -1.85], [1.95, -0.95], [-2.55, -0.35]].forEach((spot, i) => {
+      const bit = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.08), i % 2 ? leafDark : leaf);
+      bit.rotation.x = -Math.PI / 2;
+      bit.rotation.z = i * 0.5;
+      bit.position.set(spot[0], 0.05, spot[1]);
+      g.add(bit);
     });
   }
 
