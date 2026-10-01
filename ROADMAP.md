@@ -985,6 +985,10 @@ The buried kiln pool now carries denser swirl, ember-rot grain, a clearer surfac
 
 The leaf-village house roofs now carry thatch strand grain, moss patches, ridge wear, and chimney soot. The village door, the walls, the well, and the leaf-village beat stay where they were. No new cue.
 
+## Shipped in the Vesper mesh pass
+
+Vesper’s silhouette now carries richer shadow cloth, rot-tinged accents, strands on the hair lock, a clearer dark face, and boot grain. She does not enter Aftermath. The talk beats and the eight cues stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:

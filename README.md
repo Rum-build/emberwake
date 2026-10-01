@@ -222,6 +222,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The title keeps an ember rim, a warmer parchment field, a softer glow on Wake and Continue, and clearer button borders. Sound, Wake, and Continue stay the same. No new cue.
 - The buried kiln pool keeps denser swirl, ember-rot grain, a clearer surface sheen, and a stronger absorb glow. The drink and the eight cues stay the same. No new cue.
 - The leaf-village roofs keep thatch strand grain, moss patches, ridge wear, and chimney soot. The door, the walls, and the well stay readable. No new cue.
+- Vesper’s silhouette keeps richer shadow cloth, rot-tinged accents, strands on the hair lock, a clearer dark face, and boot grain. She does not enter Aftermath. No new cue.
 
 ## Play on your phone
 
