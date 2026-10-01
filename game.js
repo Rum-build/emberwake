@@ -5438,6 +5438,7 @@
     g.userData.beside = beside;
     dressAftermathBoards(g);
     dressAftermathSteps(g);
+    dressAftermathFloors(g);
     aftermathGroup = g;
     scene.add(g);
   }
@@ -5570,6 +5571,272 @@
     wash.position.set(0.04, 0.045, 4.32);
     steps.add(wash);
     g.add(steps);
+  }
+
+  function dressAftermathFloors(g) {
+    const cache = {};
+    function mat(color) {
+      const key = String(color);
+      if (!cache[key]) cache[key] = new THREE.MeshBasicMaterial({ color, fog: false });
+      return cache[key];
+    }
+    function course(parent, rows, colorA, colorB, lipColor, hiColor) {
+      rows.forEach((row, i) => {
+        const w = row[0];
+        const d = row[1];
+        const x = row[2];
+        const z = row[3];
+        const rot = row[4] || 0;
+        const lip = new THREE.Mesh(new THREE.BoxGeometry(w + 0.08, 0.014, d + 0.08), mat(lipColor));
+        lip.position.set(x, 0.014, z);
+        lip.rotation.y = rot;
+        parent.add(lip);
+        const top = new THREE.Mesh(new THREE.BoxGeometry(w, 0.022, d), mat(i % 2 ? colorB : colorA));
+        top.position.set(x, 0.028, z);
+        top.rotation.y = rot;
+        parent.add(top);
+        const inset = new THREE.Mesh(new THREE.BoxGeometry(w * 0.68, 0.012, d * 0.58), mat(i % 2 ? colorA : colorB));
+        inset.position.set(x + 0.05, 0.042, z - d * 0.06);
+        inset.rotation.y = rot;
+        parent.add(inset);
+        const pale = new THREE.Mesh(new THREE.BoxGeometry(w * 0.7, 0.01, 0.034), mat(hiColor));
+        pale.position.set(x + w * 0.06, 0.052, z - d * 0.2);
+        pale.rotation.y = rot + 0.06;
+        parent.add(pale);
+        const dark = new THREE.Mesh(new THREE.BoxGeometry(w * 0.52, 0.01, 0.028), mat(lipColor));
+        dark.position.set(x - w * 0.1, 0.053, z + d * 0.18);
+        dark.rotation.y = rot - 0.1;
+        parent.add(dark);
+      });
+    }
+    function cracks(parent, rows, color) {
+      rows.forEach((row) => {
+        const wide = Math.max(0.075, (row[1] || 0.06) * 1.55);
+        const line = new THREE.Mesh(new THREE.BoxGeometry(row[0], 0.018, wide), mat(color));
+        line.position.set(row[2], 0.058, row[3]);
+        line.rotation.y = row[4] || 0;
+        parent.add(line);
+      });
+    }
+    function chips(parent, rows, color) {
+      rows.forEach((row, i) => {
+        const s = row[2] || 0.16;
+        const bit = new THREE.Mesh(new THREE.BoxGeometry(s, 0.05, s * 0.62), mat(color));
+        bit.position.set(row[0], 0.078, row[1]);
+        bit.rotation.y = row[3] != null ? row[3] : 0.3 + i * 0.45;
+        parent.add(bit);
+      });
+    }
+    function stain(parent, x, z, radius, color, opacity) {
+      const disc = new THREE.Mesh(
+        new THREE.CircleGeometry(radius, 16),
+        new THREE.MeshBasicMaterial({ color, transparent: true, opacity, depthWrite: false, fog: false })
+      );
+      disc.rotation.x = -Math.PI / 2;
+      disc.position.set(x, 0.046, z);
+      parent.add(disc);
+    }
+    function approach(parent, color, dark) {
+      const band = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.014, 0.2), mat(color));
+      band.position.set(0.04, 0.032, 4.02);
+      parent.add(band);
+      const groove = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.01, 0.035), mat(dark));
+      groove.position.set(-0.08, 0.044, 3.94);
+      parent.add(groove);
+    }
+
+    const floors = {};
+    const claim = new THREE.Group();
+    claim.userData.endingFloor = 'claim';
+    course(claim, [
+      [2.35, 1.5, -2.35, -2.2, 0.05],
+      [2.15, 1.35, 0.4, -2.35, -0.04],
+      [1.95, 1.28, 2.75, -1.9, 0.08],
+      [2.25, 1.45, -2.5, -0.25, -0.06],
+      [2.05, 1.4, 0.15, 0.05, 0.03],
+      [1.95, 1.32, 2.55, 0.12, -0.1],
+      [2.15, 1.2, -2.25, 1.75, 0.07],
+      [1.95, 1.15, 0.35, 1.95, -0.05],
+      [1.85, 1.1, 2.6, 1.7, 0.12],
+      [2.3, 1.0, -1.35, 3.2, -0.03],
+      [2.1, 0.92, 1.55, 3.28, 0.06],
+    ], 0xe6d8c2, 0xcbb89a, 0x4a3424, 0xfff3e0);
+    cracks(claim, [
+      [1.7, 0.055, -1.7, -2.05, 0.35],
+      [1.25, 0.05, 0.55, -2.2, -0.55],
+      [1.9, 0.06, 0.05, 0.15, 0.12],
+      [1.15, 0.045, -2.2, -0.1, 1.05],
+      [1.35, 0.05, 2.35, 0.25, 0.7],
+      [1.4, 0.055, -1.4, 1.9, -0.4],
+      [1.55, 0.05, 1.05, 2.35, 0.85],
+      [1.05, 0.04, 0.15, 3.15, 0.2],
+      [0.7, 0.04, -0.4, 0.55, 1.2],
+    ], 0x2a1810);
+    chips(claim, [
+      [-1.55, -1.35, 0.2, 0.4],
+      [0.85, -1.55, 0.16, -0.3],
+      [-0.35, 0.55, 0.22, 0.8],
+      [1.85, 0.85, 0.14, 0.2],
+      [-2.05, 2.15, 0.18, -0.6],
+      [0.55, 2.55, 0.2, 0.5],
+      [1.15, 3.55, 0.15, 0.15],
+      [-0.85, 3.72, 0.17, -0.4],
+    ], 0xff6a18);
+    chips(claim, [
+      [-0.4, -1.85, 0.1, 0.2],
+      [1.45, 0.35, 0.09, 0.9],
+      [-1.2, 1.15, 0.11, -0.2],
+      [0.25, 3.05, 0.08, 0.4],
+      [2.15, 2.85, 0.1, 1.1],
+    ], 0xc4924a);
+    chips(claim, [
+      [-2.6, -1.6, 0.12, 0.5],
+      [1.1, -0.4, 0.1, -0.2],
+      [-0.9, 2.6, 0.13, 0.7],
+      [2.05, 3.1, 0.11, 0.25],
+    ], 0x8a7460);
+    stain(claim, -0.55, 1.45, 0.72, 0xff8a30, 0.42);
+    approach(claim, 0xd8c4a4, 0x3a2418);
+    claim.visible = true;
+    g.add(claim);
+    floors.claim = claim;
+
+    const refuse = new THREE.Group();
+    refuse.userData.endingFloor = 'refuse';
+    course(refuse, [
+      [2.2, 1.4, -2.5, -2.05, -0.08],
+      [2.0, 1.25, 0.15, -2.45, 0.06],
+      [1.85, 1.2, 2.55, -1.75, -0.12],
+      [2.1, 1.35, -2.2, -0.15, 0.1],
+      [1.9, 1.3, 0.55, 0.2, -0.04],
+      [1.8, 1.22, 2.7, 0.35, 0.14],
+      [2.05, 1.15, -2.4, 1.85, -0.06],
+      [1.85, 1.1, 0.2, 2.05, 0.08],
+      [1.75, 1.05, 2.45, 1.85, -0.1],
+      [2.2, 0.95, -1.2, 3.25, 0.04],
+      [1.95, 0.88, 1.7, 3.32, -0.07],
+    ], 0x9eb6d4, 0x7a92ac, 0x2a3848, 0xd6e6f4);
+    cracks(refuse, [
+      [1.55, 0.05, -1.9, -1.9, 0.5],
+      [1.1, 0.045, 0.7, -1.7, -0.3],
+      [1.65, 0.055, -0.2, 0.35, 0.2],
+      [1.2, 0.04, 2.2, 0.55, 0.95],
+      [1.3, 0.05, -1.6, 2.05, -0.55],
+      [0.95, 0.04, 0.85, 2.55, 0.4],
+      [1.15, 0.045, 0.1, 3.2, -0.15],
+    ], 0x4a1830);
+    cracks(refuse, [
+      [0.85, 0.035, -2.4, 0.15, 1.15],
+      [0.7, 0.03, 1.6, 1.15, 0.6],
+    ], 0x1a2838);
+    chips(refuse, [
+      [-1.8, -0.85, 0.14, 0.3],
+      [1.2, 0.45, 0.12, -0.5],
+      [-0.6, 2.2, 0.16, 0.7],
+      [1.55, 3.6, 0.13, 0.2],
+      [-1.15, 3.75, 0.11, -0.4],
+    ], 0x5a646e);
+    chips(refuse, [
+      [1.85, 1.55, 0.15, 0.5],
+      [-0.35, 0.95, 0.12, -0.2],
+    ], 0x6a2848);
+    stain(refuse, 1.55, 1.65, 0.78, 0x4a1830, 0.72);
+    approach(refuse, 0x8aa4c0, 0x3a2430);
+    refuse.visible = false;
+    g.add(refuse);
+    floors.refuse = refuse;
+
+    const share = new THREE.Group();
+    share.userData.endingFloor = 'share';
+    course(share, [
+      [2.15, 1.45, -2.45, -2.15, 0.04],
+      [2.05, 1.35, -2.35, -0.2, -0.05],
+      [1.95, 1.2, -2.3, 1.7, 0.08],
+      [2.15, 0.95, -1.7, 3.18, -0.03],
+    ], 0xffb060, 0xe09848, 0x6a3818, 0xffe0b0);
+    course(share, [
+      [2.05, 1.4, 2.45, -2.05, -0.06],
+      [1.95, 1.3, 2.4, 0.05, 0.07],
+      [1.85, 1.15, 2.35, 1.75, -0.1],
+      [2.0, 0.9, 1.65, 3.22, 0.05],
+    ], 0xc080ff, 0xa868e8, 0x3a2858, 0xf0d8ff);
+    const seam = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.02, 6.5), mat(0x140c14));
+    seam.position.set(0, 0.05, 0.45);
+    share.add(seam);
+    const seamLip = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.012, 6.2), mat(0xf4e8ff));
+    seamLip.position.set(0.08, 0.058, 0.45);
+    share.add(seamLip);
+    cracks(share, [
+      [1.2, 0.045, -2.1, -1.6, 0.4],
+      [1.05, 0.04, -1.8, 1.2, -0.3],
+      [1.15, 0.045, 2.2, -1.4, 0.55],
+      [0.95, 0.04, 1.9, 1.35, -0.45],
+    ], 0x1a1018);
+    chips(share, [
+      [-1.4, -1.2, 0.16, 0.3],
+      [-2.0, 1.4, 0.14, -0.4],
+      [-0.85, 3.55, 0.15, 0.6],
+    ], 0xff8a30);
+    chips(share, [
+      [1.5, -0.9, 0.16, 0.2],
+      [2.15, 1.55, 0.14, 0.8],
+      [1.05, 3.65, 0.15, -0.3],
+    ], 0xd0a0ff);
+    approach(share, 0xe0b0d0, 0x2a1828);
+    share.visible = false;
+    g.add(share);
+    floors.share = share;
+
+    const burn = new THREE.Group();
+    burn.userData.endingFloor = 'burn';
+    course(burn, [
+      [2.4, 1.55, -2.3, -2.15, 0.06],
+      [2.2, 1.4, 0.45, -2.3, -0.05],
+      [2.0, 1.3, 2.7, -1.85, 0.1],
+      [2.3, 1.45, -2.45, -0.15, -0.08],
+      [2.1, 1.35, 0.2, 0.15, 0.04],
+      [1.9, 1.28, 2.55, 0.2, -0.12],
+      [2.2, 1.18, -2.2, 1.8, 0.07],
+      [2.0, 1.12, 0.4, 2.0, -0.04],
+      [1.85, 1.08, 2.55, 1.75, 0.11],
+      [2.35, 0.98, -1.25, 3.22, -0.02],
+      [2.05, 0.9, 1.6, 3.3, 0.08],
+    ], 0x1c0c08, 0x2a1410, 0x0a0404, 0x6a4030);
+    cracks(burn, [
+      [2.05, 0.08, -1.4, -1.7, 0.25],
+      [1.6, 0.07, 0.8, -1.9, -0.4],
+      [2.2, 0.09, 0.15, 0.35, 0.08],
+      [1.35, 0.06, -2.15, 0.2, 1.0],
+      [1.7, 0.075, 2.2, 0.45, 0.65],
+      [1.55, 0.07, -1.2, 2.05, -0.35],
+      [1.85, 0.08, 0.9, 2.45, 0.75],
+      [1.2, 0.06, 0.05, 3.2, 0.15],
+    ], 0xff2a10);
+    cracks(burn, [
+      [1.1, 0.04, -0.6, -0.4, 0.9],
+      [0.85, 0.035, 1.4, 1.15, -0.5],
+      [0.95, 0.04, -0.3, 2.7, 0.3],
+    ], 0xff6a28);
+    chips(burn, [
+      [-1.35, -0.95, 0.18, 0.4],
+      [0.7, 0.65, 0.16, -0.2],
+      [-1.85, 2.25, 0.2, 0.7],
+      [1.25, 2.7, 0.15, 0.15],
+      [-0.55, 3.65, 0.17, -0.45],
+      [1.45, 3.78, 0.14, 0.55],
+    ], 0xff4a18);
+    chips(burn, [
+      [1.7, -1.4, 0.1, 0.3],
+      [-0.25, 1.35, 0.09, 0.8],
+      [0.85, 3.15, 0.08, -0.1],
+    ], 0xc4b0a0);
+    stain(burn, 0.35, 1.15, 0.85, 0xff3010, 0.38);
+    approach(burn, 0x4a2018, 0xff2a10);
+    burn.visible = false;
+    g.add(burn);
+    floors.burn = burn;
+
+    g.userData.floors = floors;
   }
 
   function naveFits(x, z) {
@@ -16811,6 +17078,11 @@
     if (data.pins) {
       Object.keys(data.pins).forEach((key) => {
         data.pins[key].visible = key === word;
+      });
+    }
+    if (data.floors) {
+      Object.keys(data.floors).forEach((key) => {
+        data.floors[key].visible = key === word;
       });
     }
   }
