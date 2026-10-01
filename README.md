@@ -226,6 +226,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - Nima’s party mesh keeps richer cloth folds, hair detail, a clearer face, and boot grain. Equipped herb rod and shawl still change the body. No new cue.
 - The bottle-hall shelves keep thicker glass, cork and seal grain, an ember-rot tint in each bottle, and worn shelf edges. The near corks and the walk stay readable. No new cue.
 - The Places cards keep a warmer parchment field, an ember rim, a clearer title, and a worn edge. The list still does not travel. No new cue.
+- The harbor pier keeps board grain, nail and knot wear, twisted rope, rust on the iron, and a wet edge by the water. The salt look and the walk stay readable. No new cue.
 
 ## Play on your phone
 

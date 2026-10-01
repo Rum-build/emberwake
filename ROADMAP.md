@@ -1001,6 +1001,10 @@ The bottle-hall shelves now carry thicker glass, cork and seal grain, an ember-r
 
 The Places destination cards now carry a warmer parchment field, ember rim grain, a clearer title over the note, a worn card edge, and a stronger selected glow. Hover brightens a card on a desktop. The list still does not travel. Phone Places still starts under the place name, and the stick stays clear. No new cue.
 
+## Shipped in the pier wear pass
+
+The harbor pier now carries board grain, nail and knot wear, twisted rope strands, rust on the iron rings and bollards, and a wet edge by the water. The salt look, the pier lamp, and the walk stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
