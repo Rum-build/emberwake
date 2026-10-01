@@ -2919,15 +2919,15 @@
     glass.renderOrder = 2;
     g.add(glass);
     const shoulder = new THREE.Mesh(
-      new THREE.TorusGeometry(0.05, 0.012, 6, 10),
-      new THREE.MeshPhongMaterial({ color: 0xf4f8fc, shininess: 80, specular: new THREE.Color(0xffffff) })
+      new THREE.TorusGeometry(0.052, 0.016, 6, 10),
+      new THREE.MeshBasicMaterial({ color: 0xf4f8fc, fog: false })
     );
     shoulder.rotation.x = Math.PI / 2;
     shoulder.position.set(x, y + 0.1, z);
     g.add(shoulder);
     const base = new THREE.Mesh(
-      new THREE.TorusGeometry(0.064, 0.012, 6, 10),
-      new THREE.MeshPhongMaterial({ color: 0xc8d4de, shininess: 40, specular: new THREE.Color(0xffffff) })
+      new THREE.TorusGeometry(0.066, 0.016, 6, 10),
+      new THREE.MeshBasicMaterial({ color: 0xd8e4ee, fog: false })
     );
     base.rotation.x = Math.PI / 2;
     base.position.set(x, y - 0.12, z);
@@ -2949,14 +2949,14 @@
     const swirlCols = [0xff6a18, 0x6a1848, 0xffe0a0];
     for (let s = 0; s < 3; s++) {
       const chip = new THREE.Mesh(
-        new THREE.BoxGeometry(0.018, 0.055, 0.014),
+        new THREE.BoxGeometry(0.028, 0.078, 0.02),
         new THREE.MeshBasicMaterial({ color: swirlCols[(i + s) % 3], fog: false })
       );
-      const along = (s - 1) * 0.038;
+      const along = (s - 1) * 0.05;
       chip.position.set(
-        x + fx * 0.08 + (fz ? along : 0),
-        y - 0.02 + (s - 1) * 0.042,
-        z + fz * 0.08 + (fx ? along : 0)
+        x + fx * 0.09 + (fz ? along : 0),
+        y - 0.02 + (s - 1) * 0.05,
+        z + fz * 0.09 + (fx ? along : 0)
       );
       chip.rotation.z = fx ? (s - 1) * 0.55 : 0;
       chip.rotation.x = fz ? (s - 1) * 0.55 : 0;
@@ -2964,29 +2964,25 @@
       g.add(chip);
     }
     const cork = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.026, 0.026, 0.042, 6),
-      new THREE.MeshPhongMaterial({ color: 0xe8d4a0, shininess: 6, specular: new THREE.Color(0xf4e2b0) })
+      new THREE.CylinderGeometry(0.036, 0.036, 0.058, 6),
+      new THREE.MeshBasicMaterial({ color: 0xf0d8a8, fog: false })
     );
-    cork.position.set(x, y + 0.21, z);
+    cork.position.set(x, y + 0.22, z);
     g.add(cork);
-    [-0.009, 0.009].forEach((ox) => {
+    [-0.012, 0.012].forEach((ox) => {
       const grain = new THREE.Mesh(
-        new THREE.BoxGeometry(0.005, 0.038, 0.008),
-        new THREE.MeshBasicMaterial({ color: 0x6a4020, fog: false })
+        new THREE.BoxGeometry(0.008, 0.052, 0.01),
+        new THREE.MeshBasicMaterial({ color: 0x4a2810, fog: false })
       );
-      grain.position.set(x + ox + fx * 0.01, y + 0.21, z + fz * 0.012 + (fx ? 0.016 : 0));
+      grain.position.set(x + ox + fx * 0.016, y + 0.22, z + fz * 0.02 + (fx ? 0.022 : 0));
       g.add(grain);
     });
-    const sealCol = i % 2 ? 0x8a3030 : 0xe2c878;
+    const sealCol = i % 2 ? 0xc04040 : 0xffe08a;
     const seal = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.032, 0.03, 0.014, 8),
-      new THREE.MeshPhongMaterial({
-        color: sealCol,
-        emissive: new THREE.Color(sealCol).multiplyScalar(0.28),
-        shininess: 22,
-      })
+      new THREE.CylinderGeometry(0.044, 0.04, 0.02, 8),
+      new THREE.MeshBasicMaterial({ color: sealCol, fog: false })
     );
-    seal.position.set(x, y + 0.238, z);
+    seal.position.set(x, y + 0.258, z);
     g.add(seal);
     const glint = new THREE.Mesh(
       new THREE.BoxGeometry(0.01, 0.11, 0.008),
@@ -3044,16 +3040,23 @@
       g.add(lip);
       const faceSign = Math.sign(spec.lip) || 1;
       const wear = new THREE.Mesh(
-        new THREE.BoxGeometry(alongZ ? 0.024 : spec.len * 0.86, 0.022, alongZ ? spec.len * 0.86 : 0.024),
-        new THREE.MeshBasicMaterial({ color: 0x3a2414, fog: false })
+        new THREE.BoxGeometry(alongZ ? 0.03 : spec.len * 0.9, 0.036, alongZ ? spec.len * 0.9 : 0.03),
+        new THREE.MeshBasicMaterial({ color: 0xe8d4b0, fog: false })
       );
-      if (alongZ) wear.position.set(spec.x + spec.lip + faceSign * 0.022, spec.y + 0.018, spec.z);
-      else wear.position.set(spec.x, spec.y + 0.018, spec.z + spec.lip + faceSign * 0.022);
+      if (alongZ) wear.position.set(spec.x + spec.lip + faceSign * 0.026, spec.y + 0.02, spec.z);
+      else wear.position.set(spec.x, spec.y + 0.02, spec.z + spec.lip + faceSign * 0.026);
       g.add(wear);
+      const groove = new THREE.Mesh(
+        new THREE.BoxGeometry(alongZ ? 0.012 : spec.len * 0.7, 0.01, alongZ ? spec.len * 0.7 : 0.012),
+        new THREE.MeshBasicMaterial({ color: 0x1a100c, fog: false })
+      );
+      if (alongZ) groove.position.set(spec.x + spec.lip + faceSign * 0.034, spec.y + 0.028, spec.z);
+      else groove.position.set(spec.x, spec.y + 0.028, spec.z + spec.lip + faceSign * 0.034);
+      g.add(groove);
       [-0.32, 0.22].forEach((t, c) => {
         const chip = new THREE.Mesh(
-          new THREE.BoxGeometry(alongZ ? 0.04 : 0.09, 0.016, alongZ ? 0.09 : 0.04),
-          new THREE.MeshBasicMaterial({ color: c ? 0xf2d2a4 : 0xc4a070, fog: false })
+          new THREE.BoxGeometry(alongZ ? 0.05 : 0.11, 0.02, alongZ ? 0.11 : 0.05),
+          new THREE.MeshBasicMaterial({ color: c ? 0xfff0d0 : 0xc4a070, fog: false })
         );
         const along = t * spec.len;
         if (alongZ) chip.position.set(spec.x + spec.lip + faceSign * 0.03, spec.y + 0.05, spec.z + along);
@@ -3071,8 +3074,8 @@
       const n = spec.bottles || 0;
       for (let i = 0; i < n; i++) {
         const t = n === 1 ? 0 : -spec.len * 0.34 + i * (spec.len * 0.68 / (n - 1));
-        const bx = alongZ ? spec.x + spec.lip * 0.28 : spec.x + t;
-        const bz = alongZ ? spec.z + t : spec.z + spec.lip * 0.28;
+        const bx = alongZ ? spec.x + spec.lip * 0.5 : spec.x + t;
+        const bz = alongZ ? spec.z + t : spec.z + spec.lip * 0.5;
         const color = glassColors[i % glassColors.length];
         const face = alongZ
           ? { x: Math.sign(spec.lip) || 1, z: 0 }
