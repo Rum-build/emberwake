@@ -1009,6 +1009,10 @@ The harbor pier now carries board grain, nail and knot wear, twisted rope strand
 
 The yard and patrol soldiers now carry cloth folds, a helm, boot and gauntlet grain, and a clearer face. The captain, the clerks, and the fight stay where they were. The chest plate still shows. No new cue.
 
+## Shipped in the clerk robe pass
+
+The counting-room and bottle-hall clerks now carry robe folds, sleeve cuffs, a clearer face and hair, boot grain, and a ledger satchel with ink. The captain, the patrol grunts, and the desk stay where they were. The chest plate still shows. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
