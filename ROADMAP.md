@@ -993,6 +993,10 @@ Vesper’s silhouette now carries richer shadow cloth, rot-tinged accents, stran
 
 Nima’s party mesh now carries richer cloth folds, hair detail, a clearer face, and boot grain. Equipped herb rod and shawl still change the body. No new cue.
 
+## Shipped in the hall glass pass
+
+The bottle-hall shelves now carry thicker glass, cork and seal grain, an ember-rot tint in each bottle, and worn shelf edges. The near corks, the earth jar, and the walk stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
