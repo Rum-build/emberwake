@@ -231,6 +231,7 @@ Listed in [ROADMAP.md](ROADMAP.md). The field slice does not close Act I.
 - The counting-room and bottle-hall clerks keep robe folds, sleeve cuffs, a clearer face and hair, boot grain, and a ledger satchel with ink. The chest plate still shows. No new cue.
 - The aftermath floors keep a cracked stone or ash grain, a tint for Claim, Refuse, Share, and Burn, and debris chips. The south steps stay. Vesper does not enter. No new cue.
 - The eagle roost perch keeps wood grain, twine on the beams, a stick-weave nest with a pale lining, ash stains, and feather chips on the floor. The climb stays. No new cue.
+- Sera and Old Joss keep cloth folds, hair strands, a clearer face, boot grain, and a worn shawl or barley knife. Nima’s mesh stays as it was. No new cue.
 
 ## Play on your phone
 
