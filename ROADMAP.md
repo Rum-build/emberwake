@@ -1017,6 +1017,10 @@ The counting-room and bottle-hall clerks now carry robe folds, sleeve cuffs, a c
 
 The aftermath grounds now keep a cracked stone or ash grain, an ember or rot tint for Claim, Refuse, Share, and Burn, and debris chips. The south steps stay where they were. Vesper does not enter. No new cue.
 
+## Shipped in the roost weave pass
+
+The eagle roost perch now keeps wood grain and twine on the beams, a stick-weave nest with a pale lining, ash stains, and feather chips on the floor. The beams, the pad, and the climb stay where they were. No new cue.
+
 ## Still ahead
 
 From DESIGN.md, after these endings:
